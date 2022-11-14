@@ -1,7 +1,7 @@
-require 'active_support/concern'
-require 'global_id'
+require "active_support/concern"
+require "global_id"
 
-module Services
+module Baseline
   module Asyncable
     extend ActiveSupport::Concern
 
@@ -11,8 +11,8 @@ module Services
       sidekiq_loaded = false
 
       begin
-        require 'sidekiq'
-        require 'sidekiq/api'
+        require "sidekiq"
+        require "sidekiq/api"
       rescue LoadError
       else
         include Sidekiq::Worker
@@ -21,9 +21,9 @@ module Services
 
       unless sidekiq_loaded
         begin
-          require 'sucker_punch'
+          require "sucker_punch"
         rescue LoadError
-          raise Services::NoBackgroundProcessorFound
+          raise Baseline::NoBackgroundProcessorFound
         else
           include SuckerPunch::Job
         end
@@ -33,19 +33,19 @@ module Services
     module ClassMethods
       ASYNC_METHOD_SUFFIXES.each do |async_method_suffix|
         define_method "call_#{async_method_suffix}" do |*args|
-          args = args.map(&Services.method(:replace_records_with_global_ids))
+          args = args.map(&Baseline.method(:replace_records_with_global_ids))
           self.public_send "perform_#{async_method_suffix}", *args
         end
       end
     end
 
     def perform(*args)
-      args = args.map(&Services.method(:replace_global_ids_with_records))
+      args = args.map(&Baseline.method(:replace_global_ids_with_records))
 
       call_method = method(:call)
 
-      # Find the first class that inherits from `Services::Base`.
-      while !(call_method.owner < Services::Base)
+      # Find the first class that inherits from `Baseline::Service`.
+      while !(call_method.owner < Baseline::Service)
         call_method = call_method.super_method
       end
 

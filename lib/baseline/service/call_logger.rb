@@ -1,5 +1,5 @@
-module Services
-  class Base
+module Baseline
+  class Service
     module CallLogger
       def self.prepended(mod)
         mod.extend ClassMethods
@@ -29,16 +29,18 @@ module Services
 
       def call(*args, **kwargs)
         unless self.class.call_logging_disabled
-          log "START with args: #{args}, kwargs: #{kwargs}", caller: caller
+          log :info, "START", args: args, kwargs: kwargs, caller: caller
           start = Time.now
         end
         begin
           result = super
-        rescue => e
-          log exception_message(e), {}, 'error'
-          raise e
+        rescue => error
+          log :error, exception_message(error)
+          raise error
         ensure
-          log 'END', duration: (Time.now - start).round(2) unless self.class.call_logging_disabled
+          unless self.class.call_logging_disabled
+            log "END", duration: (Time.now - start).round(2)
+          end
           result
         end
       end
@@ -56,14 +58,14 @@ module Services
 
       def caller
         caller_location = caller_locations(1, 10).detect do |location|
-          location.path !~ /\A#{Regexp.escape File.expand_path('../..', __FILE__)}/
+          location.path !~ /\A#{Regexp.escape File.expand_path("../..", __FILE__)}/
         end
         if caller_location.nil?
           nil
         else
           caller_path = caller_location.path
-          caller_path = caller_path.sub(%r(\A#{Regexp.escape Rails.root.to_s}/), '') if defined?(Rails)
-          [caller_path, caller_location.lineno].join(':')
+          caller_path = caller_path.sub(%r(\A#{Regexp.escape Rails.root.to_s}/), "") if defined?(Rails)
+          [caller_path, caller_location.lineno].join(":")
         end
       end
     end

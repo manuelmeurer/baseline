@@ -1,10 +1,10 @@
-module Services
-  class Base
+module Baseline
+  class Service
     module UniquenessChecker
       KEY_PREFIX = %w(
-        services
+        baseline
         uniqueness
-      ).join(':').freeze
+      ).join(":").freeze
 
       ON_ERROR = %i(
         fail
@@ -21,13 +21,13 @@ module Services
       end
 
       def check_uniqueness(*args, on_error: :fail)
-        raise "on_error must be one of #{ON_ERROR.join(', ')}, but was #{on_error}" unless ON_ERROR.include?(on_error.to_sym)
+        raise "on_error must be one of #{ON_ERROR.join(", ")}, but was #{on_error}" unless ON_ERROR.include?(on_error.to_sym)
         @_on_error = on_error
-        raise 'Service args not found.' if @_service_args.nil?
+        raise "Service args not found." if @_service_args.nil?
         @_uniqueness_args = args.empty? ? @_service_args : args
         new_uniqueness_key = uniqueness_key(@_uniqueness_args)
         raise "A uniqueness key with args #{@_uniqueness_args.inspect} already exists." if @_uniqueness_keys && @_uniqueness_keys.include?(new_uniqueness_key)
-        if @_similar_service_id = Services.redis.get(new_uniqueness_key)
+        if @_similar_service_id = Baseline.redis.get(new_uniqueness_key)
           if on_error.to_sym == :ignore
             return false
           else
@@ -37,7 +37,7 @@ module Services
         else
           @_uniqueness_keys ||= []
           @_uniqueness_keys << new_uniqueness_key
-          Services.redis.setex new_uniqueness_key, THIRTY_DAYS, @id
+          Baseline.redis.setex new_uniqueness_key, THIRTY_DAYS, @id
           true
         end
       end
@@ -62,8 +62,8 @@ module Services
           raise "Unexpected on_error: #{@_on_error}"
         end
       ensure
-        Services.redis.del @_uniqueness_keys unless Array(@_uniqueness_keys).empty?
-        Services.redis.del error_count_key
+        Baseline.redis.del @_uniqueness_keys unless Array(@_uniqueness_keys).empty?
+        Baseline.redis.del error_count_key
       end
 
       private
@@ -94,35 +94,35 @@ module Services
         reschedule_args = @_service_args.map do |arg|
           convert_for_rescheduling arg
         end
-        log "Rescheduling to be executed in #{retry_delay} seconds." if self.respond_to?(:log)
+        log :info, "Rescheduling", seconds: retry_delay
         self.class.call_in retry_delay, *reschedule_args
       end
 
       def error_count
-        (Services.redis.get(error_count_key) || 0).to_i
+        (Baseline.redis.get(error_count_key) || 0).to_i
       end
 
       def increase_error_count
-        Services.redis.setex error_count_key, retry_delay + THIRTY_DAYS, error_count + 1
+        Baseline.redis.setex error_count_key, retry_delay + THIRTY_DAYS, error_count + 1
       end
 
       def uniqueness_key(args)
         [
           KEY_PREFIX,
-          self.class.to_s.gsub(':', '_')
+          self.class.to_s.gsub(":", "_")
         ].tap do |key|
           key << Digest::MD5.hexdigest(args.to_s) unless args.empty?
-        end.join(':')
+        end.join(":")
       end
 
       def error_count_key
         [
           KEY_PREFIX,
-          'errors',
-          self.class.to_s.gsub(':', '_')
+          "errors",
+          self.class.to_s.gsub(":", "_")
         ].tap do |key|
           key << Digest::MD5.hexdigest(@_service_args.to_s) unless @_service_args.empty?
-        end.join(':')
+        end.join(":")
       end
 
       def retry_delay
