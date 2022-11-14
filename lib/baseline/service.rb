@@ -9,10 +9,13 @@ require "baseline/service/uniqueness_checker"
 
 module Baseline
   class Service
+    delegate :link_to, :tag, :link_to_modal, :pluralize, to: :"ApplicationController.helpers"
+    delegate :t, :l, to: :"I18n"
+
     class << self
       def inherited(subclass)
         subclass.const_set :Error, Class.new(StandardError)
-        subclass.public_send :include, Rails.application.routes.url_helpers if defined?(Rails)
+        subclass.public_send :include, Rails.application.routes.url_helpers
         begin
           subclass.public_send :include, Asyncable
         rescue Baseline::NoBackgroundProcessorFound
@@ -21,6 +24,67 @@ module Baseline
       end
 
       delegate :call, to: :new
+
+      def enqueued?(*args)
+        enqueued_jobs(*args).any?
+      end
+
+      def processing?(*args)
+        processing_jobs(*args).any?
+      end
+
+      def enqueued_or_processing?(*args)
+        enqueued?(*args) || processing?(*args)
+      end
+
+      def scheduled_at(*args)
+        scheduled_jobs(*args).first
+                             &.at
+                             &.in_time_zone
+      end
+    end
+
+    {
+      enqueued:   -> {
+                       defined?(Sidekiq::Testing) && Sidekiq::Testing.fake? ?
+                       Sidekiq::Job.jobs
+                                    .map { Sidekiq::JobRecord.new _1 unless _1.key?("at") }
+                                    .compact :
+                       Sidekiq::Queue.all
+                                     .flat_map(&:to_a)
+                     },
+      scheduled:  -> {
+                       defined?(Sidekiq::Testing) && Sidekiq::Testing.fake? ?
+                       Sidekiq::Job.jobs
+                                   .map { Sidekiq::JobRecord.new _1 if _1.key?("at") }
+                                   .compact :
+                       Sidekiq::ScheduledSet.new
+                     },
+      processing: -> {
+                       Sidekiq::WorkSet.new.map do |_, _, work|
+                         OpenStruct.new(
+                           {
+                             klass: "class",
+                             args:  "args"
+                           }.transform_values { work["payload"].fetch(_1) }
+                         )
+                       end
+                     }
+    }.each do |type, job_fetcher|
+      define_singleton_method "#{type}_jobs" do |*args|
+        args = args.map do |arg|
+          case arg = Services.replace_records_with_global_ids(arg)
+          when Symbol then arg.to_s
+          when Hash   then arg.stringify_keys
+          when Array  then arg.map { _1.is_a?(Symbol) ? _1.to_s : _1 }
+          else             arg
+          end
+        end
+
+        job_fetcher.call.select do |job_record|
+          job_record.klass == self.to_s && (args.none? || job_record.args.take(args.size) == args)
+        end
+      end
     end
 
     def initialize
@@ -45,59 +109,30 @@ module Baseline
         Rails.logger.public_send level, message
       end
 
-      def _split_ids_and_objects(ids_or_objects, klass)
-        ids_or_objects = Array(ids_or_objects)
-        ids, objects = ids_or_objects.grep(Integer), ids_or_objects.grep(klass)
-        if ids.size + objects.size < ids_or_objects.size
-          raise "All params must be either #{klass.to_s.pluralize} or Integers: #{ids_or_objects.map { |id_or_object| [id_or_object.class, id_or_object.inspect].join(" - ")}}"
-        end
-        [ids, objects]
-      end
-
-      def find_ids(ids_or_objects, klass = object_class)
-        ids, objects = _split_ids_and_objects(ids_or_objects, klass)
-        ids.concat objects.map(&:id) if objects.any?
-        ids
-      end
-
-      def find_service(klass)
-        find_service_name = "#{klass.to_s.pluralize}::Find"
-        candidates = ["Baseline::#{find_service_name}", find_service_name]
-        # Use a lazy enumerator here because attempting to
-        # constantize the find service without a namespace
-        # might raise a circular dependency error if it has
-        # a namespace
-        candidates.lazy.map(&:safe_constantize).detect(&:itself) or raise self.class::Error, "Could not find find service (tried: #{candidates.join(", ")})"
-      end
-
-      def find_objects(ids_or_objects, klass = object_class)
-        ids, objects = _split_ids_and_objects(ids_or_objects, klass)
-        if ids.any?
-          objects_from_ids = find_service(klass).call(ids)
-          object_ids = if objects_from_ids.is_a?(ActiveRecord::Relation)
-            objects_from_ids.pluck(:id)
-          else
-            objects_from_ids.map(&:id)
-          end
-          missing_ids = ids - object_ids
-          raise self.class::Error, "#{klass.to_s.pluralize(missing_ids)} #{missing_ids.join(", ")} not found." if missing_ids.size > 0
-          objects.concat objects_from_ids
-        end
-        objects
-      end
-
-      %i(object id).each do |type|
-        define_method "find_#{type}" do |*args|
-          send("find_#{type.to_s.pluralize}", *args).tap do |objects_or_ids|
-            raise "Expected exactly one object or ID but found #{objects_or_ids.size}." unless objects_or_ids.size == 1
-          end.first
-        end
-      end
-
       def object_class
         self.class.to_s[/\A(?:Baseline::)?([^:]+)/, 1].singularize.constantize
       rescue
         raise "Could not determine service class from #{self.class}."
+      end
+
+      def track_last_run(cache_key_part = nil)
+        now         = Time.current
+        cache_key   = [self.class.to_s.underscore, cache_key_part, "last_run"].compact.join("_")
+        last_run_at = Kredis.redis
+                            .get(cache_key)
+                            &.then { Time.zone.parse _1 }
+
+        yield *[last_run_at].compact
+
+        Kredis.redis.set cache_key, now.iso8601
+      end
+
+      def call_all_private_methods_without_args
+        private_methods(false).each do
+          send _1 if method(_1).arity == 0
+        rescue => error
+          ReportError.call error
+        end
       end
   end
 end

@@ -4,7 +4,8 @@ module Baseline
       KEY_PREFIX = %w(
         baseline
         uniqueness
-      ).join(":").freeze
+      ).join(":")
+       .freeze
 
       ON_ERROR = %i(
         fail
@@ -21,12 +22,24 @@ module Baseline
       end
 
       def check_uniqueness(*args, on_error: :fail)
-        raise "on_error must be one of #{ON_ERROR.join(", ")}, but was #{on_error}" unless ON_ERROR.include?(on_error.to_sym)
+        unless ON_ERROR.include?(on_error.to_sym)
+          raise "on_error must be one of #{ON_ERROR.join(", ")}, but was #{on_error}"
+        end
+
         @_on_error = on_error
-        raise "Service args not found." if @_service_args.nil?
-        @_uniqueness_args = args.empty? ? @_service_args : args
+
+        if @_service_args.nil?
+          raise "Service args not found."
+        end
+
+        @_uniqueness_args = args.empty? ?
+                            @_service_args :
+                            args
         new_uniqueness_key = uniqueness_key(@_uniqueness_args)
-        raise "A uniqueness key with args #{@_uniqueness_args.inspect} already exists." if @_uniqueness_keys && @_uniqueness_keys.include?(new_uniqueness_key)
+        if @_uniqueness_keys && @_uniqueness_keys.include?(new_uniqueness_key)
+          raise "A uniqueness key with args #{@_uniqueness_args.inspect} already exists."
+        end
+
         if @_similar_service_id = Baseline.redis.get(new_uniqueness_key)
           if on_error.to_sym == :ignore
             return false
@@ -62,15 +75,21 @@ module Baseline
           raise "Unexpected on_error: #{@_on_error}"
         end
       ensure
-        Baseline.redis.del @_uniqueness_keys unless Array(@_uniqueness_keys).empty?
+        unless Array(@_uniqueness_keys).empty?
+          Baseline.redis.del @_uniqueness_keys
+        end
         Baseline.redis.del error_count_key
       end
 
       private
 
       def raise_not_unique_error
-        message = "Service #{self.class} #{@id} with uniqueness args #{@_uniqueness_args} is not unique, a similar service is already running: #{@_similar_service_id}."
-        message << " The service has been retried #{MAX_RETRIES} times." if @_retries_exhausted
+        message = [
+          "Service #{self.class} #{@id} with uniqueness args #{@_uniqueness_args} is not unique, a similar service is already running: #{@_similar_service_id}.",
+          ("The service has been retried #{MAX_RETRIES} times." if @_retries_exhausted)
+        ].compact
+         .join(" ")
+
         raise self.class::NotUniqueError.new(message)
       end
 
