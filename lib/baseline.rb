@@ -34,6 +34,7 @@ module Baseline
 end
 
 require "baseline/asyncable"
-require "baseline/service"
+require "baseline/configuration"
 require "baseline/model_extensions"
 require "baseline/railtie"
+require "baseline/service"
