@@ -35,7 +35,7 @@ module Baseline
 
       def log(level, message, **kwargs)
         message = [
-          mesage,
+          message,
           kwargs.reverse_merge(service: self.class.to_s, id: @id)
                 .map { [_1, _2].join(": ") }
                 .join(", ")
