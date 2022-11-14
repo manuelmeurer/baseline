@@ -12,7 +12,7 @@ module Baseline
           log :error, exception_message(error)
           raise error
         ensure
-          log :info, "END", duration: (Time.now - start).round(2)
+          log :info, "END", duration: (Time.now - start).round(2).then { "#{_1}s" }
           result
         end
       end
