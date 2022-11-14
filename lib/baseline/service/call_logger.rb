@@ -39,7 +39,7 @@ module Baseline
           raise error
         ensure
           unless self.class.call_logging_disabled
-            log "END", duration: (Time.now - start).round(2)
+            log :info, "END", duration: (Time.now - start).round(2)
           end
           result
         end
