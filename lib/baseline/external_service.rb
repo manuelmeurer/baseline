@@ -46,10 +46,13 @@ module Baseline
           params = request_params.merge(params || {})
         end
 
-        response, tries = nil, 0
+        response    = nil
+        tries       = 0
+        auth_header = request_auth_header(*[base_url].take(method(:request_auth_header).arity))
+        headers     = request_headers.merge(accept: accept)
         loop do
-          response = HTTP.then { request_auth_header ? _1.auth(request_auth_header) : _1 }
-                         .headers(request_headers.merge(accept: accept))
+          response = HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
+                         .headers(headers)
                          .public_send(method, url, params:, json:, form:, body:)
 
           break unless response.status.too_many_requests? && tries < 10
