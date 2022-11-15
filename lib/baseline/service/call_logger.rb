@@ -22,7 +22,7 @@ module Baseline
       def exception_message(error)
         [
           "#{error.class}: #{error.message}",
-          *error.backtrace.map { "\n  #{_1}" },
+          *error.backtrace.map { "  #{_1}" },
           ("caused by: #{exception_message(error.cause)}" if error.respond_to?(:cause) && error.cause)
         ].compact
          .join("\n")
