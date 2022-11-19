@@ -70,8 +70,8 @@ module Baseline
         unless response.status.success?
           error = [
             "Error #{response.status} calling #{method.upcase} #{url}",
-            response_json
-          ].compact
+            response.to_s
+          ].compact_blank
            .join(": ")
 
           raise Error, error
