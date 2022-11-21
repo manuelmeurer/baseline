@@ -35,6 +35,7 @@ end
 
 require "baseline/asyncable"
 require "baseline/configuration"
+require "baseline/helper"
 require "baseline/model_extensions"
 require "baseline/railtie"
 require "baseline/service"
