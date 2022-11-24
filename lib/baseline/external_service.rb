@@ -7,7 +7,7 @@ module Baseline
 
       def add_method(name, return_unless_prod: true, &block)
         define_method name,
-          if Rails.env.production?
+          if defined?(Rails) && Rails.env.production?
             block
           else
             ->(*params) {

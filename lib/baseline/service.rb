@@ -15,7 +15,11 @@ module Baseline
     class << self
       def inherited(subclass)
         subclass.const_set :Error, Class.new(StandardError)
-        subclass.public_send :include, Rails.application.routes.url_helpers
+
+        if defined?(Rails)
+          subclass.public_send :include, Rails.application.routes.url_helpers
+        end
+
         begin
           subclass.public_send :include, Asyncable
         rescue Baseline::NoBackgroundProcessorFound

@@ -37,5 +37,8 @@ require "baseline/asyncable"
 require "baseline/configuration"
 require "baseline/helper"
 require "baseline/model_extensions"
-require "baseline/railtie"
 require "baseline/service"
+
+if defined?(Rails)
+  require "baseline/railtie"
+end
