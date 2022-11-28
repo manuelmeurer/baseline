@@ -46,24 +46,26 @@ module Baseline
 
                 if type == :scopes
                   [
-                    verb,
-                    "un#{verb}",
-                    "#{verb}_before",
-                    "#{verb}_after",
-                    "#{verb}_between"
+                    verb.to_sym,
+                    :"un#{verb}",
+                    :"#{verb}_before",
+                    :"#{verb}_after",
+                    :"#{verb}_between",
+                    :"un#{verb}_before",
+                    :"un#{verb}_after"
                   ]
                 else
                   [
-                    attribute,
-                    "#{verb}?",
-                    "un#{verb}?",
-                    "#{verb}!",
-                    "un#{verb}!",
-                    "#{verb}_before?",
-                    "#{verb}_after?",
-                    "#{verb}_between?"
+                    attribute.to_sym,
+                    :"#{verb}?",
+                    :"un#{verb}?",
+                    :"#{verb}!",
+                    :"un#{verb}!",
+                    :"#{verb}_before?",
+                    :"#{verb}_after?",
+                    :"#{verb}_between?"
                   ]
-                end.map(&:to_sym)
+                end
               end
             end
           end
