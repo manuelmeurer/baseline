@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Baseline
   module HasTimestamps
     def self.[](*attributes)
