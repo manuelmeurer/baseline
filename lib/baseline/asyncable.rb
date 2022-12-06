@@ -1,5 +1,4 @@
 require "active_support/concern"
-require "global_id"
 
 module Baseline
   module Asyncable
@@ -28,6 +27,9 @@ module Baseline
           include SuckerPunch::Job
         end
       end
+
+      # Load Global ID only when a background processor has been successfully loaded.
+      require "global_id"
     end
 
     module ClassMethods
