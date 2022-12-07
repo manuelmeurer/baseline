@@ -39,7 +39,6 @@ require "baseline/controller_extensions"
 require "baseline/helper"
 require "baseline/model_extensions"
 require "baseline/redis_url"
-require "baseline/service"
 
 if defined?(Rails)
   require "baseline/railtie"
