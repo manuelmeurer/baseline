@@ -6,6 +6,7 @@ module Baseline
       ruby_docs
       note_to_self
       tasks
+      spendex
     )
 
     def self.fetch(identifier = nil)
