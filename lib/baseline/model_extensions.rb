@@ -19,7 +19,7 @@ module Baseline
             attribute,
             one_or_many == :many ? :attachments : :attachment
           ].join("_")
-          .to_sym
+           .to_sym
 
           public_send has_attached_method, attribute, **kwargs
           accepts_nested_attributes_for attachment_attribute, allow_destroy: true
