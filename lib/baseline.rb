@@ -30,6 +30,14 @@ module Baseline
       else arg
       end
     end
+
+    def has_many_reflection_classes
+      [
+        ActiveRecord::Reflection::HasManyReflection,
+        ActiveRecord::Reflection::HasAndBelongsToManyReflection,
+        ActiveRecord::Reflection::ThroughReflection
+      ]
+    end
   end
 end
 
