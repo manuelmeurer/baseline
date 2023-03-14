@@ -1,6 +1,11 @@
 module Baseline
   class Configuration
-    attr_accessor :redis
+    attr_accessor :redis, :wrap_exceptions
+
+    def initialize
+      @wrap_exceptions = true
+      super
+    end
   end
 
   class << self
