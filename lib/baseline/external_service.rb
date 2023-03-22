@@ -46,12 +46,16 @@ module Baseline
           params = request_params.merge(params || {})
         end
 
+        require "http"
+
         response    = nil
         tries       = 0
-        auth_header = request_auth_header(*[base_url].take(method(:request_auth_header).arity))
+        auth_header = request_auth(*[base_url].take(method(:request_auth).arity))
         headers     = request_headers.merge(accept: accept)
+
         loop do
           response = HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
+                         .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
                          .headers(headers)
                          .public_send(method, url, params:, json:, form:, body:)
 
@@ -64,7 +68,7 @@ module Baseline
         response_json = if response.content_type.mime_type == Mime[:json] &&
                            response.to_s.present?
 
-          JSON.parse(response.to_s)
+          JSON.parse(response.to_s, symbolize_names: true)
         end
 
         unless response.status.success?
@@ -80,9 +84,10 @@ module Baseline
         response_json || response.to_s
       end
 
-      def request_auth_header = nil
-      def request_params      = {}
-      def request_headers     = {}
+      def request_auth       = nil
+      def request_basic_auth = nil
+      def request_params     = {}
+      def request_headers    = {}
 
       def wait_for(condition)
         result = nil
