@@ -16,7 +16,7 @@ module Baseline
           desired_flash[type],
           text
         ].compact_blank
-         .join(view_context.tag.br)
+         .join("\n\n")
       end
 
       def html_redirect_to(options = {}, response_options = {})
