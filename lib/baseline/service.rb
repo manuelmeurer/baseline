@@ -52,8 +52,8 @@ module Baseline
       enqueued:   -> {
                        defined?(Sidekiq::Testing) && Sidekiq::Testing.fake? ?
                        Sidekiq::Job.jobs
-                                    .map { Sidekiq::JobRecord.new _1 unless _1.key?("at") }
-                                    .compact :
+                                   .map { Sidekiq::JobRecord.new _1 unless _1.key?("at") }
+                                   .compact :
                        Sidekiq::Queue.all
                                      .flat_map(&:to_a)
                      },
@@ -66,11 +66,12 @@ module Baseline
                      },
       processing: -> {
                        Sidekiq::WorkSet.new.map do |_, _, work|
+                         payload = JSON.parse(work["payload"], symbolize_names: true)
                          OpenStruct.new(
                            {
-                             klass: "class",
-                             args:  "args"
-                           }.transform_values { work["payload"].fetch(_1) }
+                             klass: :class,
+                             args:  :args
+                           }.transform_values { payload.fetch(_1) }
                          )
                        end
                      }
