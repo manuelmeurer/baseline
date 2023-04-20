@@ -56,6 +56,7 @@ module Baseline
         loop do
           response = HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
                          .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
+                         .follow
                          .headers(headers)
                          .public_send(method, url, params:, json:, form:, body:)
 
