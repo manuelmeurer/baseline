@@ -32,15 +32,19 @@ module Baseline
 
     private
 
-      def request(method, path, base_url: nil,
-                                accept:   Mime[:json],
-                                params:   nil,
-                                json:     nil,
-                                form:     nil,
-                                body:     nil)
+      def request(method, path_or_url, base_url: nil,
+                                       accept:   Mime[:json],
+                                       params:   nil,
+                                       json:     nil,
+                                       form:     nil,
+                                       body:     nil)
 
-        base_url ||= self.class::BASE_URL
-        url        = File.join(base_url, path)
+        base_url ||= begin
+                       self.class::BASE_URL
+                     rescue NameError
+                     end
+        url = base_url&.then { File.join(_1, path_or_url) } ||
+              path_or_url
 
         if request_params.present?
           params = request_params.merge(params || {})
