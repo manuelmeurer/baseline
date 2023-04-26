@@ -59,8 +59,6 @@ module Baseline
                   when polymorphic_reflection
                     where "#{association}_type": param.klass.to_s,
                           "#{association}_id":   param
-                  when param.none?
-                    left_outer_joins(association.to_sym).where(association => nil)
                   else
                     generate_joins_scope.call.merge(param)
                   end
