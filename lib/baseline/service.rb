@@ -133,8 +133,11 @@ module Baseline
       end
 
       def call_all_private_methods_without_args
-        private_methods(false).each do
-          send _1 if method(_1).arity == 0
+        private_methods(false).map { method _1 }
+                              .select { _1.arity == 0 }
+                              .sort_by { _1.source_location.last }
+                              .each do |method|
+          method.call
         rescue => error
           ReportError.call error
         end
