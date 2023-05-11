@@ -132,14 +132,18 @@ module Baseline
         Kredis.redis.set cache_key, now.iso8601
       end
 
-      def call_all_private_methods_without_args
+      def call_all_private_methods_without_args(raise_errors: true)
         private_methods(false).map { method _1 }
                               .select { _1.arity == 0 }
                               .sort_by { _1.source_location.last }
                               .each do |method|
           method.call
         rescue => error
-          ReportError.call error
+          if raise_errors
+            raise error
+          else
+            ReportError.call error
+          end
         end
       end
   end
