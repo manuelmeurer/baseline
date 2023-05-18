@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+end
+
+class SyncAssets < Thor
+  include Thor::Actions
+
+  default_command :sync_assets
+
+  def self.exit_on_failure? = true
+
+  desc "sync_assets", "sync assets"
+  def sync_assets
+    return unless changed_since_last_deploy?(
+                    "app/assets/",
+                    "app/javascript/",
+                    "Gemfile.lock",
+                    "yarn.lock"
+                  )
+
+    run "bin/rails db:setup"
+    run "bin/rails assets:precompile"
+
+    rclone_config_file = File.expand_path("~/rclone.conf")
+    public_dir         = File.expand_path("./public")
+
+    run "curl https://rclone.org/install.sh | sudo bash"
+    File.write rclone_config_file,
+      <<~CONFIG
+        [r2]
+        type = s3
+        provider = Other
+        access_key_id = #{ENV.fetch "CLOUDFLARE_R2_ACCESS_KEY_ID"}
+        secret_access_key = #{ENV.fetch "CLOUDFLARE_R2_SECRET_ACCESS_KEY"}
+        endpoint = https://#{ENV.fetch "CLOUDFLARE_ACCOUNT_ID"}.r2.cloudflarestorage.com
+        acl = private
+      CONFIG
+
+    File.write "#{public_dir}/REVISION", sha
+
+    inside "#{public_dir}/assets" do
+      sprockets_manifest_file = Dir[".sprockets-manifest-*.json"]
+                                   .tap {
+                                     unless _1.size == 1
+                                       raise "Expected one Sprockets manifest file but got #{_1.size}: #{_1}"
+                                     end
+                                   }.first
+      FileUtils.cp sprockets_manifest_file, "manifest.json"
+    end
+
+    run "rclone --config #{rclone_config_file} copy #{public_dir} r2:#{ENV.fetch "CLOUDFLARE_R2_BUCKET_ASSETS"}"
+  end
+
+  private
+
+    def sha = ENV.fetch("GITHUB_SHA")
+
+    def changed_since_last_deploy?(*files)
+      production_sha = run("curl --silent --fail #{ENV.fetch "ASSET_HOST"}/REVISION", capture: true).chomp
+      return true if production_sha.length == 0
+
+      run "git fetch --unshallow"
+
+      # If the live deploy commit cannot be found in the Git history (e.g. if the history has been altered),
+      # pretend that the files have changed.
+      return true unless run("git cat-file commit #{production_sha}", abort_on_failure: false)
+
+      # If the current commit is being deployed again,
+      # pretend that the files have changed.
+      return true if production_sha == sha
+
+      changed_files = run("git diff --name-only #{production_sha}..#{sha}", capture: true).split
+
+      changed_files.any? do |changed_file|
+        files.any? do |file|
+          if file.end_with?("/")
+            changed_file.start_with?(file)
+          else
+            changed_file == file
+          end
+        end
+      end
+    end
+end
+
+SyncAssets.start(ARGV)
