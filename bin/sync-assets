@@ -6,6 +6,7 @@ require "bundler/inline"
 gemfile do
   source "https://rubygems.org"
   gem "thor"
+  gem "http"
 end
 
 class SyncAssets < Thor
@@ -62,17 +63,17 @@ class SyncAssets < Thor
     def sha = ENV.fetch("GITHUB_SHA")
 
     def changed_since_last_deploy?(*files)
-      production_sha = run("curl --silent --fail #{ENV.fetch "ASSET_HOST"}/REVISION", capture: true).chomp
-      return true if production_sha.length == 0
+      # Return true if the file with the production SHA cannot be found.
+      unless production_sha = HTTP.get("#{ENV.fetch "ASSET_HOST"}/REVISION").then { _1.body.to_s if _1.status.success? }
+        return true
+      end
 
       run "git fetch --unshallow"
 
-      # If the live deploy commit cannot be found in the Git history (e.g. if the history has been altered),
-      # pretend that the files have changed.
+      # Return true if the production SHA cannot be found in the Git history (e.g., if the history has been altered).
       return true unless run("git cat-file commit #{production_sha}", abort_on_failure: false)
 
-      # If the current commit is being deployed again,
-      # pretend that the files have changed.
+      # Return true if the current SHA is the production SHA, i.e. the same commit is being deployed again.
       return true if production_sha == sha
 
       changed_files = run("git diff --name-only #{production_sha}..#{sha}", capture: true).split
