@@ -42,6 +42,8 @@ module Baseline
     def fetch_manifests_from_asset_host
       return unless asset_host = Rails.application.config.asset_host
 
+      require "http"
+
       {
         "packs/manifest.json"  => nil,
         "assets/manifest.json" => "assets/.sprockets-manifest-#{Digest::MD5.hexdigest Rails.application.config.revision}.json"
