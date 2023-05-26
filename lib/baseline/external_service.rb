@@ -64,7 +64,8 @@ module Baseline
                          .headers(headers)
                          .public_send(method, url, params:, json:, form:, body:)
 
-          break unless response.status.too_many_requests? && tries < 10
+          break unless (response.status.server_error? || response.status.too_many_requests?) &&
+                       tries < 10
 
           tries += 1
           sleep 1
