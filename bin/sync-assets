@@ -25,8 +25,8 @@ class SyncAssets < Thor
                     "yarn.lock"
                   )
 
-    run "bin/rails db:setup"
-    run "bin/rails assets:precompile"
+    run_rails "db:setup"
+    run_rails "assets:precompile"
 
     rclone_config_file = File.expand_path("~/rclone.conf")
     public_dir         = File.expand_path("./public")
@@ -87,6 +87,10 @@ class SyncAssets < Thor
           end
         end
       end
+    end
+
+    def run_rails(command)
+      run "bin/rails #{command}", env: { "SKIP_FETCH_ASSET_HOST_MANIFESTS" => true.to_s }
     end
 end
 

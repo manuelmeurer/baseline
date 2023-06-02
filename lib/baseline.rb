@@ -39,8 +39,9 @@ module Baseline
       ]
     end
 
-    def fetch_manifests_from_asset_host
+    def fetch_asset_host_manifests
       return unless asset_host = Rails.application.config.asset_host
+      return if ENV["SKIP_FETCH_ASSET_HOST_MANIFESTS"]
 
       require "http"
 
