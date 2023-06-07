@@ -1,5 +1,14 @@
 module Baseline
   class ExternalService < Service
+    class RequestError < Error
+      attr_reader :status
+
+      def initialize(message, status:)
+        @status = status
+        super message
+      end
+    end
+
     class << self
       def inherited(subclass)
         subclass.cattr_accessor :calls, default: []
@@ -78,13 +87,13 @@ module Baseline
         end
 
         unless response.status.success?
-          error = [
+          error_message = [
             "Error #{response.status} calling #{method.upcase} #{url}",
             response.to_s
           ].compact_blank
            .join(": ")
 
-          raise Error, error
+          raise RequestError.new(error_message, status: response.status)
         end
 
         response_json || response.to_s
