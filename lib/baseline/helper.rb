@@ -39,7 +39,7 @@ module Baseline
         .html_safe
     end
 
-    def async_turbo_frame(name, **attributes, &block)
+    def async_turbo_frame(name, loading_message: Current.missing_value, **attributes, &block)
       # If a ActiveRecord record is passed to `turbo_frame_tag`,
       # `dom_id` is called to determine its DOM ID.
       # This exposes the record ID, which is not desirable if the record has a slug.
@@ -61,7 +61,10 @@ module Baseline
         turbo_frame_tag name, &block
       else
         turbo_frame_tag name, **attributes do
-          render "shared/loading"
+          loading_params = loading_message == Current.missing_value ?
+                           {} :
+                           { message: loading_message }
+          render "shared/loading", **loading_params
         end
       end
     end

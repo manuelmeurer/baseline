@@ -5,6 +5,8 @@ module Baseline
       require "baseline/external_service"
       require "baseline/report_error"
       require "baseline/has_timestamps"
+
+      Current.missing_value = :_missing_value_
     end
   end
 end
