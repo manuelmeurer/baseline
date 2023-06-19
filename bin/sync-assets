@@ -18,12 +18,20 @@ class SyncAssets < Thor
 
   desc "sync_assets", "sync assets"
   def sync_assets
-    return unless changed_since_last_deploy?(
-                    "app/assets/",
-                    "app/javascript/",
-                    "Gemfile.lock",
-                    "yarn.lock"
-                  )
+    do_sync = changed_since_last_deploy?(
+      "public/",
+      "app/assets/",
+      "app/javascript/",
+      "Gemfile.lock",
+      "yarn.lock"
+    )
+
+    if do_sync
+      say "One or more assets have changed since the last deploy. Syncing assets..."
+    else
+      say "No assets have changed since the last deploy. Skipping sync."
+      return
+    end
 
     run_rails "db:setup"
     run_rails "assets:precompile"
