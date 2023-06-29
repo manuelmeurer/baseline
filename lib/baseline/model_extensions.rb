@@ -29,8 +29,10 @@ module Baseline
       %i(has_many has_one belongs_to).each do |association_method|
         define_singleton_method association_method do |*args, **kwargs|
           super(*args, **kwargs).each do |association, reflection|
-            if polymorphic_reflection = reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection) &&
-                                        reflection.options[:polymorphic]
+            polymorphic_reflection = reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection) &&
+                                     reflection.options[:polymorphic]
+
+            if polymorphic_reflection
               define_method "#{reflection.name}_gid" do
                 public_send(reflection.name)&.to_gid&.to_s
               end
@@ -48,6 +50,11 @@ module Baseline
               scope with_scope_name, ->(param = true) {
                 generate_joins_scope = -> { joins(association.to_sym).distinct }
                 case param
+                when Class
+                  unless polymorphic_reflection
+                    raise "A parameter of type #{param.class} only makes sense for polymorphic associations."
+                  end
+                  where "#{association}_type": param.to_s
                 when ActiveRecord::Base, Array
                   if reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
                     where(association => param)
