@@ -39,7 +39,7 @@ module Baseline
 
               define_method "#{reflection.name}_gid=" do |value|
                 object = if value.present?
-                  GlobalID::Locator.locate!(value)
+                  GlobalID.find!(value)
                 end
                 public_send "#{reflection.name}=", object
               end
