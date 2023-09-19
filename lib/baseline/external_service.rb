@@ -73,7 +73,8 @@ module Baseline
                          .headers(headers)
                          .public_send(method, url, params:, json:, form:, body:)
 
-          break unless (response.status.server_error? || response.status.too_many_requests?) &&
+          break unless !response.status.success? &&
+                       request_retry_reasons.include?(response.status.to_sym) &&
                        tries < 10
 
           tries += 1
@@ -99,10 +100,11 @@ module Baseline
         response_json || response.to_s
       end
 
-      def request_auth       = nil
-      def request_basic_auth = nil
-      def request_params     = {}
-      def request_headers    = {}
+      def request_auth          = nil
+      def request_basic_auth    = nil
+      def request_params        = {}
+      def request_headers       = {}
+      def request_retry_reasons = %i(server_error too_many_requests)
 
       def wait_for(condition)
         result = nil
