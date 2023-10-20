@@ -74,7 +74,7 @@ module Baseline
                          .public_send(method, url, params:, json:, form:, body:)
 
           break unless !response.status.success? &&
-                       request_retry_reasons.include?(response.status.to_sym) &&
+                       request_retry_reasons.any? { response.status.public_send "#{_1}?" } &&
                        tries < 10
 
           tries += 1
