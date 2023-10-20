@@ -60,6 +60,7 @@ module Baseline
         end
 
         require "http"
+        require "octopoller"
 
         response    = nil
         tries       = 0
@@ -67,11 +68,15 @@ module Baseline
         headers     = request_headers.merge(accept: accept)
 
         loop do
-          response = HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
-                         .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
-                         .follow
-                         .headers(headers)
-                         .public_send(method, url, params:, json:, form:, body:)
+          response = Octopoller.poll(retries: 10) do
+            HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
+                .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
+                .follow
+                .headers(headers)
+                .public_send(method, url, params:, json:, form:, body:)
+          rescue Errno::ECONNRESET
+            :re_poll
+          end
 
           break unless !response.status.success? &&
                        request_retry_reasons.any? { response.status.public_send "#{_1}?" } &&
