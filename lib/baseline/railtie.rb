@@ -7,7 +7,7 @@ module Baseline
       require "baseline/has_timestamps"
 
       Rails.application.reloader.to_prepare do
-        Current.missing_value = :_missing_value_
+        Current.missing_value = "_missing_value_"
       end
     end
   end
