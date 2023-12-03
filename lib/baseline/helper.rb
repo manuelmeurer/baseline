@@ -51,13 +51,7 @@ module Baseline
         raise "async_turbo_frame needs a `src` attribute."
       end
 
-      uris = [
-        url_for(url),
-        request.fullpath
-      ].map { Addressable::URI.parse _1 }
-      uris_match = %i(path query_values).all? { uris.map(&_1).uniq.size == 1 }
-
-      if uris_match
+      if turbo_frame_request?
         turbo_frame_tag name, &block
       else
         turbo_frame_tag name, **attributes do

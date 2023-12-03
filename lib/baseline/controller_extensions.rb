@@ -1,5 +1,15 @@
 module Baseline
   module ControllerExtensions
+    extend ActiveSupport::Concern
+
+    included do
+      require "turbo/version"
+      if Turbo::VERSION >= "2.0"
+        raise "check if `turbo_frame_request?` is now added as a helper method in the gem: https://github.com/hotwired/turbo-rails/blob/main/app/controllers/turbo/frames/frame_request.rb"
+      end
+      helper_method :turbo_frame_request?
+    end
+
     private
 
       def add_flash(type, text, now: false)
