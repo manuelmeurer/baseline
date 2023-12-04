@@ -3,11 +3,9 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      require "turbo/version"
-      if Turbo::VERSION >= "2.0"
-        raise "check if `turbo_frame_request?` is now added as a helper method in the gem: https://github.com/hotwired/turbo-rails/blob/main/app/controllers/turbo/frames/frame_request.rb"
+      helper_method def specific_turbo_frame_request?(name)
+        turbo_frame_request_id == name.to_s
       end
-      helper_method :turbo_frame_request?
     end
 
     private

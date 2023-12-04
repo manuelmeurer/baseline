@@ -51,7 +51,7 @@ module Baseline
         raise "async_turbo_frame needs a `src` attribute."
       end
 
-      if turbo_frame_request?
+      if specific_turbo_frame_request?(name)
         turbo_frame_tag name, &block
       else
         turbo_frame_tag name, **attributes do
