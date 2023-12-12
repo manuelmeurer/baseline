@@ -15,3 +15,7 @@ end
 class Hash
   include DeepFetch
 end
+
+class ActionController::Parameters
+  include DeepFetch
+end
