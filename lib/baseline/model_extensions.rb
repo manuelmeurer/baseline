@@ -3,21 +3,36 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      %i(one many).each do |one_or_many|
+      %i(one many).zip([1, 2]).each do |one_or_many, pluralize_count|
         has_attached_method = :"has_#{one_or_many}_attached"
 
-        define_singleton_method has_attached_method do |*args, production_service: nil, **kwargs|
+        define_singleton_method has_attached_method do |name, production_service: nil, **kwargs|
           if production_service && Rails.env.production?
             kwargs[:service] = production_service
           end
 
-          super *args, **kwargs
+          super name, **kwargs
+
+          clone_method_name = [
+            name,
+            "clone_id".pluralize(pluralize_count)
+          ].join("_")
+           .then { :"#{_1}=" }
+          define_method clone_method_name do |ids|
+            ids.each do |id|
+              ActiveStorage::Attachment.find(id).then {
+                public_send(name).attach \
+                  io:       StringIO.new(_1.download),
+                  filename: _1.filename.to_s
+              }
+            end
+          end
         end
 
         define_singleton_method :"#{has_attached_method}_and_accepts_nested_attributes_for" do |attribute, **kwargs|
           attachment_attribute = [
             attribute,
-            one_or_many == :many ? :attachments : :attachment
+            "attachment".pluralize(pluralize_count)
           ].join("_")
            .to_sym
 
