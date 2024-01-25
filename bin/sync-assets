@@ -53,15 +53,6 @@ class SyncAssets < Thor
 
     File.write "#{public_dir}/REVISION", sha
 
-    inside "#{public_dir}/assets" do
-      sprockets_manifest_file = Dir[".sprockets-manifest-*.json"].tap {
-                                  unless _1.size == 1
-                                    raise "Expected one Sprockets manifest file but got #{_1.size}: #{_1}"
-                                  end
-                                }.first
-      FileUtils.cp sprockets_manifest_file, "manifest.json"
-    end
-
     run "rclone --config #{rclone_config_file} copy #{public_dir} r2:#{ENV.fetch "CLOUDFLARE_R2_BUCKET_ASSETS"}"
   end
 

@@ -45,15 +45,12 @@ module Baseline
 
       require "http"
 
-      {
-        "packs/manifest.json"  => nil,
-        "assets/manifest.json" => "assets/.sprockets-manifest-#{Digest::MD5.hexdigest Rails.application.config.revision}.json"
-      }.each do |remote_path, local_path|
-        next unless content = HTTP.get("#{asset_host}/#{remote_path}").then { _1.body.to_s if _1.status.success? }
-        pathname = Rails.root.join("public", local_path || remote_path)
-        FileUtils.mkdir_p pathname.dirname
-        File.write pathname, content
-      end
+      path     = File.join("assets", ".manifest.json")
+      content  = HTTP.get("#{asset_host}/#{path}").then { _1.body.to_s if _1.status.success? }
+      pathname = Rails.root.join("public", path)
+
+      FileUtils.mkdir_p pathname.dirname
+      File.write pathname, content
     end
   end
 end
