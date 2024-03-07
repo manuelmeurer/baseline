@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+end
+
+require "digest/md5"
+require "json"
+
+class Build < Thor
+  include Thor::Actions
+
+  default_command :build
+
+  def self.exit_on_failure? = true
+
+  desc "build", "build"
+  def build
+    run "bundle install -j $(nproc)"
+
+    # TODO: this shouldn't be necessary, dartsass-rails should do this automatically before assets:precompile.
+    run "bin/rails dartsass:build"
+
+    run "bin/rails assets:precompile"
+
+    if ENV.key?("CRON")
+      run "bin/rails db:migrate"
+    end
+  end
+end
+
+Build.start(ARGV)
