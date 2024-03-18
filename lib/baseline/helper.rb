@@ -51,6 +51,8 @@ module Baseline
         raise "async_turbo_frame needs a `src` attribute."
       end
 
+      attributes[:refresh] ||= "morph"
+
       if specific_turbo_frame_request?(name)
         turbo_frame_tag name, &block
       else
