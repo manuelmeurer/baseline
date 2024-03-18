@@ -47,7 +47,7 @@ module Baseline
         name = [name.class.to_s.underscore, name.slug].join("_")
       end
 
-      unless url = attributes[:src]
+      unless attributes.key?(:src)
         raise "async_turbo_frame needs a `src` attribute."
       end
 
