@@ -64,5 +64,42 @@ module Baseline
         end
       end
     end
+
+    def inline_svg(filename, **options)
+      unless File.extname(filename) == ".svg"
+        raise "Must be a SVG file: #{filename}"
+      end
+
+      cache_key = [
+        :inline_svg,
+        Rails.configuration.revision,
+        filename,
+        options.sort.to_json.then { ActiveSupport::Digest.hexdigest _1 }
+      ].join(":")
+
+      Rails.cache.fetch cache_key do
+        unless path = Rails.application.assets.load_path.find(filename)
+          raise "Could not find asset: #{path}"
+        end
+
+        content = path.content
+
+        unless css_class = options[:class].presence
+          return content
+        end
+
+        Nokogiri::XML::Document
+          .parse(content)
+          .at_css("svg")
+          .tap {
+            _1["class"] = [
+              *_1["class"]&.split(" "),
+              css_class
+            ].compact
+             .uniq
+             .join(" ")
+          }.to_s
+      end.html_safe
+    end
   end
 end
