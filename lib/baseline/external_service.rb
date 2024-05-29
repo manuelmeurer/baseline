@@ -49,11 +49,13 @@ module Baseline
                                        body:     nil)
 
         base_url ||= begin
-                       self.class::BASE_URL
-                     rescue NameError
-                     end
-        url = base_url&.then { File.join(_1, path_or_url) } ||
-              path_or_url
+          self.class::BASE_URL
+        rescue NameError
+        end
+
+        url =
+          base_url&.then { File.join(_1, path_or_url) } ||
+          path_or_url
 
         if request_params.present?
           params = request_params.merge(params || {})
@@ -69,18 +71,20 @@ module Baseline
 
         loop do
           response = Octopoller.poll(retries: 10) do
-            HTTP.then { auth_header ? _1.auth(auth_header) : _1 }
-                .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
-                .follow
-                .headers(headers)
-                .public_send(method, url, params:, json:, form:, body:)
+            HTTP
+              .then { auth_header ? _1.auth(auth_header) : _1 }
+              .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
+              .follow
+              .headers(headers)
+              .public_send(method, url, params:, json:, form:, body:)
           rescue Errno::ECONNRESET
             :re_poll
           end
 
-          break unless !response.status.success? &&
-                       request_retry_reasons.any? { response.status.public_send "#{_1}?" } &&
-                       tries < 10
+          break unless
+            !response.status.success? &&
+            request_retry_reasons.any? { response.status.public_send "#{_1}?" } &&
+            tries < 10
 
           tries += 1
           sleep 1
