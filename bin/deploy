@@ -9,8 +9,11 @@ stash_message="deploy-$(date +%s)"
 stash_output="$(git stash save --include-untracked $stash_message)"
 stashed="$(echo $stash_output | grep $stash_message)"
 
-bin/rails runner "Rails.application.eager_load!" &&
-  git push &&
+if [ -f "bin/rails" ]; then
+  bin/rails runner "Rails.application.eager_load!"
+fi
+
+git push &&
   git switch deploy &&
   git reset --hard main &&
   git push --force &&
