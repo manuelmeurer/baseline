@@ -3,8 +3,11 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      helper_method def specific_turbo_frame_request?(name)
-        turbo_frame_request_id == name.to_s
+      helper_method def specific_turbo_frame_request?(name_or_resource)
+        if name_or_resource.is_a?(ActiveRecord::Base)
+          name_or_resource = helpers.dom_id(name_or_resource)
+        end
+        turbo_frame_request_id == name_or_resource.to_s
       end
     end
 
