@@ -51,7 +51,10 @@ module Baseline
         raise "async_turbo_frame needs a `src` attribute."
       end
 
-      attributes[:refresh] ||= "morph"
+      attributes = attributes.reverse_merge(
+        refresh: :morph,
+        loading: :lazy
+      )
 
       if specific_turbo_frame_request?(name)
         turbo_frame_tag name, &block
