@@ -85,7 +85,7 @@ module Baseline
 
       Rails.cache.fetch cache_key do
         unless path = Rails.application.assets.load_path.find(filename)
-          raise "Could not find asset: #{path}"
+          raise "Could not find asset: #{filename}"
         end
 
         content = path.content
