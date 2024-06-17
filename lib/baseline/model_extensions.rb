@@ -62,8 +62,9 @@ module Baseline
 
             with_scope_name = :"with_#{association}"
             unless respond_to?(with_scope_name)
-              scope with_scope_name, ->(param = true) {
+              scope with_scope_name, ->(param = true, exact: false) {
                 generate_joins_scope = -> { joins(association.to_sym).distinct }
+
                 case param
                 when Class
                   unless polymorphic_reflection
@@ -71,13 +72,29 @@ module Baseline
                   end
                   where "#{association}_type": param.to_s
                 when ActiveRecord::Base, Array
-                  if reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
+                  case
+                  when param.is_a?(Array) && param.empty?
+                    public_send :"without_#{association}"
+                  when param.is_a?(Array) && exact
+                    ids = to_a.select {
+                      _1.public_send(association).pluck(:id).sort ==
+                        param.map { |p| p.class.in?([String, Integer]) ? p.to_i : p.id }.sort
+                    }
+                    where(id: ids)
+                  when reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
                     where(association => param)
                   else
                     generate_joins_scope.call.where(reflection.klass.table_name => { id: param })
                   end
                 when ActiveRecord::Relation
                   case
+                  when exact
+                    param_ids = param.pluck(:id).sort
+                    ids = to_a.select {
+                      _1.public_send(association).pluck(:id).sort ==
+                        param_ids
+                    }
+                    where(id: ids)
                   when polymorphic_reflection
                     where "#{association}_type": param.klass.to_s,
                           "#{association}_id":   param
