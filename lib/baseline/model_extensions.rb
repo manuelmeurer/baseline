@@ -88,6 +88,8 @@ module Baseline
                   end
                 when ActiveRecord::Relation
                   case
+                  when param.none?
+                    public_send :"without_#{association}"
                   when exact
                     param_ids = param.pluck(:id).sort
                     ids = to_a.select {
