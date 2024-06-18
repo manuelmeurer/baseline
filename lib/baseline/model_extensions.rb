@@ -73,14 +73,21 @@ module Baseline
                   where "#{association}_type": param.to_s
                 when ActiveRecord::Base, Array
                   case
-                  when param.is_a?(Array) && param.empty?
-                    public_send :"without_#{association}"
                   when param.is_a?(Array) && exact
-                    ids = to_a.select {
-                      _1.public_send(association).pluck(:id).sort ==
-                        param.map { |p| p.class.in?([String, Integer]) ? p.to_i : p.id }.sort
-                    }
-                    where(id: ids)
+                    if param.empty?
+                      public_send :"without_#{association}"
+                    else
+                      param_ids = param.map {
+                        _1.class.in?([String, Integer]) ?
+                          _1.to_i :
+                          _1.id
+                      }.sort
+                      ids = to_a.select {
+                        _1.public_send(association).pluck(:id).sort ==
+                          param_ids
+                      }
+                      where(id: ids)
+                    end
                   when reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
                     where(association => param)
                   else
@@ -88,15 +95,17 @@ module Baseline
                   end
                 when ActiveRecord::Relation
                   case
-                  when param.none?
-                    public_send :"without_#{association}"
                   when exact
-                    param_ids = param.pluck(:id).sort
-                    ids = to_a.select {
-                      _1.public_send(association).pluck(:id).sort ==
-                        param_ids
-                    }
-                    where(id: ids)
+                    if param.none?
+                      public_send :"without_#{association}"
+                    else
+                      param_ids = param.pluck(:id).sort
+                      ids = to_a.select {
+                        _1.public_send(association).pluck(:id).sort ==
+                          param_ids
+                      }
+                      where(id: ids)
+                    end
                   when polymorphic_reflection
                     where "#{association}_type": param.klass.to_s,
                           "#{association}_id":   param
