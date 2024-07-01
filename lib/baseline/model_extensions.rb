@@ -3,7 +3,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      %i(one many).zip([1, 2]).each do |one_or_many, pluralize_count|
+      { one: 1, many: 2 }.each do |one_or_many, pluralize_count|
         has_attached_method = :"has_#{one_or_many}_attached"
 
         define_singleton_method has_attached_method do |name, production_service: nil, **kwargs|
