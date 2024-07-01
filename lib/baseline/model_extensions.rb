@@ -27,6 +27,26 @@ module Baseline
               }
             end
           end
+
+          if one_or_many == :one
+            define_method "remote_#{name}_url=" do |value|
+              return unless value
+
+              begin
+                file = DownloadFile.call(value)
+              rescue DownloadFile::Error => error
+                if error.cause.is_a?(HTTP::RequestError)
+                  errors.add name, message: %(could not be downloaded from "#{value}": #{error.cause.message} (#{error.cause.class}))
+                else
+                  raise error
+                end
+              else
+                public_send(name).attach \
+                  io:       File.open(file),
+                  filename: file.basename
+              end
+            end
+          end
         end
 
         define_singleton_method :"#{has_attached_method}_and_accepts_nested_attributes_for" do |attribute, **kwargs|
