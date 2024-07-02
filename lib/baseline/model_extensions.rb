@@ -30,7 +30,7 @@ module Baseline
 
           if one_or_many == :one
             define_method "remote_#{name}_url=" do |value|
-              return unless value
+              return unless value.present?
 
               begin
                 file = DownloadFile.call(value)
