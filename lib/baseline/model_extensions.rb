@@ -29,6 +29,8 @@ module Baseline
           end
 
           if one_or_many == :one
+            attr_reader :"remote_#{name}_url"
+
             define_method "remote_#{name}_url=" do |value|
               return unless value.present?
 
