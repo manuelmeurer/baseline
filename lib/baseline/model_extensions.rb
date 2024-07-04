@@ -86,6 +86,11 @@ module Baseline
             unless respond_to?(with_scope_name)
               scope with_scope_name, ->(param = true, exact: false) {
                 generate_joins_scope = -> { joins(association.to_sym).distinct }
+                generate_filter_by_id_scope = -> {
+                  generate_joins_scope
+                    .call
+                    .where(reflection.klass.table_name => { id: param })
+                }
 
                 case param
                 when Class
@@ -113,7 +118,7 @@ module Baseline
                   when reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
                     where(association => param)
                   else
-                    generate_joins_scope.call.where(reflection.klass.table_name => { id: param })
+                    generate_filter_by_id_scope.call
                   end
                 when ActiveRecord::Relation
                   case
@@ -131,6 +136,10 @@ module Baseline
                   when polymorphic_reflection
                     where "#{association}_type": param.klass.to_s,
                           "#{association}_id":   param
+                  when param.values.key?(:limit)
+                    # If the relation has a limit, we need to explicitly filter by ID,
+                    # otherwise the limit will be applied to the complete query and return wrong results.
+                    generate_filter_by_id_scope.call
                   else
                     generate_joins_scope.call.merge(param)
                   end
