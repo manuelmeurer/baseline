@@ -7,8 +7,8 @@ module Baseline
       ].join(" ")
     end
 
-    def alert(level, text = nil, heading: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
-      classes = [
+    def alert(level, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
+      css_classes = [
         "alert",
         "alert-#{level}",
         ("alert-dismissible" if closeable),
@@ -17,15 +17,40 @@ module Baseline
         css_class
       ].compact
 
-      tag.div class: classes, data: data do
-        if closeable
-          concat tag.button(type: "button", class: "btn-close", data: { bs_dismiss: "alert" })
-        end
-        if heading
-          concat tag.h4(heading, class: "alert-heading")
-        end
-        concat text&.html_safe || capture_haml(&block)
+      text = text&.html_safe || capture_haml(&block)
+
+      if text.blank?
+        raise "No text set for alert."
       end
+
+      heading = if heading
+        [
+          icon&.then { icon _1, version: :solid, class: "me-1" },
+          heading
+        ].compact
+          .join(" ")
+          .html_safe
+          .then { tag.h4 _1, class: "alert-heading" }
+      end
+
+      icon_and_text = if icon && !heading
+        icon(icon, version: :solid, size: "lg", class: "me-3")
+          .concat(tag.div(text)) # Wrap text in <div> to ensure that "display: flex" works as expected.
+          .then { tag.div _1, class: "d-flex align-items-center" }
+      end
+
+      close_button = if closeable
+        tag.button(type: "button", class: "btn-close", data: { bs_dismiss: "alert" })
+      end
+
+      [
+        close_button,
+        heading,
+        icon_and_text || text
+      ].compact
+        .join("\n")
+        .html_safe
+        .then { tag.div _1, class: css_classes, data: data }
     end
 
     def flashes
