@@ -118,7 +118,7 @@ module Baseline
       def wait_for(condition)
         result = nil
 
-        20.times do
+        10.times do
           break if result = condition.call
           sleep 0.5
         end
