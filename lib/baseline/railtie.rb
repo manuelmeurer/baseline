@@ -5,7 +5,7 @@ module Baseline
       require "baseline/external_service"
       require "baseline/report_error"
       require "baseline/has_timestamps"
-      require "baseline/if"
+      require "baseline/if_unless"
       require "baseline/deep_fetch"
 
       Rails.application.reloader.to_prepare do

@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
 class Object
-  def if(condition, action = nil, &block)
-    result = condition.is_a?(Proc) ?
-      condition.call(self) :
-      condition
+  def if(condition, action = nil, _unless: false, &block)
+    result = case condition
+      when Proc  then condition.call(self)
+      when Class then self.is_a?(condition)
+      else condition
+      end
+
+    if _unless
+      result = !result
+    end
 
     return self unless result
 
@@ -19,5 +25,9 @@ class Object
         [self, result].take(block.arity)
       block.call *args
     end
+  end
+
+  def unless(*, &block)
+    self.if(*, _unless: true, &block)
   end
 end
