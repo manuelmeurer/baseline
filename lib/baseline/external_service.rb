@@ -115,15 +115,19 @@ module Baseline
       def request_headers       = {}
       def request_retry_reasons = %i(server_error too_many_requests)
 
-      def wait_for(condition)
+      def wait_for(condition = nil, &block)
+        unless condition || block
+          raise "wait_for requires a condition or a block."
+        end
+
         result = nil
 
         10.times do
-          break if result = condition.call
+          break if result = (condition || block).call
           sleep 0.5
         end
 
-        result or (yield if block_given?)
+        result or (block&.call if condition)
       end
   end
 end
