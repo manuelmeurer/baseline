@@ -10,7 +10,7 @@ module Baseline
     )
 
     def self.fetch(identifier = nil)
-      ENV["REDIS_URL"] ||= begin
+      @redis_url ||= Rails.application.env_credentials.redis_url || begin
         if defined?(Rails)
           identifier ||= Rails.application.class.to_s.deconstantize.underscore.to_sym
         end
@@ -22,7 +22,7 @@ module Baseline
           raise %(Redis db for identifier "#{identifier}" not found.)
         end
 
-        host = ENV.fetch("REDIS_HOST")
+        host = Rails.application.env_credentials.redis_host!
 
         "redis://#{host}/#{db}"
       end
