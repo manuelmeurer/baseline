@@ -7,6 +7,7 @@ module Baseline
       note_to_self
       tasks
       spendex
+      funlocked
     )
 
     def self.fetch(identifier = nil)
