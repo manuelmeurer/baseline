@@ -7,10 +7,6 @@ module Baseline
       require "baseline/has_timestamps"
       require "baseline/if_unless"
       require "baseline/deep_fetch"
-
-      Rails.application.reloader.to_prepare do
-        Current.missing_value = "_missing_value_"
-      end
     end
   end
 end

@@ -1,4 +1,6 @@
 module Baseline
+  NULL_VALUE = "_null_value_".freeze
+
   NoBackgroundProcessorFound = Class.new(StandardError)
   RedisNotFound              = Class.new(StandardError)
 
