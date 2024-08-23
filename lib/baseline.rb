@@ -3,6 +3,10 @@ module Baseline
   RedisNotFound              = Class.new(StandardError)
 
   class << self
+    def redis=(redis)
+      @redis = redis
+    end
+
     def redis
       @redis ||= configuration.redis || (defined?(Kredis) && Kredis.redis) \
         or raise RedisNotFound, "Redis not configured."
