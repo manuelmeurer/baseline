@@ -10,7 +10,7 @@ stash_output="$(git stash save --include-untracked $stash_message)"
 stashed="$(echo $stash_output | grep $stash_message)"
 
 if [ -f "bin/rails" ]; then
-  bin/rails runner "Rails.application.eager_load!" || exit 1
+  bundle exec rails zeitwerk:check || exit 1
 fi
 
 git push &&
