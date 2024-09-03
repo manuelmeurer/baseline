@@ -27,7 +27,7 @@ class Object
     end
   end
 
-  def unless(*, &block)
-    self.if(*, _unless: true, &block)
+  def unless(*, &)
+    self.if(*, _unless: true, &)
   end
 end
