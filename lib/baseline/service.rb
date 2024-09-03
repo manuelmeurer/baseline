@@ -9,6 +9,8 @@ require "baseline/service/uniqueness_checker"
 
 module Baseline
   class Service
+    prepend MemoWise
+
     delegate :link_to, :tag, :link_to_modal, :pluralize, to: :"ApplicationController.helpers"
     delegate :t, :l, to: :"I18n"
 
