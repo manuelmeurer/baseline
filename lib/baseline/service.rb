@@ -5,16 +5,18 @@ require "securerandom"
 require "action_dispatch"
 require "digest"
 
-require "baseline/service/call_logger"
-require "baseline/service/exception_wrapper"
-require "baseline/service/uniqueness_checker"
+require "baseline/call_logger"
+require "baseline/exception_wrapper"
+require "baseline/uniqueness_checker"
 
 module Baseline
-  class Service
+  class Service < ActiveJob::Base
     prepend MemoWise
 
     delegate :link_to, :tag, :link_to_modal, :pluralize, to: :"ApplicationController.helpers"
     delegate :t, :l, to: :"I18n"
+
+    queue_as :default
 
     class << self
       def inherited(subclass)
@@ -24,84 +26,33 @@ module Baseline
           subclass.public_send :include, Rails.application.routes.url_helpers
         end
 
-        begin
-          subclass.public_send :include, Asyncable
-        rescue Baseline::NoBackgroundProcessorFound
-        end
         subclass.public_send :prepend, CallLogger, ExceptionWrapper, UniquenessChecker
       end
 
       delegate :call, to: :new
 
-      def enqueued?(*args)
-        enqueued_jobs(*args).any?
+      alias_method :call_async, :perform_later
+
+      def call_in(wait, *, **)
+        set(wait: wait).perform_later(*, **)
       end
 
-      def processing?(*args)
-        processing_jobs(*args).any?
-      end
-
-      def enqueued_or_processing?(*args)
-        enqueued?(*args) || processing?(*args)
-      end
-
-      def scheduled_at(*args)
-        scheduled_jobs(*args).first
-                             &.at
-                             &.in_time_zone
+      def call_at(wait_until, *, **)
+        set(wait_until: wait_until).perform_later(*, **)
       end
     end
 
-    {
-      enqueued:   -> {
-                       defined?(Sidekiq::Testing) && Sidekiq::Testing.fake? ?
-                       Sidekiq::Job.jobs
-                                   .map { Sidekiq::JobRecord.new _1 unless _1.key?("at") }
-                                   .compact :
-                       Sidekiq::Queue.all
-                                     .flat_map(&:to_a)
-                     },
-      scheduled:  -> {
-                       defined?(Sidekiq::Testing) && Sidekiq::Testing.fake? ?
-                       Sidekiq::Job.jobs
-                                   .map { Sidekiq::JobRecord.new _1 if _1.key?("at") }
-                                   .compact :
-                       Sidekiq::ScheduledSet.new
-                     },
-      processing: -> {
-                       Sidekiq::WorkSet.new.map do |_, _, work|
-                         payload = JSON.parse(work["payload"], symbolize_names: true)
-                         OpenStruct.new(
-                           {
-                             klass: :class,
-                             args:  :args
-                           }.transform_values { payload.fetch(_1) }
-                         )
-                       end
-                     }
-    }.each do |type, job_fetcher|
-      define_singleton_method "#{type}_jobs" do |*args|
-        args = args.map do |arg|
-          case arg = Baseline.replace_records_with_global_ids(arg)
-          when Symbol then arg.to_s
-          when Hash   then arg.stringify_keys
-          when Array  then arg.map { _1.is_a?(Symbol) ? _1.to_s : _1 }
-          else             arg
-          end
-        end
-
-        job_fetcher.call.select do |job_record|
-          job_record.klass == self.to_s && (args.none? || job_record.args.take(args.size) == args)
-        end
-      end
-    end
-
-    def initialize
+    def initialize(*, **)
+      super
       @id = SecureRandom.hex(6)
     end
 
-    def call(*args, **kwargs)
+    def call(*, **)
       raise NotImplementedError
+    end
+
+    def perform(*, **)
+      call *, **
     end
 
     private

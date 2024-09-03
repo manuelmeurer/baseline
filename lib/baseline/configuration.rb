@@ -2,7 +2,7 @@
 
 module Baseline
   class Configuration
-    attr_accessor :redis, :wrap_exceptions
+    attr_accessor :wrap_exceptions
 
     def initialize
       @wrap_exceptions = true
