@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Baseline
   NULL_VALUE = "_null_value_".freeze
 

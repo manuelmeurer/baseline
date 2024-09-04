@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DeepFetch
   def deep_fetch(*keys, &block)
     keys.inject(self) {

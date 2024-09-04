@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Baseline
   class Configuration
     attr_accessor :redis, :wrap_exceptions

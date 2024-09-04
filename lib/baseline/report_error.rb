@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Baseline
   class ReportError < Service
     def call(*error, **params)

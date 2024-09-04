@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Baseline
   class Railtie < Rails::Railtie
     initializer "baseline.load_classes" do
