@@ -40,6 +40,25 @@ module Baseline
       def call_at(wait_until, *, **)
         set(wait_until: wait_until).perform_later(*, **)
       end
+
+      %i(
+        enqueued:   :ready
+        scheduled:  :scheduled
+        processing: :claimed
+      ).each do |prefix, execution_type|
+        define_method :"#{prefix}_jobs" do |*args|
+          args = ActiveJob::Arguments.serialize(args)
+          SolidQueue::Job
+            .where(class_name: to_s)
+            .joins(:"#{execution_type}_execution")
+            .select {
+              args.none? ||
+                _1.arguments
+                  .fetch("arguments")
+                  .take(args.size) == args
+            }
+        end
+      end
     end
 
     def initialize(*, **)
@@ -53,6 +72,24 @@ module Baseline
 
     def perform(*, **)
       call *, **
+    end
+
+    def enqueued?(*)
+      enqueued_jobs(*).any?
+    end
+
+    def processing?(*)
+      processing_jobs(*).any?
+    end
+
+    def enqueued_or_processing?(*)
+      enqueued?(*) || processing?(*)
+    end
+
+    def scheduled_at(*)
+      scheduled_jobs(*).first&.then {
+        _1.scheduled_execution.scheduled_at
+      }
     end
 
     private
