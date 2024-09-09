@@ -41,11 +41,11 @@ module Baseline
         set(wait_until: wait_until).perform_later(*, **)
       end
 
-      %i(
-        enqueued:   :ready
-        scheduled:  :scheduled
+      {
+        enqueued:   :ready,
+        scheduled:  :scheduled,
         processing: :claimed
-      ).each do |prefix, execution_type|
+      }.each do |prefix, execution_type|
         define_method :"#{prefix}_jobs" do |*args|
           args = ActiveJob::Arguments.serialize(args)
           SolidQueue::Job
