@@ -58,6 +58,23 @@ module Baseline
                   .take(args.size) == args
             }
         end
+
+        define_method "#{prefix}?" do |*args|
+          public_send("#{prefix}_jobs", *args).any?
+        end
+      end
+
+      def enqueued_or_processing?(*)
+        enqueued?(*) || processing?(*)
+      end
+
+      def scheduled_at(*)
+        scheduled_jobs(*)
+          .first
+          &.then {
+            _1.scheduled_execution
+              .scheduled_at
+          }
       end
     end
 
@@ -72,24 +89,6 @@ module Baseline
 
     def perform(*, **)
       call *, **
-    end
-
-    def enqueued?(*)
-      enqueued_jobs(*).any?
-    end
-
-    def processing?(*)
-      processing_jobs(*).any?
-    end
-
-    def enqueued_or_processing?(*)
-      enqueued?(*) || processing?(*)
-    end
-
-    def scheduled_at(*)
-      scheduled_jobs(*).first&.then {
-        _1.scheduled_execution.scheduled_at
-      }
     end
 
     private
