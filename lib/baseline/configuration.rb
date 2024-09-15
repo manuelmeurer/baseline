@@ -2,10 +2,12 @@
 
 module Baseline
   class Configuration
-    attr_accessor :wrap_exceptions
+    attr_accessor :wrap_exceptions, :root
 
     def initialize
       @wrap_exceptions = true
+      @root            = defined?(Rails) ? Rails.root : Pathname.new(Dir.pwd)
+
       super
     end
   end

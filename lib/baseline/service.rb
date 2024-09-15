@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "active_record"
 require "securerandom"
-require "action_dispatch"
 require "digest"
 
 require "baseline/call_logger"
@@ -10,13 +8,17 @@ require "baseline/exception_wrapper"
 require "baseline/uniqueness_checker"
 
 module Baseline
-  class Service < ActiveJob::Base
-    prepend MemoWise
+  class Service < defined?(ActiveJob) ? ActiveJob::Base : Object
+    if defined?(MemoWise)
+      prepend MemoWise
+    end
 
     delegate :link_to, :tag, :link_to_modal, :pluralize, to: :"ApplicationController.helpers"
     delegate :t, :l, to: :"I18n"
 
-    queue_as :default
+    if defined?(ActiveJob)
+      queue_as :default
+    end
 
     class << self
       def inherited(subclass)
@@ -26,55 +28,61 @@ module Baseline
           subclass.public_send :include, Rails.application.routes.url_helpers
         end
 
-        subclass.public_send :prepend, CallLogger, ExceptionWrapper, UniquenessChecker
+        subclass.public_send :prepend, CallLogger, ExceptionWrapper
+
+        if defined?(Kredis)
+          subclass.public_send :prepend, UniquenessChecker
+        end
       end
 
       delegate :call, to: :new
 
-      alias_method :call_async, :perform_later
+      if defined?(ActiveJob)
+        alias_method :call_async, :perform_later
 
-      def call_in(wait, *, **)
-        set(wait: wait).perform_later(*, **)
-      end
+        def call_in(wait, *, **)
+          set(wait: wait).perform_later(*, **)
+        end
 
-      def call_at(wait_until, *, **)
-        set(wait_until: wait_until).perform_later(*, **)
-      end
+        def call_at(wait_until, *, **)
+          set(wait_until: wait_until).perform_later(*, **)
+        end
 
-      {
-        enqueued:   :ready,
-        scheduled:  :scheduled,
-        processing: :claimed
-      }.each do |prefix, execution_type|
-        define_method :"#{prefix}_jobs" do |*args|
-          args = ActiveJob::Arguments.serialize(args)
-          SolidQueue::Job
-            .where(class_name: to_s)
-            .joins(:"#{execution_type}_execution")
-            .select {
-              args.none? ||
-                _1.arguments
-                  .fetch("arguments")
-                  .take(args.size) == args
+        {
+          enqueued:   :ready,
+          scheduled:  :scheduled,
+          processing: :claimed
+        }.each do |prefix, execution_type|
+          define_method :"#{prefix}_jobs" do |*args|
+            args = ActiveJob::Arguments.serialize(args)
+            SolidQueue::Job
+              .where(class_name: to_s)
+              .joins(:"#{execution_type}_execution")
+              .select {
+                args.none? ||
+                  _1.arguments
+                    .fetch("arguments")
+                    .take(args.size) == args
+              }
+          end
+
+          define_method "#{prefix}?" do |*args|
+            public_send("#{prefix}_jobs", *args).any?
+          end
+        end
+
+        def enqueued_or_processing?(*)
+          enqueued?(*) || processing?(*)
+        end
+
+        def scheduled_at(*)
+          scheduled_jobs(*)
+            .first
+            &.then {
+              _1.scheduled_execution
+                .scheduled_at
             }
         end
-
-        define_method "#{prefix}?" do |*args|
-          public_send("#{prefix}_jobs", *args).any?
-        end
-      end
-
-      def enqueued_or_processing?(*)
-        enqueued?(*) || processing?(*)
-      end
-
-      def scheduled_at(*)
-        scheduled_jobs(*)
-          .first
-          &.then {
-            _1.scheduled_execution
-              .scheduled_at
-          }
       end
     end
 
@@ -94,15 +102,22 @@ module Baseline
     private
 
       def log(level, message, **kwargs)
-        message = [
-          message,
-          kwargs.reverse_merge(service: self.class.to_s, id: @id)
-                .map { [_1, _2].join(": ") }
-                .join(", ")
-                .then { "(#{_1})" }
-        ].join(" ")
+        message = kwargs
+          .reverse_merge(service: self.class.to_s, id: @id)
+          .map { [_1, _2].join(": ") }
+          .join(", ")
+          .then {
+            [
+              message,
+              "(#{_1})"
+            ].join(" ")
+          }
 
-        Rails.logger.public_send level, message
+        if defined?(Rails)
+          Rails.logger.public_send level, message
+        else
+          puts "[#{level}] #{message}"
+        end
       end
 
       def object_class

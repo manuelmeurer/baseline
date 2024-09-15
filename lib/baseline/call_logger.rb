@@ -34,7 +34,7 @@ module Baseline
         end
         caller_location&.then do
           [
-            _1.path.delete_prefix(Rails.root.to_s),
+            _1.path.delete_prefix(Baseline.configuration.root.to_s),
             _1.lineno
           ].join(":")
         end
