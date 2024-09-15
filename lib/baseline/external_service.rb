@@ -44,7 +44,7 @@ module Baseline
     private
 
       def request(method, path_or_url, base_url: nil,
-                                       accept:   Mime[:json],
+                                       accept:   "application/json",
                                        params:   nil,
                                        json:     nil,
                                        form:     nil,
@@ -92,7 +92,7 @@ module Baseline
           sleep 1
         end
 
-        response_json = if response.content_type.mime_type == Mime[:json] &&
+        response_json = if response.content_type.mime_type == "application/json" &&
                            response.to_s.present?
 
           JSON.parse(response.to_s, symbolize_names: true)
