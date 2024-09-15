@@ -39,6 +39,9 @@ require "baseline/report_error"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
 
+# Initialize configuration
+Baseline.configuration
+
 if defined?(Rails)
   require "baseline/railtie"
 
