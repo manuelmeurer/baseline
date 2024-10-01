@@ -3,6 +3,10 @@
 module Baseline
   NULL_VALUE = "_null_value_".freeze
 
+  autoload :Service,         "baseline/service"
+  autoload :ExternalService, "baseline/external_service"
+  autoload :ReportError,     "baseline/report_error"
+
   class << self
     def has_many_reflection_classes
       [
@@ -33,9 +37,6 @@ require "baseline/controller_extensions"
 require "baseline/helper"
 require "baseline/model_extensions"
 require "baseline/redis_url"
-require "baseline/service"
-require "baseline/external_service"
-require "baseline/report_error"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
 
