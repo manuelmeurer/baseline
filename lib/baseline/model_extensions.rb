@@ -34,6 +34,8 @@ module Baseline
             attr_reader :"remote_#{name}_url"
 
             define_method "remote_#{name}_url=" do |value|
+              instance_variable_set :"@remote_#{name}_url", value.presence
+
               return unless value.present?
 
               begin
