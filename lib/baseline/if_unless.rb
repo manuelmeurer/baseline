@@ -3,8 +3,9 @@
 class Object
   def if(condition, action = nil, _unless: false, &block)
     result = case condition
-      when Proc  then condition.call(self)
-      when Class then self.is_a?(condition)
+      when Proc   then condition.call(self)
+      when Class  then self.is_a?(condition)
+      when Regexp then self.match(condition)
       else condition
       end
 
@@ -14,12 +15,13 @@ class Object
 
     return self unless result
 
-    if action
+    case
+    when action
       if block
         raise "You can't pass both a block and an action."
       end
       action
-    else
+    when block
       args = block.arity < 0 ?
         [self] :
         [self, result].take(block.arity)
