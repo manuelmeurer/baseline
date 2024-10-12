@@ -6,10 +6,9 @@ module Baseline
 
     included do
       helper_method def specific_turbo_frame_request?(name_or_resource)
-        if name_or_resource.is_a?(ActiveRecord::Base)
-          name_or_resource = helpers.dom_id(name_or_resource)
-        end
-        turbo_frame_request_id == name_or_resource.to_s
+        name_or_resource
+          .if(ActiveRecord::Base) { helpers.dom_id(_1) }
+          .then { turbo_frame_request_id == _1.to_s }
       end
     end
 

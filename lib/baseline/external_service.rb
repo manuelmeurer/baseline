@@ -74,8 +74,8 @@ module Baseline
         loop do
           response = Octopoller.poll(retries: 10) do
             HTTP
-              .then { auth_header ? _1.auth(auth_header) : _1 }
-              .then { |request| request_basic_auth&.then { request.basic_auth _1 } || request }
+              .if(auth_header) { _1.auth(_2) }
+              .if(request_basic_auth) { _1.basic_auth(_2) }
               .follow
               .headers(headers)
               .public_send(method, url, params:, json:, form:, body:)
