@@ -131,5 +131,22 @@ module Baseline
 
         result or (block&.call if condition)
       end
+
+      def with_playwright_chromium(**browser_params)
+        playwright_params = {
+          playwright_cli_executable_path: "npx playwright@#{Playwright::COMPATIBLE_PLAYWRIGHT_VERSION}"
+        }
+
+        Playwright.create(**playwright_params) do |playwright|
+          playwright.chromium.launch(**browser_params) do |browser|
+            yield browser
+          end
+        end
+      end
+
+      def ignoring_playwright_timeout
+        yield
+      rescue Playwright::TimeoutError
+      end
   end
 end
