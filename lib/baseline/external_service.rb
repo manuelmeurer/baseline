@@ -133,6 +133,8 @@ module Baseline
       end
 
       def with_playwright_chromium(**browser_params)
+        require "playwright"
+
         playwright_params = {
           playwright_cli_executable_path: "npx playwright@#{Playwright::COMPATIBLE_PLAYWRIGHT_VERSION}"
         }
@@ -145,6 +147,7 @@ module Baseline
       end
 
       def ignoring_playwright_timeout
+        require "playwright"
         yield
       rescue Playwright::TimeoutError
       end
