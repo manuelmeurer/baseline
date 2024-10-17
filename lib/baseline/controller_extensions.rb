@@ -10,6 +10,22 @@ module Baseline
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }
           .then { turbo_frame_request_id == _1.to_s }
       end
+
+      helper_method def normalized_action_name(action = action_name, reverse: false)
+        {
+          "create" => "new",
+          "update" => "edit"
+        }.if(reverse, &:invert)
+          .fetch(action) {
+            action.delete_prefix("do_")
+          }
+      end
+
+      helper_method def stimco(name, to_h: true, outlets: {}, **values)
+        StimulusController
+          .new(name:, values:, outlets:)
+          .if(to_h) { _1.to_h }
+      end
     end
 
     private

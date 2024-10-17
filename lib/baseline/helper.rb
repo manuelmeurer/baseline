@@ -98,6 +98,26 @@ module Baseline
       end
     end
 
+    def turbo_data(method:       :patch,
+                   confirm:      true,
+                   submits_with: true,
+                   frame:        ("modal" if Current.try(:modal_request)))
+
+      {
+        turbo_method:       method,
+        turbo_frame:        frame,
+        turbo_confirm:      confirm.is_a?(String) ? confirm : (t(:confirm) if confirm),
+        turbo_submits_with: (t :please_wait if submits_with)
+      }
+    end
+
+    def external_link_attributes
+      {
+        target: "_blank",
+        rel:    "nofollow noopener"
+      }
+    end
+
     def inline_svg(filename, **options)
       unless File.extname(filename) == ".svg"
         raise "Must be a SVG file: #{filename}"
@@ -133,6 +153,51 @@ module Baseline
              .join(" ")
           }.to_s
       end.html_safe
+    end
+
+    def meta_tags(data)
+      data.map do |name, content|
+        tag.meta name: name, content: content
+      end.then {
+        safe_join _1
+      }
+    end
+
+    def controller_and_normalized_action_name
+      [
+        controller_name,
+        normalized_action_name
+      ]
+    end
+
+    def body_classes
+      [
+        *controller_and_normalized_action_name,
+        params[:id]
+      ].compact
+        .join(" ")
+    end
+
+    def data_merge(*datas)
+      datas = datas.compact_blank.map(&:to_h)
+      return {} if datas.empty?
+
+      invalids = datas.reject { _1.is_a?(Hash) }
+      if invalids.any?
+        raise "datas must be hashes, #{pluralize invalids.size, "invalid value"} found: #{invalids.map(&:class).join(", ")}"
+      end
+
+      controller = datas
+        .map { _1[:controller] }
+        .compact
+        .join(" ")
+        .presence
+
+      datas
+        .inject(:merge)
+        .if(controller) {
+          _1.merge(controller: _2)
+        }
     end
   end
 end

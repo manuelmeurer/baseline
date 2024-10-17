@@ -3,9 +3,15 @@
 module Baseline
   NULL_VALUE = "_null_value_".freeze
 
-  autoload :Service,         "baseline/service"
-  autoload :ExternalService, "baseline/external_service"
-  autoload :ReportError,     "baseline/report_error"
+  autoload :ControllerExtensions, "baseline/controller_extensions"
+  autoload :ExternalService,      "baseline/external_service"
+  autoload :Helper,               "baseline/helper"
+  autoload :ModelExtensions,      "baseline/model_extensions"
+  autoload :NamespaceLayout,      "baseline/namespace_layout"
+  autoload :RedisURL,             "baseline/redis_url"
+  autoload :ReportError,          "baseline/report_error"
+  autoload :Service,              "baseline/service"
+  autoload :StimulusController,   "baseline/stimulus_controller"
 
   class << self
     def has_many_reflection_classes
@@ -33,10 +39,6 @@ module Baseline
 end
 
 require "baseline/configuration"
-require "baseline/controller_extensions"
-require "baseline/helper"
-require "baseline/model_extensions"
-require "baseline/redis_url"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
 
