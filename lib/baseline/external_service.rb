@@ -139,6 +139,21 @@ module Baseline
           playwright_cli_executable_path: "npx playwright@#{Playwright::COMPATIBLE_PLAYWRIGHT_VERSION}"
         }
 
+        if browser_params[:proxy].is_a?(String)
+          require "addressable"
+          browser_params[:proxy] = Addressable::URI
+            .parse(browser_params[:proxy])
+            .then {
+              username, password = _1.user, _1.password
+              _1.user = _1.password = nil
+              {
+                server:   _1.to_s,
+                username: username,
+                password: password
+              }
+            }
+        end
+
         Playwright.create(**playwright_params) do |playwright|
           playwright.chromium.launch(**browser_params) do |browser|
             yield browser
