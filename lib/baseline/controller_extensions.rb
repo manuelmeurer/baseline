@@ -11,7 +11,7 @@ module Baseline
           .then { turbo_frame_request_id == _1.to_s }
       end
 
-      helper_method def normalized_action_name(action = action_name, reverse: false)
+      helper_method def normalized_action_name(action = Current.action_name, reverse: false)
         {
           "create" => "new",
           "update" => "edit"
