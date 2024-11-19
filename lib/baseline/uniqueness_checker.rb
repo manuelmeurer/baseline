@@ -16,7 +16,8 @@ module Baseline
     ).freeze
 
     MAX_RETRIES = 10.freeze
-    THIRTY_DAYS = (60 * 60 * 24 * 30).freeze
+    ONE_HOUR    = (60 * 60).freeze
+    THIRTY_DAYS = (ONE_HOUR * 24 * 30).freeze
 
     def self.prepended(mod)
       mod.const_set :NotUniqueError, Class.new(mod::Error)
@@ -51,7 +52,7 @@ module Baseline
       else
         @_uniqueness_keys ||= []
         @_uniqueness_keys << new_uniqueness_key
-        Kredis.redis.setex new_uniqueness_key, THIRTY_DAYS, @id
+        Kredis.redis.setex new_uniqueness_key, ONE_HOUR, @id
         true
       end
     end
