@@ -70,8 +70,8 @@ module Baseline
       # If a ActiveRecord record is passed to `turbo_frame_tag`,
       # `dom_id` is called to determine its DOM ID.
       # This exposes the record ID, which is not desirable if the record has a slug.
-      if name.is_a?(ActiveRecord::Base) && name.respond_to?(:slug)
-        name = [name.class.to_s.underscore, name.slug].join("_")
+      if slug = name.try(:slug)
+        name = [name.class.to_s.underscore, slug].join("_")
       end
 
       unless attributes.key?(:src)
