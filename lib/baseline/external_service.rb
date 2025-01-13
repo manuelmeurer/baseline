@@ -39,14 +39,16 @@ module Baseline
       end
     end
 
-    def call(method, ...)
+    def call(method, *, **)
       self
         .class
         .actions
         .fetch(method) {
           raise NoMethodError, "undefined method `#{method}' for #{self}"
         }
-        .call(...)
+        .then {
+          instance_exec(*, **, &_1)
+        }
     end
 
     private
