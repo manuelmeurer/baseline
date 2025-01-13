@@ -13,12 +13,15 @@ module Baseline
 
     class << self
       def inherited(subclass)
-        subclass.cattr_accessor :calls, default: []
-        subclass.cattr_accessor :methods, default: {}
+        subclass.instance_variable_set :"@calls",   []
+        subclass.instance_variable_set :"@actions", {}
       end
 
-      def add_method(name, return_unless_prod: true, &block)
-        methods[name] =
+      def calls   = @calls
+      def actions = @actions
+
+      def add_action(name, return_unless_prod: true, &block)
+        @actions[name] =
           if Baseline.configuration.env == :production
             block
           else
@@ -30,14 +33,16 @@ module Baseline
       end
 
       def method_missing(method, ...)
-        methods.key?(method) ?
+        @actions.key?(method) ?
           new.call(method, ...) :
           super
       end
     end
 
     def call(method, ...)
-      methods
+      self
+        .class
+        .actions
         .fetch(method) {
           raise NoMethodError, "undefined method `#{method}' for #{self}"
         }
