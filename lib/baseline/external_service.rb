@@ -17,8 +17,8 @@ module Baseline
         subclass.instance_variable_set :"@actions", {}
       end
 
-      def calls   = @calls
-      def actions = @actions
+      attr_reader :calls
+      attr_reader :actions
 
       def add_action(name, return_unless_prod: true, &block)
         @actions[name] =
