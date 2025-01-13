@@ -26,7 +26,7 @@ module Baseline
             block
           else
             ->(*params) {
-              calls << [Time.current, name, params]
+              self.class.calls << [Time.current, name, params]
               return_unless_prod
             }
           end
