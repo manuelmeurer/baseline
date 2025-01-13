@@ -14,31 +14,34 @@ module Baseline
     class << self
       def inherited(subclass)
         subclass.cattr_accessor :calls, default: []
+        subclass.cattr_accessor :methods, default: {}
       end
 
       def add_method(name, return_unless_prod: true, &block)
-        define_method name,
+        methods[name] =
           if Baseline.configuration.env == :production
             block
           else
             ->(*params) {
-              self.class.calls << [Time.current, name, params]
+              calls << [Time.current, name, params]
               return_unless_prod
             }
           end
       end
 
-      def method_missing(method, *args, **kwargs, &block)
-        if new.respond_to?(method)
-          new.public_send method, *args, **kwargs, &block
-        else
+      def method_missing(method, ...)
+        methods.key?(method) ?
+          new.call(method, ...) :
           super
-        end
       end
     end
 
-    def call(*args, **kwargs)
-      public_send *args, **kwargs
+    def call(method, ...)
+      methods
+        .fetch(method) {
+          raise NoMethodError, "undefined method `#{method}' for #{self}"
+        }
+        .call(...)
     end
 
     private
