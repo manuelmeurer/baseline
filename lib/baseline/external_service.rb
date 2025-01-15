@@ -20,14 +20,16 @@ module Baseline
       attr_reader :calls
       attr_reader :actions
 
-      def add_action(name, return_unless_prod: true, &block)
+      def add_action(name, run_unless_prod: false, return_unless_prod: "dummy", &block)
         @actions[name] =
           if Baseline.configuration.env == :production
             block
           else
-            ->(*params) {
-              self.class.calls << [Time.current, name, params]
-              return_unless_prod
+            ->(*args, **kwargs) {
+              self.class.calls << [Time.current, name, args, kwargs]
+              run_unless_prod ?
+                instance_exec(*args, **kwargs, &block) :
+                return_unless_prod
             }
           end
       end
