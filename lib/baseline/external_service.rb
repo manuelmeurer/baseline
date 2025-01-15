@@ -21,7 +21,7 @@ module Baseline
       attr_reader :actions
 
       def add_action(name, run_unless_prod: false, return_unless_prod: "dummy", &block)
-        @actions[name] =
+        @actions[name.to_sym] =
           if Baseline.configuration.env == :production
             block
           else
@@ -45,7 +45,7 @@ module Baseline
       self
         .class
         .actions
-        .fetch(method) {
+        .fetch(method.to_sym) {
           raise NoMethodError, "undefined method `#{method}' for #{self}"
         }
         .then {
