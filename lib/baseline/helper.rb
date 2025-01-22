@@ -2,13 +2,6 @@
 
 module Baseline
   module Helper
-    def page_classes
-      [
-        controller.controller_name,
-        { "create" => "new", "update" => "edit" }.fetch(controller.action_name, controller.action_name)
-      ].join(" ")
-    end
-
     def alert(level, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
       css_classes = [
         "alert",
