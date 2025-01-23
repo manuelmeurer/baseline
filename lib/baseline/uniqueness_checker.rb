@@ -42,7 +42,7 @@ module Baseline
         raise "A uniqueness key with args #{@_uniqueness_args.inspect} already exists."
       end
 
-      if @_similar_service_id = Kredis.redis.get(new_uniqueness_key)
+      if @_similar_service_id = Rails.cache.read(new_uniqueness_key)
         if on_error.to_sym == :ignore
           return false
         else
@@ -52,7 +52,7 @@ module Baseline
       else
         @_uniqueness_keys ||= []
         @_uniqueness_keys << new_uniqueness_key
-        Kredis.redis.setex new_uniqueness_key, ONE_HOUR, @id
+        Rails.cache.write new_uniqueness_key, @id, expires_in: ONE_HOUR
         true
       end
     end
@@ -78,9 +78,9 @@ module Baseline
       end
     ensure
       unless Array(@_uniqueness_keys).empty?
-        Kredis.redis.del @_uniqueness_keys
+        Rails.cache.delete @_uniqueness_keys
       end
-      Kredis.redis.del error_count_key
+      Rails.cache.delete error_count_key
     end
 
     private
@@ -120,20 +120,23 @@ module Baseline
     end
 
     def error_count
-      (Kredis.redis.get(error_count_key) || 0).to_i
+      (Rails.cache.read(error_count_key) || 0).to_i
     end
 
     def increase_error_count
-      Kredis.redis.setex error_count_key, retry_delay + THIRTY_DAYS, error_count + 1
+      Rails.cache.write \
+        error_count_key,
+        error_count + 1,
+        expires_in: retry_delay + THIRTY_DAYS
     end
 
     def uniqueness_key(args)
       [
         KEY_PREFIX,
-        self.class.to_s.gsub(":", "_")
-      ].tap do |key|
-        key << Digest::MD5.hexdigest(args.to_s) unless args.empty?
-      end.join(":")
+        self.class.to_s.gsub(":", "_"),
+        (Digest::MD5.hexdigest(args.to_s) unless args.empty?)
+      ].compact
+        .join(":")
     end
 
     def error_count_key

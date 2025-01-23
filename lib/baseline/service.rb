@@ -30,10 +30,7 @@ module Baseline
         end
 
         subclass.public_send :prepend, CallLogger, ExceptionWrapper
-
-        if defined?(Kredis)
-          subclass.public_send :prepend, UniquenessChecker
-        end
+        subclass.public_send :prepend, UniquenessChecker
       end
 
       delegate :call, to: :new
@@ -129,14 +126,12 @@ module Baseline
 
       def track_last_run(cache_key_part = nil)
         now         = Time.current
-        cache_key   = [self.class.to_s.underscore, cache_key_part, "last_run"].compact.join("_")
-        last_run_at = Kredis.redis
-                            .get(cache_key)
-                            &.then { Time.zone.parse _1 }
+        cache_key   = [self.class.to_s.underscore, cache_key_part, :last_run].compact
+        last_run_at = Rails.cache.read(cache_key)&.then { Time.zone.parse _1 }
 
         yield *[last_run_at].compact
 
-        Kredis.redis.set cache_key, now.iso8601
+        Rails.cache.write cache_key, now.iso8601
       end
 
       def call_all_private_methods_without_args(raise_errors: true)
