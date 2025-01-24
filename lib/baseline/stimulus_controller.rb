@@ -29,7 +29,7 @@ module Baseline
       { "#{name}-target": target_name.to_s.camelize(:lower) }
     end
 
-    def action(action_name = nil, **params)
+    def action(action_name = nil, option: nil, **params)
       unless action_name
         event, action_name = params.shift
       end
@@ -37,6 +37,7 @@ module Baseline
       value = [name, action_name.to_s.camelize(:lower)]
         .join("#")
         .if(event) { [_2, _1].join "->" }
+        .if(option) { _1 << ":#{option}" }
 
       {
         action: value,
