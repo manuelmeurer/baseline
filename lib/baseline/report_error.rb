@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  class ReportError < Service
+  class ReportError < ApplicationService
     def call(*error, **params)
       raise *error
     rescue => e

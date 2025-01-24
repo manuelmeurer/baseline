@@ -4,12 +4,10 @@ module Baseline
   NULL_VALUE = "_null_value_".freeze
 
   autoload :ControllerExtensions, "baseline/controller_extensions"
-  autoload :ExternalService,      "baseline/external_service"
   autoload :Helper,               "baseline/helper"
   autoload :ModelExtensions,      "baseline/model_extensions"
   autoload :NamespaceLayout,      "baseline/namespace_layout"
   autoload :RedisURL,             "baseline/redis_url"
-  autoload :ReportError,          "baseline/report_error"
   autoload :Service,              "baseline/service"
   autoload :StimulusController,   "baseline/stimulus_controller"
 

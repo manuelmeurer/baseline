@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  class ExternalService < Service
+  class ExternalService < ApplicationService
     class RequestError < Error
       attr_reader :status
 
