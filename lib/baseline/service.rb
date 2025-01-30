@@ -29,8 +29,10 @@ module Baseline
           subclass.public_send :include, Rails.application.routes.url_helpers
         end
 
-        subclass.public_send :prepend, CallLogger, ExceptionWrapper
-        subclass.public_send :prepend, UniquenessChecker
+        subclass.public_send :prepend,
+          CallLogger,
+          ExceptionWrapper,
+          UniquenessChecker
       end
 
       delegate :call, to: :new
