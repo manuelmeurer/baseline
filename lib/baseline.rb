@@ -44,8 +44,6 @@ require "baseline/deep_fetch"
 Baseline.configuration
 
 if defined?(Rails)
-  require "baseline/railtie"
-
   Rails::Application.class_eval do
     def env_credentials(env = Rails.env)
       @env_credentials ||= {}
