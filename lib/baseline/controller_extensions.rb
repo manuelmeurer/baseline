@@ -28,6 +28,47 @@ module Baseline
       end
     end
 
+    def render_turbo_response(redirect:             nil,
+                              success_message:      nil,
+                              error_message:        nil,
+                              reload_main:          false,
+                              reload_main_or_modal: false,
+                              reload_frames:        [],
+                              close_modal:          false)
+
+      if success_message && error_message
+        raise "success_message and error_message cannot both be given."
+      end
+
+      if reload_main_or_modal && close_modal
+        raise "reload_main_or_modal and close_modal cannot both be given."
+      end
+
+      stream = turbo_stream.append_all(:body) do
+        view_context.tag.div \
+          data: stimco(:turbo_response,
+            redirect:             redirect&.then { url_for _1 },
+            close_modal:          close_modal,
+            reload_main:          reload_main,
+            reload_main_or_modal: reload_main_or_modal,
+            reload_frames:        Array(reload_frames),
+            success_message:      success_message,
+            error_message:        error_message
+          )
+      end
+
+      streams = [
+        stream,
+        *(Array(yield) if block_given?)
+      ]
+
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: streams
+        end
+      end
+    end
+
     private
 
       def add_flash(type, text, now: false)
