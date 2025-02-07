@@ -12,6 +12,12 @@ module Baseline
           attributes_and_verbs.each do |attribute, verb|
             attribute_with_table_name = "#{table_name}.#{attribute}"
 
+            # If we are using PostgreSQL and the column is a date,
+            # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
+            if self.class.connection.adapter_name == "PostgreSQL" && columns_hash[attribute].type == :date
+              attribute_with_table_name << "::timestamp"
+            end
+
             scope verb,        -> { where.not(attribute_with_table_name => nil) }
             scope "un#{verb}", -> { where(attribute_with_table_name => nil) }
 
