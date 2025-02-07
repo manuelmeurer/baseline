@@ -14,7 +14,7 @@ module Baseline
 
             # If we are using PostgreSQL and the column is a date,
             # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
-            if self.class.connection.adapter_name == "PostgreSQL" && columns_hash[attribute].type == :date
+            if connection.adapter_name == "PostgreSQL" && columns_hash.fetch(attribute.to_s).type == :date
               attribute_with_table_name << "::timestamp"
             end
 
@@ -30,11 +30,14 @@ module Baseline
 
             { before: %w(< >), after: %w(> <) }.each do |before_or_after, (operator, unoperator)|
               {
-                "#{verb}_#{before_or_after}"   => ->(placeholder) { "#{attribute_with_table_name} #{operator} #{placeholder}" },
-                "un#{verb}_#{before_or_after}" => ->(placeholder) { "(#{attribute_with_table_name} IS NULL) OR (#{attribute_with_table_name} #{unoperator} #{placeholder})" }
+                "#{verb}_#{before_or_after}"   => -> { "#{attribute_with_table_name} #{operator} #{_1}" },
+                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{attribute_with_table_name} #{unoperator} #{_1})" }
               }.each do |scope_name, sql|
                 scope scope_name, ->(time = Time.current) {
-                  placeholder, params = time.is_a?(Time) || time.is_a?(Date) ? ["?", [time]] : [time, []]
+                  placeholder, params =
+                    time.is_a?(Time) || time.is_a?(Date) ?
+                    ["?", [time]] :
+                    [time, []]
                   where(sql.call(placeholder), *params)
                 }
               end
