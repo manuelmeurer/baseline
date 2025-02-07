@@ -5,7 +5,7 @@ validator = Class.new(ActiveModel::EachValidator) do
 
   def validate_each(record, attribute, value)
     valid =
-      record.class.columns_hash.fetch(attribute.to_s).array ?
+      record.class.columns_hash.fetch(attribute.to_s).try(:array) ? # Only works for Postgres
       value.all? { _1.match?(self.class.regex) } :
       (options[:allow_blank] && value.blank?) || value.match?(self.class.regex)
 
