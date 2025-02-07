@@ -12,12 +12,6 @@ module Baseline
           attributes_and_verbs.each do |attribute, verb|
             attribute_with_table_name = "#{table_name}.#{attribute}"
 
-            # If we are using PostgreSQL and the column is a date,
-            # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
-            if connection.adapter_name == "PostgreSQL" && columns_hash.fetch(attribute.to_s).type == :date
-              attribute_with_table_name << "::timestamp"
-            end
-
             scope verb,        -> { where.not(attribute_with_table_name => nil) }
             scope "un#{verb}", -> { where(attribute_with_table_name => nil) }
 
@@ -29,9 +23,16 @@ module Baseline
             }
 
             { before: %w(< >), after: %w(> <) }.each do |before_or_after, (operator, unoperator)|
+              # If we are using PostgreSQL and the column is a date,
+              # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
+              before_after_attribute_with_table_name =
+                connection.adapter_name == "PostgreSQL" && columns_hash.fetch(attribute.to_s).type == :date ?
+                  attribute_with_table_name + "::timestamp" :
+                  attribute_with_table_name
+
               {
-                "#{verb}_#{before_or_after}"   => -> { "#{attribute_with_table_name} #{operator} #{_1}" },
-                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{attribute_with_table_name} #{unoperator} #{_1})" }
+                "#{verb}_#{before_or_after}"   => -> { "#{before_after_attribute_with_table_name} #{operator} #{_1}" },
+                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{before_after_attribute_with_table_name} #{unoperator} #{_1})" }
               }.each do |scope_name, sql|
                 scope scope_name, ->(time = Time.current) {
                   placeholder, params =
