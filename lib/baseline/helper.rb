@@ -251,5 +251,40 @@ module Baseline
           _1.merge(controller: _2)
         }
     end
+
+    def link_to_modal(name = nil, options = nil, html_options = nil, &block)
+      if block
+        options, html_options, name = name, options, capture(&block)
+      end
+      html_options ||= {}
+      html_options[:data] ||= {}
+      html_options[:data].merge!(
+        bs_toggle: "modal",
+        bs_target: "#modal",
+        url:       url_for(options)
+      )
+      link_to name, "#", html_options
+    end
+
+    def form_field(*, **, &)
+      render Baseline::FormFieldComponent.new(*, **), &
+    end
+
+    def form_classes(type:, prefix: "col")
+      {
+        label:            %w(md-3 lg-2),
+        input:            %w(md-9 lg-10 xl-6),
+        input_full_width: %w(md-9 lg-10)
+      }.fetch(type)
+        .map { [prefix, _1].join("-") }
+    end
+
+    def custom_human_attribute_name(klass, attribute)
+      human_attribute_name = klass.human_attribute_name(attribute)
+
+      t attribute,
+        scope:   [Current.namespace, :human_attribute_names, klass.to_s.underscore],
+        default: human_attribute_name
+    end
   end
 end
