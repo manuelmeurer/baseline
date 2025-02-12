@@ -286,5 +286,9 @@ module Baseline
         scope:   [Current.namespace, :human_attribute_names, klass.to_s.underscore],
         default: human_attribute_name
     end
+
+    def md_to_html(...)
+      Baseline::MarkdownToHTML.call(...)
+    end
   end
 end

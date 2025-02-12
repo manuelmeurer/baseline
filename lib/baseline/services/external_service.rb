@@ -56,11 +56,11 @@ module Baseline
     private
 
       def request(method, path_or_url, base_url: nil,
-                                       accept:   "application/json",
-                                       params:   nil,
-                                       json:     nil,
-                                       form:     nil,
-                                       body:     nil)
+                                      accept:   "application/json",
+                                      params:   nil,
+                                      json:     nil,
+                                      form:     nil,
+                                      body:     nil)
 
         base_url ||= begin
           self.class::BASE_URL
@@ -105,7 +105,7 @@ module Baseline
         end
 
         response_json = if response.content_type.mime_type == "application/json" &&
-                           response.to_s.present?
+                          response.to_s.present?
 
           JSON.parse(response.to_s, symbolize_names: true)
         end
@@ -115,7 +115,7 @@ module Baseline
             "Error #{response.status} calling #{method.upcase} #{url}",
             response.to_s
           ].compact_blank
-           .join(": ")
+          .join(": ")
 
           raise RequestError.new(error_message, status: response.status)
         end

@@ -25,7 +25,7 @@ class Object
       args = block.arity < 0 ?
         [self] :
         [self, result].take(block.arity)
-      block.call *args
+      block.call(*args)
     end
   end
 
