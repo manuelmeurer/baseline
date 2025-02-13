@@ -14,7 +14,7 @@ module Baseline
         i18n_params:        {},
         i18n_scope:         nil,
         identifier:         form.object_name,
-        show_label:         Current.namespace.in?(%i(admin recruiters)) ? :horizontal : :vertical,
+        show_label:         :horizontal,
         suffix:             nil,
         value_attributes:   {},
         wrapper_attributes: {},
