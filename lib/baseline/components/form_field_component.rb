@@ -104,6 +104,7 @@ module Baseline
       when :horizontal then @horizontal_label = true
       when :vertical   then @vertical_label   = true
       when :floating   then @floating_label   = true
+      when :inline     then @inline_label     = true
       when false       then @no_label         = true
       else raise "Unexpected show_label: #{show_label}"
       end
@@ -288,8 +289,10 @@ module Baseline
           }
 
         tag.div class: "form-check form-switch" do
-          @form.check_box @attribute,
-            **params
+          safe_join [
+            @form.check_box(@attribute, **params),
+            (@form.label(@attribute, @label, class: "form-check-label") if @inline_label)
+          ]
         end
       end
 
