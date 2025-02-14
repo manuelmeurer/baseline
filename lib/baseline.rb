@@ -36,6 +36,7 @@ module Baseline
   end
 end
 
+require "baseline/engine"
 require "baseline/configuration"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
