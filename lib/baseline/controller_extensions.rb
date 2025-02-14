@@ -5,6 +5,8 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      include Baseline::I18nScopes
+
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }

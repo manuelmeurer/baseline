@@ -5,6 +5,7 @@ module Baseline
 
   autoload :ControllerExtensions, "baseline/controller_extensions"
   autoload :Helper,               "baseline/helper"
+  autoload :I18nScopes,           "baseline/i18n_scopes"
   autoload :ModelExtensions,      "baseline/model_extensions"
   autoload :NamespaceLayout,      "baseline/namespace_layout"
   autoload :RedisURL,             "baseline/redis_url"

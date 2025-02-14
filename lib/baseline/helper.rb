@@ -291,13 +291,11 @@ module Baseline
       Baseline::MarkdownToHTML.call(...)
     end
 
-    def section(id = nil, css_class: nil, container: false, i18n_scope: nil, &block)
+    def section(id = nil, css_class: nil, container: false, i18n_scope: action_i18n_scope, &block)
       if block.arity == 1
         unless id
           raise "Cannot determine I18n scope without section ID."
         end
-        i18n_scope ||= @i18n_scope or
-          raise "Cannot determine I18n scope."
         arg = [*i18n_scope, id.to_s.tr("-", "_")]
       end
 
