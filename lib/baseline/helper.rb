@@ -299,12 +299,22 @@ module Baseline
         arg = [*i18n_scope, id.to_s.tr("-", "_")]
       end
 
+      content = -> {
+        block.call(*[arg])
+      }
+
       tag.section id: id&.to_s&.tr("_", "-"), class: css_class do
-        content = block.call(*[arg])
         if container
-          tag.div content, class: [:container, (container unless container == true)].compact.join("-")
+          css_class = [
+            :container,
+            (container unless container == true)
+          ].compact
+            .join("-")
+          tag.div class: css_class do
+            content.call
+          end
         else
-          content
+          content.call
         end
       end
     end
