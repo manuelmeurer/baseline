@@ -3,14 +3,15 @@
 module Baseline
   NULL_VALUE = "_null_value_".freeze
 
-  autoload :ControllerExtensions, "baseline/controller_extensions"
-  autoload :Helper,               "baseline/helper"
-  autoload :I18nScopes,           "baseline/i18n_scopes"
-  autoload :ModelExtensions,      "baseline/model_extensions"
-  autoload :NamespaceLayout,      "baseline/namespace_layout"
-  autoload :RedisURL,             "baseline/redis_url"
-  autoload :Service,              "baseline/service"
-  autoload :StimulusController,   "baseline/stimulus_controller"
+  autoload :ControllerExtensions,   "baseline/controller_extensions"
+  autoload :Helper,                 "baseline/helper"
+  autoload :I18nScopes,             "baseline/i18n_scopes"
+  autoload :ModelExtensions,        "baseline/model_extensions"
+  autoload :NamespaceLayout,        "baseline/namespace_layout"
+  autoload :RedisURL,               "baseline/redis_url"
+  autoload :Service,                "baseline/service"
+  autoload :StimulusController,     "baseline/stimulus_controller"
+  autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
 
   class << self
     def has_many_reflection_classes
