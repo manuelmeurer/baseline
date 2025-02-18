@@ -2,7 +2,7 @@
 
 module Baseline
   class UpdateSchemaMigrations < ApplicationService
-    SchemaMigration = Class.new(ActiveRecord::Base)
+    ::SchemaMigration = Class.new(ActiveRecord::Base)
 
     def call
       SchemaMigration.delete_all
