@@ -20,6 +20,9 @@ module Baseline
   autoload :ReportError,            "baseline/services/report_error"
   autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
 
+  # Components
+  autoload :FormFieldComponent,     "baseline/components/form_field_component"
+
   autoload :Helper,                 "baseline/helper"
   autoload :RedisURL,               "baseline/redis_url"
   autoload :StimulusController,     "baseline/stimulus_controller"
