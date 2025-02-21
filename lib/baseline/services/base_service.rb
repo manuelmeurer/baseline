@@ -8,7 +8,7 @@ require "baseline/exception_wrapper"
 require "baseline/uniqueness_checker"
 
 module Baseline
-  class Service < defined?(ActiveJob) ? ActiveJob::Base : Object
+  class BaseService < defined?(ActiveJob) ? ActiveJob::Base : Object
     if defined?(MemoWise)
       prepend MemoWise
     end

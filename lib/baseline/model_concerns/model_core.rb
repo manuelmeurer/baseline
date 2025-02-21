@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  module ModelExtensions
+  module ModelCore
     extend ActiveSupport::Concern
 
     included do

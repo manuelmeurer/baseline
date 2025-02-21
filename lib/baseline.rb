@@ -3,15 +3,26 @@
 module Baseline
   NULL_VALUE = "_null_value_".freeze
 
-  autoload :ControllerExtensions,   "baseline/controller_extensions"
-  autoload :Helper,                 "baseline/helper"
-  autoload :I18nScopes,             "baseline/i18n_scopes"
-  autoload :ModelExtensions,        "baseline/model_extensions"
-  autoload :NamespaceLayout,        "baseline/namespace_layout"
-  autoload :RedisURL,               "baseline/redis_url"
-  autoload :Service,                "baseline/service"
-  autoload :StimulusController,     "baseline/stimulus_controller"
+  # Controller concerns
+  autoload :ControllerCore,         "baseline/controller_concerns/controller_core"
+  autoload :I18nScopes,             "baseline/controller_concerns/i18n_scopes"
+  autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
+
+  # Model concerns
+  autoload :HasLocale,              "baseline/model_concerns/has_locale"
+  autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
+  autoload :ModelCore,              "baseline/model_concerns/model_core"
+
+  # Services
+  autoload :BaseService,            "baseline/services/base_service"
+  autoload :ExternalService,        "baseline/services/external_service"
+  autoload :MarkdownToHTML,         "baseline/services/markdown_to_html"
+  autoload :ReportError,            "baseline/services/report_error"
   autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
+
+  autoload :Helper,                 "baseline/helper"
+  autoload :RedisURL,               "baseline/redis_url"
+  autoload :StimulusController,     "baseline/stimulus_controller"
 
   class << self
     def has_many_reflection_classes
@@ -42,6 +53,7 @@ require "baseline/engine"
 require "baseline/configuration"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
+require "baseline/url_format_validator"
 
 # Initialize configuration
 Baseline.configuration
