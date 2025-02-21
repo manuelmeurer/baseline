@@ -53,7 +53,6 @@ require "baseline/engine"
 require "baseline/configuration"
 require "baseline/if_unless"
 require "baseline/deep_fetch"
-require "baseline/url_format_validator"
 
 # Initialize configuration
 Baseline.configuration
