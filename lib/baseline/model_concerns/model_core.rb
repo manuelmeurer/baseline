@@ -185,6 +185,27 @@ module Baseline
       end
     end
 
+    def slug_identifier
+      @slug_identifier ||= begin
+        slug.presence&.split("-")&.first ||
+          begin
+            tries = 100
+            Octopoller.poll wait: false, retries: tries do
+              new_slug_identifier = SecureRandom.hex(3)
+              begin
+                self.class.friendly.find(new_slug_identifier)
+              rescue ActiveRecord::RecordNotFound
+                new_slug_identifier
+              else
+                :re_poll
+              end
+            end
+          rescue Octopoller::TooManyAttemptsError
+            raise "Could not find a unique slug identifier for #{inspect} after #{tries} attempts."
+          end
+      end
+    end
+
     class_methods do
       def inherited(subclass)
         super
