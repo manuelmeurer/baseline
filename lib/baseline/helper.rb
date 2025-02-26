@@ -239,17 +239,18 @@ module Baseline
         raise "datas must be hashes, #{pluralize invalids.size, "invalid value"} found: #{invalids.map(&:class).join(", ")}"
       end
 
-      controller = datas
-        .map { _1[:controller] }
-        .compact
-        .join(" ")
-        .presence
+      joined_data = %i(controller action)
+        .index_with do |attribute|
+          datas
+            .map { _1[attribute] }
+            .compact
+            .join(" ")
+            .presence
+        end.compact
 
       datas
         .inject(:merge)
-        .if(controller) {
-          _1.merge(controller: _2)
-        }
+        .merge(joined_data)
     end
 
     def link_to_modal(name = nil, options = nil, html_options = nil, &block)
