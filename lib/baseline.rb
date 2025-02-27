@@ -15,6 +15,7 @@ module Baseline
 
   # Services
   autoload :BaseService,            "baseline/services/base_service"
+  autoload :DownloadFile,           "baseline/services/download_file"
   autoload :ExternalService,        "baseline/services/external_service"
   autoload :MarkdownToHTML,         "baseline/services/markdown_to_html"
   autoload :ReportError,            "baseline/services/report_error"
