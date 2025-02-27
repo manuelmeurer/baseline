@@ -207,6 +207,10 @@ module Baseline
     end
 
     class_methods do
+      def translates_with_fallback(*)
+        translates(*, fallback: :any)
+      end
+
       def inherited(subclass)
         super
 
