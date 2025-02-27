@@ -39,8 +39,8 @@ module Baseline
               return unless value.present?
 
               begin
-                file = DownloadFile.call(value)
-              rescue DownloadFile::Error => error
+                file = Baseline::DownloadFile.call(value)
+              rescue Baseline::DownloadFile::Error => error
                 if error.cause.is_a?(HTTP::RequestError)
                   errors.add name, message: %(could not be downloaded from "#{value}": #{error.cause.message} (#{error.cause.class}))
                 else
