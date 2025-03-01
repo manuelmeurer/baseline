@@ -212,14 +212,70 @@ module Baseline
       end
 
       def inherited(subclass)
+        if subclass.base_class&.then { _1 != subclass }
+          return super
+        end
+
         super
 
-        if subclass.table_exists?
-          timestamps = %w(created_at updated_at).select do |timestamp|
-            subclass.column_names.include?(timestamp)
-          end
-          if timestamps.any?
-            subclass.include HasTimestamps[*timestamps]
+        return unless subclass.table_exists?
+
+        if timestamp_attributes = %w(created_at updated_at).intersection(subclass.column_names).presence
+          subclass.include HasTimestamps[*timestamp_attributes]
+        end
+
+        subclass.columns.each do |column|
+          attribute = column.name.to_sym
+
+          case
+          when column.type == :string
+            subclass.define_singleton_method attribute.to_s.pluralize do
+              pluck(Arel.sql("DISTINCT #{attribute}"))
+                .compact
+                .sort
+            end
+          when column.type == :boolean
+            not_attributes = %i(un not_).map {
+              [_1, attribute].join.to_sym
+            }
+            unless [attribute, *not_attributes].any? { subclass.respond_to? _1, true }
+              subclass.scope attribute, -> { where(attribute => true) }
+              not_attributes.each do |not_attribute|
+                subclass.scope not_attribute, -> { where(attribute => false) }
+              end
+            end
+          when column.try(:array) # Postgres only
+            subclass.define_method("#{attribute}=") do |value|
+              if value.is_a?(String)
+                value = value.split(/(\r?\n)+/)
+              end
+              value
+                .map { _1.is_a?(String) ? _1.strip : _1 }
+                .uniq
+                .compact_blank
+                .then { super _1 }
+            end
+
+            subclass.scope :"with_#{attribute}", ->(*values) {
+              where.overlap(attribute => values)
+            }
+          when column.type.in?(%i(json jsonb))
+            subclass.scope :"with_#{attribute}", ->(*values) {
+              values.inject(self) do |scope, value|
+                case connection.adapter_name
+                when "PostgreSQL"
+                  value.is_a?(Hash) ?
+                    scope.where.contains(attribute => value) :
+                    scope.where("#{attribute} ? :value", value: value.to_s)
+                when "SQLite"
+                  scope.where("EXISTS (
+                    SELECT 1 FROM json_each(#{attribute})
+                    WHERE value = ?
+                  )", value)
+                else raise "Unexpected database adapter: #{connection.adapter_name}"
+                end
+              end
+            }
           end
         end
       end
