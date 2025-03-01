@@ -2,6 +2,51 @@
 
 module Baseline
   module Helper
+    prepend MemoWise
+
+    CLOUDINARY_VERSIONS = {
+      xs:  50,
+      sm: 100,
+      md: 250,
+      lg: 500
+    }.inject({}) do |versions, (key, size)|
+      {
+        "#{key}_fit": {
+          crop: :fit
+        },
+        "#{key}_fit_gray": {
+          crop:   :fit,
+          effect: :grayscale
+        },
+        "#{key}_fit_rounded": {
+          crop:   :fit,
+          radius: 20
+        },
+        "#{key}_thumb": {
+          crop:    :thumb,
+          gravity: :face
+        },
+        "#{key}_thumb_rounded": {
+          crop:    :thumb,
+          gravity: :face,
+          radius:  20
+        }
+      }.transform_values {
+        _1.merge \
+          quality:      :auto,
+          fetch_format: :auto,
+          width:        size,
+          height:       size
+      }.then {
+        _1.merge(
+          _1.transform_keys   { |key| :"wide_#{key}" }
+            .transform_values { |value| value.merge(width: value.fetch(:width) * 2) }
+        )
+      }.then {
+        versions.merge _1
+      }
+    end.freeze
+
     ICON_VERSIONS = %i(
       solid
       regular
@@ -10,6 +55,46 @@ module Baseline
       thin
       brands
     ).freeze
+
+    %i(tag path).each do |suffix|
+      define_method :"attachment_image_#{suffix}" do |attached, version, **options|
+        unless attached.attached?
+          if Rails.env.production?
+            raise "Attached is not attached."
+          else
+            return
+          end
+        end
+
+        options = CLOUDINARY_VERSIONS
+          .fetch(version)
+          .merge(options)
+
+        # Don't compare `attached.service.class` directly since the
+        # ActiveStorage::Service::* subclasses don't exist if they are not used.
+        case service = attached.service.class.to_s.demodulize
+        when "DiskService"
+          variant = attached.variant(
+            resize_to_fill: options.fetch_values(:width, :height)
+          )
+          public_send \
+            :"image_#{suffix}",
+            polymorphic_url(variant, host: Rails.application.env_credentials.host!),
+            **options
+        when "CloudinaryService"
+          public_send \
+            :"cl_image_#{suffix}",
+            attached.key,
+            **options
+        else
+          raise "Unexpected service: #{service}"
+        end
+          .gsub(/\s+(width|height)=['"]\d+['"]/, "")
+          .html_safe
+      end.then {
+        memo_wise _1
+      }
+    end
 
     def icon_classes
       {
