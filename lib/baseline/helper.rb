@@ -275,7 +275,7 @@ module Baseline
         content = path.content
 
         unless css_class = options[:class].presence
-          return content
+          break content
         end
 
         Nokogiri::XML::Document
