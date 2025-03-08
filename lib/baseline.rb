@@ -24,6 +24,7 @@ module Baseline
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
 
+  autoload :ApplicationCore,        "baseline/application_core"
   autoload :Helper,                 "baseline/helper"
   autoload :RedisURL,               "baseline/redis_url"
   autoload :StimulusController,     "baseline/stimulus_controller"

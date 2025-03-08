@@ -28,15 +28,33 @@ module Baseline
           .new(name:, values:, outlets:)
           .if(to_h) { _1.to_h }
       end
+
+      helper_method def og_data
+        # Assign to ivar so data can be changed.
+        @og_data ||= {
+          type:        "website",
+          site_name:   site_name,
+          title:       [page_meta_title, site_name].join(" | "),
+          description: page_meta_description,
+          url:         url_for(only_path: false),
+          locale:      { de: :de_DE, en: :en_US }.fetch(I18n.locale)
+        }
+      end
+
+      helper_method def set_og_data(overwrite: true, **data)
+        method = overwrite ? :merge! : :reverse_merge!
+        og_data.public_send method, data
+      end
     end
 
-    def render_turbo_response(redirect:             nil,
-                              success_message:      nil,
-                              error_message:        nil,
-                              reload_main:          false,
-                              reload_main_or_modal: false,
-                              reload_frames:        [],
-                              close_modal:          false)
+    def render_turbo_response(
+      redirect:             nil,
+      success_message:      nil,
+      error_message:        nil,
+      reload_main:          false,
+      reload_main_or_modal: false,
+      reload_frames:        [],
+      close_modal:          false)
 
       if success_message && error_message
         raise "success_message and error_message cannot both be given."
@@ -72,6 +90,24 @@ module Baseline
     end
 
     private
+
+      def site_name
+        t Current.namespace, scope: :site_names
+      end
+
+      def page_meta_title(**)
+        t :meta_title,
+          scope:   action_i18n_scope,
+          default: Loofah.fragment(page_title).text(encode_special_chars: false).html_safe,
+          **
+      end
+
+      def page_meta_description(**)
+        t :meta_description,
+          scope:   action_i18n_scope,
+          default: page_meta_title,
+          **
+      end
 
       def add_flash(type, text, now: false)
         valid_types = %i(alert info notice warning)
