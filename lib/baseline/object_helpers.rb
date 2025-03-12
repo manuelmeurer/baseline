@@ -32,4 +32,8 @@ class Object
   def unless(*, &)
     self.if(*, _unless: true, &)
   end
+
+  def fetch_from(hash, &block)
+    hash.fetch(self, &block)
+  end
 end

@@ -56,7 +56,7 @@ end
 
 require "baseline/engine"
 require "baseline/configuration"
-require "baseline/if_unless"
+require "baseline/object_helpers"
 require "baseline/deep_fetch"
 
 # Initialize configuration
