@@ -21,6 +21,10 @@ module Baseline
   autoload :ReportError,            "baseline/services/report_error"
   autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
 
+  module External
+    autoload :Lexoffice,            "baseline/services/external/lexoffice"
+  end
+
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
 
