@@ -93,7 +93,7 @@ module Baseline
         end
         url_params = {
           finalize:                true,
-          precedingSalesVoucherId: preceding_sales_voucher_id,
+          precedingSalesVoucherId: preceding_sales_voucher_id
         }.compact
         request(
           :post,
