@@ -21,16 +21,13 @@ module Baseline
 
       unless pathname.exist?
         FileUtils.mkdir_p(pathname.dirname)
-
-        data = HTTP
+        HTTP
           .follow
           .get(url)
-          .tap { raise Error, "Could not fetch #{url}" unless _1.status.success? }
-          .to_s
-
-        File.open(pathname, "wb") {
-          _1.write data
-        }
+          .unless(-> { _1.status.success? }) { raise Error, "Could not fetch #{url}" }
+          .then {
+            File.binwrite pathname, _1.to_s
+          }
       end
 
       if block_given?
