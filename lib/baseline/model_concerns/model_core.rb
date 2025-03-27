@@ -261,18 +261,28 @@ module Baseline
             }
           when column.type.in?(%i(json jsonb))
             subclass.scope :"with_#{attribute}", ->(*values) {
-              values.inject(self) do |scope, value|
+              if values.empty?
                 case connection.adapter_name
                 when "PostgreSQL"
-                  value.is_a?(Hash) ?
-                    scope.where.contains(attribute => value) :
-                    scope.where("#{attribute} ? :value", value: value.to_s)
-                when "SQLite"
-                  scope.where("EXISTS (
-                    SELECT 1 FROM json_each(#{attribute})
-                    WHERE value = ?
-                  )", value)
+                  [[], {}].inject(self) {
+                    _1.where("#{attribute} != '#{_2}'::#{column.type}")
+                  }
                 else raise "Unexpected database adapter: #{connection.adapter_name}"
+                end
+              else
+                values.inject(self) do |scope, value|
+                  case connection.adapter_name
+                  when "PostgreSQL"
+                    value.is_a?(Hash) ?
+                      scope.where.contains(attribute => value) :
+                      scope.where("#{attribute} ? :value", value: value.to_s)
+                  when "SQLite"
+                    scope.where("EXISTS (
+                      SELECT 1 FROM json_each(#{attribute})
+                      WHERE value = ?
+                    )", value)
+                  else raise "Unexpected database adapter: #{connection.adapter_name}"
+                  end
                 end
               end
             }
