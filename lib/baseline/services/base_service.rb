@@ -71,6 +71,10 @@ module Baseline
           end
         end
 
+        def enqueued_or_processing_jobs(*)
+          enqueued_jobs(*) + processing_jobs(*)
+        end
+
         def enqueued_or_processing?(*)
           enqueued?(*) || processing?(*)
         end
