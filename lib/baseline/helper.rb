@@ -404,5 +404,106 @@ module Baseline
         end
       end
     end
+
+    # Copied from https://github.com/tenderlove/rails_autolink
+    def auto_link(text, link: :all, html: {}, sanitize: true, &block)
+      return "".html_safe if text.blank?
+
+      if sanitize
+        text = sanitize(text, sanitize.unless(Hash, {}))
+      end
+
+      case link
+      when :all
+        auto_link_urls(text, html:, sanitize:, &block)
+          .then { auto_link_email_addresses _1, html:, sanitize:, &block }
+          .if(sanitize, &:html_safe)
+      when :email_addresses
+        auto_link_email_addresses(text, html:, sanitize:, &block)
+          .if(sanitize, &:html_safe)
+      when :urls
+        auto_link_urls(text, html:, sanitize:, &block)
+          .if(sanitize, &:html_safe)
+      else raise "Unexpected link option: #{link}"
+      end
+    end
+
+    private
+
+      AUTO_LINK_RE = %r(
+        (?: ((?:http|https|mailto|webcal|ssh|sftp|file):)// | www\.\w )
+        [^\s<\u00A0"]+
+      )ix
+      AUTO_LINK_CRE = [/<[^>]+$/, /^[^>]*>/, /<a\b.*?>/i, /<\/a>/i]
+      AUTO_EMAIL_LOCAL_RE = /[\w.!#\$%&"*\/=?^`{|}~+-]/
+      AUTO_EMAIL_RE = /(?<!#{AUTO_EMAIL_LOCAL_RE})[\w.!#\$%+-]\.?#{AUTO_EMAIL_LOCAL_RE}*@[\w-]+(?:\.[\w-]+)+/
+      BRACKETS = { "]" => "[", ")" => "(", "}" => "{" }
+      WORD_PATTERN = '\p{Word}'
+
+      def auto_link_urls(text, html:, sanitize:, &block)
+        text.gsub(AUTO_LINK_RE) do
+          scheme, href = $1, $&
+          punctuation = []
+          trailing_gt = ""
+
+          if auto_linked?($`, $')
+            href
+          else
+            # don't include trailing punctuation character as part of the URL
+            while href.sub!(/[^#{WORD_PATTERN}\/\-=;]$/, "")
+              punctuation.push $&
+              if opening = BRACKETS[punctuation.last] and href.scan(opening).size > href.scan(punctuation.last).size
+                href << punctuation.pop
+                break
+              end
+            end
+
+            # don't include trailing &gt; entities as part of the URL
+            trailing_gt = $& if href.sub!(/&gt;$/, "")
+
+            link_text = block ? block.call(href) : href
+
+            unless scheme
+              href = "http://#{href}"
+            end
+
+            if sanitize
+              link_text = sanitize(link_text)
+              href      = sanitize(href)
+            end
+
+            tag.a(link_text, html.merge(href: href), !!sanitize) +
+              punctuation.reverse.join("") +
+              trailing_gt.html_safe
+          end
+        end
+      end
+
+      def auto_link_email_addresses(text, html:, sanitize:, &block)
+        text.gsub(AUTO_EMAIL_RE) do
+          text = $&
+
+          if auto_linked?($`, $')
+            text.html_safe
+          else
+            display_text = block ? block.call(text) : text
+
+            if sanitize
+              text         = sanitize(text)
+              unless text == display_text
+                display_text = sanitize(display_text)
+              end
+            end
+
+            mail_to text, display_text, html
+          end
+        end
+      end
+
+      # Detects already linked context or position in the middle of a tag
+      def auto_linked?(left, right)
+        (left =~ AUTO_LINK_CRE[0] and right =~ AUTO_LINK_CRE[1]) or
+          (left.rindex(AUTO_LINK_CRE[2]) and $' !~ AUTO_LINK_CRE[3])
+      end
   end
 end
