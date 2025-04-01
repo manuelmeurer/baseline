@@ -12,6 +12,7 @@ module Baseline
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
+  autoload :SaveSlugIdentifier,     "baseline/model_concerns/save_slug_identifier"
 
   # Services
   autoload :BaseService,            "baseline/services/base_service"
