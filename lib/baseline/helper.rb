@@ -472,7 +472,7 @@ module Baseline
               href      = sanitize(href)
             end
 
-            tag.a(link_text, html.merge(href: href), !!sanitize) +
+            tag.a(link_text, **html.merge(href: href)) +
               punctuation.reverse.join("") +
               trailing_gt.html_safe
           end
