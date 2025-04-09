@@ -328,10 +328,20 @@ module Baseline
         .flat_map(&:keys)
         .uniq
         .index_with do |key|
-          datas
-            .map { _1[key] }
-            .compact_blank
-            .join(" ")
+          values = datas
+            .select { _1.key? key }
+            .map { _1.fetch key }
+
+          if values.size == 1
+            values.first
+          else
+            unless values.all?(String)
+              raise "Don't know how to merge multiple data values that are not strings: #{values}"
+            end
+            values
+              .compact_blank
+              .join(" ")
+          end
         end
     end
 
