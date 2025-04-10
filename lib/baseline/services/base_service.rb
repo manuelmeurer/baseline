@@ -54,7 +54,7 @@ module Baseline
           processing: :claimed,
           nil => nil
         }.each do |prefix, execution_type|
-          define_method [prefix, :jobs].compact.join(" ") do |*_args|
+          define_method [prefix, :jobs].compact.join("_") do |*_args|
             args = ActiveJob::Arguments.serialize(_args)
             SolidQueue::Job
               .where(class_name: to_s)
