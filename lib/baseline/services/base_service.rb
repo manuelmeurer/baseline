@@ -51,18 +51,20 @@ module Baseline
         {
           enqueued:   :ready,
           scheduled:  :scheduled,
-          processing: :claimed
+          processing: :claimed,
+          nil => nil
         }.each do |prefix, execution_type|
-          define_method :"#{prefix}_jobs" do |*args|
-            args = ActiveJob::Arguments.serialize(args)
+          define_method [prefix, :jobs].compact.join(" ") do |*_args|
+            args = ActiveJob::Arguments.serialize(_args)
             SolidQueue::Job
               .where(class_name: to_s)
-              .joins(:"#{execution_type}_execution")
-              .select {
-                args.none? ||
-                  _1.arguments
+              .if(execution_type) { _1.joins(:"#{_2}_execution") }
+              .if(args.any?) {
+                _1.select do |job|
+                  job.arguments
                     .fetch("arguments")
                     .take(args.size) == args
+                end
               }
           end
 
