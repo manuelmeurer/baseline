@@ -142,11 +142,14 @@ module Baseline
         Rails.cache.write cache_key, now.iso8601
       end
 
-      def call_all_private_methods_without_args(raise_errors: true)
-        private_methods(false).map { method _1 }
-                              .select { _1.arity == 0 }
-                              .sort_by { _1.source_location.last }
-                              .each do |method|
+      def call_all_private_methods_without_args(raise_errors: true, except: nil)
+        private_methods(false)
+          .if(except) { _1 - Array(_2).map(&:to_s) }
+          .map { method _1 }
+          .select { _1.arity == 0 }
+          .sort_by { _1.source_location.last }
+          .each do |method|
+
           method.call
         rescue => error
           if raise_errors

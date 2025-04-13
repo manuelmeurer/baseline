@@ -25,6 +25,9 @@ module Baseline
   module External
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
   end
+  module Recurring
+    autoload :Base,                 "baseline/services/recurring/base"
+  end
 
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
