@@ -2,7 +2,8 @@
 
 class Object
   def if(condition, action = nil, _unless: false, &block)
-    result = case condition
+    result =
+      case condition
       when Proc   then condition.call(self)
       when Class  then self.is_a?(condition)
       when Regexp then self.match(condition)
@@ -22,7 +23,8 @@ class Object
       end
       action
     when block
-      args = block.arity < 0 ?
+      args =
+        block.arity < 0 ?
         [self] :
         [self, result].take(block.arity)
       block.call(*args)
