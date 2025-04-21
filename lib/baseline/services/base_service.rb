@@ -19,6 +19,8 @@ module Baseline
     if defined?(ActiveJob)
       queue_as :default
       queue_with_priority 5
+      retry_on ActiveRecord::Deadlocked
+      discard_on ActiveJob::DeserializationError
     end
 
     class << self
