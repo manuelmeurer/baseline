@@ -1,0 +1,32 @@
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
+
+AllCops:
+  Exclude:
+    - "stuff.*"
+
+Layout/HashAlignment:
+  EnforcedColonStyle: table
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+# Override rubocop-rails-omakase
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: true
+  EnforcedStyle: no_space
+
+# Override rubocop-rails-omakase
+Layout/IndentationConsistency:
+  Enabled: true
+
+# Allow empty line at the beginning of a block,
+# e.g. if an `if` statement has multiple conditions and thus spans multiple lines.
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+# Allow empty line at the beginning of a method,
+# e.g. if it has multiple arguments and thus spans multiple lines.
+Layout/EmptyLinesAroundMethodBody:
+  Enabled: false
