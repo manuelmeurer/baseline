@@ -512,5 +512,16 @@ module Baseline
         (left =~ AUTO_LINK_CRE[0] and right =~ AUTO_LINK_CRE[1]) or
           (left.rindex(AUTO_LINK_CRE[2]) and $' !~ AUTO_LINK_CRE[3])
       end
+
+      def plausible_javascript_tag
+        return unless Rails.env.production?
+
+        javascript_include_tag "/qwerty/js/script.js",
+          defer: true,
+          data: {
+            domain: request.host,
+            api:    "/qwerty/api/event"
+          }
+      end
   end
 end
