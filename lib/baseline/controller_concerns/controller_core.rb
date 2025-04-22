@@ -30,6 +30,18 @@ module Baseline
       end
 
       helper_method def og_data
+        locale = {
+          de:      :de_DE,
+          "de-DE": :de_DE,
+          en:      :en_US,
+          "en-US": :en_US,
+          es:      :es_ES,
+          fr:      :fr_FR,
+          it:      :it_IT,
+          nl:      :nl_NL,
+          pl:      :pl_PL,
+        }.fetch(I18n.locale)
+
         # Assign to ivar so data can be changed.
         @og_data ||= {
           type:        "website",
@@ -37,7 +49,7 @@ module Baseline
           title:       [page_meta_title, site_name].join(" | "),
           description: page_meta_description,
           url:         url_for(only_path: false),
-          locale:      { de: :de_DE, en: :en_US }.fetch(I18n.locale)
+          locale:      locale
         }
       end
 
