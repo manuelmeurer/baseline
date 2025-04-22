@@ -109,6 +109,10 @@ module Baseline
 
     private
 
+      def async?
+        defined?(ActiveJob) && executions > 0
+      end
+
       def log(level, message, **kwargs)
         message = kwargs
           .reverse_merge(service: self.class.to_s, id: @id)
