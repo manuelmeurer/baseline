@@ -47,7 +47,7 @@ module Baseline
         val = if field
           attr == :required ?
             field.required? :
-            field.option(attr, default: default)
+            field.option(attr, default:)
         else
           default
         end
