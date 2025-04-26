@@ -14,7 +14,7 @@ module Baseline
         i18n_params:        {},
         i18n_scope:         nil,
         identifier:         form.object_name,
-        show_label:         :horizontal,
+        label_style:        Baseline.configuration.default_label_style,
         suffix:             nil,
         value_attributes:   {},
         wrapper_attributes: {},
@@ -100,13 +100,13 @@ module Baseline
         instance_variable_set "@#{_1}", binding.local_variable_get(_1)
       }
 
-      case show_label
+      case label_style
       when :horizontal then @horizontal_label = true
       when :vertical   then @vertical_label   = true
       when :floating   then @floating_label   = true
       when :inline     then @inline_label     = true
       when false       then @no_label         = true
-      else raise "Unexpected show_label: #{show_label}"
+      else raise "Unexpected label_style: #{label_style}"
       end
 
       case
