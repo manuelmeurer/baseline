@@ -307,12 +307,11 @@ module Baseline
       ]
     end
 
-    def body_classes
+    def body_css_class
       [
         *controller_and_normalized_action_name,
         params[:id]
       ].compact
-        .join(" ")
     end
 
     def data_merge(*datas)
