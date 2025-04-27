@@ -63,7 +63,6 @@ module Baseline
   end
 end
 
-require "baseline/engine"
 require "baseline/configuration"
 require "baseline/object_helpers"
 require "baseline/deep_fetch"
@@ -72,6 +71,8 @@ require "baseline/deep_fetch"
 Baseline.configuration
 
 if defined?(Rails)
+  require "baseline/engine"
+
   Rails::Application.class_eval do
     def env_credentials(env = Rails.env)
       @env_credentials ||= {}
