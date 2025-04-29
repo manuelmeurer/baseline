@@ -2,7 +2,7 @@
 
 module Baseline
   module External
-    class Todoist < Base
+    class Todoist < ::External::Base
       BASE_URL = "https://api.todoist.com/rest/v2".freeze
 
       mattr_accessor :project_name
@@ -15,6 +15,10 @@ module Baseline
       # Projects
 
       add_action :get_project_id do
+        if project_name.blank?
+          raise Error, "Project name is missing."
+        end
+
         cache_key = [
           :todoist_project_id,
           @access_token,
