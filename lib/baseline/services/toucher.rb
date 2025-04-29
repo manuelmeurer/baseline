@@ -5,15 +5,18 @@ module Baseline
     CACHE_KEY = :toucher
 
     def add(resource)
-      read_cache do |value|
-        Set.new([*value, resource.to_gid.to_s])
+      read_cache do |gids|
+        [
+          *gids,
+          resource.to_gid.to_s
+        ].uniq
       end
     end
 
     def call
       gids = nil
-      read_cache do |value|
-        gids = value
+      read_cache do |_gids|
+        gids = _gids
         []
       end
 
@@ -40,7 +43,16 @@ module Baseline
     private
 
       def read_cache(&block)
-        SolidCache::Entry.lock_and_write CACHE_KEY, &block
+        SolidCache::Entry.lock_and_write CACHE_KEY.to_s do |value|
+          gids = value.present? ?
+            JSON.parse(value) :
+            []
+          block
+            .call(gids)
+            .then {
+              JSON.generate _1
+            }
+        end
       end
   end
 end
