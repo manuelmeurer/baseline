@@ -9,7 +9,7 @@ module Baseline
           if task_or_attributes.is_a?(Hash)
             task = Task.new(task_or_attributes)
             if task.todoist_id
-              External::Todoist.call \
+              Baseline::External::Todoist.call \
                 task.responsible.todoist_access_token,
                 :delete_task,
                 task.todoist_id
@@ -42,7 +42,7 @@ module Baseline
 
             task.with responsible: old_responsible do
               if old_access_token = task.responsible_admin_todoist_access_token
-                External::Todoist.call \
+                Baseline::External::Todoist.call \
                   old_access_token,
                   :delete_task,
                   task.todoist_id
@@ -56,7 +56,7 @@ module Baseline
             case
             when task.todoist_id
               if changes.empty? || changes.keys.intersect?(dependent_attributes)
-                External::Todoist.call \
+                Baseline::External::Todoist.call \
                   access_token,
                   :update_task,
                   task.todoist_id,
@@ -64,7 +64,7 @@ module Baseline
                   task_attributes
               end
             when !task.too_old_for_todoist?
-              External::Todoist.call(
+              Baseline::External::Todoist.call(
                 access_token,
                 :create_task,
                 task.done?,

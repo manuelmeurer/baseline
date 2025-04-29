@@ -14,7 +14,7 @@ module Baseline
               raise Error, "Task #{task.id} has Todoist ID, but responsible #{task.responsible} has no Todoist access token."
             end
 
-            External::Todoist.call \
+            Baseline::External::Todoist.call \
               access_token,
               :delete_task,
               task.todoist_id
