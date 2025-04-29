@@ -39,7 +39,7 @@ module Baseline
           self.class.processing_todoist_event ||
           previous_changes.keys.sort == %w[todoist_id updated_at]
 
-          Tasks::Todoist::Update.call_async \
+          Baseline::Tasks::Todoist::Update.call_async \
             (persisted? ? self : as_json),
             previous_changes
         end
