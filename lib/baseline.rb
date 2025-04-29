@@ -10,10 +10,12 @@ module Baseline
   autoload :PageTitle,              "baseline/controller_concerns/page_title"
 
   # Model concerns
+  autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
   autoload :SaveSlugIdentifier,     "baseline/model_concerns/save_slug_identifier"
+  autoload :TouchAsync,             "baseline/model_concerns/touch_async"
 
   # Services
   autoload :BaseService,            "baseline/services/base_service"
@@ -21,6 +23,7 @@ module Baseline
   autoload :ExternalService,        "baseline/services/external_service"
   autoload :MarkdownToHTML,         "baseline/services/markdown_to_html"
   autoload :ReportError,            "baseline/services/report_error"
+  autoload :Toucher,                "baseline/services/toucher"
   autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
 
   module External
@@ -29,10 +32,18 @@ module Baseline
   module Recurring
     autoload :Base,                 "baseline/services/recurring/base"
   end
+  module Tasks
+    module Todoist
+      autoload :CreateAll,          "baseline/services/tasks/todoist/create_all"
+      autoload :DeleteOld,          "baseline/services/tasks/todoist/delete_old"
+      autoload :Update,             "baseline/services/tasks/todoist/update"
+    end
+  end
 
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
 
+  autoload :ActsAsAvoResource,      "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,        "baseline/application_core"
   autoload :Helper,                 "baseline/helper"
   autoload :RedisURL,               "baseline/redis_url"

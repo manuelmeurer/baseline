@@ -46,21 +46,23 @@ module Baseline
         .class
         .actions
         .fetch(method.to_sym) {
-          raise NoMethodError, "undefined method `#{method}' for #{self}"
-        }
-        .then {
+          raise NoMethodError, "Action #{method} not found."
+        }.then {
           instance_exec(*, **, &_1)
         }
     end
 
     private
 
-      def request(method, path_or_url, base_url: nil,
-                                      accept:   "application/json",
-                                      params:   nil,
-                                      json:     nil,
-                                      form:     nil,
-                                      body:     nil)
+      def request(
+        method,
+        path_or_url,
+        base_url: nil,
+        accept:   "application/json",
+        params:   nil,
+        json:     nil,
+        form:     nil,
+        body:     nil)
 
         base_url ||= begin
           self.class::BASE_URL
