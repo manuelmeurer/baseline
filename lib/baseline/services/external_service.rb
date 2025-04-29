@@ -58,7 +58,7 @@ module Baseline
         method,
         path_or_url,
         base_url: nil,
-        accept:   "application/json",
+        accept:   Mime[:json].to_s,
         params:   nil,
         json:     nil,
         form:     nil,
@@ -106,11 +106,10 @@ module Baseline
           sleep 1
         end
 
-        response_json = if response.content_type.mime_type == "application/json" &&
-                          response.to_s.present?
-
-          JSON.parse(response.to_s, symbolize_names: true)
-        end
+        response_json =
+          if response.content_type.mime_type == Mime[:json].to_s && response.to_s.present?
+            JSON.parse(response.to_s, symbolize_names: true)
+          end
 
         unless response.status.success?
           error_message = [
