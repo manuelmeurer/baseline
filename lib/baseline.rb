@@ -48,6 +48,7 @@ module Baseline
   autoload :ActsAsAvoResource,      "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,        "baseline/application_core"
   autoload :Helper,                 "baseline/helper"
+  autoload :MailerCore,             "baseline/mailer_core"
   autoload :RedisURL,               "baseline/redis_url"
   autoload :StimulusController,     "baseline/stimulus_controller"
 
