@@ -2,7 +2,9 @@
 
 module Baseline
   module Helper
-    prepend MemoWise
+    if defined?(MemoWise)
+      prepend MemoWise
+    end
 
     CLOUDINARY_VERSIONS = {
       xs:  50,
