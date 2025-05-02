@@ -4,6 +4,7 @@ module Baseline
   NULL_VALUE = "_null_value_".freeze
 
   # Controller concerns
+  autoload :APIControllerCore,      "baseline/controller_concerns/api_controller_core"
   autoload :ControllerCore,         "baseline/controller_concerns/controller_core"
   autoload :I18nScopes,             "baseline/controller_concerns/i18n_scopes"
   autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
