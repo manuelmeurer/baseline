@@ -185,6 +185,38 @@ module Baseline
       end
     end
 
+    def method_missing(method, *args, _async: false, _after: nil, **kwargs)
+      return super unless service_name = method[/\A_do_(.+)/, 1]
+
+      service = service_namespace.const_get(service_name.classify)
+
+      if persisted?
+        if service.enqueued_or_processing?(self)
+          raise "#{self.class} #{service_name} is already in progress."
+        end
+        if service.scheduled_at(self)
+          raise "#{self.class} #{service_name} is already scheduled."
+        end
+      end
+
+      case
+      when _after
+        service.call_in _after, self, *args, **kwargs
+      when _async
+        service.call_async self, *args, **kwargs
+      else
+        service.call self, *args, **kwargs
+      end
+    end
+
+    def service_namespace
+      self
+        .class
+        .to_s
+        .pluralize
+        .safe_constantize
+    end
+
     def slug_identifier
       @slug_identifier ||= begin
         slug.presence&.split("-")&.first ||
