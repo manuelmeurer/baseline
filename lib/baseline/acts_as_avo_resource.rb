@@ -33,7 +33,7 @@ module Baseline
 
     def filters
       if model_class.respond_to?(:search)
-        filter Avo::Filters::Search
+        filter Baseline::Avo::Filters::Search
       end
     end
 
