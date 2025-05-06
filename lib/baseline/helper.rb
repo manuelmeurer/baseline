@@ -360,8 +360,14 @@ module Baseline
       link_to name, "#", html_options
     end
 
-    def form_field(*, **, &)
-      render Baseline::FormFieldComponent.new(*, **), &
+    def method_missing(method, *, **, &)
+      component_name = "#{method.to_s.classify}Component"
+
+      if component = Baseline.const_get(component_name)
+        render component.new(*, **), &
+      else
+        super
+      end
     end
 
     def form_classes(type:, prefix: "col")
