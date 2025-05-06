@@ -26,6 +26,9 @@ module Baseline
           }
         end
       end
+
+      # https://github.com/avo-hq/avo/issues/3820
+      abstract_resource!
     end
 
     def truncate_on_index = -> { value.if(view == "index") { truncate _1, length: 50 } }
@@ -40,6 +43,11 @@ module Baseline
     def fields
       discover_columns
       discover_associations
+    end
+
+    def timestamps
+      field :created_at, as: :date_time, only_on: :display
+      field :updated_at, as: :date_time, only_on: :show
     end
   end
 end
