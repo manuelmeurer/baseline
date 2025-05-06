@@ -1,0 +1,30 @@
+-# frozen_string_literal: true
+-# locals: (imageable:, size:, vertical: false, rounded_corners: true)
+
+- margin = size.in?(%i(xs sm)) ? 2 : 3
+- image = ->(css_class = nil) do
+  - capture_haml do
+    - css_class = [css_class, class_names("border", "align-self-center", "square-#{size}", "rounded-circle": rounded_corners)].compact
+    - case imageable
+    - when String
+      = image_tag imageable, class: css_class
+    - when ActiveStorage::Attached
+      - unless imageable.attached?
+        - raise "Attachment is missing: #{imageable.id}"
+      = attachment_image_tag imageable, :md_thumb, class: css_class
+    - else
+      - raise "Unexpected imageable: #{imageable.class}"
+
+- if content = yield.presence
+  - if vertical
+    .d-flex.flex-column.align-items-center
+      = image.call "mb-#{margin}"
+      = content
+  - else
+    .d-flex
+      = image.call "me-#{margin}"
+      .d-flex.overflow-auto
+        .align-self-center.overflow-auto
+          = content
+- else
+  = image.call
