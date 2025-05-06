@@ -1,0 +1,4 @@
+-# frozen_string_literal: true
+
+.d-flex.flex-column{ class: class_names(*@css_class, "row-gap-#{@gap.fetch(:row)}", "column-gap-#{@gap.fetch(:column)}", "flex-#{@breakpoint}-row": @breakpoint, "align-items-#{@breakpoint}-center": @breakpoint && @center_vertically) }
+  = safe_join items, " "

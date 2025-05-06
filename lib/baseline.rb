@@ -44,6 +44,7 @@ module Baseline
 
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
+  autoload :ItemListComponent,      "baseline/components/item_list_component"
 
   autoload :ActsAsAvoResource,      "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,        "baseline/application_core"
