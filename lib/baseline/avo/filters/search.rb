@@ -3,7 +3,7 @@
 module Baseline
   module Avo
     module Filters
-      class Search < Avo::Filters::TextFilter
+      class Search < ::Avo::Filters::TextFilter
         self.name = "Search"
 
         def apply(request, query, value)
