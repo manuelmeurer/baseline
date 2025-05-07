@@ -28,6 +28,8 @@ module Baseline
         raise "on_error must be one of #{ON_ERROR.join(", ")}, but was #{on_error}"
       end
 
+      return if @_ignore_uniqueness_check
+
       @_on_error = on_error
 
       if @_service_args.nil?
@@ -35,8 +37,8 @@ module Baseline
       end
 
       @_uniqueness_args = args.empty? ?
-                          @_service_args :
-                          args
+        @_service_args :
+        args
       new_uniqueness_key = uniqueness_key(@_uniqueness_args)
       if @_uniqueness_keys && @_uniqueness_keys.include?(new_uniqueness_key)
         raise "A uniqueness key with args #{@_uniqueness_args.inspect} already exists."
@@ -57,9 +59,10 @@ module Baseline
       end
     end
 
-    def call(*args, **kwargs)
+    def call(*args, _ignore_uniqueness_check: false, **kwargs)
+      @_ignore_uniqueness_check = _ignore_uniqueness_check
       @_service_args = args
-      super
+      super *args, **kwargs
     rescue self.class::NotUniqueError => e
       case @_on_error.to_sym
       when :fail
