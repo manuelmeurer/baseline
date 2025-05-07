@@ -27,6 +27,11 @@ module Baseline
   autoload :Toucher,                "baseline/services/toucher"
   autoload :UpdateSchemaMigrations, "baseline/services/update_schema_migrations"
 
+  module Avo
+    module Filters
+      autoload :Search,             "baseline/avo/filters/search"
+    end
+  end
   module External
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
     autoload :Todoist,              "baseline/services/external/todoist"
