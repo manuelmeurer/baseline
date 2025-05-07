@@ -62,7 +62,7 @@ module Baseline
     def call(*args, _ignore_uniqueness_check: false, **kwargs)
       @_ignore_uniqueness_check = _ignore_uniqueness_check
       @_service_args = args
-      super *args, **kwargs
+      super(*args, **kwargs)
     rescue self.class::NotUniqueError => e
       case @_on_error.to_sym
       when :fail
