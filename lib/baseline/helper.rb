@@ -222,7 +222,7 @@ module Baseline
         loading: :lazy
       )
 
-      if specific_turbo_frame_request?(name) || ActiveRecord::Type::Boolean.new.cast(params["_load_frame"])
+      if specific_turbo_frame_request?(name) || ActiveRecord::Type::Boolean.new.cast(params[:_load_frame])
         turbo_frame_tag name, &block
       else
         turbo_frame_tag name, **attributes do
