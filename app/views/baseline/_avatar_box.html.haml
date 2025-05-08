@@ -1,9 +1,9 @@
 -# frozen_string_literal: true
--# locals: (imageable:, size:, vertical: false, rounded_corners: true)
+-# locals: (imageable:, size:, vertical: false, rounded_corners: true, image_wrapper: nil)
 
 - margin = size.in?(%i(xs sm)) ? 2 : 3
 - image = ->(css_class = nil) do
-  - capture_haml do
+  - image = capture_haml do
     - css_class = [css_class, class_names("border", "align-self-center", "square-#{size}", "rounded-circle": rounded_corners)].compact
     - case imageable
     - when String
@@ -14,6 +14,7 @@
       = attachment_image_tag imageable, :md_thumb, class: css_class
     - else
       - raise "Unexpected imageable: #{imageable.class}"
+  - image_wrapper ? image_wrapper.call(image) : image
 
 - if content = yield.presence
   - if vertical
