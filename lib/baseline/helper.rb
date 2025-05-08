@@ -361,9 +361,11 @@ module Baseline
     end
 
     def method_missing(method, *, **, &)
-      component_name = "#{method.to_s.classify}Component"
+      component = suppress NameError do
+        Baseline.const_get("#{method.to_s.classify}Component")
+      end
 
-      if component = Baseline.const_get(component_name)
+      if component
         render component.new(*, **), &
       else
         super
