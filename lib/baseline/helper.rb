@@ -155,6 +155,7 @@ module Baseline
         ("alert-dismissible" if closeable),
         "fade",
         "show",
+        "d-none",
         css_class
       ].compact
 
