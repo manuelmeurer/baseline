@@ -149,7 +149,7 @@ module Baseline
     end
 
     def alert(level, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
-      css_classes = [
+      css_class = [
         "alert",
         "alert-#{level}",
         ("alert-dismissible" if closeable),
@@ -184,6 +184,8 @@ module Baseline
         tag.button(type: "button", class: "btn-close", data: { bs_dismiss: "alert" })
       end
 
+      data = data_merge(data, stimco(:alert, hide_id:))
+
       [
         close_button,
         heading,
@@ -191,7 +193,7 @@ module Baseline
       ].compact
         .join("\n")
         .html_safe
-        .then { tag.div _1, class: css_classes, data: data }
+        .then { tag.div _1, class: css_class, data: }
     end
 
     def flashes
