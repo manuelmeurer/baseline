@@ -1,5 +1,5 @@
 -# frozen_string_literal: true
--# locals: (title: nil, image: nil, icon: nil, header: nil, css_class: nil, body_css_class: nil, equal_height: false, url: nil, footer: nil, footer_css_class: nil, title_tag: :h5, above_title: nil, after_body: nil, image_cover: false)
+-# locals: (title: nil, image: nil, icon: nil, header: nil, css_class: nil, body_css_class: nil, equal_height: false, url: nil, footer: nil, footer_css_class: nil, title_tag: :h5, above_title: nil, after_body: nil, image_cover: false, data: {}, style: nil)
 
 - css_class = class_names(:card, css_class, "h-100": equal_height)
 
@@ -47,7 +47,7 @@
       = footer.html_safe
 
 - if url
-  = link_to content, url, class: [*css_class, "text-body"]
+  = link_to content, url, class: [*css_class, "text-body"], data:, style:
 - else
-  %div{ class: css_class }
+  %div{ class: css_class, data:, style: }
     = content
