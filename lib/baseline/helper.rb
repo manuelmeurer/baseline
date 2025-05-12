@@ -365,7 +365,7 @@ module Baseline
 
     def method_missing(method, *, **, &)
       component = suppress NameError do
-        Baseline.const_get("#{method.to_s.classify}Component")
+        Baseline.const_get("#{method.to_s.camelize}Component")
       end
 
       if component
