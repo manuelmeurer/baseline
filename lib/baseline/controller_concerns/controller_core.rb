@@ -30,6 +30,10 @@ module Baseline
           .if(to_h) { _1.to_h }
       end
 
+      helper_method def site_name
+        t Current.namespace, scope: :site_names
+      end
+
       helper_method def og_data
         locale = {
           de:      :de_DE,
@@ -103,10 +107,6 @@ module Baseline
     end
 
     private
-
-      def site_name
-        t Current.namespace, scope: :site_names
-      end
 
       def page_meta_title(**)
         t :meta_title,
