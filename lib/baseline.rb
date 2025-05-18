@@ -5,10 +5,12 @@ module Baseline
 
   # Controller concerns
   autoload :APIControllerCore,      "baseline/controller_concerns/api_controller_core"
+  autoload :Authentication,         "baseline/controller_concerns/authentication"
   autoload :ControllerCore,         "baseline/controller_concerns/controller_core"
   autoload :I18nScopes,             "baseline/controller_concerns/i18n_scopes"
   autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,              "baseline/controller_concerns/page_title"
+  autoload :Robots,                 "baseline/controller_concerns/robots"
 
   # Model concerns
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"

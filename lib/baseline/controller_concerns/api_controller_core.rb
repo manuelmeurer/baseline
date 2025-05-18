@@ -10,7 +10,8 @@ module Baseline
         memo_wise :json_body
       end
 
-      include ActionController::HttpAuthentication::Token::ControllerMethods
+      include ActionController::HttpAuthentication::Token::ControllerMethods,
+              Robots
 
       error_class = Class.new(StandardError) do
         attr_reader :status
