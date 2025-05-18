@@ -81,12 +81,19 @@ module Baseline
 
     def todoist_description
       meta = [
-        Rails.application.routes.url_helpers.url_for([:admin, self]),
+        Rails.application.routes.url_helpers.url_for(admin_url_parts),
         if taskable
-          [
-            %(#{taskable.model_name.human} "#{taskable}"),
-            (Rails.application.routes.url_helpers.url_for([:admin, taskable]) rescue nil)
-          ].compact
+          Rails
+            .application
+            .routes
+            .url_helpers
+            .then { _1.url_for(taskable_admin_url_parts) rescue nil }
+            .then {
+              [
+                %(#{taskable.model_name.human} "#{taskable}"),
+                _1
+              ]
+            }.compact
             .join("\n")
         end
       ].compact
