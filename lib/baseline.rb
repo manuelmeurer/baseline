@@ -36,14 +36,19 @@ module Baseline
       autoload :Search,             "baseline/avo/filters/search"
     end
   end
+
   module External
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
     autoload :Todoist,              "baseline/services/external/todoist"
   end
+
   module Recurring
     autoload :Base,                 "baseline/services/recurring/base"
   end
+
   module Tasks
+    autoload :Create,               "baseline/services/tasks/create"
+
     module Todoist
       autoload :CreateAll,          "baseline/services/tasks/todoist/create_all"
       autoload :DeleteOld,          "baseline/services/tasks/todoist/delete_old"
