@@ -4,6 +4,7 @@ module Baseline
   NULL_VALUE = "_null_value_".freeze
 
   # Controller concerns
+  autoload :APITodoistControllable, "baseline/controller_concerns/api_todoist_controllable"
   autoload :APIControllerCore,      "baseline/controller_concerns/api_controller_core"
   autoload :Authentication,         "baseline/controller_concerns/authentication"
   autoload :ControllerCore,         "baseline/controller_concerns/controller_core"
@@ -14,6 +15,7 @@ module Baseline
 
   # Model concerns
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
+  autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
