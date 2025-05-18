@@ -214,7 +214,7 @@ module Baseline
         .class
         .to_s
         .pluralize
-        .safe_constantize
+        .constantize
     end
 
     def slug_identifier
