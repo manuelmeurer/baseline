@@ -56,6 +56,10 @@ module Baseline
     end
   end
 
+  module TodoistEvents
+    autoload :Process,              "baseline/services/todoist_events/process"
+  end
+
   # Components
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
   autoload :ItemListComponent,      "baseline/components/item_list_component"
