@@ -26,16 +26,13 @@ module Baseline
         ].join(":")
 
         Rails.cache.fetch cache_key do
-          projects = call(@access_token, :get_projects)
+          call(@access_token, :get_projects)
             .select {
               _1.fetch(:name) == project_name
-            }
-
-          unless projects.one?
-            raise Error, "Found #{projects.size} Todoist projects with name #{project_name}."
-          end
-
-          projects.first.fetch(:id)
+            }.unless(-> { _1.one? }) {
+              raise Error, "Found #{_1.size} Todoist projects with name #{project_name}."
+            }.first
+            .fetch(:id)
         end
       end
 
