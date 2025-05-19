@@ -109,12 +109,15 @@ module Baseline
         end
 
         def close_or_reopen_task(response, done)
-          id, completed = response.fetch_values(:id, :is_completed)
+          id, completed_at = response.fetch_values(:id, :completed_at)
           case
-          when completed && !done then :reopen_task
-          when !completed && done then :close_task
+          when completed_at && !done then :reopen_task
+          when !completed_at && done then :close_task
           end&.then {
-            self.class.call_async @access_token, _1, id
+            self.class.call_async \
+              @access_token,
+              _1,
+              id
           }
         end
     end
