@@ -3,7 +3,7 @@
 module Baseline
   module External
     class Todoist < ::External::Base
-      BASE_URL = "https://api.todoist.com/rest/v2".freeze
+      BASE_URL = "https://api.todoist.com/api/v1".freeze
 
       mattr_accessor :project_name
 
