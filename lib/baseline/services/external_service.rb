@@ -124,11 +124,47 @@ module Baseline
         response_json || response.to_s
       end
 
+      def paginate_get(url, params = {}, yielder = nil)
+        unless yielder
+          return Enumerator.new do |yielder|
+            send \
+              __method__,
+              url,
+              params,
+              yielder
+          end
+        end
+
+        if respond_to?(:prepare_paginate_params, true)
+          params = prepare_paginate_params(params)
+        end
+
+        response = request(:get, url, params:)
+
+        response
+          .fetch(paginate_results_key)
+          .each do |result|
+
+          yielder << result
+        end
+
+        next_url, next_params = next_url_and_params(response, url, params)
+
+        if next_url
+          send \
+            __method__,
+            next_url,
+            next_params,
+            yielder
+        end
+      end
+
       def request_auth          = nil
       def request_basic_auth    = nil
       def request_params        = {}
       def request_headers       = {}
       def request_retry_reasons = %i(server_error too_many_requests)
+      def paginate_results_key  = :results
 
       def wait_for(condition = nil, &block)
         unless condition || block

@@ -3,7 +3,8 @@
 module Baseline
   module External
     class Todoist < ::External::Base
-      BASE_URL = "https://api.todoist.com/api/v1".freeze
+      BASE_URL  = "https://api.todoist.com/api/v1".freeze
+      PAGE_SIZE = 200
 
       mattr_accessor :project_name
 
@@ -37,16 +38,16 @@ module Baseline
       end
 
       add_action :get_projects do
-        request :get, "projects"
+        paginate_get "projects"
       end
 
       # Tasks
 
       add_action :get_tasks do |due_today: false|
-        request(
-          :get,
+        project_id = call(@access_token, :get_project_id)
+        paginate_get(
           "tasks",
-          params: { project_id: call(@access_token, :get_project_id) }
+          params: { project_id: }
         ).if(due_today) do |tasks|
           tasks.select { _1[:due]&.fetch(:date)&.<=(Date.current.iso8601) }
         end
@@ -92,6 +93,19 @@ module Baseline
           end
 
           "Bearer #{@access_token}"
+        end
+
+        def prepare_paginate_params(params)
+          params.reverse_merge(
+            limit: PAGE_SIZE
+          )
+        end
+
+        def next_url_and_params(response, url, params)
+          if cursor = response[:next_cursor]
+            params[:cursor] = cursor
+            [url, params]
+          end
         end
 
         def close_or_reopen_task(response, done)

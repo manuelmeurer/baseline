@@ -134,7 +134,9 @@ module Baseline
         }.transform_values { Array(_1).join(",") }
           .merge(filters)
           .then {
-            paginate_get "voucherlist", _1
+            paginate_get \
+              "voucherlist",
+              _1
           }
       end
 
@@ -160,39 +162,20 @@ module Baseline
 
       private
 
-        def request_auth = "Bearer #{Rails.application.env_credentials.lexoffice_api_key!}"
+        def request_auth         = "Bearer #{Rails.application.env_credentials.lexoffice_api_key!}"
+        def paginate_results_key = :content
 
-        def paginate_get(url, params, yielder = nil)
-          unless yielder
-            return Enumerator.new do |yielder|
-              send \
-                __method__,
-                url,
-                params,
-                yielder
-            end
-          end
-
-          params = params.reverse_merge(
+        def prepare_paginate_params(params)
+          params.reverse_merge(
             page: 0,
             size: PAGE_SIZE
           )
+        end
 
-          response = request(:get, url, params:)
-
-          response
-            .fetch(:content)
-            .each {
-              yielder << _1
-            }
-
+        def next_url_and_params(response, url, params)
           unless response.fetch(:last)
             params[:page] += 1
-
-            paginate_get \
-              url,
-              params,
-              yielder
+            [url, params]
           end
         end
     end
