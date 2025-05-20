@@ -126,12 +126,12 @@ module Baseline
 
       def paginate_get(url, params = {}, yielder = nil)
         unless yielder
-          return Enumerator.new do |yielder|
+          return Enumerator.new do |y|
             send \
               __method__,
               url,
               params,
-              yielder
+              y
           end
         end
 
