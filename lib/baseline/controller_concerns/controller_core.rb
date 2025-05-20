@@ -6,7 +6,7 @@ module Baseline
 
     included do
       include I18nScopes,
-              Robots
+              RobotsSitemap
 
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource

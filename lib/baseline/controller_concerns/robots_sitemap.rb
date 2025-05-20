@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  module Robots
+  module RobotsSitemap
     extend ActiveSupport::Concern
 
     # This is a bit hacky... we need to allow unauthenticated access to the "robots" action,
@@ -11,21 +11,21 @@ module Baseline
     # first request is for robots, redirect so that the authentication is actually skipped on the
     # second request.
     included do
-      mattr_accessor :robots_unauthenticated_access_set
+      mattr_accessor :_robots_sitemap_unauthenticated_access
 
       before_action prepend: true do
-        next if self.class.robots_unauthenticated_access_set
+        next if self.class._robots_sitemap_unauthenticated_access
 
-        # We need to find the class that has includes the Authentication concern,
+        # We need to find the class that has included the Authentication concern,
         # it might be a superclass of the current class.
         self
           .class
           .ancestors
           .select { _1.respond_to? :allow_unauthenticated_access }
           .last
-          .try(:allow_unauthenticated_access, only: :robots)
+          .try(:allow_unauthenticated_access, only: %i[robots sitemap])
 
-        self.class.robots_unauthenticated_access_set = true
+        self.class._robots_sitemap_unauthenticated_access = true
 
         if action_name == "robots"
           redirect_to params.permit!
@@ -35,9 +35,10 @@ module Baseline
 
     def robots
       response = {
-        allow: <<~ROBOTS,
+        allow: <<~ROBOTS.chomp,
             User-agent: *
             Allow: /
+            #{url_for_sitemap&.then { "Sitemap: #{_1}" }}
           ROBOTS
         disallow: <<~ROBOTS
             User-agent: *
@@ -47,5 +48,21 @@ module Baseline
 
       render plain: response
     end
+
+    def sitemap
+      if sitemap = Sitemaps::Fetch.call(Current.namespace).presence
+        render xml: sitemap
+      else
+        head :ok
+      end
+    end
+
+    private
+
+      def url_for_sitemap
+        suppress NoMethodError do
+          url_for [Current.namespace, :sitemap, only_path: false]
+        end
+      end
   end
 end

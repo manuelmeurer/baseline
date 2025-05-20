@@ -11,7 +11,7 @@ module Baseline
   autoload :I18nScopes,             "baseline/controller_concerns/i18n_scopes"
   autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,              "baseline/controller_concerns/page_title"
-  autoload :Robots,                 "baseline/controller_concerns/robots"
+  autoload :RobotsSitemap,          "baseline/controller_concerns/robots_sitemap"
 
   # Model concerns
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
@@ -58,6 +58,12 @@ module Baseline
 
   module TodoistEvents
     autoload :Process,              "baseline/services/todoist_events/process"
+  end
+
+  module Sitemaps
+    autoload :Fetch,                "baseline/services/sitemaps/fetch"
+    autoload :GenerateAll,          "baseline/services/sitemaps/generate_all"
+    autoload :Helpers,              "baseline/services/sitemaps/helpers"
   end
 
   # Components

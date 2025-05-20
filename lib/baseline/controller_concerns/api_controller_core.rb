@@ -11,7 +11,7 @@ module Baseline
       end
 
       include ActionController::HttpAuthentication::Token::ControllerMethods,
-              Robots
+              RobotsSitemap
 
       error_class = Class.new(StandardError) do
         attr_reader :status
