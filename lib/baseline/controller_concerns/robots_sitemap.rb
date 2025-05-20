@@ -35,7 +35,7 @@ module Baseline
 
     def robots
       response = {
-        allow: <<~ROBOTS.chomp,
+        allow: <<~ROBOTS.strip,
             User-agent: *
             Allow: /
             #{url_for_sitemap&.then { "Sitemap: #{_1}" }}
