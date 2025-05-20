@@ -34,7 +34,9 @@ module Baseline
 
         task.save!
 
-        try :after_create, task
+        if respond_to?(:after_create, true)
+          after_create(task)
+        end
 
         task
       end
