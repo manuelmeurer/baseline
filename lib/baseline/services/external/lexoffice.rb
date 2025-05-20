@@ -4,7 +4,7 @@ module Baseline
   module External
     class Lexoffice < ::External::Base
       BASE_URL  = "https://api.lexoffice.io/v1".freeze
-      PAGE_SIZE = 250
+      PAGE_SIZE = 250.freeze
 
       class << self
         def voucher_url(id) = "https://app.lexoffice.de/vouchers#!/VoucherView/Invoice/#{id}"

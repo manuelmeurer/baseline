@@ -4,7 +4,7 @@ module Baseline
   module External
     class Todoist < ::External::Base
       BASE_URL  = "https://api.todoist.com/api/v1".freeze
-      PAGE_SIZE = 200
+      PAGE_SIZE = 200.freeze
 
       mattr_accessor :project_name
 
