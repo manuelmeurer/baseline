@@ -350,14 +350,14 @@ module Baseline
             [value, :string]
           end
           data = stimco.action(:fill,
-            key:   key,
-            value: value,
-            type:  type
+            key:,
+            value:,
+            type:
           )
           link_to key, "#",
             tabindex: -1,
             class:    "btn btn-sm btn-outline-secondary",
-            data:     data
+            data:
         end.then {
           tag.div \
             _1.join(" ").html_safe,

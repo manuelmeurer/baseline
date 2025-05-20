@@ -119,7 +119,7 @@ module Baseline
           "files",
           form: {
             file: HTTP::FormData::File.new(path_or_io),
-            type: type
+            type:
           }
         ).fetch(:id)
       end

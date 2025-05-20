@@ -50,11 +50,11 @@ module Baseline
         # Assign to ivar so data can be changed.
         @og_data ||= {
           type:        "website",
-          site_name:   site_name,
+          site_name:,
           title:       [page_meta_title, site_name].join(" | "),
           description: page_meta_description,
           url:         url_for(only_path: false),
-          locale:      locale
+          locale:
         }
       end
 
@@ -85,12 +85,12 @@ module Baseline
         view_context.tag.div \
           data: stimco(:turbo_response,
             redirect:             redirect&.then { url_for _1 },
-            close_modal:          close_modal,
-            reload_main:          reload_main,
-            reload_main_or_modal: reload_main_or_modal,
+            close_modal:,
+            reload_main:,
+            reload_main_or_modal:,
             reload_frames:        Array(reload_frames),
-            success_message:      success_message,
-            error_message:        error_message
+            success_message:,
+            error_message:
           )
       end
 

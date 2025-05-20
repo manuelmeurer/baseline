@@ -83,7 +83,7 @@ module Baseline
         response    = nil
         tries       = 0
         auth_header = request_auth(*[base_url].take(method(:request_auth).arity))
-        headers     = request_headers.merge(accept: accept)
+        headers     = request_headers.merge(accept:)
 
         loop do
           response = Octopoller.poll(retries: 10) do
@@ -197,8 +197,8 @@ module Baseline
               _1.user = _1.password = nil
               {
                 server:   _1.to_s,
-                username: username,
-                password: password
+                username:,
+                password:
               }
             }
         end

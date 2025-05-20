@@ -10,7 +10,7 @@ module Baseline
 
         included do
           if default
-            attribute attribute, default: default
+            attribute attribute, default:
           end
 
           if validate_presence

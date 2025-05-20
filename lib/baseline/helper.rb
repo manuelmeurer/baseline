@@ -299,7 +299,7 @@ module Baseline
 
     def meta_tags(data)
       data.map do |name, content|
-        tag.meta name: name, content: content
+        tag.meta name:, content:
       end.then {
         safe_join _1
       }
@@ -491,7 +491,7 @@ module Baseline
               href      = sanitize(href)
             end
 
-            tag.a(link_text, **html.merge(href: href)) +
+            tag.a(link_text, **html.merge(href:)) +
               punctuation.reverse.join("") +
               trailing_gt.html_safe
           end

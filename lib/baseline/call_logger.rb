@@ -3,7 +3,7 @@
 module Baseline
   module CallLogger
     def call(*args, **kwargs)
-      log :info, "START", args: args, kwargs: kwargs, caller: caller
+      log :info, "START", args:, kwargs:, caller:
 
       start = Time.now
 

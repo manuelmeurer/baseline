@@ -43,11 +43,11 @@ module Baseline
         alias_method :call_async, :perform_later
 
         def call_in(wait, *, **)
-          set(wait: wait).perform_later(*, **)
+          set(wait:).perform_later(*, **)
         end
 
         def call_at(wait_until, *, **)
-          set(wait_until: wait_until).perform_later(*, **)
+          set(wait_until:).perform_later(*, **)
         end
 
         {

@@ -10,7 +10,7 @@ module Baseline
         unless version = file[%r(db/migrate/(\d{14})), 1]
           raise Error, "Could not determine version from file: #{file}"
         end
-        SchemaMigration.create! version: version
+        SchemaMigration.create! version:
       end
     end
   end
