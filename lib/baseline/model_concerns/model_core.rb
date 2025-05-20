@@ -239,6 +239,28 @@ module Baseline
     end
 
     class_methods do
+      def accepted_file_types(attribute)
+        unless reflect_on_attachment(attribute)
+          raise "#{attribute} is not an attachment."
+        end
+
+        return unless validator = validators
+          .grep(ActiveStorageValidations::ContentTypeValidator)
+          .detect { _1.attributes == [attribute.to_sym] }
+
+        validator
+          .options
+          .then { _1[:in] || _1.fetch(:with) }
+          .then { Array(_1) }
+          .map {
+            case _1
+            when String
+            when Symbol then Marcel::MimeType.for(extension: _1) || raise("Unexpected extension: #{_1}")
+            else raise "Unexpected value: #{_1.class}"
+            end
+          }.join(", ")
+      end
+
       def translates_with_fallback(*)
         translates(*, fallback: :any)
       end
