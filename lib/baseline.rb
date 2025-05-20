@@ -76,6 +76,7 @@ module Baseline
   autoload :MailerCore,             "baseline/mailer_core"
   autoload :RedisURL,               "baseline/redis_url"
   autoload :StimulusController,     "baseline/stimulus_controller"
+  autoload :ZstdCompressor,         "baseline/zstd_compressor"
 
   class << self
     def has_many_reflection_classes
