@@ -13,6 +13,14 @@ module Baseline
         super(...)
       end
 
+      add_action :get_id_mappings do |ids|
+        if ids.size > 100
+          raise Error, "Too many IDs. Maximum is 100."
+        end
+
+        request :get, "id_mappings/tasks/#{ids.join(",")}"
+      end
+
       # Projects
 
       add_action :get_project_id do
