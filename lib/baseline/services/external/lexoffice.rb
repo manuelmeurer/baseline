@@ -131,8 +131,9 @@ module Baseline
         {
           voucherType:   type,
           voucherStatus: status
-        }.transform_values { Array(_1).join(",") }
-          .merge(filters)
+        }.transform_values {
+          Array(_1).join(",")
+        }.merge(filters)
           .then {
             paginate_get \
               "voucherlist",
