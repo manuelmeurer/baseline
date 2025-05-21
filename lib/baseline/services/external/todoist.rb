@@ -47,7 +47,7 @@ module Baseline
         project_id = call(@access_token, :get_project_id)
         paginate_get(
           "tasks",
-          params: { project_id: }
+          project_id:
         ).if(due_today) do |tasks|
           tasks.select { _1[:due]&.fetch(:date)&.<=(Date.current.iso8601) }
         end
