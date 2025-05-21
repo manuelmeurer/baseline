@@ -27,7 +27,7 @@ module Baseline
 
         self.class._robots_sitemap_unauthenticated_access = true
 
-        if action_name == "robots"
+        if action_name.in?(%w[robots sitemap])
           redirect_to params.permit!
         end
       end
