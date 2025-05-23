@@ -24,7 +24,10 @@ module Baseline
 
         class_methods do
           def allow_unauthenticated_access(**)
+            # If the `require_authentication` callback has not been defined, an ArgumentError is raised.
             skip_before_action(:require_authentication, **)
+          rescue ArgumentError
+          else
             before_action(:resume_session, **) # Set Current.user
           end
         end
