@@ -108,6 +108,12 @@ module Baseline
 
     private
 
+      def expires_soon
+        expires_in 1.hour,
+          public:     true,
+          "s-maxage": 1.day
+      end
+
       def page_meta_title(**)
         t :meta_title,
           scope:   action_i18n_scope,
