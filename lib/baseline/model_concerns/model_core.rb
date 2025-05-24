@@ -278,6 +278,10 @@ module Baseline
           subclass.include HasTimestamps[*timestamp_attributes]
         end
 
+        unless subclass.to_s == "Task" || subclass.columns.map(&:name).include?("tasks")
+          subclass.has_many :tasks, as: :taskable, dependent: :destroy
+        end
+
         subclass.columns.each do |column|
           attribute = column.name.to_sym
 
