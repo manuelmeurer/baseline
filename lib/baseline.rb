@@ -14,8 +14,12 @@ module Baseline
   autoload :RobotsSitemap,          "baseline/controller_concerns/robots_sitemap"
 
   # Model concerns
+  autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
+  autoload :HasCountry,             "baseline/model_concerns/has_country"
+  autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
+  autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
@@ -42,8 +46,20 @@ module Baseline
     autoload :Todoist,              "baseline/services/external/todoist"
   end
 
+  module InvoicingDetails
+    module Lexoffice
+      autoload :UpsertContact,      "baseline/services/invoicing_details/lexoffice/upsert_contact"
+    end
+  end
+
   module Recurring
     autoload :Base,                 "baseline/services/recurring/base"
+  end
+
+  module Sitemaps
+    autoload :Fetch,                "baseline/services/sitemaps/fetch"
+    autoload :GenerateAll,          "baseline/services/sitemaps/generate_all"
+    autoload :Helpers,              "baseline/services/sitemaps/helpers"
   end
 
   module Tasks
@@ -58,12 +74,6 @@ module Baseline
 
   module TodoistEvents
     autoload :Process,              "baseline/services/todoist_events/process"
-  end
-
-  module Sitemaps
-    autoload :Fetch,                "baseline/services/sitemaps/fetch"
-    autoload :GenerateAll,          "baseline/services/sitemaps/generate_all"
-    autoload :Helpers,              "baseline/services/sitemaps/helpers"
   end
 
   # Components
