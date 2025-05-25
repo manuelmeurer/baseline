@@ -265,29 +265,43 @@ module Baseline
         translates(*, fallback: :any)
       end
 
-      def inherited(subclass)
-        if subclass.base_class&.then { _1 != subclass }
+      def inherited(klass)
+        if klass.base_class&.then { _1 != klass }
           return super
         end
 
         super
 
-        return unless subclass.table_exists?
+        # Call `_baseline_finalize` when class has been loaded.
+        TracePoint.new(:end) do |tracepoint|
+          if tracepoint.self == klass
+            klass._baseline_finalize
+            tracepoint.disable
+          end
+        end.enable
+      end
 
-        if timestamp_attributes = %w(created_at updated_at).intersection(subclass.column_names).presence
-          subclass.include HasTimestamps[*timestamp_attributes]
+      def _baseline_finalize
+        return unless table_exists?
+
+        if @_baseline_finalized
+          raise "Model #{name} has already been finalized."
         end
 
-        unless subclass.to_s == "Task" || subclass.columns.map(&:name).include?("tasks")
-          subclass.has_many :tasks, as: :taskable, dependent: :destroy
+        if timestamp_attributes = %w(created_at updated_at).intersection(column_names).presence
+          include HasTimestamps[*timestamp_attributes]
         end
 
-        subclass.columns.each do |column|
+        unless self == Task || columns.map(&:name).include?("tasks")
+          has_many :tasks, as: :taskable, dependent: :destroy
+        end
+
+        columns.each do |column|
           attribute = column.name.to_sym
 
           case
           when column.type == :string
-            subclass.define_singleton_method attribute.to_s.pluralize do
+            define_singleton_method attribute.to_s.pluralize do
               pluck(Arel.sql("DISTINCT #{attribute}"))
                 .compact
                 .sort
@@ -296,14 +310,14 @@ module Baseline
             not_attributes = %i(un not_).map {
               [_1, attribute].join.to_sym
             }
-            unless [attribute, *not_attributes].any? { subclass.respond_to? _1, true }
-              subclass.scope attribute, -> { where(attribute => true) }
+            unless [attribute, *not_attributes].any? { respond_to? _1, true }
+              scope attribute, -> { where(attribute => true) }
               not_attributes.each do |not_attribute|
-                subclass.scope not_attribute, -> { where(attribute => false) }
+                scope not_attribute, -> { where(attribute => false) }
               end
             end
           when column.try(:array) # Postgres only
-            subclass.define_method("#{attribute}=") do |value|
+            define_method("#{attribute}=") do |value|
               if value.is_a?(String)
                 value = value.split(/(\r?\n)+/)
               end
@@ -314,11 +328,11 @@ module Baseline
                 .then { super _1 }
             end
 
-            subclass.scope :"with_#{attribute}", ->(*values) {
+            scope :"with_#{attribute}", ->(*values) {
               where.overlap(attribute => values)
             }
           when column.type.in?(%i(json jsonb))
-            subclass.scope :"with_#{attribute}", ->(*values) {
+            scope :"with_#{attribute}", ->(*values) {
               if values.empty?
                 case connection.adapter_name
                 when "PostgreSQL"
@@ -346,6 +360,8 @@ module Baseline
             }
           end
         end
+
+        @_baseline_finalized = true
       end
     end
   end
