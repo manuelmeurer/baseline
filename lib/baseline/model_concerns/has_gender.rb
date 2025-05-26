@@ -10,7 +10,7 @@ module Baseline
         female
       ].then {
         enum :gender, _1,
-          validate: true
+          validate: { allow_nil: true }
       }
     end
   end
