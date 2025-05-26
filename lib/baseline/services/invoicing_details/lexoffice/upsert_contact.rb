@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  class InvoicingDetails
+  module InvoicingDetails
     module Lexoffice
       class UpsertContact < ApplicationService
         def call(invoicing_details)
