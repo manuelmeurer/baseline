@@ -9,9 +9,6 @@ module Baseline
               HasFirstAndLastName,
               HasGender
 
-      validates :gender, presence: { unless: :company_name }
-      validates :first_name, presence: { unless: :company_name }
-      validates :last_name, presence: { unless: :company_name }
       validates :street_1, presence: true
       validates :zip, presence: true
       validates :city, presence: true
@@ -43,6 +40,11 @@ module Baseline
       if lexoffice_id.present?
         Baseline::External::Lexoffice.contact_url(lexoffice_id)
       end
+    end
+
+    # Overwrite this method to fetch missing values from an associated record.
+    def fetch_value(attribute)
+      public_send attribute
     end
   end
 end
