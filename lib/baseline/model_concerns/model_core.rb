@@ -285,6 +285,7 @@ module Baseline
         end.enable
       end
 
+      # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
         return unless table_exists?
 
@@ -296,7 +297,7 @@ module Baseline
           include HasTimestamps[*timestamp_attributes]
         end
 
-        unless self == Task || columns.map(&:name).include?("tasks")
+        unless to_s == "Task" || columns.map(&:name).include?("tasks")
           has_many :tasks, as: :taskable, dependent: :destroy
         end
 
