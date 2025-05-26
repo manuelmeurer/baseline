@@ -3,12 +3,17 @@
 module Baseline
   module HasTimestamps
     def self.[](*attributes)
+      attributes = attributes.map(&:to_sym)
+
       Module.new do
         extend ActiveSupport::Concern
 
         attributes_and_verbs = attributes.index_with { _1.to_s.sub(/_(at|on|until)\z/, "") }
 
         included do
+          @_timestamp_attributes_and_verbs ||= {}
+          @_timestamp_attributes_and_verbs.merge!(attributes_and_verbs)
+
           attributes_and_verbs.each do |attribute, verb|
             attribute_with_table_name = "#{table_name}.#{attribute}"
 
@@ -50,7 +55,7 @@ module Baseline
           %i(scopes methods).each do |type|
             define_method "timestamp_#{type}" do |*attributes|
               Array(attributes).flat_map do |attribute|
-                unless verb = attributes_and_verbs[attribute]
+                unless verb = @_timestamp_attributes_and_verbs[attribute]
                   raise "#{attribute} is not a valid timestamp method."
                 end
 
