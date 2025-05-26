@@ -22,7 +22,6 @@ module Baseline
       end
     end
 
-    def to_s                  = "Invoicing details for #{kunde}"
     def allow_no_vat?         = !eu_country?
     def allow_reverse_charge? = eu_country_except_germany? && vat_id.present?
     def allow_tax_free?       = allow_reverse_charge? || allow_no_vat?
