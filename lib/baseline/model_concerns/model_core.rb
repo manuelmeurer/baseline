@@ -19,7 +19,8 @@ module Baseline
             name,
             "clone_id".pluralize(pluralize_count)
           ].join("_")
-           .then { :"#{_1}=" }
+            .then { :"#{_1}=" }
+
           define_method clone_method_name do |ids|
             ids.each do |id|
               ActiveStorage::Attachment.find(id).then {
@@ -60,10 +61,13 @@ module Baseline
             attribute,
             "attachment".pluralize(pluralize_count)
           ].join("_")
-           .to_sym
+            .to_sym
 
           public_send has_attached_method, attribute, **kwargs
-          accepts_nested_attributes_for attachment_attribute, allow_destroy: true
+
+          accepts_nested_attributes_for \
+            attachment_attribute,
+            allow_destroy: true
         end
       end
 
