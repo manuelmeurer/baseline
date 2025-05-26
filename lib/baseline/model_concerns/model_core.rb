@@ -306,10 +306,13 @@ module Baseline
 
           case
           when column.type == :string
-            define_singleton_method attribute.to_s.pluralize do
-              pluck(Arel.sql("DISTINCT #{attribute}"))
-                .compact
-                .sort
+            method_name = attribute.to_s.pluralize
+            unless respond_to?(method_name, true)
+              define_singleton_method method_name do
+                pluck(Arel.sql("DISTINCT #{attribute}"))
+                  .compact
+                  .sort
+              end
             end
           when column.type == :boolean
             not_attributes = %i(un not_).map {
