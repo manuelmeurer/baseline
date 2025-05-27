@@ -303,6 +303,12 @@ module Baseline
 
         columns.each do |column|
           attribute = column.name.to_sym
+          array     = column.try(:array) # Postgres only
+
+          if column.type.in?(%i[string text]) && !array
+            normalizes attribute,
+              with: -> { _1.strip.unicode_normalize.presence }
+          end
 
           case
           when column.type == :string
@@ -324,7 +330,7 @@ module Baseline
                 scope not_attribute, -> { where(attribute => false) }
               end
             end
-          when column.try(:array) # Postgres only
+          when array
             define_method("#{attribute}=") do |value|
               if value.is_a?(String)
                 value = value.split(/(\r?\n)+/)
