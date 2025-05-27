@@ -19,6 +19,7 @@ module Baseline
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasCountry,             "baseline/model_concerns/has_country"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
+  autoload :HasFullName,             "baseline/model_concerns/has_full_name"
   autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
