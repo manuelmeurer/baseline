@@ -8,6 +8,12 @@ module Baseline
       include I18nScopes,
               RobotsSitemap
 
+      before_action only: :manifest do
+        unless params[:format] == "json"
+          redirect_to url_for(format: :json)
+        end
+      end
+
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }
@@ -62,6 +68,11 @@ module Baseline
         method = overwrite ? :merge! : :reverse_merge!
         og_data.public_send method, data
       end
+    end
+
+    def manifest
+      expires_soon
+      render "/manifest"
     end
 
     def render_turbo_response(

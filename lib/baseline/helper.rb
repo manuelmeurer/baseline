@@ -447,6 +447,16 @@ module Baseline
       end
     end
 
+    def icon_links
+      tag.link(rel: "icon",             href: "/favicon.ico", sizes: "32x32")
+      tag.link(rel: "icon",             href: image_path("icons/icon.svg"), type: "image/svg+xml")
+      tag.link(rel: "apple-touch-icon", href: image_path("icons/apple-touch-icon.png"))
+    end
+
+    def manifest_link
+      tag.link(rel: "manifest", href: url_for([Current.namespace, :manifest, format: :json]))
+    end
+
     private
 
       AUTO_LINK_RE = %r(
