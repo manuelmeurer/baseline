@@ -447,6 +447,17 @@ module Baseline
       end
     end
 
+    def plausible_javascript_tag
+      return unless Rails.env.production?
+
+      javascript_include_tag "/qwerty/js/script.js",
+        defer: true,
+        data: {
+          domain: request.host,
+          api:    "/qwerty/api/event"
+        }
+    end
+
     def icon_links
       tag.link(rel: "icon",             href: "/favicon.ico", sizes: "32x32")
       tag.link(rel: "icon",             href: image_path("icons/icon.svg"), type: "image/svg+xml")
@@ -533,17 +544,6 @@ module Baseline
       def auto_linked?(left, right)
         (left =~ AUTO_LINK_CRE[0] and right =~ AUTO_LINK_CRE[1]) or
           (left.rindex(AUTO_LINK_CRE[2]) and $' !~ AUTO_LINK_CRE[3])
-      end
-
-      def plausible_javascript_tag
-        return unless Rails.env.production?
-
-        javascript_include_tag "/qwerty/js/script.js",
-          defer: true,
-          data: {
-            domain: request.host,
-            api:    "/qwerty/api/event"
-          }
       end
   end
 end
