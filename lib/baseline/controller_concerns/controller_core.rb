@@ -54,19 +54,20 @@ module Baseline
         }.fetch(I18n.locale)
 
         # Assign to ivar so data can be changed.
-        @og_data ||= {
+        @og_data ||= {}
+        @og_data.reverse_merge(
           type:        "website",
-          site_name:,
           title:       [page_meta_title, site_name].join(" | "),
           description: page_meta_description,
           url:         url_for(only_path: false),
+          site_name:,
           locale:
-        }
+        )
       end
 
-      helper_method def set_og_data(overwrite: true, **data)
-        method = overwrite ? :merge! : :reverse_merge!
-        og_data.public_send method, data
+      helper_method def set_og_data(**data)
+        @og_data ||= {}
+        @og_data.merge! data
       end
     end
 
