@@ -307,7 +307,7 @@ module Baseline
 
           if column.type.in?(%i[string text]) && !array
             normalizes attribute,
-              with: -> { _1.encode("UTF-8").strip.unicode_normalize.presence }
+              with: -> { _1.to_s.encode("UTF-8").strip.unicode_normalize.presence }
           end
 
           case
