@@ -17,8 +17,10 @@ module Baseline
           attributes_and_verbs.each do |attribute, verb|
             attribute_with_table_name = "#{table_name}.#{attribute}"
 
-            scope verb,        -> { where.not(attribute_with_table_name => nil) }
-            scope "un#{verb}", -> { where(attribute_with_table_name => nil) }
+            unless attribute.in?(%i[created_at updated_at])
+              scope verb,        -> { where.not(attribute_with_table_name => nil) }
+              scope "un#{verb}", -> { where(attribute_with_table_name => nil) }
+            end
 
             scope "#{verb}_between", ->(start_time, end_time) {
               if start_time >= end_time
