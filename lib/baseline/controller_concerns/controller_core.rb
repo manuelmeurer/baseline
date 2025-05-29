@@ -20,7 +20,7 @@ module Baseline
           .then { turbo_frame_request_id == _1.to_s }
       end
 
-      helper_method def normalized_action_name(action = Current.action_name, reverse: false)
+      helper_method def normalized_action_name(action = ::Current.action_name, reverse: false)
         {
           "create" => "new",
           "update" => "edit"
@@ -37,7 +37,7 @@ module Baseline
       end
 
       helper_method def site_name
-        t Current.namespace, scope: :site_names
+        t ::Current.namespace, scope: :site_names
       end
 
       helper_method def og_data

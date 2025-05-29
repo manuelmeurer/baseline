@@ -243,7 +243,7 @@ module Baseline
     def turbo_data(method:       :patch,
                    confirm:      true,
                    submits_with: true,
-                   frame:        ("modal" if Current.try(:modal_request)))
+                   frame:        ("modal" if ::Current.try(:modal_request)))
 
       {
         turbo_method:       method,
@@ -388,7 +388,7 @@ module Baseline
       human_attribute_name = klass.human_attribute_name(attribute)
 
       t attribute,
-        scope:   [Current.namespace, :human_attribute_names, klass.to_s.underscore],
+        scope:   [::Current.namespace, :human_attribute_names, klass.to_s.underscore],
         default: human_attribute_name
     end
 
@@ -465,7 +465,7 @@ module Baseline
     end
 
     def manifest_link
-      tag.link(rel: "manifest", href: url_for([Current.namespace, :manifest, format: :json]))
+      tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
     end
 
     private

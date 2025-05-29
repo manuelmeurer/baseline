@@ -2,14 +2,13 @@
 
 module Baseline
   class Configuration
-    attr_accessor :wrap_exceptions, :root, :default_label_style
+    attr_accessor :wrap_exceptions, :root
     attr_reader :env
 
     def initialize
-      @wrap_exceptions     = true
-      @root                = defined?(Rails) ? Rails.root : Pathname.new(Dir.pwd)
-      @env                 = (Rails.env.to_sym if defined?(Rails))
-      @default_label_style = :vertical
+      @wrap_exceptions = true
+      @root            = defined?(Rails) ? Rails.root : Pathname.new(Dir.pwd)
+      @env             = (Rails.env.to_sym if defined?(Rails))
 
       super
     end

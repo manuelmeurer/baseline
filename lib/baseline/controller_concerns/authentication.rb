@@ -40,8 +40,8 @@ module Baseline
 
           # Use define_method, since we're accessing the user_class variable.
           define_method :resume_session do
-            Current.public_send "#{underscored_user_class}=",
-              Current.public_send(underscored_user_class) ||
+            ::Current.public_send "#{underscored_user_class}=",
+              ::Current.public_send(underscored_user_class) ||
                 cookies
                   .signed[:"#{underscored_user_class}_id"]
                   &.then {
@@ -51,13 +51,13 @@ module Baseline
 
           def request_authentication
             session[:return_to] = request.url
-            redirect_to [Current.namespace, :login],
+            redirect_to [::Current.namespace, :login],
               alert: "Please log in to continue."
           end
 
           def after_authentication_url
             session.delete(:return_to) ||
-              [Current.namespace, :root]
+              [::Current.namespace, :root]
           end
 
           # Use define_method, since we're accessing the user_class variable.
@@ -66,7 +66,7 @@ module Baseline
               raise "Unexpected user class: #{user.class}"
             end
 
-            Current.public_send "#{underscored_user_class}=", user
+            ::Current.public_send "#{underscored_user_class}=", user
             cookies.signed.permanent[:"#{underscored_user_class}_id"] = {
               value:     user.id,
               httponly:  true,
@@ -80,7 +80,7 @@ module Baseline
               raise "Unexpected user class: #{user.class}"
             end
 
-            Current.public_send "#{underscored_user_class}=", nil
+            ::Current.public_send "#{underscored_user_class}=", nil
             cookies.delete :"#{underscored_user_class}_id"
           end
       end

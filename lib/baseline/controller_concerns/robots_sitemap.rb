@@ -50,7 +50,7 @@ module Baseline
     end
 
     def sitemap
-      if sitemap = Sitemaps::Fetch.call(Current.namespace).presence
+      if sitemap = Sitemaps::Fetch.call(::Current.namespace).presence
         render xml: sitemap
       else
         head :ok
@@ -61,7 +61,7 @@ module Baseline
 
       def url_for_sitemap
         suppress NoMethodError do
-          url_for [Current.namespace, :sitemap, only_path: false]
+          url_for [::Current.namespace, :sitemap, only_path: false]
         end
       end
   end

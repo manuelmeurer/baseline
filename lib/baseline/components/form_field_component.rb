@@ -14,7 +14,7 @@ module Baseline
         i18n_params:        {},
         i18n_scope:         nil,
         identifier:         form.object_name,
-        label_style:        Baseline.configuration.default_label_style,
+        label_style:        Current.default_label_style,
         suffix:             nil,
         value_attributes:   {},
         wrapper_attributes: {},
@@ -57,7 +57,7 @@ module Baseline
 
       if hint == Baseline::NULL_VALUE
         hint = I18n.t(attribute,
-          scope:   [Current.namespace, :form_hints, identifier],
+          scope:   [::Current.namespace, :form_hints, identifier],
           default: nil,
           **i18n_params
         )
@@ -152,7 +152,7 @@ module Baseline
         placeholder
       ).each do |attr|
         [
-          Current.namespace,
+          ::Current.namespace,
           attr.to_s.pluralize,
           *@i18n_scopes,
           @attribute,
