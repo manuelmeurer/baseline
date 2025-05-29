@@ -48,9 +48,11 @@ module Baseline
   end
 
   module InvoicingDetails
-    module Lexoffice
-      autoload :UpsertContact,      "baseline/services/invoicing_details/lexoffice/upsert_contact"
-    end
+    autoload :UpsertLexoffice,      "baseline/services/invoicing_details/upsert_lexoffice"
+  end
+
+  module Lexoffice
+    autoload :Helpers,              "baseline/lexoffice/helpers"
   end
 
   module Recurring
