@@ -10,7 +10,7 @@ module Baseline
         field:              nil,
         attribute:          field.attribute,
         full_width:         false,
-        hint:               Baseline::NULL_VALUE,
+        hint:               Baseline::NOT_SET,
         i18n_params:        {},
         i18n_scope:         nil,
         identifier:         form.object_name,
@@ -18,20 +18,20 @@ module Baseline
         suffix:             nil,
         value_attributes:   {},
         wrapper_attributes: {},
-        data:               Baseline::NULL_VALUE,
-        direct_upload:      Baseline::NULL_VALUE,
-        file_label:         Baseline::NULL_VALUE,
-        multiple:           Baseline::NULL_VALUE,
-        required:           Baseline::NULL_VALUE,
-        show_url_field:     !multiple || multiple == Baseline::NULL_VALUE,
+        data:               Baseline::NOT_SET,
+        direct_upload:      Baseline::NOT_SET,
+        file_label:         Baseline::NOT_SET,
+        multiple:           Baseline::NOT_SET,
+        required:           Baseline::NOT_SET,
+        show_url_field:     !multiple || multiple == Baseline::NOT_SET,
         options:            {},
         include_blank:      false,
         disabled:           false,
         readonly:           false,
-        value:              Baseline::NULL_VALUE
+        value:              Baseline::NOT_SET
       )
 
-      if type == :radio && value == Baseline::NULL_VALUE
+      if type == :radio && value == Baseline::NOT_SET
         raise ArgumentError, "value is required for radio buttons"
       end
 
@@ -42,7 +42,7 @@ module Baseline
         multiple:      false,
         required:      false
       }.each do |attr, default|
-        next unless binding.local_variable_get(attr) == Baseline::NULL_VALUE
+        next unless binding.local_variable_get(attr) == Baseline::NOT_SET
 
         val = if field
           attr == :required ?
@@ -55,7 +55,7 @@ module Baseline
         binding.local_variable_set(attr, val)
       end
 
-      if hint == Baseline::NULL_VALUE
+      if hint == Baseline::NOT_SET
         hint = I18n.t(attribute,
           scope:   [::Current.namespace, :form_hints, identifier],
           default: nil,
@@ -198,7 +198,7 @@ module Baseline
           required:    @required,
           disabled:    @disabled,
           readonly:    @readonly
-        }.if(@value != Baseline::NULL_VALUE) {
+        }.if(@value != Baseline::NOT_SET) {
           _1.merge value: @value
         }
       end

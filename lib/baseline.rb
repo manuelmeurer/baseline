@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  NULL_VALUE = "_null_value_".freeze
+  NOT_SET = Object.new.freeze
 
   # Controller concerns
   autoload :APITodoistControllable, "baseline/controller_concerns/api_todoist_controllable"
