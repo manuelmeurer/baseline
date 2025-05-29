@@ -126,16 +126,18 @@ module Baseline
           "s-maxage": 1.day
       end
 
-      def page_meta_title(**)
-        t :meta_title,
-          scope:   action_i18n_scope,
+      def page_meta_title(_scope: nil, **)
+        *i18n_scope, i18n_key = [*action_i18n_scope, :meta_title, _scope].compact
+        t i18n_key,
+          scope:   i18n_scope,
           default: Loofah.fragment(page_title).text(encode_special_chars: false).html_safe,
           **
       end
 
-      def page_meta_description(**)
-        t :meta_description,
-          scope:   action_i18n_scope,
+      def page_meta_description(_scope: nil, **)
+        *i18n_scope, i18n_key = [*action_i18n_scope, :meta_description, _scope].compact
+        t i18n_key,
+          scope:   i18n_scope,
           default: page_meta_title,
           **
       end
