@@ -5,10 +5,6 @@ module Baseline
     isolate_namespace Baseline
 
     initializer "baseline.after_initialize" do |app|
-      # This validator must be loaded after the app's code is loaded,
-      # because the class name depends on whether "URL" is registered as an acronym.
-      require "baseline/url_format_validator"
-
       require "baseline/sitemap_generator"
 
       app.config.assets.paths << root.join("app", "javascript")

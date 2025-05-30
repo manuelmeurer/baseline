@@ -17,6 +17,7 @@ module Baseline
   autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
+  autoload :HasChargeVAT,           "baseline/model_concerns/has_charge_vat"
   autoload :HasCountry,             "baseline/model_concerns/has_country"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
@@ -90,6 +91,7 @@ module Baseline
   autoload :MailerCore,             "baseline/mailer_core"
   autoload :RedisURL,               "baseline/redis_url"
   autoload :StimulusController,     "baseline/stimulus_controller"
+  autoload :URLFormatValidator,     "baseline/url_format_validator"
   autoload :ZstdCompressor,         "baseline/zstd_compressor"
 
   class << self
