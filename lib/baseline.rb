@@ -46,6 +46,19 @@ module Baseline
   module External
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
     autoload :Todoist,              "baseline/services/external/todoist"
+
+    module Google
+      module Oauth
+        autoload :Authorizer,       "baseline/services/external/google/oauth/authorizer"
+        autoload :Helpers,          "baseline/services/external/google/oauth/helpers"
+        autoload :Service,          "baseline/services/external/google/oauth/service"
+      end
+    end
+  end
+
+  module GoogleDrive
+    autoload :Helpers,              "baseline/services/google_drive/helpers"
+    autoload :SyncToLexoffice,      "baseline/services/google_drive/sync_to_lexoffice"
   end
 
   module InvoicingDetails
