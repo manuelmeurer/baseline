@@ -20,12 +20,13 @@ module Baseline
         }.compact
       end
 
-      def line_item(name, net_amount, charge_vat)
+      def line_item(name, description, net_amount, charge_vat)
         {
           type:     "custom",
           quantity: 1,
           unitName: "Stück",
           name:,
+          description:,
           unitPrice: {
             currency:          :EUR,
             netAmount:         net_amount.to_f.round(2),
