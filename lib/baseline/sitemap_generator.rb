@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "sitemap_generator"
-
 class SitemapGenerator::Interpreter
   def add(link, options = {})
     if link.is_a?(Array)

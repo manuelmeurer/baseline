@@ -5,7 +5,12 @@ module Baseline
     isolate_namespace Baseline
 
     initializer "baseline.after_initialize" do |app|
-      require "baseline/sitemap_generator"
+      begin
+        require "sitemap_generator"
+      rescue LoadError
+      else
+        require "baseline/sitemap_generator"
+      end
 
       app.config.assets.paths << root.join("app", "javascript")
     end
