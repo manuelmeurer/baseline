@@ -3,8 +3,6 @@
 module Baseline
   module Sitemaps
     class GenerateAll < ApplicationService
-      include Helpers
-
       def call
         SitemapGenerator::Sitemap.compress = false
         SitemapGenerator::Sitemap.adapter  = self
@@ -19,7 +17,7 @@ module Baseline
           .delete_suffix(".xml")
           .then {
             Rails.cache.write \
-              cache_key(_1),
+              Helpers.cache_key(_1),
               data
           }
       end

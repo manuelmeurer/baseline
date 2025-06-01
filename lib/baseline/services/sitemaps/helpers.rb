@@ -3,7 +3,9 @@
 module Baseline
   module Sitemaps
     module Helpers
-      private def cache_key(namespace)
+      extend self
+
+      def cache_key(namespace)
         [
           :sitemap,
           namespace
