@@ -114,6 +114,9 @@ module Baseline
 
       # https://developers.lexoffice.io/docs/#files-endpoint-upload-a-file
       add_action :create_file do |path_or_io, type: "voucher"|
+        # Make sure we can access HTTP::FormData.
+        require "http"
+
         request(
           :post,
           "files",
@@ -152,6 +155,9 @@ module Baseline
 
       # https://developers.lexoffice.io/docs/#vouchers-endpoint-upload-a-file-to-a-voucher
       add_action :create_voucher_file do |id, path_or_io|
+        # Make sure we can access HTTP::FormData.
+        require "http"
+
         request(
           :post,
           "vouchers/#{id}/files",
