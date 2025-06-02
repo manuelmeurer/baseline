@@ -52,12 +52,13 @@ module Baseline
               }.compact)
 
             client_id_object = ::Google::Auth::ClientId.new(client_id, client_secret)
+            callback_url     = Rails.application.routes.url_helpers.admin_google_oauth_callback_url
 
             ::Google::Auth::UserAuthorizer.new \
               client_id_object,
               scopes,
               token_store,
-              admin_google_oauth_callback_url
+              callback_url
           end
 
           def initialize_service(name, admin_user = nil)
