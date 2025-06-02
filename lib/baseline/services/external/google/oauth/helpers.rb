@@ -17,7 +17,7 @@ module Baseline
 
           mattr_accessor :application_name
 
-          def initialize_user_authorizer(admin_user, names = nil)
+          def initialize_authorizer(admin_user = nil, names = nil)
             return unless Rails.env.production?
 
             names ||= SERVICES.keys.reject { use_service_account? _1 }
@@ -45,8 +45,8 @@ module Baseline
                 def store(*);  end
                 def delete(*); end
               end.new({
+                scope: scopes,
                 client_id:,
-                scope:         scopes,
                 access_token:,
                 refresh_token:
               }.compact)
@@ -77,20 +77,23 @@ module Baseline
                 service_namespace(name).const_get(_1)
               }
 
-            authorization = use_service_account?(name) ?
-              Rails
-                .application
-                .env_credentials
-                .google
-                .service_account!
-                .to_json
-                .then { StringIO.new _1 }
-                .then {
-                  ::Google::Auth::ServiceAccountCredentials.make_creds \
-                    json_key_io: _1,
-                    scope:       service_scope(name)
-                } :
-              initialize_user_authorizer(admin_user, name).get_credentials("default")
+            authorization =
+              if use_service_account?(name)
+                Rails
+                  .application
+                  .env_credentials
+                  .google
+                  .service_account!
+                  .to_json
+                  .then { StringIO.new _1 }
+                  .then {
+                    ::Google::Auth::ServiceAccountCredentials.make_creds \
+                      json_key_io: _1,
+                      scope:       service_scope(name)
+                  }
+              else
+                initialize_authorizer(admin_user, name).get_credentials("default")
+              end
 
             unless authorization
               raise Error, "Could not load Google API credentials."
