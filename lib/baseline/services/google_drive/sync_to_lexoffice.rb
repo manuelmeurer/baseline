@@ -14,12 +14,13 @@ module Baseline
             q:      "parents in '#{folder_id}' and trashed = false",
             fields: ATTRIBUTES.join(",").then { "files(#{_1})" }
           ).files
-        valid_files, invalid_files = files.partition {
-          File
-            .extname(_1.name)
-            .downcase
-            .in?(%w[.pdf .jpg .jpeg .png])
-        }
+        valid_files, invalid_files =
+          files.partition {
+            File
+              .extname(_1.name)
+              .downcase
+              .in?(%w[.pdf .jpg .jpeg .png])
+          }
 
         if invalid_files.any?
           task_identifier = [
