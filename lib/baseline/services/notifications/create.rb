@@ -15,13 +15,23 @@ module Baseline
 
         notification = Notification.create!(args)
         notifiable   = notification.notifiable
+        admin_url =
+          defined?(::Avo) ?
+            ::Avo::Engine
+              .routes
+              .url_helpers
+              .url_for([
+                :resources,
+                notifiable
+              ]) :
+            url_for([:admin, notifiable])
         message = [
           "*#{notification.title}*",
           notification.details,
           if notifiable
             [
               %(#{notifiable.class.to_s.titleize} "#{notifiable}"),
-              url_for([:admin, notifiable])
+              admin_url
             ]
           end
         ].flatten
