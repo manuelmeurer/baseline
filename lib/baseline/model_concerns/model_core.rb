@@ -187,19 +187,36 @@ module Baseline
           end
         end
       end
+
+      delegate \
+        :service_namespace,
+        :service_namespaces,
+        to: :class
     end
 
     def method_missing(method, *args, _async: false, _after: nil, **kwargs)
-      return super unless service_name = method[/\A_do_(.+)/, 1]
+      return super unless service_name = method[/\A_do_(.+)/, 1]&.classify
 
-      service = service_namespace.const_get(service_name.classify)
+      service = service_namespaces
+        .lazy
+        .map do |namespace|
+          suppress NameError do
+            namespace.const_get(service_name)
+          end
+        end
+        .compact
+        .first
+
+      unless service
+        raise "Could not find service #{service_name} for #{self.class}."
+      end
 
       if persisted?
         if service.enqueued_or_processing?(self)
-          raise "#{self.class} #{service_name} is already in progress."
+          raise "#{self.class} {service_name} is already in progress."
         end
         if service.scheduled_at(self)
-          raise "#{self.class} #{service_name} is already scheduled."
+          raise "#{self.class} {service_name} is already scheduled."
         end
       end
 
@@ -211,14 +228,6 @@ module Baseline
       else
         service.call self, *args, **kwargs
       end
-    end
-
-    def service_namespace
-      self
-        .class
-        .to_s
-        .pluralize
-        .constantize
     end
 
     def slug_identifier
@@ -267,6 +276,22 @@ module Baseline
 
       def translates_with_fallback(*)
         translates(*, fallback: :any)
+      end
+
+      def service_namespace
+        service_namespaces.first or
+          raise "Could not find service namespace for #{name}."
+      end
+
+      def service_namespaces
+        ancestors
+          .take_while { _1 != ApplicationRecord }
+          .grep(Class)
+          .map {
+            _1.to_s
+              .pluralize
+              .safe_constantize
+          }.compact
       end
 
       def inherited(klass)
