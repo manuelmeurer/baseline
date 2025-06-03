@@ -13,7 +13,9 @@ module Baseline
 
       validates :kind, presence: true, inclusion: { in: -> { [_1.group.kind] }, if: :group }
       validates :messageable, inclusion: { in: -> { [_1.group.messageable] }, if: :group }
-      validates :recipient_type, inclusion: { in: -> { [_1.class.to_s.delete_suffix("Message")] } }
+
+      # Vorerst deaktiviert, da die Models bei dasauge noch den Namespace "Old" haben
+      # validates :recipient_type, inclusion: { in: -> { [_1.class.to_s.delete_suffix("Message")] } }
     end
 
     class_methods do
