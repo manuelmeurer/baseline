@@ -15,6 +15,8 @@ module Baseline
 
   # Model concerns
   autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
+  autoload :ActsAsMessage,          "baseline/model_concerns/acts_as_message"
+  autoload :ActsAsPDFFile,          "baseline/model_concerns/acts_as_pdf_file"
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasChargeVAT,           "baseline/model_concerns/has_charge_vat"
@@ -23,6 +25,7 @@ module Baseline
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
   autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
+  autoload :HasPDFFiles,            "baseline/model_concerns/has_pdf_files"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
   autoload :SaveSlugIdentifier,     "baseline/model_concerns/save_slug_identifier"
@@ -66,7 +69,8 @@ module Baseline
   end
 
   module Lexoffice
-    autoload :Helpers,              "baseline/lexoffice/helpers"
+    autoload :Helpers,              "baseline/services/lexoffice/helpers"
+    autoload :DownloadPDF,          "baseline/services/lexoffice/download_pdf"
   end
 
   module Recurring
