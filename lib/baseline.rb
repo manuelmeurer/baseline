@@ -16,6 +16,7 @@ module Baseline
   # Model concerns
   autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
   autoload :ActsAsMessage,          "baseline/model_concerns/acts_as_message"
+  autoload :ActsAsNotification,     "baseline/model_concerns/acts_as_notification"
   autoload :ActsAsPDFFile,          "baseline/model_concerns/acts_as_pdf_file"
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
@@ -50,6 +51,7 @@ module Baseline
   module External
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
     autoload :Todoist,              "baseline/services/external/todoist"
+    autoload :SlackSimple,          "baseline/services/external/slack_simple"
 
     module Google
       module Oauth
@@ -72,6 +74,10 @@ module Baseline
   module Lexoffice
     autoload :Helpers,              "baseline/services/lexoffice/helpers"
     autoload :DownloadPDF,          "baseline/services/lexoffice/download_pdf"
+  end
+
+  module Notifications
+    autoload :Create,               "baseline/services/notifications/create"
   end
 
   module Recurring
