@@ -7,6 +7,6 @@ module Baseline
 
     private
 
-      def name_parts = name&.strip&.split(/\s+/) || []
+      def name_parts = name&.split(/\s+/) || []
   end
 end
