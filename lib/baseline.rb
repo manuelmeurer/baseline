@@ -26,6 +26,7 @@ module Baseline
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
   autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
+  autoload :HasMessageable,         "baseline/model_concerns/has_messageable"
   autoload :HasPDFFiles,            "baseline/model_concerns/has_pdf_files"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
