@@ -10,7 +10,11 @@ module Baseline
       name_parts = name
         .strip
         .sub(/\Adr\.?\s+/i, "")
-        .split(/\s+/, 2)
+        .then {
+          _1.include?(",") ?
+            _1.split(/\s*,\s*/, 2).reverse :
+            _1.split(/\s+/, 2)
+        }
 
       if name_parts.first.present?
         self.first_name = name_parts.first
