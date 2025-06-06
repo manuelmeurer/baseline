@@ -294,8 +294,14 @@ module Baseline
           }.compact
       end
 
-      def inherited(klass)
-        if klass.base_class&.then { _1 != klass }
+      if defined?(::Ransack)
+        def ransackable_attributes(auth_object = nil)
+          authorizable_ransackable_attributes
+        end
+      end
+
+      def inherited(subclass)
+        if subclass.base_class&.then { _1 != subclass }
           return super
         end
 
@@ -303,8 +309,8 @@ module Baseline
 
         # Call `_baseline_finalize` when class has been loaded.
         TracePoint.new(:end) do |tracepoint|
-          if tracepoint.self == klass
-            klass._baseline_finalize
+          if tracepoint.self == subclass
+            subclass._baseline_finalize
             tracepoint.disable
           end
         end.enable
