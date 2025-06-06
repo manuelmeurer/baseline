@@ -5,30 +5,41 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      def self.inherited(subclass)
-        subclass.title = :to_s
+      # https://github.com/avo-hq/avo/issues/3820
+      abstract_resource!
+    end
 
-        if subclass.model_class.respond_to?(:friendly)
-          subclass.find_record_method = -> {
+    class_methods do
+      def inherited(subclass)
+        super
+
+        # Call `_baseline_finalize` when class has been loaded.
+        TracePoint.new(:end) do |tracepoint|
+          if tracepoint.self == subclass
+            subclass._baseline_finalize
+            tracepoint.disable
+          end
+        end.enable
+      end
+
+      def _baseline_finalize
+        self.title = :to_s
+
+        if model_class.respond_to?(:friendly)
+          self.find_record_method = -> {
             id.is_a?(Array) ?
               query.where(slug: id) :
               query.friendly.find(id)
           }
         end
-
-        if subclass.model_class.respond_to?(:search)
-          subclass.search = {
+        if model_class.respond_to?(:search)
+          self.search = {
             query: -> {
-              subclass
-                .model_class
-                .search(params[:q])
+              query.search(params[:q])
             }
           }
         end
       end
-
-      # https://github.com/avo-hq/avo/issues/3820
-      abstract_resource!
     end
 
     def truncate_on_index = -> { value.if(view == "index") { truncate _1, length: 50 } }
