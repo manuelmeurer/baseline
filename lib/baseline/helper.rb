@@ -448,7 +448,9 @@ module Baseline
     end
 
     def plausible_javascript_tag
-      return unless Rails.env.production?
+      return unless
+        Rails.env.production? &&
+        ::Current.namespace != :admin
 
       javascript_include_tag "/qwerty/js/script.js",
         defer: true,
