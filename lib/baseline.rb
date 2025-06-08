@@ -77,6 +77,10 @@ module Baseline
     autoload :DownloadPDF,          "baseline/services/lexoffice/download_pdf"
   end
 
+  module Messages
+    autoload :GeneratePartsFromI18n, "baseline/services/messages/generate_parts_from_i18n"
+  end
+
   module Notifications
     autoload :Create,               "baseline/services/notifications/create"
   end
@@ -106,6 +110,7 @@ module Baseline
   end
 
   # Components
+  autoload :FormActionsComponent,   "baseline/components/form_actions_component"
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
   autoload :ItemListComponent,      "baseline/components/item_list_component"
 

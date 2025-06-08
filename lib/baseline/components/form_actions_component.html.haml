@@ -1,0 +1,21 @@
+-# frozen_string_literal: true
+
+- actions = capture_haml do
+  = @form.button class: "btn btn-#{@submit_button_color}", data: @submit_data do
+    -# For some reason, this content is output twice if we use `= icon :accept` here.
+    - [icon(:accept), @submit_label].join(" ").html_safe
+  - if Current.modal_request
+    = link_to "#", class: "btn btn-outline-dark", data: { bs_dismiss: "modal" } do
+      = icon :reject
+      = t :cancel
+
+- case
+- when Current.modal_request
+  .d-none{ data: helpers.stimco(:modal, to_h: false).target(:footer_content) }
+    = actions
+- when @horizontal
+  .row
+    .col{ class: form_classes(type: :label, prefix: "offset") }
+      = actions
+- else
+  = actions
