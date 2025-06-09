@@ -307,13 +307,14 @@ module Baseline
 
         super
 
-        # Call `_baseline_finalize` when class has been loaded.
-        TracePoint.new(:end) do |tracepoint|
-          if tracepoint.self == subclass
-            subclass._baseline_finalize
-            tracepoint.disable
-          end
-        end.enable
+        # Disabled because it's flaky with Rails autoloading.
+        # Call `_baseline_finalize` manually in the subclass!
+        # TracePoint.new(:end) do |tracepoint|
+        #   if tracepoint.self.respond_to?(:_baseline_finalize)
+        #     subclass._baseline_finalize
+        #     tracepoint.disable
+        #   end
+        # end.enable
       end
 
       # Do not reference any ApplicationModel descendants in this method!
