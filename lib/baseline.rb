@@ -12,6 +12,7 @@ module Baseline
   autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,              "baseline/controller_concerns/page_title"
   autoload :RobotsSitemap,          "baseline/controller_concerns/robots_sitemap"
+  autoload :SetLocale,              "baseline/controller_concerns/set_locale"
 
   # Model concerns
   autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
