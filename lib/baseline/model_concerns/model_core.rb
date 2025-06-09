@@ -385,6 +385,10 @@ module Baseline
                   [[], {}].inject(self) {
                     _1.where("#{attribute} != '#{_2}'::#{column.type}")
                   }
+                when "SQLite"
+                  [[], {}].inject(self) {
+                    _1.where("#{attribute} != '#{_2}'")
+                  }
                 else raise "Unexpected database adapter: #{connection.adapter_name}"
                 end
               else
