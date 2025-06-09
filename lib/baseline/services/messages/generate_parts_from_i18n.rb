@@ -3,7 +3,7 @@
 module Baseline
   module Messages
     class GeneratePartsFromI18n < ApplicationService
-      def call(message_or_group, recipient = nil, admin_user: Current.admin_user)
+      def call(message_or_group, recipient = nil, admin_user: ::Current.admin_user)
         case
         when message_or_group.is_a?(MessageGroup)
           @message_group = message_or_group
