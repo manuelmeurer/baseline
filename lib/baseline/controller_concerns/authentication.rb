@@ -2,15 +2,15 @@
 
 module Baseline
   module Authentication
-    def self.[](user_class)
-      underscored_user_class = user_class.to_s.underscore
+    def self.[](user_class_name)
+      @auth_user_class_name = user_class_name
 
       Module.new do
         extend ActiveSupport::Concern
 
         included do
           before_action do
-            next unless user = params[:t]&.then { user_class.find_signed(_1) }
+            next unless user = params[:t]&.then { auth_user_class.find_signed(_1) }
 
             authenticate user
             redirect_to params.permit!.except(:t)
@@ -34,18 +34,20 @@ module Baseline
 
         private
 
+          def auth_user_class            = @auth_user_class ||= @auth_user_class_name.constantize
+          def auth_user_class_identifier = @auth_user_class_name.underscore
+
           def require_authentication
             request_authentication unless authenticated?
           end
 
-          # Use define_method, since we're accessing the user_class variable.
-          define_method :resume_session do
-            ::Current.public_send "#{underscored_user_class}=",
-              ::Current.public_send(underscored_user_class) ||
+          def resume_session
+            ::Current.public_send "#{auth_user_class_identifier}=",
+              ::Current.public_send(auth_user_class_identifier) ||
                 cookies
-                  .signed[:"#{underscored_user_class}_id"]
+                  .signed[:"#{auth_user_class_identifier}_id"]
                   &.then {
-                    user_class.find_by(id: _1)
+                    auth_user_class.find_by(id: _1)
                   }
           end
 
@@ -60,34 +62,32 @@ module Baseline
               [::Current.namespace, :root]
           end
 
-          # Use define_method, since we're accessing the user_class variable.
-          define_method :authenticate do |user|
-            unless user.is_a?(user_class)
+          def authenticate
+            unless user.is_a?(auth_user_class)
               raise "Unexpected user class: #{user.class}"
             end
 
-            ::Current.public_send "#{underscored_user_class}=", user
-            cookies.signed.permanent[:"#{underscored_user_class}_id"] = {
+            ::Current.public_send "#{auth_user_class_identifier}=", user
+            cookies.signed.permanent[:"#{auth_user_class_identifier}_id"] = {
               value:     user.id,
               httponly:  true,
               same_site: :lax
             }
           end
 
-          # Use define_method, since we're accessing the user_class variable.
-          define_method :unauthenticate do |user|
-            unless user.is_a?(user_class)
+          def unauthenticate
+            unless user.is_a?(auth_user_class)
               raise "Unexpected user class: #{user.class}"
             end
 
-            ::Current.public_send "#{underscored_user_class}=", nil
-            cookies.delete :"#{underscored_user_class}_id"
+            ::Current.public_send "#{auth_user_class_identifier}=", nil
+            cookies.delete :"#{auth_user_class_identifier}_id"
           end
       end
     end
 
     def self.included(base)
-      base.include self[User]
+      base.include self["User"]
     end
   end
 end
