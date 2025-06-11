@@ -124,15 +124,16 @@ module Baseline
         response_json || response.to_s
       end
 
-      def paginate_get(url, params = {}, yielder = nil)
+      def paginate_get(url, params = {}, results_key: nil, yielder: nil)
         unless yielder
-          return Enumerator.new do |y|
+          return Enumerator.new {
             send \
               __method__,
               url,
               params,
-              y
-          end
+              results_key:,
+              yielder: _1
+          }
         end
 
         if respond_to?(:prepare_paginate_params, true)
@@ -140,22 +141,26 @@ module Baseline
         end
 
         response = request(:get, url, params:)
+        results  = response.fetch(results_key || paginate_results_key)
 
-        response
-          .fetch(paginate_results_key)
-          .each do |result|
+        results.each {
+          yielder << _1
+        }
 
-          yielder << result
-        end
-
-        next_url, next_params = next_url_and_params(response, url, params)
+        next_url, next_params =
+          [response, url, params, results.size]
+            .take(method(:next_url_and_params).arity)
+            .then {
+              next_url_and_params(*_1)
+            }
 
         if next_url
           send \
             __method__,
             next_url,
             next_params,
-            yielder
+            results_key:,
+            yielder:
         end
       end
 
