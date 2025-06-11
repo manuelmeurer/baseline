@@ -28,7 +28,10 @@ module Baseline
         end
 
         define_method language_attribute do
-          public_send(attribute)&.then { Language.new locale: _1 }
+          public_send(attribute)
+            &.then {
+              Language.new locale: _1
+            }
         end
 
         define_method "#{language_attribute}=" do |value|
