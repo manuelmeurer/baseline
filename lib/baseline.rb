@@ -151,8 +151,7 @@ module Baseline
 end
 
 require "baseline/configuration"
-require "baseline/object_helpers"
-require "baseline/deep_fetch"
+require "baseline/monkeypatches"
 
 # Initialize configuration
 Baseline.configuration
