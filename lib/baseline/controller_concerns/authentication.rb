@@ -3,12 +3,12 @@
 module Baseline
   module Authentication
     def self.[](user_class_name)
-      @auth_user_class_name = user_class_name
-
       Module.new do
         extend ActiveSupport::Concern
 
         included do
+          class_eval { @auth_user_class_name = user_class_name }
+
           before_action do
             next unless user = params[:t]&.then { auth_user_class.find_signed(_1) }
 
@@ -23,6 +23,10 @@ module Baseline
         end
 
         class_methods do
+          def auth_user_class_name
+            @auth_user_class_name || superclass.auth_user_class_name
+          end
+
           def allow_unauthenticated_access(**)
             # If the `require_authentication` callback has not been defined, an ArgumentError is raised.
             skip_before_action(:require_authentication, **)
@@ -34,8 +38,8 @@ module Baseline
 
         private
 
-          def auth_user_class            = @auth_user_class ||= @auth_user_class_name.constantize
-          def auth_user_class_identifier = @auth_user_class_name.underscore
+          def auth_user_class            = @auth_user_class ||= self.class.auth_user_class_name.constantize
+          def auth_user_class_identifier = self.class.auth_user_class_name.underscore
 
           def require_authentication
             request_authentication unless authenticated?
