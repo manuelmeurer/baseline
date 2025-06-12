@@ -16,6 +16,8 @@ module Baseline
         identifier:         form.object_name,
         label_style:        Current.default_label_style,
         suffix:             nil,
+        label:              nil,
+        id:                 nil,
         value_attributes:   {},
         wrapper_attributes: {},
         data:               Baseline::NOT_SET,
@@ -64,7 +66,7 @@ module Baseline
       end
 
       # Don't use `object&.` here since `object` might be nil or false.
-      id = [
+      id ||= [
         identifier,
         form.object.then { _1.id if _1 },
         attribute,
@@ -86,6 +88,7 @@ module Baseline
         id
         identifier
         include_blank
+        label
         multiple
         options
         readonly
@@ -151,6 +154,9 @@ module Baseline
         help_text
         placeholder
       ).each do |attr|
+        # Only for "label" currently
+        next if instance_variable_get("@#{attr}")
+
         [
           ::Current.namespace,
           attr.to_s.pluralize,
@@ -275,7 +281,7 @@ module Baseline
 
         tag.div class: "form-check" do
           safe_join [
-            @form.radio_button(@attribute, @value, **params),
+            @form.radio_button(@attribute, @value, params),
             @form.label(@attribute, @label, value: @value, class: "form-check-label")
           ]
         end
@@ -290,7 +296,7 @@ module Baseline
 
         tag.div class: "form-check form-switch" do
           safe_join [
-            @form.check_box(@attribute, **params),
+            @form.checkbox(@attribute, params),
             (@form.label(@attribute, @label, class: "form-check-label") if @inline_label)
           ]
         end
