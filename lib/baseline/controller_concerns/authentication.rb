@@ -66,7 +66,7 @@ module Baseline
               [::Current.namespace, :root]
           end
 
-          def authenticate
+          def authenticate(user)
             unless user.is_a?(auth_user_class)
               raise "Unexpected user class: #{user.class}"
             end
@@ -79,7 +79,7 @@ module Baseline
             }
           end
 
-          def unauthenticate
+          def unauthenticate(user)
             unless user.is_a?(auth_user_class)
               raise "Unexpected user class: #{user.class}"
             end
