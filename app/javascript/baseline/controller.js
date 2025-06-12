@@ -69,4 +69,48 @@ export default class extends Controller {
       rect.right  <= (window.innerWidth  || document.documentElement.clientWidth)
     )
   }
+
+  waitForConstant(name, interval = 100, timeout = 10000) {
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now()
+
+      function checkConstant() {
+        if (typeof window[name] !== "undefined") {
+          resolve(window[name])
+        } else if (Date.now() - startTime >= timeout) {
+          reject(new Error(`${name} is not defined within the timeout period.`))
+        } else {
+          setTimeout(checkConstant, interval)
+        }
+      }
+
+      checkConstant()
+    })
+  }
+
+  toggleFromUrl() {
+    let idSuffix, checkbox, checked
+
+    for (const param of ["on", "off"]) {
+      idSuffix = this.getSearchParam(param)
+      checked = param === "on"
+
+      if (!idSuffix)
+        continue
+
+      checkbox = Array
+        .from(this.element.querySelectorAll("input[type='checkbox']"))
+        .find(element => element.id.endsWith(idSuffix))
+
+      if (!checkbox || (checkbox.checked === checked))
+        continue
+
+      checkbox.checked = checked
+      checkbox.dispatchEvent(new Event("change"), { bubbles: true })
+    }
+  }
+
+  getSearchParam(param) {
+    return new URLSearchParams(this.currentUrl.search).get(param)
+  }
 }
