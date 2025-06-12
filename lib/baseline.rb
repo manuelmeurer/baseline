@@ -11,7 +11,7 @@ module Baseline
   autoload :I18nScopes,             "baseline/controller_concerns/i18n_scopes"
   autoload :NamespaceLayout,        "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,              "baseline/controller_concerns/page_title"
-  autoload :RobotsSitemap,          "baseline/controller_concerns/robots_sitemap"
+  autoload :RobotsSitemapManifest,  "baseline/controller_concerns/robots_sitemap_manifest"
   autoload :SetLocale,              "baseline/controller_concerns/set_locale"
 
   # Model concerns

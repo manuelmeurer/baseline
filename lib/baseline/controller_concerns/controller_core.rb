@@ -6,13 +6,7 @@ module Baseline
 
     included do
       include I18nScopes,
-              RobotsSitemap
-
-      before_action only: :manifest do
-        unless params[:format] == "json"
-          redirect_to url_for(format: :json)
-        end
-      end
+              RobotsSitemapManifest
 
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
@@ -69,11 +63,6 @@ module Baseline
         @og_data ||= {}
         @og_data.merge! data
       end
-    end
-
-    def manifest
-      expires_soon
-      render "/manifest"
     end
 
     def render_turbo_response(
