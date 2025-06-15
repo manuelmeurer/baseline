@@ -113,4 +113,8 @@ export default class extends Controller {
   getSearchParam(param) {
     return new URLSearchParams(this.currentUrl.search).get(param)
   }
+
+  get currentUrl() {
+    return this.inModal() ? document.modalController.url : window.location
+  }
 }
