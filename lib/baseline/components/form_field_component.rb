@@ -11,12 +11,12 @@ module Baseline
         attribute:          field.attribute,
         full_width:         false,
         hint:               Baseline::NOT_SET,
+        i18n_key:           nil,
         i18n_params:        {},
         i18n_scope:         nil,
         identifier:         form.object_name,
         label_style:        Current.default_label_style,
         suffix:             nil,
-        label:              nil,
         id:                 nil,
         value_attributes:   {},
         wrapper_attributes: {},
@@ -36,6 +36,9 @@ module Baseline
       if type == :radio && value == Baseline::NOT_SET
         raise ArgumentError, "value is required for radio buttons"
       end
+
+      i18n_key   ||= attribute
+      identifier ||= attribute
 
       {
         data:          {},
@@ -83,12 +86,12 @@ module Baseline
         file_label
         form
         hint
+        i18n_key
         i18n_params
         i18n_scope
         id
         identifier
         include_blank
-        label
         multiple
         options
         readonly
@@ -154,14 +157,11 @@ module Baseline
         help_text
         placeholder
       ).each do |attr|
-        # Only for "label" currently
-        next if instance_variable_get("@#{attr}")
-
         [
           ::Current.namespace,
           attr.to_s.pluralize,
           *@i18n_scopes,
-          @attribute,
+          @i18n_key,
           *Array(@i18n_scope)
         ].then {
           t _1.pop,
@@ -179,16 +179,18 @@ module Baseline
       end
     end
 
-    def label_tag
-      css_class = case
-        when @vertical_label then "form-label"
-        when @floating_label then ""
-        else ["col-form-label", *form_classes(type: :label)].join(" ")
-        end.if(@required) {
-          _1.split
-            .append("required")
-            .join(" ")
-        }
+    def label_tag(css_class = Baseline::NOT_SET)
+      if css_class == Baseline::NOT_SET
+        css_class = case
+          when @vertical_label then "form-label"
+          when @floating_label then ""
+          else ["col-form-label", *form_classes(type: :label)].join(" ")
+          end.if(@required) {
+            _1.split
+              .append("required")
+              .join(" ")
+          }
+      end
 
       @form.label @attribute, @label, class: css_class, for: @id
     end
@@ -282,7 +284,7 @@ module Baseline
         tag.div class: "form-check" do
           safe_join [
             @form.radio_button(@attribute, @value, params),
-            @form.label(@attribute, @label, value: @value, class: "form-check-label")
+            (label_tag("form-check-label") if @inline_label)
           ]
         end
       end
@@ -297,7 +299,7 @@ module Baseline
         tag.div class: "form-check form-switch" do
           safe_join [
             @form.checkbox(@attribute, params),
-            (@form.label(@attribute, @label, class: "form-check-label") if @inline_label)
+            (label_tag("form-check-label") if @inline_label)
           ]
         end
       end
