@@ -30,7 +30,7 @@ module Baseline
                   ]) :
                 url_for([:admin, notifiable])
             [
-              %(#{notifiable.class.to_s.titleize} "#{notifiable}"),
+              %(#{notifiable.model_name.human} "#{notifiable}"),
               admin_url
             ]
           end
