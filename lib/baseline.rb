@@ -16,12 +16,14 @@ module Baseline
 
   # Model concerns
   autoload :ActsAsInvoicingDetails, "baseline/model_concerns/acts_as_invoicing_details"
+  autoload :ActsAsCreditNote,       "baseline/model_concerns/acts_as_credit_note"
   autoload :ActsAsMessage,          "baseline/model_concerns/acts_as_message"
   autoload :ActsAsNotification,     "baseline/model_concerns/acts_as_notification"
   autoload :ActsAsPDFFile,          "baseline/model_concerns/acts_as_pdf_file"
   autoload :ActsAsTask,             "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasChargeVAT,           "baseline/model_concerns/has_charge_vat"
+  autoload :HasCreditNote,          "baseline/model_concerns/has_credit_note"
   autoload :HasCountry,             "baseline/model_concerns/has_country"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
