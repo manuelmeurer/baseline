@@ -25,7 +25,7 @@ module Baseline
           *error.backtrace.map { "  #{_1}" },
           ("caused by: #{exception_message(error.cause)}" if error.respond_to?(:cause) && error.cause)
         ].compact
-        .join("\n")
+          .join("\n")
       end
 
       def caller
