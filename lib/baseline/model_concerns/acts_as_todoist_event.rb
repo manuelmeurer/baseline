@@ -7,6 +7,8 @@ module Baseline
     included do
       include HasTimestamps[:processed_at]
 
+      validates :kind, presence: true
+      validates :event_id, presence: true
       validates :delivery_id, presence: true, uniqueness: true
       validates :data, presence: true
     end
