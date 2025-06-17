@@ -12,9 +12,11 @@ module Baseline
       belongs_to :creditable, polymorphic: true
 
       validates :date, presence: true
+      validates :description, presence: true
       validates :pdf_file, presence: { if: :lexoffice_id }
       validates :number, presence: { if: :lexoffice_id }
       validates :amount_cents,
+        presence: true,
         numericality: {
           allow_nil:    true,
           only_integer: true,
