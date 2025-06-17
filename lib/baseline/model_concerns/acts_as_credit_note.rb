@@ -25,11 +25,7 @@ module Baseline
 
       delegate :invoicing_details, to: :creditable
 
-      after_initialize do
-        if new_record?
-          self.date ||= Date.current
-        end
-      end
+      attribute :date, default: -> { Date.current }
 
       monetize :amount_cents
     end
