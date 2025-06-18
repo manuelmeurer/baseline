@@ -21,11 +21,6 @@ module Baseline
                 locale = I18n.default_locale
               end
 
-              cookies.permanent[:locale] = {
-                value:  locale,
-                secure: Rails.configuration.force_ssl
-              }
-
               I18n.with_locale locale, &block
             end
 
