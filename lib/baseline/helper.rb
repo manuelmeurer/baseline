@@ -470,6 +470,30 @@ module Baseline
       tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
     end
 
+    def og_data_tags(prefix = "og", data = og_data)
+      data.map do |key, value|
+        if value.is_a?(Hash)
+          new_prefix = [
+            (prefix unless prefix == "og"),
+            key
+          ].compact
+            .join(":")
+          public_send __method__, new_prefix, value
+        else
+          property = [
+            prefix,
+            key
+          ].compact
+            .join(":")
+          Array(value).map do |content|
+            tag.meta \
+              property:,
+              content:
+          end
+        end
+      end
+    end
+
     private
 
       AUTO_LINK_RE = %r(
