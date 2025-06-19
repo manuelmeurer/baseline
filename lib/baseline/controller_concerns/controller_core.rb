@@ -36,16 +36,17 @@ module Baseline
 
       helper_method def og_data
         locale = {
-          de:      :de_DE,
-          "de-DE": :de_DE,
-          en:      :en_US,
-          "en-US": :en_US,
-          es:      :es_ES,
-          fr:      :fr_FR,
-          it:      :it_IT,
-          nl:      :nl_NL,
-          pl:      :pl_PL,
-        }.fetch(I18n.locale)
+          en: :en_US
+        }.fetch(I18n.locale) {
+          case I18n.locale
+          when /\A[a-z]{2}-[A-Z]{2}\z/
+            I18n.locale.to_s.tr("-", "_")
+          when /\A[a-z]{2}\z/
+            I18n.locale.then { "#{_1}_#{_1.upcase}" }
+          else
+            raise "Unexpected locale: #{I18n.locale}"
+          end
+        }
 
         # Assign to ivar so data can be changed.
         @og_data ||= {}
