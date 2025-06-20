@@ -396,7 +396,7 @@ module Baseline
       Baseline::MarkdownToHTML.call(...)
     end
 
-    def section(id = nil, css_class: nil, container: false, i18n_scope: action_i18n_scope, &block)
+    def section(id = nil, css_class: nil, container_css_class: nil, container: false, i18n_scope: action_i18n_scope, &block)
       if block.arity == 1
         unless id
           raise "Cannot determine I18n scope without section ID."
@@ -410,12 +410,13 @@ module Baseline
 
       tag.section id: id&.to_s&.tr("_", "-"), class: css_class do
         if container
-          css_class = [
+          new_container_css_class = [
             :container,
             (container unless container == true)
           ].compact
             .join("-")
-          tag.div class: css_class do
+          container_css_class = Array(container_css_class) << new_container_css_class
+          tag.div class: container_css_class do
             content.call
           end
         else
