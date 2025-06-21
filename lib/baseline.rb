@@ -118,6 +118,7 @@ module Baseline
 
   autoload :ActsAsAvoResource,      "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,        "baseline/application_core"
+  autoload :ApplicationPolicy,      "baseline/application_policy"
   autoload :Current,                "baseline/current"
   autoload :Helper,                 "baseline/helper"
   autoload :MailerCore,             "baseline/mailer_core"
