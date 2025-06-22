@@ -66,6 +66,43 @@ module Baseline
       end
     end
 
+    class_methods do
+      def redirect_to_clean_id_or_current_slug(only: :show, &block)
+        before_action only: do
+          id = params.fetch(:id)
+
+          begin
+            record = instance_exec(id, &block)
+          rescue ActiveRecord::RecordNotFound => error
+            cleaners = [
+              -> { _1.delete_suffix(")") }
+            ]
+            clean_id = nil
+
+            loop do
+              raise error unless cleaner = cleaners.shift
+              clean_id = cleaner.call(id)
+              redo if clean_id == id
+              record_found_with_clean_id = suppress ActiveRecord::RecordNotFound do
+                instance_exec(clean_id, &block)
+              end
+              break if record_found_with_clean_id
+            end
+
+            html_redirect_to \
+              params.permit!.merge(id: clean_id),
+              status: :moved_permanently
+          else
+            if record.respond_to?(:slug) && id != record.slug
+              html_redirect_to \
+                params.permit!.merge(id: record.slug),
+                status: :moved_permanently
+            end
+          end
+        end
+      end
+    end
+
     def render_turbo_response(
       redirect:             nil,
       success_message:      nil,
