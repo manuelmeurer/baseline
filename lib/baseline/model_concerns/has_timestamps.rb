@@ -30,23 +30,28 @@ module Baseline
             }
 
             { before: %w(< >), after: %w(> <) }.each do |before_or_after, (operator, unoperator)|
-              # If we are using PostgreSQL and the column is a date,
-              # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
-              before_after_attribute_with_table_name =
-                connection.adapter_name == "PostgreSQL" && columns_hash.fetch(attribute.to_s).type == :date ?
-                  attribute_with_table_name + "::timestamp" :
-                  attribute_with_table_name
-
               {
-                "#{verb}_#{before_or_after}"   => -> { "#{before_after_attribute_with_table_name} #{operator} #{_1}" },
-                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{before_after_attribute_with_table_name} #{unoperator} #{_1})" }
+                "#{verb}_#{before_or_after}"   => -> { "#{_1} #{operator} #{_2}" },
+                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{_1} #{unoperator} #{_1})" }
               }.each do |scope_name, sql|
                 scope scope_name, ->(time = Time.current) {
+                  # If we are using PostgreSQL and the column is a date,
+                  # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
+                  before_after_attribute_with_table_name =
+                    attribute_with_table_name.if(
+                      connection.adapter_name == "PostgreSQL" &&
+                      columns_hash.fetch(attribute.to_s).type == :date
+                    ) {
+                      _1 << "::timestamp"
+                    }
                   placeholder, params =
                     time.is_a?(Time) || time.is_a?(Date) ?
                     ["?", [time]] :
                     [time, []]
-                  where(sql.call(placeholder), *params)
+                  where(
+                    sql.call(before_after_attribute_with_table_name, placeholder),
+                    *params
+                  )
                 }
               end
             end
