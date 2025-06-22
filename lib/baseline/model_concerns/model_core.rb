@@ -319,7 +319,11 @@ module Baseline
 
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
-        return unless table_exists?
+        proceed = Kernel.suppress(ActiveRecord::NoDatabaseError) do
+          table_exists?
+        end
+
+        return unless proceed
 
         if @_baseline_finalized
           raise "Model #{name} has already been finalized."
