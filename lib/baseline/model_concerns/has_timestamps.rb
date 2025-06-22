@@ -32,7 +32,7 @@ module Baseline
             { before: %w(< >), after: %w(> <) }.each do |before_or_after, (operator, unoperator)|
               {
                 "#{verb}_#{before_or_after}"   => -> { "#{_1} #{operator} #{_2}" },
-                "un#{verb}_#{before_or_after}" => -> { "(#{attribute_with_table_name} IS NULL) OR (#{_1} #{unoperator} #{_1})" }
+                "un#{verb}_#{before_or_after}" => -> { "(#{_1} IS NULL) OR (#{_1} #{unoperator} #{_2})" }
               }.each do |scope_name, sql|
                 scope scope_name, ->(time = Time.current) {
                   # If we are using PostgreSQL and the column is a date,
@@ -42,7 +42,7 @@ module Baseline
                       connection.adapter_name == "PostgreSQL" &&
                       columns_hash.fetch(attribute.to_s).type == :date
                     ) {
-                      _1 << "::timestamp"
+                      "#{_1}::timestamp"
                     }
                   placeholder, params =
                     time.is_a?(Time) || time.is_a?(Date) ?
