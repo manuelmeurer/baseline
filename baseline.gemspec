@@ -22,4 +22,6 @@ Gem::Specification.new do |gem|
   gem.executables           = gem.files.grep(%r(\Abin/)).map(&File.method(:basename))
   gem.test_files            = test_files
   gem.require_paths         = ["lib"]
+
+  gem.add_development_dependency "rubocop-rails-omakase", "~> 1.1"
 end
