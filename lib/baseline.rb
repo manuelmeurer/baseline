@@ -97,6 +97,11 @@ module Baseline
     autoload :Helpers,              "baseline/services/sitemaps/helpers"
   end
 
+  module Spec
+    autoload :APIHelpers,           "baseline/spec/api_helpers"
+    autoload :CapybaraHelpers,      "baseline/spec/capybara_helpers"
+  end
+
   module Tasks
     autoload :Create,               "baseline/services/tasks/create"
 
