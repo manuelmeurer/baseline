@@ -55,6 +55,7 @@ module Baseline
     autoload :Lexoffice,            "baseline/services/external/lexoffice"
     autoload :Todoist,              "baseline/services/external/todoist"
     autoload :SlackSimple,          "baseline/services/external/slack_simple"
+    autoload :Pretix,               "baseline/services/external/pretix"
 
     module Google
       module Oauth
