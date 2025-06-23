@@ -13,8 +13,10 @@ module Baseline
 
     class << self
       def inherited(subclass)
+        return if subclass == ::External::Base
+
         subclass.instance_variable_set :"@calls",   []
-        subclass.instance_variable_set :"@actions", {}
+        subclass.instance_variable_set :"@actions", actions || {}
       end
 
       attr_reader :calls
@@ -35,7 +37,7 @@ module Baseline
       end
 
       def method_missing(method, ...)
-        @actions.key?(method) ?
+        actions.key?(method) ?
           new.call(method, ...) :
           super
       end
