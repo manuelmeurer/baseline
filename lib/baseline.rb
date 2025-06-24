@@ -155,6 +155,15 @@ module Baseline
       FileUtils.mkdir_p pathname.dirname
       File.write pathname, content
     end
+
+    def load_thor_tasks
+      path = File.expand_path(__dir__)
+      Dir
+        .glob("#{path}/baseline/tasks/**/*.thor")
+        .each {
+          load _1
+        }
+    end
   end
 end
 
