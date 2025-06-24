@@ -47,7 +47,7 @@
       = footer.html_safe
 
 - if url
-  = link_to content, url, class: [*css_class, "text-body"], data:, style:
+  = link_to content, url, class: [*css_class, "text-body", "text-decoration-none"], data:, style:
 - else
   %div{ class: css_class, data:, style: }
     = content
