@@ -17,7 +17,7 @@ module Baseline
 
       # https://docs.pretix.eu/dev/api/resources/orders.html#get--api-v1-organizers-(organizer)-events-(event)-orders-
       add_action :list_orders do |event_id, params = {}|
-        paginate \
+        paginate_get \
           path_with_prefix(event_id, "orders", **params)
       end
 
@@ -100,7 +100,7 @@ module Baseline
 
       # https://docs.pretix.eu/dev/api/resources/items.html#get--api-v1-organizers-(organizer)-events-(event)-items-
       add_action :list_items do |event_id|
-        paginate \
+        paginate_get \
           path_with_prefix(event_id, "items")
       end
 
@@ -114,7 +114,7 @@ module Baseline
 
       # https://docs.pretix.eu/dev/api/resources/quotas.html#get--api-v1-organizers-(organizer)-events-(event)-quotas-
       add_action :list_quotas do |event_id|
-        paginate \
+        paginate_get \
           path_with_prefix(event_id, "quotas")
       end
 
