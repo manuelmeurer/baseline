@@ -11,11 +11,11 @@ module Baseline
 
     def index?   = true
     def show?    = true
-    def create?  = false
+    def create?  = true
     def new?     = create?
-    def update?  = false
+    def update?  = true
     def edit?    = update?
-    def destroy? = false
+    def destroy? = true
     def search?  = true
     def reorder? = true
     def act_on?  = true
