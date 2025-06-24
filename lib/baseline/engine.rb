@@ -14,5 +14,10 @@ module Baseline
 
       app.config.assets.paths << root.join("app", "javascript")
     end
+
+    rake_tasks do
+      path = File.expand_path(__dir__)
+      Dir.glob("#{path}/tasks/**/*.rake").each { load _1 }
+    end
   end
 end
