@@ -572,5 +572,11 @@ module Baseline
         (left =~ AUTO_LINK_CRE[0] and right =~ AUTO_LINK_CRE[1]) or
           (left.rindex(AUTO_LINK_CRE[2]) and $' !~ AUTO_LINK_CRE[3])
       end
+
+      def credential_meta_tags(*names)
+        names
+          .index_with { Rails.application.env_credentials.dig(*_1.to_s.split(".")) }
+          .then { meta_tags _1 }
+      end
   end
 end
