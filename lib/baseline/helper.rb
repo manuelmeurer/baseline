@@ -299,7 +299,7 @@ module Baseline
 
     def meta_tags(data)
       data.map do |name, content|
-        tag.meta name:, content:
+        tag.meta name:, content: content.if(Hash, &:to_json)
       end.then {
         safe_join _1
       }
