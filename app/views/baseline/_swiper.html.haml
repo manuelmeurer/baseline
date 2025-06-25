@@ -2,7 +2,7 @@
 -# locals: (items:, params: {}, css_class: nil)
 
 -# If "slidesPerView" is set to "auto", we need to tell the slide explicitly to only take up as much space as needed.
-- slide_css_class = class_names("w-auto": params[:slidesPerView].to_sym == :auto)
+- slide_css_class = class_names("w-auto": params[:slidesPerView]&.to_sym == :auto)
 
 .swiper{ data: stimco(:swiper, params: params.to_json), class: css_class }
   .swiper-wrapper
