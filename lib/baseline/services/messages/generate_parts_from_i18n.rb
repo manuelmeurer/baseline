@@ -26,7 +26,7 @@ module Baseline
         end
 
         @admin_user             = admin_user
-        @message_class_i18n_key = @message_class.to_s.underscore
+        @message_class_i18n_key = @message_class.to_s.underscore.to_sym
 
         do_generate
       end
@@ -96,25 +96,23 @@ module Baseline
         def optional_i18n_scopes = []
 
         def body_from_i18n(*i18n_keys)
-          fetch_from_i18n [
+          fetch_from_i18n \
             :messages,
             @message_class_i18n_key,
             @kind,
             *i18n_keys
-          ]
         end
 
         def subject_from_i18n
-          fetch_from_i18n [
+          fetch_from_i18n \
             :messages,
             :subjects,
             @message_class_i18n_key,
             @kind
-          ]
         end
 
         def fetch_from_i18n(*i18n_keys)
-          _optional_i18n_scopes = optional_i18n_scopes.compact
+          _optional_i18n_scopes = optional_i18n_scopes.compact.map(&:to_sym)
 
           _optional_i18n_scopes
             .size
@@ -122,7 +120,7 @@ module Baseline
             .map { _optional_i18n_scopes.take(_1) }
             .map {
               i18n_keys
-                .concat(_1)
+                .+(_1) # Don't concat
                 .compact
                 .join(".")
             }.lazy
