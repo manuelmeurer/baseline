@@ -118,6 +118,7 @@ module Baseline
   end
 
   # Components
+  autoload :AvatarBoxComponent,     "baseline/components/avatar_box_component"
   autoload :FormActionsComponent,   "baseline/components/form_actions_component"
   autoload :FormFieldComponent,     "baseline/components/form_field_component"
   autoload :ItemListComponent,      "baseline/components/item_list_component"

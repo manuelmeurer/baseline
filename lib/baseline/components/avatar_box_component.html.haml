@@ -1,0 +1,29 @@
+-# frozen_string_literal: true
+
+- render_image = ->(css_class = nil) do
+  - image = capture_haml do
+    - css_class = [css_class, class_names("border", "align-self-center", "square-#{@size}", "rounded-circle": @rounded_corners)].compact
+    - case @imageable
+    - when String
+      = image_tag @imageable, class: css_class
+    - when ActiveStorage::Attached
+      - unless @imageable.attached?
+        - raise "Attachment is missing: #{@imageable.id}"
+      = attachment_image_tag @imageable, :md_thumb, class: css_class
+    - else
+      - raise "Unexpected @imageable: #{@imageable.class}"
+  - @image_wrapper ? @image_wrapper.call(image) : image
+
+- if content
+  - if @vertical
+    .d-flex.flex-column.align-items-center
+      = render_image.call "mb-#{@margin}"
+      = content
+  - else
+    .d-flex
+      = render_image.call "me-#{@margin}"
+      .d-flex.overflow-auto
+        .align-self-center.overflow-auto
+          = content
+- else
+  = render_image.call
