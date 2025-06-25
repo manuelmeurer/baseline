@@ -117,4 +117,23 @@ export default class extends Controller {
   get currentUrl() {
     return this.inModal() ? document.modalController.url : window.location
   }
+
+  enableStylesheets(name) {
+    const disabledStylesheets = JSON.parse(this.metaContent("disabled_stylesheets"))
+
+    if (!disabledStylesheets[name])
+      throw new Error(`No disabled stylesheets found for ${name}.`)
+
+    disabledStylesheets[name].forEach(link => {
+      const url = new DOMParser()
+        .parseFromString(link, "text/html")
+        .querySelector("link")
+        .getAttribute("href")
+
+      if (document.querySelector(`link[href="${url}"]`))
+        return
+
+      document.head.insertAdjacentHTML('beforeend', link)
+    })
+  }
 }

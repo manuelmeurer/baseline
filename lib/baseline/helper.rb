@@ -495,6 +495,39 @@ module Baseline
       end
     end
 
+    def stylesheets
+      @stylesheets ||= Hash.new
+    end
+
+    def add_stylesheet(stylesheet, name, disabled: false, **options)
+      unless stylesheet.match?(URLFormatValidator.regex)
+        path = javascript_path(name)
+        unless prefix = path[%r[.+@\d+(\.[^/]+)*/], 0]
+          raise "Could not determine prefix from path: #{path}"
+        end
+        stylesheet = File.join(prefix, stylesheet)
+      end
+
+      if disabled && !options.key?(:preload_links_header)
+        options[:preload_links_header] = false
+      end
+
+      stylesheets[stylesheet] = {
+        name:,
+        disabled:,
+        options:
+      }
+    end
+
+    def javascript_path(name)
+      Rails
+        .application
+        .importmap
+        .packages
+        .fetch(name.to_s)
+        .path
+    end
+
     private
 
       AUTO_LINK_RE = %r(
