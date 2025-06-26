@@ -2,10 +2,6 @@
 
 module Baseline
   module Helper
-    if defined?(MemoWise)
-      prepend MemoWise
-    end
-
     CLOUDINARY_VERSIONS = {
       xs:  50,
       sm: 100,
@@ -93,9 +89,7 @@ module Baseline
         end
           .gsub(/\s+(width|height)=['"]\d+['"]/, "")
           .html_safe
-      end.then {
-        memo_wise _1
-      }
+      end
     end
 
     def icon_classes
