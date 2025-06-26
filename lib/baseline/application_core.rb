@@ -15,7 +15,7 @@ module Baseline
       end.presence or
         raise "Could not load revision."
 
-      %i(host protocol port)
+      %i[host protocol port]
         .index_with { env_credentials[_1] }
         .compact
         .then do |url_options|

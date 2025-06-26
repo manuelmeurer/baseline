@@ -2,7 +2,7 @@
 
 module Baseline
   class URLFormatValidator < ActiveModel::EachValidator
-    def self.regex = %r(\Ahttps?://).freeze
+    def self.regex = %r{\Ahttps?://}.freeze
 
     def validate_each(record, attribute, value)
       valid =

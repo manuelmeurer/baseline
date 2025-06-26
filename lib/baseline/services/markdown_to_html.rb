@@ -5,7 +5,7 @@ require "kramdown-parser-gfm"
 
 module Baseline
   class MarkdownToHTML < ApplicationService
-    LINE_BREAK_REGEX = %r(<br(\s*/)?>).freeze
+    LINE_BREAK_REGEX = %r{<br(\s*/)?>}.freeze
 
     def call(text, sanitize: false, avoid_paragraphs: false)
       return "" if text.blank?

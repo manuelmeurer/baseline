@@ -2,18 +2,18 @@
 
 module Baseline
   module UniquenessChecker
-    KEY_PREFIX = %w(
+    KEY_PREFIX = %w[
       baseline
       uniqueness
-    ).join(":")
+    ].join(":")
       .freeze
 
-    ON_ERROR = %i(
+    ON_ERROR = %i[
       fail
       ignore
       reschedule
       return
-    ).freeze
+    ].freeze
 
     MAX_RETRIES = 10.freeze
     ONE_HOUR    = (60 * 60).freeze

@@ -6,7 +6,7 @@ end
 
 Gem::Specification.new do |gem|
   files      = `git ls-files`.split($/)
-  test_files = files.grep(%r(^spec/))
+  test_files = files.grep(%r{^spec/})
 
   gem.name                  = "baseline"
   gem.version               = "1.0"
@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.license               = "MIT"
   gem.required_ruby_version = ">= 3.1"
   gem.files                 = files - test_files
-  gem.executables           = gem.files.grep(%r(\Abin/)).map(&File.method(:basename))
+  gem.executables           = gem.files.grep(%r{\Abin/}).map(&File.method(:basename))
   gem.test_files            = test_files
   gem.require_paths         = ["lib"]
 

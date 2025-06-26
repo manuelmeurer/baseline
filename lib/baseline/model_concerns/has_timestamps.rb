@@ -29,7 +29,7 @@ module Baseline
               where(attribute_with_table_name => start_time..end_time)
             }
 
-            { before: %w(< >), after: %w(> <) }.each do |before_or_after, (operator, unoperator)|
+            { before: %w[< >], after: %w[> <] }.each do |before_or_after, (operator, unoperator)|
               {
                 "#{verb}_#{before_or_after}"   => -> { "#{_1} #{operator} #{_2}" },
                 "un#{verb}_#{before_or_after}" => -> { "(#{_1} IS NULL) OR (#{_1} #{unoperator} #{_2})" }
@@ -59,7 +59,7 @@ module Baseline
         end
 
         class_methods do
-          %i(scopes methods).each do |type|
+          %i[scopes methods].each do |type|
             define_method "timestamp_#{type}" do |*attributes|
               Array(attributes).flat_map do |attribute|
                 unless verb = @_timestamp_attributes_and_verbs[attribute]
@@ -107,12 +107,12 @@ module Baseline
                               if amount.is_a?(String)
                                 amount = Time.zone.parse(amount)
                               end
-                              %i(year month day).index_with { amount.public_send _1 }
+                              %i[year month day].index_with { amount.public_send _1 }
                             when :time
                               if amount.is_a?(String)
                                 amount = Time.zone.parse(amount)
                               end
-                              %i(hour min sec).index_with { amount.public_send _1 }
+                              %i[hour min sec].index_with { amount.public_send _1 }
                             else
                               change_unit = {
                                 hours:   :hour,
@@ -149,7 +149,7 @@ module Baseline
             public_send("#{verb}?") && (start_time..end_time).cover?(public_send(attribute))
           end
 
-          { before: %w(before? after?), after: %w(after? before?) }.each do |before_or_after, (method, unmethod)|
+          { before: %w[before? after?], after: %w[after? before?] }.each do |before_or_after, (method, unmethod)|
             define_method "#{verb}_#{before_or_after}?" do |time = Time.current|
               public_send("#{verb}?") && public_send(attribute).public_send(method, time)
             end

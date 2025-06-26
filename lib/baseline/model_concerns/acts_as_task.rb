@@ -10,14 +10,14 @@ module Baseline
 
       TODOIST_DESCRIPTION_DIVIDER = "--- DON'T EDIT BELOW THIS LINE ---".freeze
       TODOIST_DESCRIPTION_DIVIDER_REGEX = /\s*#{Regexp.escape TODOIST_DESCRIPTION_DIVIDER}[\s\S]*\z/.freeze
-      MARKDOWN_LINK_REGEX = %r(
+      MARKDOWN_LINK_REGEX = %r{
         \[
           [^\]]+
         \]
         \(
           ([^\)]+)
         \)
-      )ix.freeze
+      }ix.freeze
 
       enum :priority,
         %i[low medium high],

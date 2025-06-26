@@ -2,7 +2,7 @@
 
 module Baseline
   module RedisURL
-    DATABASES = %i(
+    DATABASES = %i[
       uplink
       rails_bump
       ruby_docs
@@ -10,7 +10,7 @@ module Baseline
       tasks
       spendex
       funlocked
-    )
+    ]
 
     def self.fetch(identifier = nil)
       @redis_url ||= Rails.application.env_credentials.redis_url || begin

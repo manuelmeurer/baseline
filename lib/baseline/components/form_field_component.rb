@@ -77,7 +77,7 @@ module Baseline
       ].compact
         .join("_")
 
-      %i(
+      %i[
         attribute
         data
         direct_upload
@@ -102,7 +102,7 @@ module Baseline
         value
         value_attributes
         wrapper_attributes
-      ).each {
+      ].each {
         instance_variable_set "@#{_1}", binding.local_variable_get(_1)
       }
 
@@ -152,11 +152,11 @@ module Baseline
         .presence ||
           [@identifier]
 
-      %i(
+      %i[
         label
         help_text
         placeholder
-      ).each do |attr|
+      ].each do |attr|
         [
           ::Current.namespace,
           attr.to_s.pluralize,
