@@ -45,6 +45,16 @@ module Baseline
     def reorder? = true
     def act_on?  = true
 
+    def method_missing(method, ...)
+      return true if attachment_policy_method?(method)
+      super
+    end
+
+    def respond_to_missing?(method, include_private = false)
+      return true if attachment_policy_method?(method)
+      super
+    end
+
     class Scope
       def initialize(user, scope)
         @user, @scope =
@@ -57,5 +67,17 @@ module Baseline
 
         attr_reader :user, :scope
     end
+
+    private
+
+      def attachment_policy_method?(method)
+        if attachment = method[/\A(?:upload|delete|download)_(.+)\?\z/, 1]
+          if @record.class.reflect_on_attachment(attachment)
+            return true
+          end
+        end
+
+        false
+      end
   end
 end
