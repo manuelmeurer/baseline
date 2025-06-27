@@ -26,6 +26,7 @@ module Baseline
   autoload :HasCountry,             "baseline/model_concerns/has_country"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
+  autoload :HasFriendlyID,          "baseline/model_concerns/has_friendly_id"
   autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasMessageable,         "baseline/model_concerns/has_messageable"
