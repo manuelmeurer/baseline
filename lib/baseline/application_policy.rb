@@ -14,19 +14,15 @@ module Baseline
         .constantize
 
       klass
-        .reflections
-        .select { _2.collection? }
-        .keys
-        .without(%w[versions]) # Papertrail versions
+        .reflect_on_all_associations
         .each do |association|
-          policy_klass = klass
-            .reflect_on_association(association)
+          policy_klass = association
             .class_name
             .then { "#{_1}Policy" }
             .safe_constantize
           next unless policy_klass
           inherit_association_from_policy \
-            association,
+            association.name,
             policy_klass
         end
     end
