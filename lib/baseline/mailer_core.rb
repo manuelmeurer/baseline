@@ -2,18 +2,22 @@
 
 module Baseline
   module MailerCore
-    def self.inherited(subclass)
-      identifier = subclass
-        .to_s
-        .underscore
-        .delete_suffix("_mailer")
+    extend ActiveSupport::Concern
 
-      subclass.layout "mailers/#{identifier}"
+    class_methods do
+      def inherited(subclass)
+        identifier = subclass
+          .to_s
+          .underscore
+          .delete_suffix("_mailer")
 
-      subclass.default template_path: "mailers/#{identifier}"
+        subclass.layout "mailers/#{identifier}"
 
-      suppress NameError do
-        subclass.helper subclass.to_s
+        subclass.default template_path: "mailers/#{identifier}"
+
+        suppress NameError do
+          subclass.helper subclass.to_s
+        end
       end
     end
   end
