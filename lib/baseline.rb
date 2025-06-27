@@ -26,13 +26,13 @@ module Baseline
   autoload :HasCountry,             "baseline/model_concerns/has_country"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
+  autoload :HasFriendlyID,          "baseline/model_concerns/has_friendly_id"
   autoload :HasGender,              "baseline/model_concerns/has_gender"
   autoload :HasLocale,              "baseline/model_concerns/has_locale"
   autoload :HasMessageable,         "baseline/model_concerns/has_messageable"
   autoload :HasPDFFiles,            "baseline/model_concerns/has_pdf_files"
   autoload :HasTimestamps,          "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,              "baseline/model_concerns/model_core"
-  autoload :SaveSlugIdentifier,     "baseline/model_concerns/save_slug_identifier"
   autoload :TouchAsync,             "baseline/model_concerns/touch_async"
 
   # Services

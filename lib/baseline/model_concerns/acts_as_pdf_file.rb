@@ -5,12 +5,8 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      extend FriendlyId
-
-      include SaveSlugIdentifier,
+      include HasFriendlyID,
               TouchAsync[:pdfable]
-
-      friendly_id :custom_slug, use: :history
 
       belongs_to :pdfable, polymorphic: true, optional: true
       belongs_to :original, class_name: to_s, optional: true
@@ -38,7 +34,7 @@ module Baseline
       end
 
       def custom_slug
-        [slug_identifier, title].join(" ")
+        [new_slug_identifier, title].join(" ")
       end
 
       def assign_attributes_from_original
