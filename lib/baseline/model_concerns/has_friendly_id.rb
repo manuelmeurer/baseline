@@ -11,10 +11,12 @@ module Baseline
 
           friendly_id(method, use:)
 
-          after_create do
-            if slug_identifier
-              with slug: slug_identifier do
-                create_slug
+          if use
+            after_create do
+              if slug_identifier
+                with slug: slug_identifier do
+                  create_slug
+                end
               end
             end
           end
