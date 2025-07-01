@@ -25,7 +25,7 @@ module Baseline
         end
 
         if method == :custom_slug
-          private def custom_slug = slug_identifier
+          private def custom_slug = new_slug_identifier
         end
 
         def slug_identifier
