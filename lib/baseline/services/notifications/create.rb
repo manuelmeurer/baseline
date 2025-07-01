@@ -36,7 +36,7 @@ module Baseline
           ]
         end
 
-        Baseline::External::SlackSimple.call_async \
+        ::External::SlackSimple.call_async \
           :post_message,
           SLACK_CHANNEL_ID,
           message_parts.join("\n")
