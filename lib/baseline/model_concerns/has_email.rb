@@ -12,7 +12,7 @@ module Baseline
 
           validates attribute,
             email: {
-              allow_blank: true
+              allow_nil: true
             }
         end
       end
