@@ -24,6 +24,7 @@ module Baseline
   autoload :ActsAsTodoistEvent,     "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasChargeVAT,           "baseline/model_concerns/has_charge_vat"
   autoload :HasCountry,             "baseline/model_concerns/has_country"
+  autoload :HasEmail,               "baseline/model_concerns/has_email"
   autoload :HasFirstAndLastName,    "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFullName,            "baseline/model_concerns/has_full_name"
   autoload :HasFriendlyID,          "baseline/model_concerns/has_friendly_id"
