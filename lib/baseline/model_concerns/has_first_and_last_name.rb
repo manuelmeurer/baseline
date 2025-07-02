@@ -4,10 +4,10 @@ module Baseline
   module HasFirstAndLastName
     extend ActiveSupport::Concern
 
-    def name=(name)
-      return if name.blank?
+    def name=(value)
+      return if value.blank?
 
-      name_parts = name
+      name_parts = value
         .strip
         .sub(/\Adr\.?\s+/i, "")
         .then {
