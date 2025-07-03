@@ -5,10 +5,7 @@ module Baseline
     attr_reader :error_class, :placeholder
     attr_accessor :id, :attribute, :data
 
-    def initialize(type,
-        form:,
-        field:              nil,
-        attribute:          field.attribute,
+    def initialize(form, type, field_or_attribute,
         full_width:         false,
         hint:               Baseline::NOT_SET,
         i18n_key:           nil,
@@ -32,6 +29,11 @@ module Baseline
         readonly:           false,
         value:              Baseline::NOT_SET
       )
+
+      field, attribute =
+        field_or_attribute.is_a?(Symbol) ?
+          [nil,                field_or_attribute] :
+          [field_or_attribute, field_or_attribute.attribute]
 
       if type == :radio && value == Baseline::NOT_SET
         raise ArgumentError, "value is required for radio buttons"
@@ -181,7 +183,8 @@ module Baseline
 
     def label_tag(css_class = Baseline::NOT_SET)
       if css_class == Baseline::NOT_SET
-        css_class = case
+        css_class =
+          case
           when @vertical_label then "form-label"
           when @floating_label then ""
           else ["col-form-label", *form_classes(type: :label)].join(" ")
@@ -213,6 +216,8 @@ module Baseline
 
       def content_for_type
         send :"#{@type}_content"
+      rescue NoMethodError
+        raise "Unknown content type: #{@type}"
       end
 
       def base_content

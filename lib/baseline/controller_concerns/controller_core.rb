@@ -103,6 +103,8 @@ module Baseline
       end
     end
 
+    def current_language = Language.new(locale: I18n.locale)
+
     def render_turbo_response(
       redirect:             nil,
       success_message:      nil,
@@ -143,6 +145,28 @@ module Baseline
           render turbo_stream: streams
         end
       end
+    end
+
+    def validate_turnstile
+      unless Rails.env.production?
+        return true
+      end
+
+      if params["cf-turnstile-response"].blank?
+        return false
+      end
+
+      success = params["cf-turnstile-success"]
+
+      [true, false].each do |value|
+        if success == value.to_s
+          return value
+        end
+      end
+
+      ReportError.call %(Cloudflare Turnstile Success param neither "true" nor "false", got: #{success.inspect})
+
+      false
     end
 
     private

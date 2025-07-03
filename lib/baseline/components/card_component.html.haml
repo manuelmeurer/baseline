@@ -1,0 +1,49 @@
+-# frozen_string_literal: true
+
+- card = capture_haml do
+  - case @image
+  - when Array
+    - if @image.first.attached?
+      = attachment_image_tag *@image, class: @image_css_class
+  - when String
+    = image_tag @image, class: @image_css_class
+  - when ActiveStorage::Attached::One
+    - if @image.attached?
+      = image_tag @image, class: @image_css_class
+  - when NilClass
+  - else
+    - raise "Unexpected @image: #{@image.class}"
+
+  - if @header
+    %h5.card-header
+      = @header.html_safe
+
+  .card-body{ class: @body_css_class }
+    - case @icon
+    - when /\.svg\z/
+      = inline_svg @icon, class: "card-icon"
+    - when /\.(jpg|png)\z/
+      = image_tag @icon, class: "card-icon"
+    - when /.+/
+      %span.card-icon
+        = @icon
+
+    = @above_title
+
+    - if @title
+      = tag.public_send(@title_tag, class: "card-title") do
+        = @title
+
+    = content
+
+  = @after_body
+
+  - if @footer
+    .card-footer{ class: @footer_css_class }
+      = @footer.html_safe
+
+- if @url
+  = link_to card, @url, class: [*@css_class, "text-body", "text-decoration-none"], data: @data, style: @style
+- else
+  %div{ class: @css_class, data: @data, style: @style }
+    = card
