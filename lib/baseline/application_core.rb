@@ -5,6 +5,10 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      config.paths.add "app/models",
+        eager_load: true,
+        glob:       "**/*"
+
       config.revision = begin
         Rails
           .root

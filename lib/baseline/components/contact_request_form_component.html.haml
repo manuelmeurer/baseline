@@ -29,10 +29,9 @@
         = @contact_request.errors.full_messages.join(tag.br).html_safe
 
     = form.hidden_field :kind
-    = hidden_field_tag :partial_data, @partial_data.to_json
     = hidden_field_tag :success_message, @texts.fetch(:success)
 
-    - @fields.each_with_index do |fields, index|
+    - @contact_request.fields.each_with_index do |fields, index|
       - if fields.is_a?(Array)
         - raise "Unexpected number of fields: #{fields.size}" unless fields.size.in?(2..3)
         .row.gx-3

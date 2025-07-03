@@ -125,11 +125,11 @@ module Baseline
       stream = turbo_stream.append_all(:body) do
         view_context.tag.div \
           data: stimco(:turbo_response,
-            redirect:             redirect&.then { url_for _1 },
+            redirect:      redirect&.then { url_for _1 },
+            reload_frames: Array(reload_frames),
             close_modal:,
             reload_main:,
             reload_main_or_modal:,
-            reload_frames:        Array(reload_frames),
             success_message:,
             error_message:
           )

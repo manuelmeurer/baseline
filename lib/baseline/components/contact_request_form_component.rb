@@ -2,10 +2,9 @@
 
 module Baseline
   class ContactRequestFormComponent < ApplicationComponent
-    def initialize(kind, fields:, contact_request: ContactRequest.new(kind:), button_row_breakpoint: :sm, i18n_scope: nil, i18n_params: {})
-      @kind, @fields, @contact_request, @button_row_breakpoint, @i18n_scope, @i18n_params =
-        kind, fields, contact_request, button_row_breakpoint, i18n_scope, i18n_params
-      @partial_data = { i18n_scope:, i18n_params: }.compact_blank
+    def initialize(kind, contact_request: ContactRequest.new(kind:), button_row_breakpoint: :sm, i18n_scope: nil, i18n_params: {})
+      @kind, @contact_request, @button_row_breakpoint, @i18n_scope, @i18n_params =
+        kind, contact_request, button_row_breakpoint, i18n_scope, i18n_params
     end
 
     def before_render
@@ -14,7 +13,7 @@ module Baseline
         turbo_data(method: nil, confirm: false),
         @turnstile_stimco.to_h
       )
-      @texts = [*@fields.flatten, :success, :error].index_with do |field|
+      @texts = [*@contact_request.fields.flatten, :success, :error].index_with do |field|
         if field.is_a?(Hash)
           field = field.keys.first
         end

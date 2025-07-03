@@ -3,12 +3,19 @@
 module Baseline
   module ContactRequestControllable
     def create
+      unless validate_turnstile
+        SpamRequest.new(type: "contact", params: contact_request_params).save
+        return
+      end
+
+      do_create
+
       @success_message = params[:success_message]
 
-      if validate_turnstile
-        do_create
-      else
-        SpamRequest.new(type: "contact", params: contact_request_params).save
+      respond_to do |format|
+        format.turbo_stream do
+          render "baseline/contact_requests/create"
+        end
       end
     end
 
@@ -16,29 +23,29 @@ module Baseline
 
       def contact_request_params
         params.require(:contact_request).permit(
-          :kind,
-          :name,
+          :company,
           :email,
-          :phone,
+          :kind,
           :message,
+          :name,
+          :phone,
           details: {}
         ).merge(language: current_language)
       end
 
       def do_create
-        contact_request = ContactRequest.new(contact_request_params)
+        contact_request = ContactRequest.new(
+          locale: I18n.locale,
+          **contact_request_params
+        )
 
         begin
           contact_request.save!
         rescue ActiveRecord::RecordInvalid
           ReportError.call "Error creating contact request",
             errors: contact_request.errors.to_hash
-          locals = JSON
-            .parse(params[:partial_data])
-            .symbolize_keys
-            .merge(contact_request:)
-          render ContactRequestFormComponent.new(contact_request.kind, **locals),
-            status: :unprocessable_entity
+          render_turbo_response \
+            error_message: contact_request.errors.full_messages.to_sentence
           return
         end
 
@@ -46,13 +53,11 @@ module Baseline
           after_create contact_request
         end
 
-        contact_request_message = contact_request
+        contact_request
           .messages
           .created
-          .build \
-            language: current_language
-
-        Messages::CreateAndSend.call contact_request_message
+          .build
+          ._do_create_and_send
 
         Tasks::Create.call \
           taskable:   contact_request,
