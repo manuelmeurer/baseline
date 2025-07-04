@@ -291,6 +291,14 @@ module Baseline
           raise "Model #{name} has already been finalized."
         end
 
+        unless instance_methods(false).include?(:to_s)
+          define_method :to_s do
+            try(:name) ||
+              try(:title) ||
+              "#{model_name.human} #{try(:slug) || id || "[new]"}"
+          end
+        end
+
         if timestamp_attributes = %w(created_at updated_at).intersection(column_names).presence
           include HasTimestamps[*timestamp_attributes]
         end
