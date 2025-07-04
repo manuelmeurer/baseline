@@ -279,23 +279,6 @@ module Baseline
         end
       end
 
-      def inherited(subclass)
-        if subclass.base_class&.then { _1 != subclass }
-          return super
-        end
-
-        super
-
-        # Disabled because it's flaky with Rails autoloading.
-        # Call `_baseline_finalize` manually in the subclass!
-        # TracePoint.new(:end) do |tracepoint|
-        #   if tracepoint.self.respond_to?(:_baseline_finalize)
-        #     subclass._baseline_finalize
-        #     tracepoint.disable
-        #   end
-        # end.enable
-      end
-
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
         proceed = Kernel.suppress(ActiveRecord::NoDatabaseError) do

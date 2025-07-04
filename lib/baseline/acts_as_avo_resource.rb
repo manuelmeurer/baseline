@@ -10,19 +10,6 @@ module Baseline
     end
 
     class_methods do
-      def inherited(subclass)
-        super
-
-        # Disabled because it's flaky with Rails autoloading.
-        # Call `_baseline_finalize` manually in the subclass!
-        # TracePoint.new(:end) do |tracepoint|
-        #   if tracepoint.self == subclass
-        #     subclass._baseline_finalize
-        #     tracepoint.disable
-        #   end
-        # end.enable
-      end
-
       def _baseline_finalize
         self.title = :to_s
 
