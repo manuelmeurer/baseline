@@ -1,0 +1,63 @@
+en:
+
+  languages:
+    names:
+      az: Azerbaijani
+      be: Belarusian
+      bg: Bulgarian
+      cs: Czech
+      cy: Welsh
+      da: Danish
+      de-AT: Deutsch (Austria)
+      de-CH: Deutsch (Switzerland)
+      de-DE: Deutsch (Germany)
+      de: German
+      el: Greek
+      en-GB: English (United Kingdom)
+      en-US: English (United States)
+      en: English
+      es: Spanish
+      et: Estonian
+      eu: Basque
+      fa: Persian
+      fi: Finnish
+      fr: French
+      ga: Irish
+      hi: Hindi
+      hu: Hungarian
+      id: Indonesian
+      is: Icelandic
+      it: Italian
+      ja: Japanese
+      kk: Kazakh
+      ko: Korean
+      lt: Lithuanian
+      lv: Latvian
+      mk: Macedonian
+      mt: Maltese
+      ne: Nepali
+      nl: Dutch
+      "no": Norwegian
+      pl: Polish
+      pt: Portuguese
+      ro: Romanian
+      ru: Russian
+      sh: Serbo-Croatian
+      sk: Slovak
+      sl: Slovene
+      sq: Albanian
+      sv: Swedish
+      th: Thai
+      tr: Turkish
+      uk: Ukrainian
+      uz: Uzbek
+      vi: Vietnamese
+      zh: Mandarin Chinese
+    locales:
+      de: German
+      en: English
+    levels:
+      basic: Basic
+      intermediate: Intermediate
+      fluent: Fluent
+      primary: Primary

@@ -228,7 +228,7 @@ module Baseline
               loading_message == NOT_SET ?
               {} :
               { message: loading_message }
-            render "shared/loading", **loading_params
+            loading(**loading_params)
           end
         end
       end
@@ -605,5 +605,7 @@ module Baseline
           .index_with { Rails.application.env_credentials.dig(*_1.to_s.split(".")) }
           .then { meta_tags _1 }
       end
+
+      def modal_default_size = "lg"
   end
 end

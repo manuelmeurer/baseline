@@ -1,0 +1,12 @@
+-# frozen_string_literal: true
+
+#modal.modal.fade{ data: @stimco.to_h }
+  .modal-dialog.modal-fullscreen-sm-down{ data: @stimco.target(:dialog) }
+    .modal-content{ data: @stimco.target(:content) }
+      .modal-header{ data: @stimco.target(:header) }
+        %h5.modal-title{ data: @stimco.target(:title) }
+        .d-flex.gap-2.mx-3{ data: @stimco.target(:actions) }
+        %button.btn-close{ type: "button", data: { bs_dismiss: "modal" } }
+      .modal-body{ data: @stimco.target(:body) }
+        = helpers.turbo_frame_tag :modal, data: @stimco.target(:frame), target: "_top"
+      .modal-footer{ data: @stimco.target(:footer) }

@@ -1,0 +1,109 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  // https://github.com/hotwired/turbo-rails/issues/165
+  scroll-behavior: auto !important;
+}
+
+img {
+  @include img-fluid;
+}
+
+body {
+  min-height: 100vh;
+
+  &.loading {
+    cursor: wait;
+  }
+}
+
+p,
+ul,
+table {
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+turbo-frame {
+  display: block;
+}
+
+.form-switch input:hover {
+  cursor: pointer;
+}
+
+.square-xs {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+}
+
+.square-sm {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+}
+
+.square-md {
+  width: 80px;
+  min-width: 80px;
+  height: 80px;
+}
+
+.square-lg {
+  width: 120px;
+  min-width: 120px;
+  height: 120px;
+}
+
+.square-xl {
+  width: 200px;
+  min-width: 200px;
+  height: 200px;
+}
+
+.truncated {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.width-300 {
+  width: 300px;
+}
+
+.max-width-150 {
+  max-width: 150px;
+}
+
+.max-width-350 {
+  max-width: 350px;
+}
+
+.max-width-500 {
+  max-width: 500px;
+}
+
+.max-width-1000 {
+  max-width: 1000px;
+}
+
+.height-300 {
+  height: 300px;
+}
+
+.min-w-fit {
+  min-width: fit-content;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+i[class^="fa-"] {
+  min-width: 12px;
+  display: inline-block;
+}

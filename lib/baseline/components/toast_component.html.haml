@@ -1,0 +1,14 @@
+-# frozen_string_literal: true
+
+%div{ data: @stimco.to_h }
+
+  #toast-container{ data: data_merge(@stimco.target(:container), turbo_permanent: true) }
+
+  .toast{ data: @stimco.target(:template) }
+    .toast-header
+      .title-success
+        = icon :accept, version: :solid
+      .title-error
+        = icon :warning, version: :solid
+      %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }
+    .toast-body

@@ -123,17 +123,21 @@ module Baseline
   # Components
   autoload :AvatarBoxComponent,             "baseline/components/avatar_box_component"
   autoload :CardComponent,                  "baseline/components/card_component"
+  autoload :ContactRequestFormComponent,    "baseline/components/contact_request_form_component"
   autoload :CopyableTextFieldComponent,     "baseline/components/copyable_text_field_component"
   autoload :FormActionsComponent,           "baseline/components/form_actions_component"
   autoload :FormFieldComponent,             "baseline/components/form_field_component"
   autoload :ItemListComponent,              "baseline/components/item_list_component"
-  autoload :ContactRequestFormComponent,    "baseline/components/contact_request_form_component"
+  autoload :ModalComponent,                 "baseline/components/modal_component"
+  autoload :ToastComponent,                 "baseline/components/toast_component"
+  autoload :LoadingComponent,               "baseline/components/loading_component"
 
   autoload :ActsAsAvoResource,              "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,                "baseline/application_core"
   autoload :ApplicationPolicy,              "baseline/application_policy"
   autoload :Current,                        "baseline/current"
   autoload :Helper,                         "baseline/helper"
+  autoload :Language,                       "baseline/language"
   autoload :MailerCore,                     "baseline/mailer_core"
   autoload :RedisURL,                       "baseline/redis_url"
   autoload :StimulusController,             "baseline/stimulus_controller"
@@ -170,6 +174,48 @@ module Baseline
         .each {
           load _1
         }
+    end
+
+    def importmap_setup(importmap)
+      require "addressable"
+
+      sentry_public_key = Rails
+        .application
+        .env_credentials
+        .sentry
+        &.dsn
+        &.then {
+          Addressable::URI
+            .parse(_1)
+            .user
+        } ||
+          "dummy"
+
+      importmap.pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
+      importmap.pin "@hotwired/stimulus",         to: "stimulus.min.js"
+      importmap.pin "@hotwired/turbo-rails",      to: "turbo.min.js"
+      importmap.pin "@rails/request.js",          to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0.0.12/dist/requestjs.min.js"
+      importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/+esm"
+      importmap.pin "fontawesome",                to: "https://kit.fontawesome.com/803861782f.js"
+      importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
+      importmap.pin "sentry",                     to: "https://js.sentry-cdn.com/#{sentry_public_key}.min.js"
+
+      importmap.pin "application_controller"
+      importmap.pin "baseline_controller",        to: "baseline/controller.js"
+      importmap.pin "controllers",                to: "controllers/index.js"
+
+      Rails
+        .root
+        .join("app", "javascript", "controllers", "*")
+        .then { Dir[_1] }
+        .map { File.basename _1 if File.directory? _1 }
+        .compact
+        .each do |namespace|
+          importmap.pin namespace
+          importmap.pin_all_from "app/javascript/controllers/#{namespace}",
+            under:   "controllers/#{namespace}",
+            preload: Rails.configuration.stimulus_app_namespaces.fetch(namespace.to_sym).map(&:to_s)
+        end
     end
   end
 end

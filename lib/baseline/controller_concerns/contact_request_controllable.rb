@@ -14,7 +14,12 @@ module Baseline
 
       respond_to do |format|
         format.turbo_stream do
-          render "baseline/contact_requests/create"
+          if defined?(@error_message)
+            render_turbo_response \
+              error_message: @error_message
+          else
+            render "baseline/contact_requests/create"
+          end
         end
       end
     end
@@ -44,8 +49,7 @@ module Baseline
         rescue ActiveRecord::RecordInvalid
           ReportError.call "Error creating contact request",
             errors: contact_request.errors.to_hash
-          render_turbo_response \
-            error_message: contact_request.errors.full_messages.to_sentence
+          @error_message = contact_request.errors.full_messages.to_sentence
           return
         end
 

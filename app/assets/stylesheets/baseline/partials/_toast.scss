@@ -1,0 +1,57 @@
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  z-index: $zindex-tooltip + 100;
+  row-gap: 1rem;
+
+  .toast {
+    width: 300px;
+    background-color: white;
+
+    p:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
+
+    .title-success,
+    .title-error {
+      display: none;
+      font-weight: bold;
+      margin-right: auto;
+    }
+
+    .title-success {
+      color: $green;
+    }
+
+    .title-error {
+      color: $red;
+    }
+
+    &.success {
+
+      .toast-header {
+        background-color: $green-100;
+
+        .title-success {
+          display: block;
+        }
+      }
+    }
+
+    &.error {
+
+      .toast-header {
+        background-color: $red-100;
+
+        .title-error {
+          display: block;
+        }
+      }
+    }
+  }
+}

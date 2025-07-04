@@ -1,0 +1,63 @@
+de:
+
+  languages:
+    names:
+      az: Aserbaidschanisch
+      be: Weißrussisch
+      bg: Bulgarisch
+      cs: Tschechisch
+      cy: Walisisch
+      da: Dänisch
+      de-AT: Deutsch (Österreich)
+      de-CH: Deutsch (Schweiz)
+      de-DE: Deutsch (Deutschland)
+      de: Deutsch
+      el: Griechisch
+      en-GB: Englisch (Vereinigtes Königreich)
+      en-US: Englisch (Vereinigte Staaten)
+      en: Englisch
+      es: Spanisch
+      et: Estnisch
+      eu: Baskisch
+      fa: Persisch
+      fi: Finnisch
+      fr: Französisch
+      ga: Irisch
+      hi: Hindi
+      hu: Ungarisch
+      id: Indonesisch
+      is: Isländisch
+      it: Italienisch
+      ja: Japanisch
+      kk: Kasachisch
+      ko: Koreanisch
+      lt: Litauisch
+      lv: Lettisch
+      mk: Mazedonisch
+      mt: Maltesisch
+      ne: Nepali
+      nl: Niederländisch
+      "no": Norwegisch
+      pl: Polnisch
+      pt: Portugiesisch
+      ro: Rumänisch
+      ru: Russisch
+      sh: Serbokroatisch
+      sk: Slowakisch
+      sl: Slowenisch
+      sq: Albanisch
+      sv: Schwedisch
+      th: Thailändisch
+      tr: Türkisch
+      uk: Ukrainisch
+      uz: Usbekisch
+      vi: Vietnamesisch
+      zh: Mandarin (Chinesisch)
+    locales:
+      de: Deutsch
+      en: Englisch
+    levels:
+      basic: Grundkenntnisse
+      intermediate: Fortgeschritten
+      fluent: Fließend
+      primary: Erstsprache

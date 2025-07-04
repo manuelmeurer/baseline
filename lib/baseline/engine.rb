@@ -12,7 +12,13 @@ module Baseline
         require "baseline/sitemap_generator"
       end
 
+      I18n.load_path += Dir[root.join("config", "locales", "**", "*.yml")]
+
       app.config.assets.paths << root.join("app", "javascript")
+    end
+
+    initializer "baseline.assets.precompile" do |app|
+      app.config.assets.paths << root.join("app", "assets", "stylesheets")
     end
 
     rake_tasks do
