@@ -54,7 +54,7 @@ module Baseline
           authenticate(admin_user)
 
           add_flash :notice, "Successfully logged in."
-          redirect_to(cookies[:return_to] || %i[admin root])
+          redirect_to(cookies[:return_to].presence || %i[admin root])
         end
 
         private
