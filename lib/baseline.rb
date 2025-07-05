@@ -176,7 +176,7 @@ module Baseline
         }
     end
 
-    def importmap_setup(importmap)
+    def importmap_setup(importmap, fontawesome_id: nil)
       require "addressable"
 
       sentry_public_key = Rails
@@ -196,9 +196,12 @@ module Baseline
       importmap.pin "@hotwired/turbo-rails",      to: "turbo.min.js"
       importmap.pin "@rails/request.js",          to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0.0.12/dist/requestjs.min.js"
       importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/+esm"
-      importmap.pin "fontawesome",                to: "https://kit.fontawesome.com/803861782f.js"
       importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
       importmap.pin "sentry",                     to: "https://js.sentry-cdn.com/#{sentry_public_key}.min.js"
+
+      if fontawesome_id
+        importmap.pin "fontawesome",              to: "https://kit.fontawesome.com/#{fontawesome_id}.js"
+      end
 
       importmap.pin "application_controller"
       importmap.pin "baseline_controller",        to: "baseline/controller.js"
