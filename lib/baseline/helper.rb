@@ -387,7 +387,7 @@ module Baseline
     end
 
     def md_to_html(...)
-      Baseline::MarkdownToHTML.call(...)
+      MarkdownToHTML.call(...)
     end
 
     def section(id = nil, css_class: nil, container_css_class: nil, container: false, i18n_scope: action_i18n_scope, &block)
