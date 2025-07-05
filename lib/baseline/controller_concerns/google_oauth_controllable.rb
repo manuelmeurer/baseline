@@ -59,7 +59,7 @@ module Baseline
 
         private
 
-          def redirect_uri = admin_oauth_callback_url(return_to: params[:return_to])
+          def redirect_uri = admin_oauth_callback_url
 
           def oauth_client
             Rails
