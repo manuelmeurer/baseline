@@ -22,7 +22,7 @@ module Baseline
             allow_other_host: true
         end
 
-        def callback
+        define_method :callback do
           if error = params[:error]
             add_flash :alert, "An error occurred: #{error}. Please try again."
             redirect_to %i[admin login]
