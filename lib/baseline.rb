@@ -4,13 +4,14 @@ module Baseline
   NOT_SET = Object.new.freeze
 
   # Controller concerns
+  autoload :AdminSessionsControllable,          "baseline/controller_concerns/admin_sessions_controllable"
   autoload :APIControllerCore,                  "baseline/controller_concerns/api_controller_core"
   autoload :APITodoistControllable,             "baseline/controller_concerns/api_todoist_controllable"
   autoload :Authentication,                     "baseline/controller_concerns/authentication"
   autoload :AvoApplicationControllable,         "baseline/controller_concerns/avo_application_controllable"
   autoload :ContactRequestControllable,         "baseline/controller_concerns/contact_request_controllable"
   autoload :ControllerCore,                     "baseline/controller_concerns/controller_core"
-  autoload :AdminSessionsControllable,          "baseline/controller_concerns/admin_sessions_controllable"
+  autoload :GoogleOauthControllable,            "baseline/controller_concerns/google_oauth_controllable"
   autoload :I18nScopes,                         "baseline/controller_concerns/i18n_scopes"
   autoload :MissionControlJobsBaseControllable, "baseline/controller_concerns/mission_control_jobs_base_controllable"
   autoload :NamespaceLayout,                    "baseline/controller_concerns/namespace_layout"

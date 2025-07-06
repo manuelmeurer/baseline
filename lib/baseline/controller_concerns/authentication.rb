@@ -40,9 +40,9 @@ module Baseline
 
             before_action(**) do
               if current_user
+                add_flash :alert, "You are already logged in."
                 redirect_back_or_to \
-                  [::Current.namespace, :root],
-                  alert: "You are already logged in."
+                  [::Current.namespace, :root]
               end
             end
           end
@@ -73,13 +73,19 @@ module Baseline
 
           def request_authentication
             session[:return_to] = request.url
-            redirect_to [::Current.namespace, :login],
-              alert: "Please log in to continue."
+            add_flash :alert, "Please log in to continue."
+            redirect_to [::Current.namespace, :login]
           end
 
           def after_authentication_url
             session.delete(:return_to) ||
               [::Current.namespace, :root]
+          end
+
+          def authenticate_and_redirect(user)
+            authenticate(user)
+            add_flash :notice, "Successfully logged in."
+            redirect_to after_authentication_url
           end
 
           def authenticate(user)
