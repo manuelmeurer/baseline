@@ -20,10 +20,6 @@ module Baseline
             admin_user = AdminUser.find(params[:admin_user_id])
             authenticate_and_redirect(admin_user)
           else
-            # cookies[:return_to] = {
-            #   value:   params[:return_to],
-            #   expires: 1.hour.from_now
-            # }
             google_url = oauth_client
               .auth_code
               .authorize_url(
