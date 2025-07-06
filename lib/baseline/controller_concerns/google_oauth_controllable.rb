@@ -37,7 +37,7 @@ module Baseline
         return
       end
 
-      if params[:scope]
+      if ::Current.admin_user
         # Authorization
         code, scope = params.values_at(:code, :scope)
         if code.blank? || scope.blank?
