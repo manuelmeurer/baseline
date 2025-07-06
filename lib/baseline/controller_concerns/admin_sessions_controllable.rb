@@ -42,7 +42,7 @@ module Baseline
             notice: "Successfully logged out."
         end
 
-        define_method :callback do
+        define_method :oauth_callback do
           if error = params[:error]
             add_flash :alert, "An error occurred: #{error}. Please try again."
             redirect_to %i[admin login]
@@ -76,7 +76,7 @@ module Baseline
 
         private
 
-          def redirect_uri = admin_sessions_callback_url
+          def redirect_uri = admin_oauth_callback_url
 
           def authenticate_and_redirect(admin_user)
             authenticate(admin_user)
