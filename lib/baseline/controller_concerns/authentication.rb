@@ -34,25 +34,41 @@ module Baseline
           else
             before_action(:resume_session, **) # Set Current.user
           end
+
+          def enforce_unauthenticated_access(**)
+            allow_unauthenticated_access(**)
+
+            before_action(**) do
+              if current_user
+                redirect_back_or_to \
+                  [::Current.namespace, :root],
+                  alert: "You are already logged in."
+              end
+            end
+          end
         end
 
         private
 
-          def auth_user_class            = @auth_user_class ||= self.class.auth_user_class_name.constantize
-          def auth_user_class_identifier = self.class.auth_user_class_name.underscore
+          def auth_user_class               = @auth_user_class ||= self.class.auth_user_class_name.constantize
+          def auth_user_class_identifier    = self.class.auth_user_class_name.underscore
+          def cookie_name                   = :"#{auth_user_class_identifier}_id"
+          def current_user                  = ::Current.public_send(auth_user_class_identifier)
+          def set_current_user(value = nil) = ::Current.public_send("#{auth_user_class_identifier}=", value)
 
           def require_authentication
             request_authentication unless authenticated?
           end
 
           def resume_session
-            ::Current.public_send "#{auth_user_class_identifier}=",
-              ::Current.public_send(auth_user_class_identifier) ||
+            set_current_user(
+              current_user ||
                 cookies
-                  .signed[:"#{auth_user_class_identifier}_id"]
+                  .signed[cookie_name]
                   &.then {
                     auth_user_class.find_by(id: _1)
                   }
+            )
           end
 
           def request_authentication
@@ -71,21 +87,17 @@ module Baseline
               raise "Unexpected user class: #{user.class}"
             end
 
-            ::Current.public_send "#{auth_user_class_identifier}=", user
-            cookies.signed.permanent[:"#{auth_user_class_identifier}_id"] = {
+            set_current_user(user)
+            cookies.signed.permanent[cookie_name] = {
               value:     user.id,
               httponly:  true,
               same_site: :lax
             }
           end
 
-          def unauthenticate(user)
-            unless user.is_a?(auth_user_class)
-              raise "Unexpected user class: #{user.class}"
-            end
-
-            ::Current.public_send "#{auth_user_class_identifier}=", nil
-            cookies.delete :"#{auth_user_class_identifier}_id"
+          def unauthenticate
+            set_current_user
+            cookies.delete(cookie_name)
           end
       end
     end

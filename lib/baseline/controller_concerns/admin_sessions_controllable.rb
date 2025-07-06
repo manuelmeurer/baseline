@@ -1,25 +1,45 @@
 # frozen_string_literal: true
 
 module Baseline
-  module GoogleOauthControllable
+  module AdminSessionsControllable
     def self.[](email_domain)
       Module.new do
         extend ActiveSupport::Concern
 
         included do
-          allow_unauthenticated_access
+          enforce_unauthenticated_access only: %i[new create]
         end
 
-        def authorize
-          google_url = oauth_client
-            .auth_code
-            .authorize_url(
-              redirect_uri:,
-              scope:       "openid email profile",
-              access_type: "offline"
-            )
-          redirect_to google_url,
-            allow_other_host: true
+        define_method :new do
+          @email_domain = email_domain
+          render "baseline/admin_sessions/new"
+        end
+
+        def create
+          if Rails.env.development?
+            admin_user = AdminUser.find(params[:admin_user_id])
+            authenticate_and_redirect(admin_user)
+          else
+            # cookies[:return_to] = {
+            #   value:   params[:return_to],
+            #   expires: 1.hour.from_now
+            # }
+            google_url = oauth_client
+              .auth_code
+              .authorize_url(
+                redirect_uri:,
+                scope:       "openid email profile",
+                access_type: "offline"
+              )
+            redirect_to google_url,
+              allow_other_host: true
+          end
+        end
+
+        def destroy
+          unauthenticate
+          redirect_to %i[admin login],
+            notice: "Successfully logged out."
         end
 
         define_method :callback do
@@ -51,15 +71,18 @@ module Baseline
             .create_with(first_name:, last_name:)
             .find_or_create_by!(email:)
 
-          authenticate(admin_user)
-
-          add_flash :notice, "Successfully logged in."
-          redirect_to(cookies[:return_to].presence || %i[admin root])
+          authenticate_and_redirect(admin_user)
         end
 
         private
 
-          def redirect_uri = admin_oauth_callback_url
+          def redirect_uri = admin_sessions_callback_url
+
+          def authenticate_and_redirect(admin_user)
+            authenticate(admin_user)
+            add_flash :notice, "Successfully logged in."
+            redirect_to after_authentication_url
+          end
 
           def oauth_client
             Rails
