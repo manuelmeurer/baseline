@@ -7,7 +7,7 @@ module Baseline
         extend ActiveSupport::Concern
 
         included do
-          enforce_unauthenticated_access only: %i[new create]
+          enforce_unauthenticated_access except: :destroy
         end
 
         define_method :new do
