@@ -281,6 +281,10 @@ module Baseline
 
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
+        if base_class != self
+          raise "Don't call #{__method__} in a class that does not inherit from ApplicationRecord."
+        end
+
         proceed = Kernel.suppress(ActiveRecord::NoDatabaseError) do
           table_exists?
         end
