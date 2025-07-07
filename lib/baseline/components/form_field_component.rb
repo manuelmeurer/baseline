@@ -7,7 +7,7 @@ module Baseline
 
     def initialize(form, type, field_or_attribute,
         full_width:         false,
-        hint:               Baseline::NOT_SET,
+        hint:               NOT_SET,
         i18n_key:           nil,
         i18n_params:        {},
         i18n_scope:         nil,
@@ -17,17 +17,20 @@ module Baseline
         id:                 nil,
         value_attributes:   {},
         wrapper_attributes: {},
-        data:               Baseline::NOT_SET,
-        direct_upload:      Baseline::NOT_SET,
-        file_label:         Baseline::NOT_SET,
-        multiple:           Baseline::NOT_SET,
-        required:           Baseline::NOT_SET,
-        show_url_field:     !multiple || multiple == Baseline::NOT_SET,
+        data:               NOT_SET,
+        direct_upload:      NOT_SET,
+        file_label:         NOT_SET,
+        multiple:           NOT_SET,
+        required:           NOT_SET,
+        show_url_field:     !multiple || multiple == NOT_SET,
         options:            {},
         include_blank:      false,
         disabled:           false,
         readonly:           false,
-        value:              Baseline::NOT_SET
+        value:              NOT_SET,
+        label:              NOT_SET,
+        help_text:          NOT_SET,
+        placeholder:        NOT_SET
       )
 
       field, attribute =
@@ -35,7 +38,7 @@ module Baseline
           [nil,                field_or_attribute] :
           [field_or_attribute, field_or_attribute.attribute]
 
-      if type == :radio && value == Baseline::NOT_SET
+      if type == :radio && value == NOT_SET
         raise ArgumentError, "value is required for radio buttons"
       end
 
@@ -49,7 +52,7 @@ module Baseline
         multiple:      false,
         required:      false
       }.each do |attr, default|
-        next unless binding.local_variable_get(attr) == Baseline::NOT_SET
+        next unless binding.local_variable_get(attr) == NOT_SET
 
         val = if field
           attr == :required ?
@@ -62,7 +65,7 @@ module Baseline
         binding.local_variable_set(attr, val)
       end
 
-      if hint == Baseline::NOT_SET
+      if hint == NOT_SET
         hint = I18n.t(attribute,
           scope:   [::Current.namespace, :form_hints, identifier],
           default: nil,
@@ -104,6 +107,9 @@ module Baseline
         value
         value_attributes
         wrapper_attributes
+        label
+        help_text
+        placeholder
       ].each {
         instance_variable_set "@#{_1}", binding.local_variable_get(_1)
       }
@@ -159,6 +165,8 @@ module Baseline
         help_text
         placeholder
       ].each do |attr|
+        next unless instance_variable_get("@#{attr}") == NOT_SET
+
         [
           ::Current.namespace,
           attr.to_s.pluralize,
@@ -181,8 +189,8 @@ module Baseline
       end
     end
 
-    def label_tag(css_class = Baseline::NOT_SET)
-      if css_class == Baseline::NOT_SET
+    def label_tag(css_class = NOT_SET)
+      if css_class == NOT_SET
         css_class =
           case
           when @vertical_label then "form-label"
@@ -209,7 +217,7 @@ module Baseline
           required:    @required,
           disabled:    @disabled,
           readonly:    @readonly
-        }.if(@value != Baseline::NOT_SET) {
+        }.if(@value != NOT_SET) {
           _1.merge value: @value
         }
       end
