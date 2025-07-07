@@ -24,15 +24,22 @@ module Baseline
 
             require "googleauth"
 
+            credentials = Rails
+              .application
+              .env_credentials
+              .google!
+              .oauth!
+
             client_id, client_secret =
               %i[client_id client_secret].map {
-                Rails.application.env_credentials.google.fetch(_1)
+                credentials.fetch(_1)
               }
+
             access_token, refresh_token =
               %i[access_token refresh_token].map {
                 admin_user ?
                   admin_user.public_send("google_#{_1}") :
-                  Rails.application.env_credentials.google.fetch(_1)
+                  credentials.fetch(_1)
               }
 
             scopes = Array(names).map {
