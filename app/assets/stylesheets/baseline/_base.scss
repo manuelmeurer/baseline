@@ -107,3 +107,12 @@ i[class^="fa-"] {
   min-width: 12px;
   display: inline-block;
 }
+
+// "form-control" class is needed for specificity
+textarea.form-control {
+
+  &,
+  .form-floating > & {
+    min-height: 6rem;
+  }
+}
