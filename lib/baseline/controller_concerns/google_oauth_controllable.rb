@@ -110,6 +110,11 @@ module Baseline
           .then { JSON.parse(_1.body) }
           .fetch_values("email", "given_name", "family_name")
 
+        find_and_authenticate_admin_user \
+          email, first_name, last_name
+      end
+
+      def find_and_authenticate_admin_user(email, first_name, last_name)
         admin_user = AdminUser
           .create_with(first_name:, last_name:)
           .find_or_create_by!(email:)
