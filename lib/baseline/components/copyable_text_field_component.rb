@@ -8,7 +8,7 @@ module Baseline
     end
 
     def before_render
-      @clipboard_stimco = stimco(:copy_to_clipboard, to_h: false)
+      @clipboard_stimco = helpers.stimco(:copy_to_clipboard, to_h: false)
     end
   end
 end
