@@ -43,6 +43,7 @@ module Baseline
 
   # Services
   autoload :BaseService,                        "baseline/services/base_service"
+  autoload :CreateDbBackup,                     "baseline/services/create_db_backup"
   autoload :DownloadFile,                       "baseline/services/download_file"
   autoload :ExternalService,                    "baseline/services/external_service"
   autoload :MarkdownToHTML,                     "baseline/services/markdown_to_html"

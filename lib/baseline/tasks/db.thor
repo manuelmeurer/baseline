@@ -20,7 +20,7 @@ module Baseline
 
       Pathname(DIR)
         .children
-        .select { File.ctime(_1) < 3.days.ago }
+        .select { File.ctime(_1) < 3.days.ago.beginning_of_day }
         .each { File.delete _1 }
 
       puts "#{SUCCESS_PREFIX} #{pathname}"
