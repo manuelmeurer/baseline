@@ -33,12 +33,41 @@ module Baseline
     def callback
       if error = params[:error]
         add_flash :alert, "An error occurred: #{error}. Please try again."
-        redirect_to %i[admin login]
+        url = ::Current.admin_user ?
+          %i[admin root] :
+          %i[admin login]
+        redirect_to url
         return
       end
 
-      if ::Current.admin_user
-        # Authorization
+      ::Current.admin_user ?
+        authorization_callback :
+        authentication_callback
+    end
+
+    private
+
+      def redirect_uri = admin_oauth_callback_url
+
+      def oauth_client
+        require "oauth2"
+
+        Rails
+          .application
+          .env_credentials
+          .google!
+          .oauth!
+          .then {
+            OAuth2::Client.new \
+              _1.client_id!,
+              _1.client_secret!,
+              site:          "https://oauth2.googleapis.com",
+              token_url:     "/token",
+              authorize_url: "https://accounts.google.com/o/oauth2/v2/auth"
+          }
+      end
+
+      def authorization_callback
         code, scope = params.values_at(:code, :scope)
         if code.blank? || scope.blank?
           render plain: "Code and/or scope missing."
@@ -53,13 +82,22 @@ module Baseline
         end
 
         credentials = authorizer.auth_credentials(code)
-        data = %i[access_token refresh_token].index_with {
-          credentials.public_send(_1)
+        %i[access_token refresh_token].each {
+          ::Current.admin_user.public_send \
+            "google_#{token}=",
+            credentials.public_send(_1)
         }
+        ::Current.admin_user.save!
 
-        render plain: data.to_json
-      else
-        # Authentication
+        if respond_to?(:after_authorization, true)
+          after_authorization
+        end
+
+        add_flash :notice, "Successfully authorized."
+        redirect_to %i[admin root]
+      end
+
+      def authentication_callback
         token = oauth_client
           .auth_code
           .get_token(
@@ -77,27 +115,6 @@ module Baseline
           .find_or_create_by!(email:)
 
         authenticate_and_redirect(admin_user)
-      end
-    end
-
-    private
-
-      def redirect_uri = admin_oauth_callback_url
-
-      def oauth_client
-        Rails
-          .application
-          .env_credentials
-          .google!
-          .oauth!
-          .then {
-            OAuth2::Client.new \
-              _1.client_id!,
-              _1.client_secret!,
-              site:          "https://oauth2.googleapis.com",
-              token_url:     "/token",
-              authorize_url: "https://accounts.google.com/o/oauth2/v2/auth"
-          }
       end
   end
 end
