@@ -224,6 +224,10 @@ module Baseline
             preload: Rails.configuration.stimulus_app_namespaces.fetch(namespace.to_sym).map(&:to_s)
         end
     end
+
+    def load_initializer(identifier)
+      load "baseline/initializers/#{identifier}.rb"
+    end
   end
 end
 
