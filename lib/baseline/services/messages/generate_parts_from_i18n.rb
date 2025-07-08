@@ -67,7 +67,7 @@ module Baseline
             messageable_i18n_params,
             recipient_class_i18n_params,
             recipient_i18n_params,
-            custom_i18n_params
+            kind_i18n_params
           ].compact_blank
             .inject(:merge)
         end
@@ -82,7 +82,7 @@ module Baseline
 
         def messageable_i18n_params     = {}
         def recipient_class_i18n_params = {}
-        def custom_i18n_params          = {}
+        def kind_i18n_params            = {}
 
         def recipient_i18n_params
           resolve_with_recipient(
