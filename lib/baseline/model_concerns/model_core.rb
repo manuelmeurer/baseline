@@ -195,7 +195,7 @@ module Baseline
     end
 
     def method_missing(method, *args, _async: false, _after: nil, **kwargs)
-      return super unless service_name = method[/\A_do_(.+)/, 1]&.classify
+      return super unless service_name = method[/\A_do_(.+)/, 1]&.camelize
 
       service = service_namespaces
         .lazy
