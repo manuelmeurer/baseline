@@ -5,7 +5,10 @@ require "digest"
 
 require "baseline/call_logger"
 require "baseline/exception_wrapper"
-require "baseline/uniqueness_checker"
+
+if defined?(Rails)
+  require "baseline/uniqueness_checker"
+end
 
 module Baseline
   class BaseService < defined?(ActiveJob) ? ActiveJob::Base : Object
@@ -31,10 +34,13 @@ module Baseline
           subclass.public_send :include, Rails.application.routes.url_helpers
         end
 
-        subclass.public_send :prepend,
+        modules = [
           CallLogger,
           ExceptionWrapper,
-          UniquenessChecker
+          (UniquenessChecker if defined?(UniquenessChecker))
+        ].compact
+
+        subclass.public_send :prepend, *modules
       end
 
       delegate :call, to: :new
