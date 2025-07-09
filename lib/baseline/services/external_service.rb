@@ -60,7 +60,7 @@ module Baseline
         method,
         path_or_url,
         base_url: nil,
-        accept:   Mime[:json].to_s,
+        accept:   "application/json",
         params:   nil,
         json:     nil,
         form:     nil,
@@ -109,7 +109,7 @@ module Baseline
         end
 
         response_json =
-          if response.content_type.mime_type == Mime[:json].to_s && response.to_s.present?
+          if response.content_type.mime_type == "application/json" && response.to_s.present?
             JSON.parse(response.to_s, symbolize_names: true)
           end
 
