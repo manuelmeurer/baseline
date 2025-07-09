@@ -4,7 +4,7 @@ require "addressable"
 
 module Baseline
   module External
-    class Cloudflare < Base
+    class Cloudflare < ::External::Base
       BASE_URL = "https://api.cloudflare.com".freeze
 
       add_action :r2_url do |bucket = nil, **query_values|
