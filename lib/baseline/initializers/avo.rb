@@ -2,7 +2,7 @@
 
 require "avo"
 
-Avo.configure do |config|
+::Avo.configure do |config|
   config.app_name                      = "Admin Dashboard"
   config.authorization_client          = :pundit
   config.click_row_to_view_record      = true
