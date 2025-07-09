@@ -226,8 +226,14 @@ module Baseline
         end
     end
 
-    def load_initializer(identifier)
-      load "baseline/initializers/#{identifier}.rb"
+    def load_initializer(identifier, **kwargs)
+      kwargs.each {
+        instance_variable_set("@#{_1}", _2)
+      }
+      File
+        .join(__dir__, "baseline/initializers/#{identifier}.rb")
+        .then { File.read _1 }
+        .then { instance_eval _1 }
     end
   end
 end
