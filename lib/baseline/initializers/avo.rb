@@ -16,3 +16,8 @@ require "avo"
     ::Current.admin_user
   end
 end
+
+::Avo::Engine.routes.default_url_options = {
+  subdomain: "admin",
+  host:      Rails.application.routes.default_url_options.fetch(:host)
+}
