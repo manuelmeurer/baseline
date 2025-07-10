@@ -13,6 +13,6 @@ require "avo"
   config.root_path                     = "cms"
 
   config.current_user_method do
-    Current.admin_user
+    ::Current.admin_user
   end
 end
