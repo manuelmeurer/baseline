@@ -10,6 +10,5 @@ if sentry_config = Rails.application.env_credentials.sentry
     config.include_local_variables = true
     config.release                 = Rails.configuration.revision
     config.send_default_pii        = true
-    config.app_dirs_pattern        = /(app|baseline|bin|config|lib|spec)/
   end
 end
