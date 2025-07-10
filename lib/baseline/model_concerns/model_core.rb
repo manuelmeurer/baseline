@@ -295,7 +295,7 @@ module Baseline
           raise "Model #{name} has already been finalized."
         end
 
-        unless instance_methods(false).include?(:to_s)
+        if instance_method(:to_s).owner == Kernel
           define_method :to_s do
             try(:name) ||
               try(:title) ||
