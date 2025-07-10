@@ -102,25 +102,26 @@ module Baseline
               if value = value.compact_blank.presence
                 new_value = public_send(attribute) || Time.current
                 value.each do |unit, amount|
-                  changes = case unit.to_sym
-                            when :date
-                              if amount.is_a?(String)
-                                amount = Time.zone.parse(amount)
-                              end
-                              %i[year month day].index_with { amount.public_send _1 }
-                            when :time
-                              if amount.is_a?(String)
-                                amount = Time.zone.parse(amount)
-                              end
-                              %i[hour min sec].index_with { amount.public_send _1 }
-                            else
-                              change_unit = {
-                                hours:   :hour,
-                                minutes: :min,
-                                seconds: :sec
-                              }.fetch(unit.to_sym) { unit.to_sym }
-                              { change_unit => amount.to_i }
-                            end
+                  changes =
+                    case unit.to_sym
+                    when :date
+                      if amount.is_a?(String)
+                        amount = Time.zone.parse(amount)
+                      end
+                      %i[year month day].index_with { amount.public_send _1 }
+                    when :time
+                      if amount.is_a?(String)
+                        amount = Time.zone.parse(amount)
+                      end
+                      %i[hour min sec].index_with { amount.public_send _1 }
+                    else
+                      change_unit = {
+                        hours:   :hour,
+                        minutes: :min,
+                        seconds: :sec
+                      }.fetch(unit.to_sym) { unit.to_sym }
+                      { change_unit => amount.to_i }
+                    end
                   new_value = new_value.change(changes)
                 end
                 value = new_value
