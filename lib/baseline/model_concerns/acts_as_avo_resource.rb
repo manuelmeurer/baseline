@@ -11,6 +11,16 @@ module Baseline
 
     class_methods do
       def _baseline_finalize
+        # Accessing the model class here will raise a ActiveRecord::StatementInvalid
+        # with cause PG::UndefinedTable if the table does not exist yet,
+        # which is the case when running db:setup in CI.
+        begin
+          model_class
+        rescue ActiveRecord::StatementInvalid => error
+          return if error.cause.is_a?(PG::UndefinedTable)
+          raise error
+        end
+
         self.title = :to_s
 
         if model_class.respond_to?(:friendly)
