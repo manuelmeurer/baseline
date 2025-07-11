@@ -20,20 +20,31 @@ module Baseline
           notification.details
         ]
         if notifiable
-          admin_url =
-            defined?(::Avo) ?
+          # In Uplink, we will replace our custom CMS with Avo step by step.
+          # This means that some resources already have an Avo URL, for others we will want to use the custom admin URL.
+          # Once the custom CMS is fully replaced, we can simplify this logic and always use the Avo URL.
+          if defined?(::Avo)
+            admin_url = suppress NoMethodError do
               ::Avo::Engine
                 .routes
                 .url_helpers
                 .url_for([
                   :resources,
                   notifiable
-                ]) :
+                ])
+            end
+          end
+          admin_url ||=
+            begin
               url_for([:admin, notifiable])
+            rescue NoMethodError
+              ReportError.call Error, "Could not generate admin URL for notifiable",
+                notifiable_class: notifiable.class
+            end
           message_parts.concat [
             %(#{notifiable.model_name.human} "#{notifiable}"),
             admin_url
-          ]
+          ].compact
         end
 
         ::External::SlackSimple.call_async \
