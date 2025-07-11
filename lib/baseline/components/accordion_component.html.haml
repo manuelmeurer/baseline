@@ -1,0 +1,12 @@
+-# frozen_string_literal: true
+
+.accordion.mt-5{ id: @id }
+  - items.each_with_index do |item, index|
+    - item_id = "#{@id}-item-#{index + 1}"
+    .accordion-item
+      %h2.accordion-header
+        %button.accordion-button{ type: "button", class: class_names(collapsed: !@expanded || index.nonzero?), data: { bs_toggle: "collapse", bs_target: "##{item_id}" }, aria: { expanded: (@expanded && index.zero?).to_s, controls: item_id } }
+          = item.title
+      .accordion-collapse.collapse{ data: { bs_parent: "##{@id}" }, id: item_id, class: class_names(show: @expanded && index.zero?) }
+        .accordion-body
+          = item.body

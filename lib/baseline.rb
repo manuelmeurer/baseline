@@ -127,6 +127,7 @@ module Baseline
   end
 
   # Components
+  autoload :AccordionComponent,                 "baseline/components/accordion_component"
   autoload :AvatarBoxComponent,                 "baseline/components/avatar_box_component"
   autoload :CardComponent,                      "baseline/components/card_component"
   autoload :ContactRequestFormComponent,        "baseline/components/contact_request_form_component"
