@@ -20,8 +20,9 @@ module Baseline
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
 
   # Model concerns
-  autoload :ActsAsInvoicingDetails,             "baseline/model_concerns/acts_as_invoicing_details"
+  autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"
   autoload :ActsAsCreditNote,                   "baseline/model_concerns/acts_as_credit_note"
+  autoload :ActsAsInvoicingDetails,             "baseline/model_concerns/acts_as_invoicing_details"
   autoload :ActsAsMessage,                      "baseline/model_concerns/acts_as_message"
   autoload :ActsAsNotification,                 "baseline/model_concerns/acts_as_notification"
   autoload :ActsAsPDFFile,                      "baseline/model_concerns/acts_as_pdf_file"
@@ -31,8 +32,8 @@ module Baseline
   autoload :HasCountry,                         "baseline/model_concerns/has_country"
   autoload :HasEmail,                           "baseline/model_concerns/has_email"
   autoload :HasFirstAndLastName,                "baseline/model_concerns/has_first_and_last_name"
-  autoload :HasFullName,                        "baseline/model_concerns/has_full_name"
   autoload :HasFriendlyID,                      "baseline/model_concerns/has_friendly_id"
+  autoload :HasFullName,                        "baseline/model_concerns/has_full_name"
   autoload :HasGender,                          "baseline/model_concerns/has_gender"
   autoload :HasLocale,                          "baseline/model_concerns/has_locale"
   autoload :HasMessageable,                     "baseline/model_concerns/has_messageable"
@@ -137,7 +138,6 @@ module Baseline
   autoload :ToastComponent,                     "baseline/components/toast_component"
   autoload :LoadingComponent,                   "baseline/components/loading_component"
 
-  autoload :ActsAsAvoResource,                  "baseline/acts_as_avo_resource"
   autoload :ApplicationCore,                    "baseline/application_core"
   autoload :ApplicationPolicy,                  "baseline/application_policy"
   autoload :Current,                            "baseline/current"
