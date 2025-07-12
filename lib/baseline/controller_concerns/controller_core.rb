@@ -177,6 +177,10 @@ module Baseline
           "s-maxage": 1.day
       end
 
+      def set_noindex_header
+        headers["X-Robots-Tag"] = "noindex"
+      end
+
       def page_meta_title(_scope: nil, **)
         *i18n_scope, i18n_key = [*action_i18n_scope, :meta_title, _scope].compact
         t i18n_key,

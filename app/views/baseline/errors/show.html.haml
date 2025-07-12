@@ -1,0 +1,11 @@
+-# frozen_string_literal: true
+
+- base_i18n_scope = :errors
+- i18n_scope      = [base_i18n_scope, @id]
+
+%h1
+  = t :headline, scope: i18n_scope
+
+= md_to_html t(:text, scope: i18n_scope)
+
+= md_to_html t(:cta, scope: base_i18n_scope, url: url_for(cta_path))

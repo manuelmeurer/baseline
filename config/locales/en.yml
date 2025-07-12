@@ -61,3 +61,32 @@ en:
       intermediate: Intermediate
       fluent: Fluent
       primary: Primary
+
+  errors:
+    cta: "[Click here](%{url}) to return to the homepage."
+
+    400:
+      headline: Error - Bad Request (400)
+      text: Unfortunately, the request you sent could not be processed.
+
+    403:
+      headline: Error - Forbidden (403)
+      text: Unfortunately, you do not have permission to access this resource.
+
+    404:
+      headline: Error - Page not found (404)
+      text: Unfortunately, the page you requested could not be found.
+
+    406:
+      headline: Error - Not Acceptable (406)
+      text: Unfortunately, the requested resource is not available in a format that is acceptable.
+
+    422:
+      headline: Error - Unprocessable entity (422)
+      text: Unfortunately, this request could not be processed.
+
+    500:
+      headline: Error - Application error (500)
+      text: |-
+        An error occurred in the application.
+        We have been notified and will take a look at it as soon as possible!

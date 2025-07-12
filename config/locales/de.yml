@@ -61,3 +61,32 @@ de:
       intermediate: Fortgeschritten
       fluent: Fließend
       primary: Erstsprache
+
+  errors:
+    cta: "[Klick hier](%{url}), um zur Homepage zurückzukommen."
+
+    400:
+      headline: Fehler - Ungültige Anfrage (400)
+      text: Leider konnte die Anfrage, die du gesendet hast, nicht verarbeitet werden.
+
+    403:
+      headline: Fehler - Zugriff verweigert (403)
+      text: Leider hast du keine Berechtigung, auf diese Ressource zuzugreifen.
+
+    404:
+      headline: Fehler - Seite nicht gefunden (404)
+      text: Leider konnte die Seite, die du angefordert hast, nicht gefunden werden.
+
+    406:
+      headline: Fehler - Nicht akzeptabel (406)
+      text: Leider ist die angeforderte Ressource nicht in einem akzeptablen Format verfügbar.
+
+    422:
+      headline: Fehler - Anfrage konnte nicht bearbeitet werden (422)
+      text: Leider konnte diese Anfrage nicht bearbeitet werden.
+
+    500:
+      headline: Fehler - Anwendungsfehler (500)
+      text: |-
+        Ein Fehler in der Anwendung ist aufgetreten.
+        Wir wurden darüber informiert und kümmern uns so bald wie möglich darum!
