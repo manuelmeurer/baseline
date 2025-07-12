@@ -5,6 +5,19 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      # https://guides.rubyonrails.org/configuring.html#config-exceptions-app
+      config.exceptions_app = ->(env) {
+        request = ActionDispatch::Request.new(env)
+
+        begin
+          request.formats
+        rescue ActionDispatch::Http::MimeNegotiation::InvalidType
+          request.set_header "CONTENT_TYPE", "text/html"
+        end
+
+        routes.call(env)
+      }
+
       config.paths.add "app/models",
         eager_load: true,
         glob:       "**/*"
