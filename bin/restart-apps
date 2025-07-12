@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+RESTART_APPS_FILE="tmp/.restart-apps"
+
+mkdir -p "$(dirname "$RESTART_APPS_FILE")"
+
+if [ ! -f "$RESTART_APPS_FILE" ]; then
+  find ~/code \
+    -path ~/code/_open-source -prune -o \
+    -path "*/.ruby-lsp/*" -prune -o \
+    -name "Gemfile" -print | \
+    while read gemfile; do
+      if grep -q "baseline" "$gemfile"; then
+        dir="$(dirname "$gemfile")"
+        restart_file="$dir/tmp/restart.txt"
+        if [ -f "$restart_file" ]; then
+          echo "$restart_file"
+        fi
+      fi
+    done > "$RESTART_APPS_FILE"
+fi
+
+xargs touch < "$RESTART_APPS_FILE"
