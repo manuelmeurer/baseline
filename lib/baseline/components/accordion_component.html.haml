@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-.accordion.mt-5{ id: @id }
+.accordion{ id: @id, class: @css_class }
   - items.each_with_index do |item, index|
     - item_id = "#{@id}-item-#{index + 1}"
     .accordion-item
@@ -9,4 +9,4 @@
           = item.title
       .accordion-collapse.collapse{ data: { bs_parent: "##{@id}" }, id: item_id, class: class_names(show: @expanded && index.zero?) }
         .accordion-body
-          = item.body
+          = item.content
