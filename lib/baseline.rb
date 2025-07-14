@@ -136,9 +136,10 @@ module Baseline
   autoload :FormActionsComponent,               "baseline/components/form_actions_component"
   autoload :FormFieldComponent,                 "baseline/components/form_field_component"
   autoload :ItemListComponent,                  "baseline/components/item_list_component"
-  autoload :ModalComponent,                     "baseline/components/modal_component"
-  autoload :ToastComponent,                     "baseline/components/toast_component"
   autoload :LoadingComponent,                   "baseline/components/loading_component"
+  autoload :ModalComponent,                     "baseline/components/modal_component"
+  autoload :NavbarComponent,                    "baseline/components/navbar_component"
+  autoload :ToastComponent,                     "baseline/components/toast_component"
 
   autoload :ApplicationCore,                    "baseline/application_core"
   autoload :ApplicationPolicy,                  "baseline/application_policy"
