@@ -9,7 +9,7 @@ module Baseline
         id, expanded, css_class
     end
 
-    class ItemComponent < ViewComponent::Base
+    class ItemComponent < ApplicationComponent
       attr_reader :title
 
       def initialize(title:)
