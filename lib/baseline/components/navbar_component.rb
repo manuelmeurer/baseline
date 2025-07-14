@@ -29,10 +29,8 @@ module Baseline
       @container_classes = container_classes
     end
 
-    def call(&block)
-      content = block ? capture(self, &block) : ""
-      
-      render_navbar_content(content)
+    def call
+      render_navbar_content
     end
 
     # Helper methods that can be used within the component block
@@ -135,7 +133,10 @@ module Baseline
 
     private
 
-    def render_navbar_content(content)
+    def render_navbar_content
+      # Ensure before_render has been called (ViewComponent normally handles this)
+      before_render unless @navbar_classes
+      
       content_tag :nav, class: @navbar_classes, **@options.except(:class) do
         if @container_classes
           content_tag :div, class: @container_classes do
