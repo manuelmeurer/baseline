@@ -29,8 +29,14 @@ module Baseline
       @container_classes = container_classes
     end
 
+    def call(&block)
+      content = block ? capture(self, &block) : ""
+      
+      render_navbar_content(content)
+    end
+
     # Helper methods that can be used within the component block
-    def navbar_collapse(id: "navbar-collapsable", **options, &block)
+    def navbar_collapse(id: "navbar-collapsible", **options, &block)
       classes = ["collapse", "navbar-collapse"]
       classes << options[:class] if options[:class]
       
@@ -128,6 +134,29 @@ module Baseline
     end
 
     private
+
+    def render_navbar_content(content)
+      content_tag :nav, class: @navbar_classes, **@options.except(:class) do
+        if @container_classes
+          content_tag :div, class: @container_classes do
+            brand_html = render_brand
+            safe_join([brand_html, content].compact)
+          end
+        else
+          brand_html = render_brand
+          safe_join([brand_html, content].compact)
+        end
+      end
+    end
+
+    def render_brand
+      return unless @brand
+      
+      brand_element = @brand_url == false ? :span : :a
+      brand_attributes = @brand_url == false ? {} : { href: @brand_url }
+      brand_attributes[:class] = "navbar-brand"
+      content_tag brand_element, @brand, brand_attributes
+    end
 
     def navbar_classes
       classes = ["navbar"]
