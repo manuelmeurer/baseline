@@ -522,6 +522,15 @@ module Baseline
         .path
     end
 
+    def other_locale_url
+      params
+        .permit!
+        .merge(locale: I18n.other_locale.to_s)
+        .then {
+          url_for _1
+        }
+    end
+
     private
 
       AUTO_LINK_RE = %r(
