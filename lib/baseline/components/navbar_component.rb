@@ -103,16 +103,23 @@ module Baseline
       end
     end
 
-    def navbar_dropdown_item(url = "#", **options, &block)
-      text = block_given? ? capture(&block) : url
-      url = "#" if block_given?
+    def navbar_dropdown_item(text, url = nil, link_options = {}, &block)
+      # When block is given, parameters shift: block content becomes text, first param becomes url
+      text, url, link_options = capture(&block), text, (url || {}) if block_given?
+      url ||= '#'
       
       link_classes = ["dropdown-item"]
       link_classes << "active" if current_url_or_sub_url?(url)
-      link_classes << options[:class] if options[:class]
+      link_classes << link_options[:class] if link_options[:class]
       
       content_tag :li do
         link_to text, url, class: link_classes.join(" ")
+      end
+    end
+
+    def navbar_dropdown_divider
+      content_tag :li do
+        content_tag :div, "", class: "dropdown-divider"
       end
     end
 
