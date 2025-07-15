@@ -203,9 +203,10 @@ module Baseline
       importmap.pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
       importmap.pin "@hotwired/stimulus",         to: "stimulus.min.js"
       importmap.pin "@hotwired/turbo-rails",      to: "turbo.min.js"
-      importmap.pin "@rails/request.js",          to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0.0.12/dist/requestjs.min.js"
-      importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/+esm"
-      importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"
+      importmap.pin "@rails/request.js",          to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0/dist/requestjs.min.js"
+      importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3/+esm"
+      importmap.pin "cookieconsent",              to: "https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.esm.js"
+      importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3/dist/js.cookie.min.js"
       importmap.pin "sentry",                     to: "https://js.sentry-cdn.com/#{sentry_public_key}.min.js"
 
       if fontawesome_id

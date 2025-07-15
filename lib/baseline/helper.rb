@@ -295,7 +295,7 @@ module Baseline
       data.map do |name, content|
         tag.meta name:, content: content.if(Hash, &:to_json)
       end.then {
-        safe_join _1
+        safe_join _1, "\n"
       }
     end
 
@@ -511,6 +511,57 @@ module Baseline
         disabled:,
         options:
       }
+    end
+
+    def javascripts
+      @javascripts ||= Set.new
+    end
+
+    def add_javascript(javascript)
+      javascripts << javascript
+    end
+
+    def head_tags
+      @head_tags ||= []
+    end
+
+    def add_head_tag(tag)
+      head_tags << tag
+    end
+
+    def all_head_tags
+      stylesheet_tags      = []
+      disabled_stylesheets = {}
+      stylesheets.each do |url, params|
+        name, disabled, options = params.fetch_values(:name, :disabled, :options)
+        tag = stylesheet_link_tag(url, **options)
+
+        if disabled
+          disabled_stylesheets[name] ||= []
+          disabled_stylesheets[name] << tag
+        else
+          stylesheet_tags << tag
+        end
+      end
+
+      safe_join [
+        head_tags,
+        csp_meta_tag,
+        javascript_importmap_tags(::Current.namespace.to_s),
+        javascripts.map { javascript_import_module_tag _1 },
+        meta_tags(
+          revision:    Rails.configuration.revision,
+          sentry_user: Sentry.get_current_scope.user,
+          rails_env:   Rails.env,
+          action_name:,
+          disabled_stylesheets:
+        ),
+        og_data_tags,
+        plausible_javascript_tag,
+        stylesheet_link_tag(::Current.namespace, data: { turbo_track: "reload" }),
+        stylesheet_tags,
+        turbo_refresh_method_tag(:morph)
+      ], "\n"
     end
 
     def javascript_path(name)
