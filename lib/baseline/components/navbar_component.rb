@@ -169,7 +169,7 @@ module Baseline
         {
           end:   @align_end,
           start: @align_start
-        }.compact
+        }.compact_blank
           .each do |suffix, value|
             [
               "dropdown-menu",
