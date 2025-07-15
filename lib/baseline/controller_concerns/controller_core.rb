@@ -242,7 +242,7 @@ module Baseline
           Rails.configuration.revision,
           dir
         ]
-        Rails.cache.fetch cache_key do
+        Rails.cache.fetch cache_key, force: Rails.env.development? do
           Rails
             .application
             .assets
