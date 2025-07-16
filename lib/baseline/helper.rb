@@ -359,7 +359,12 @@ module Baseline
 
     def method_missing(method, *, **, &)
       component = suppress NameError do
-        Baseline.const_get("#{method.to_s.camelize}Component")
+        method
+          .to_s
+          .split("__")
+          .inject(Baseline) {
+            _1.const_get("#{_2.camelize}Component")
+          }
       end
 
       if component
