@@ -3,13 +3,13 @@
 module Baseline
   class NavbarComponent < ApplicationComponent
     module ActsAsLinkComponent
-      def initialize(label_or_url, url = nil, css_class: nil, data: nil, title: nil, replace_link_css_class: nil)
+      def initialize(label_or_url, url = nil, css_class: nil, data: nil)
         @label, @url =
           url ?
           [label_or_url, url] :
           [nil, label_or_url]
         @css_class = Array(css_class).append("nav-item")
-        @data, @replace_link_css_class = data, replace_link_css_class
+        @data = data
       end
 
       def call
@@ -20,9 +20,8 @@ module Baseline
           link_to \
             @label,
             @url,
-            class:        @replace_link_css_class || class_names(link_css_class, active: current?),
+            class:        class_names(link_css_class, active: current?),
             data:         @data,
-            title:        @title,
             aria_current: (aria_current if current?)
          end
       end
@@ -126,7 +125,7 @@ module Baseline
 
     class GroupComponent < ApplicationComponent
       renders_many :items,
-        types: %i[link dropdown].index_with {
+        types: %i[link dropdown content].index_with {
           "#{name.deconstantize}::#{_1.to_s.camelize}Component"
         }
 
@@ -216,6 +215,10 @@ module Baseline
           end
         end
       end
+    end
+
+    class ContentComponent < ApplicationComponent
+      def call = content
     end
   end
 end
