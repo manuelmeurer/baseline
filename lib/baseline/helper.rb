@@ -228,7 +228,7 @@ module Baseline
               loading_message == NOT_SET ?
               {} :
               { message: loading_message }
-            loading(**loading_params)
+            component :loading, **loading_params
           end
         end
       end
@@ -357,6 +357,18 @@ module Baseline
       link_to name, "#", html_options
     end
 
+    def component(name, *, **, &)
+      component = name
+        .to_s
+        .split("/")
+        .tap { _1.last << "_component" }
+        .inject(Baseline) {
+          _1.const_get(_2.camelize)
+        }
+
+      render component.new(*, **), &
+    end
+
     def method_missing(method, *, **, &)
       component = suppress NameError do
         method
@@ -367,7 +379,11 @@ module Baseline
           }
       end
 
+      if Date.current > Date.new(2025, 9, 1)
+        ReportError.call "remove this!"
+      end
       if component
+        ReportError.call "Use `component` to render components."
         render component.new(*, **), &
       else
         super

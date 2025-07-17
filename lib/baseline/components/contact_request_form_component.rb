@@ -35,7 +35,13 @@ module Baseline
           data:     (helpers.stimco(:autosize) if field_type == :text_area)
         }.compact
 
-        form_field _form, field_type, field, label_style: :floating, label: @texts.fetch(field), **options
+        component :form_field,
+          _form,
+          field_type,
+          field,
+          label_style: :floating,
+          label:       @texts.fetch(field),
+          **options
       end
 
       if ContactRequest.column_names.include?(field.to_s)
