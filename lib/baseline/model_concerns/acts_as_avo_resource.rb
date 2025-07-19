@@ -4,11 +4,6 @@ module Baseline
   module ActsAsAvoResource
     extend ActiveSupport::Concern
 
-    included do
-      # https://github.com/avo-hq/avo/issues/3820
-      abstract_resource!
-    end
-
     class_methods do
       def _baseline_finalize
         # Accessing the model class here will raise a ActiveRecord::StatementInvalid
