@@ -21,7 +21,8 @@ module Baseline
           end
 
           define_method :invoicing_details do
-            public_send(invoicing_details_owner).invoicing_details
+            public_send(invoicing_details_owner)
+              &.invoicing_details
           end
 
           delegate \
