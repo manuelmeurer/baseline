@@ -21,3 +21,5 @@ end
   subdomain: "admin",
   host:      Rails.application.routes.default_url_options.fetch(:host)
 }
+
+::Avo::BaseAction.include Baseline::Avo::ActionHelpers

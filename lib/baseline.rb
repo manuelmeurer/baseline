@@ -55,6 +55,8 @@ module Baseline
   autoload :UpdateSchemaMigrations,             "baseline/services/update_schema_migrations"
 
   module Avo
+    autoload :ActionHelpers,                    "baseline/avo/action_helpers"
+
     module Filters
       autoload :Search,                         "baseline/avo/filters/search"
     end
