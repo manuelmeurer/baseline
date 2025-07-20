@@ -2,9 +2,9 @@
 
 module Baseline
   class ContactRequestFormComponent < ApplicationComponent
-    def initialize(kind, contact_request: ContactRequest.new, button_row_breakpoint: :sm, i18n_scope: nil, i18n_params: {})
-      @kind, @contact_request, @button_row_breakpoint, @i18n_scope, @i18n_params =
-        kind, contact_request, button_row_breakpoint, i18n_scope, i18n_params
+    def initialize(kind, contact_request: ContactRequest.new, button_row_breakpoint: :sm, i18n_scope: nil, i18n_params: {}, button_color: Current.default_button_color)
+      @kind, @contact_request, @button_row_breakpoint, @i18n_scope, @i18n_params, @button_color =
+        kind, contact_request, button_row_breakpoint, i18n_scope, i18n_params, button_color
       @contact_request.kind ||= @kind
     end
 

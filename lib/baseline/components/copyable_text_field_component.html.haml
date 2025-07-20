@@ -2,6 +2,6 @@
 
 .input-group{ class: @css_class, data: @clipboard_stimco.to_h }
   = text_field_tag :text, @text, class: "form-control bg-white", data: @clipboard_stimco.target(:container), readonly: true
-  = link_to "#", class: "btn btn-outline-#{@button_color_class}", data: @clipboard_stimco.action(:copy) do
+  = link_to "#", class: "btn btn-outline-#{@button_color}", data: @clipboard_stimco.action(:copy) do
     = icon "copy"
     = t(:copy).capitalize

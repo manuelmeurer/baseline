@@ -2,9 +2,9 @@
 
 module Baseline
   class FormActionsComponent < ApplicationComponent
-    def initialize(form, horizontal: false, submit_label: nil, submit_data: {}, submit_button_color: :primary)
-      @form, @horizontal, @submit_label, @submit_data, @submit_button_color =
-        form, horizontal, submit_label, submit_data, submit_button_color
+    def initialize(form, horizontal: false, submit_label: nil, submit_data: {}, button_color: Current.default_button_color)
+      @form, @horizontal, @submit_label, @submit_data, @button_color =
+        form, horizontal, submit_label, submit_data, button_color
     end
 
     def before_render

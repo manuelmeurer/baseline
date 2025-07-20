@@ -2,9 +2,9 @@
 
 module Baseline
   class CopyableTextFieldComponent < ApplicationComponent
-    def initialize(text, button_color_class: :primary, css_class: nil)
-      @text, @button_color_class, @css_class =
-        text, button_color_class, css_class
+    def initialize(text, button_color: Current.default_button_color, css_class: nil)
+      @text, @button_color, @css_class =
+        text, button_color, css_class
     end
 
     def before_render
