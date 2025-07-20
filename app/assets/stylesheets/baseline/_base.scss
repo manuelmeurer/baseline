@@ -71,7 +71,12 @@ turbo-frame {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 .width-300 {
+  width: 300px;
+}
+
+.width-400 {
   width: 300px;
 }
 
@@ -85,6 +90,10 @@ turbo-frame {
 
 .max-width-500 {
   max-width: 500px;
+}
+
+.max-width-800 {
+  max-width: 800px;
 }
 
 .max-width-1000 {
