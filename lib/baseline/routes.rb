@@ -10,6 +10,13 @@ module Baseline
           id:  /\d{3}/
       end
 
+      routes.concern :oauth do
+        namespace :oauth do
+          get :authorize
+          get :callback
+        end
+      end
+
       routes.concern :health do
         get "up" => "/rails/health#show", as: :rails_health_check
       end
