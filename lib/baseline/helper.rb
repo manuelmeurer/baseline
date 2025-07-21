@@ -271,7 +271,7 @@ module Baseline
         options.sort.to_json.then { ActiveSupport::Digest.hexdigest _1 }
       ].join(":")
 
-      Rails.cache.fetch cache_key do
+      Rails.cache.fetch cache_key, force: Rails.env.development? do
         unless path = Rails.application.assets.load_path.find(filename)
           raise "Could not find asset: #{filename}"
         end
