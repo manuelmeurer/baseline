@@ -18,6 +18,8 @@ module Baseline
       ]
 
       Rails.cache.fetch cache_key do
+        # If we ever want to process the text without adding any block level elements (<p> etc.),
+        # use this approach: https://island94.org/2025/07/customize-rails-i18n-key-suffixes-like-md-for-markdown
         Kramdown::Document
           .new(text, input: "GFM")
           .to_html
