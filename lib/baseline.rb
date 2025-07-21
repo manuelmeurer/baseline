@@ -49,6 +49,7 @@ module Baseline
   autoload :DownloadFile,                       "baseline/services/download_file"
   autoload :ExternalService,                    "baseline/services/external_service"
   autoload :MarkdownToHTML,                     "baseline/services/markdown_to_html"
+  autoload :ProcessInvoiceEmails,               "baseline/services/process_invoice_emails"
   autoload :ReportError,                        "baseline/services/report_error"
   autoload :SaveToTempfile,                     "baseline/services/save_to_tempfile"
   autoload :Toucher,                            "baseline/services/toucher"
