@@ -72,8 +72,13 @@ module Baseline
         # ActiveStorage::Service::* subclasses don't exist if they are not used.
         case service = attached.service.class.to_s.demodulize
         when "DiskService"
+          transformation = case version
+            when /_fit/   then :resize_to_fit
+            when /_thumb/ then :resize_to_fill
+            else raise "Unexpected version: #{version}"
+            end
           variant = attached.variant(
-            resize_to_fill: options.fetch_values(:width, :height)
+            transformation => options.fetch_values(:width, :height)
           )
           public_send \
             :"image_#{suffix}",
