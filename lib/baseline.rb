@@ -198,6 +198,22 @@ module Baseline
         .then { File.read _1 }
         .then { instance_eval _1 }
     end
+
+    def lograge_config(config)
+      config.lograge.enabled = true
+      config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
+      config.lograge.custom_options = ->(event) {
+        event
+          .payload
+          .slice(:request_id, :remote_ip, :host)
+          .merge \
+            time:   event.time.to_fs(:iso8601),
+            params: event.payload[:params]&.except("controller", "action", "subdomain")
+      }
+      config.lograge.ignore_custom = ->(event) {
+        event.payload[:controller] == "Rails::HealthController"
+      }
+    end
   end
 end
 
