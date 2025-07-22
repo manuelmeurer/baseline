@@ -90,3 +90,16 @@ en:
       text: |-
         An error occurred in the application.
         We have been notified and will take a look at it as soon as possible!
+
+  i18n:
+    transliterate:
+      rule:
+        ä: ae
+        é: e
+        ü: ue
+        ö: oe
+        Ä: Ae
+        Ü: Ue
+        Ö: Oe
+        ß: ss
+        ẞ: SS
