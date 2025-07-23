@@ -34,12 +34,7 @@ module Baseline
 
       private
 
-        def request_headers
-          {
-            "X-Auth-Email": Rails.application.env_credentials.cloudflare.email!,
-            "X-Auth-Key":   Rails.application.env_credentials.cloudflare.api_key!
-          }
-        end
+        def request_auth = "Bearer #{Rails.application.env_credentials.cloudflare.api_token!}"
     end
   end
 end
