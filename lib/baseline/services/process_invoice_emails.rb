@@ -42,7 +42,7 @@ module Baseline
         end
 
         from_admin =
-          [from, email].map { _1.split("@").last }.uniq.one? ||
+          [from, Rails.application.env_credentials.mail_from!].map { _1.split("@").last }.uniq.one? ||
           from == "manuel@meurer.io"
 
         if from_admin
