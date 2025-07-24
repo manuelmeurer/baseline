@@ -4,7 +4,9 @@ module Baseline
   module ContactRequestControllable
     def create
       unless validate_turnstile
-        SpamRequest.new(type: "contact", params: contact_request_params).save
+        SpamRequest.create \
+          kind: :contact,
+          data: contact_request_params
         return
       end
 
