@@ -40,7 +40,7 @@ module Baseline
 
             before_action(**) do
               if current_user
-                redirect_back_or_to \
+                html_redirect_back_or_to \
                   [::Current.namespace, :root],
                   alert: "You are already logged in."
               end
@@ -84,7 +84,7 @@ module Baseline
 
           def authenticate_and_redirect(user)
             authenticate(user)
-            redirect_to after_authentication_url,
+            html_redirect_to after_authentication_url,
               notice: "Successfully logged in."
           end
 

@@ -78,13 +78,14 @@ module Baseline
       bg:            :body_tertiary,
       border_bottom: true,
       css_class:     nil,
+      data:          nil,
       sticky:        nil,
       fixed:         nil)
 
       @id = "navbar-collapsable"
 
-      @brand, @brand_url, @css_class =
-        brand, brand_url, Array(css_class)
+      @brand, @brand_url, @css_class, @data =
+        brand, brand_url, Array(css_class), data
 
       if bg
         @css_class << "bg-#{bg.to_s.dasherize}"

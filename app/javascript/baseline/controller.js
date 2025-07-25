@@ -1,6 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  startLocalTime(localTime) {
+    localTime.config.useFormat24 = true
+    localTime.config.i18n["de"]  = JSON.parse(this.metaContent("local_time_i18n_de"))
+    localTime.config.locale      = this.currentLocale.split("-")[0]
+
+    localTime.start()
+
+    document.addEventListener("turbo:morph", () => {
+      localTime.run()
+    })
+  }
+
   metaContent(name) {
     return document.head.querySelector(`meta[name="${name}"]`)?.content
   }
@@ -116,6 +128,10 @@ export default class extends Controller {
 
   get currentUrl() {
     return this.inModal() ? document.modalController.url : window.location
+  }
+
+  get currentLocale() {
+    return document.documentElement.lang
   }
 
   enableStylesheets(name) {

@@ -224,35 +224,14 @@ module Baseline
         end
       end
 
-      def html_redirect_back_or_to(url, params = {})
+      def html_redirect_back_or_to(url, options = {})
         respond_to do |format|
           format.html do
-            redirect_back \
-              fallback_location: url,
-              status:            :see_other,
-              **params
+            redirect_back_or_to url,
+              status: :see_other,
+              **options
           end
         end
-      end
-
-      def image_assets(dir)
-        images_path = Rails.root.join("app", "assets", "images")
-        cache_key = [
-          :image_assets,
-          Rails.configuration.revision,
-          dir
-        ]
-        Rails.cache.fetch cache_key, force: Rails.env.development? do
-          Rails
-            .application
-            .assets
-            .reveal
-            .select { _1.to_s.start_with? dir }
-            .sort
-            .map(&:to_s)
-        end.index_with {
-          File.open(images_path.join(_1))
-        }
       end
   end
 end

@@ -19,6 +19,7 @@ module Baseline
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
   autoload :RobotsSitemapManifest,              "baseline/controller_concerns/robots_sitemap_manifest"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
+  autoload :WebFramesControllable,              "baseline/controller_concerns/web_frames_controllable"
 
   # Model concerns
   autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"
@@ -31,6 +32,7 @@ module Baseline
   autoload :ActsAsTodoistEvent,                 "baseline/model_concerns/acts_as_todoist_event"
   autoload :HasChargeVAT,                       "baseline/model_concerns/has_charge_vat"
   autoload :HasCountry,                         "baseline/model_concerns/has_country"
+  autoload :HasDummyImageAttachment,            "baseline/model_concerns/has_dummy_image_attachment"
   autoload :HasEmail,                           "baseline/model_concerns/has_email"
   autoload :HasFirstAndLastName,                "baseline/model_concerns/has_first_and_last_name"
   autoload :HasFriendlyID,                      "baseline/model_concerns/has_friendly_id"
@@ -235,6 +237,26 @@ if defined?(Rails)
         creds.delete_if { _1.start_with?("__") }
         creds.deep_merge(env_creds || {})
       end
+    end
+
+    def image_assets(dir)
+      images_path = Rails.root.join("app", "assets", "images")
+      cache_key = [
+        :image_assets,
+        Rails.configuration.revision,
+        dir
+      ]
+      Rails.cache.fetch cache_key, force: Rails.env.development? do
+        Rails
+          .application
+          .assets
+          .reveal
+          .select { _1.to_s.start_with? dir }
+          .sort
+          .map(&:to_s)
+      end.index_with {
+        File.open(images_path.join(_1))
+      }
     end
   end
 end

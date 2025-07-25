@@ -55,10 +55,10 @@ module Baseline
     ).freeze
 
     %i(tag path).each do |suffix|
-      define_method :"attachment_image_#{suffix}" do |attached, version, **options|
-        unless attached.attached?
+      define_method :"attachment_image_#{suffix}" do |attached_or_blob, version, **options|
+        if attached_or_blob.respond_to?(:attached?) && !attached_or_blob.attached?
           if Rails.env.production?
-            raise "Attached is not attached."
+            raise "Attached is not attached_or_blob."
           else
             return
           end
@@ -68,16 +68,16 @@ module Baseline
           .fetch(version)
           .merge(options)
 
-        # Don't compare `attached.service.class` directly since the
+        # Don't compare `attached_or_blob.service.class` directly since the
         # ActiveStorage::Service::* subclasses don't exist if they are not used.
-        case service = attached.service.class.to_s.demodulize
+        case service = attached_or_blob.service.class.to_s.demodulize
         when "DiskService"
           transformation = case version
             when /_fit/   then :resize_to_fit
             when /_thumb/ then :resize_to_fill
             else raise "Unexpected version: #{version}"
             end
-          variant = attached.variant(
+          variant = attached_or_blob.variant(
             transformation => options.fetch_values(:width, :height)
           )
           public_send \
@@ -87,7 +87,7 @@ module Baseline
         when "CloudinaryService"
           public_send \
             :"cl_image_#{suffix}",
-            attached.key,
+            attached_or_blob.key,
             **options
         else
           raise "Unexpected service: #{service}"
@@ -693,5 +693,62 @@ module Baseline
       end
 
       def modal_default_size = "lg"
+
+      def set_color_mode
+        tag.script do
+          <<~JS.html_safe
+            document.documentElement.setAttribute(
+              "data-bs-theme",
+              (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            )
+          JS
+        end
+      end
+
+      def local_time_i18n(locale)
+        I18n.with_locale locale do
+          {
+            date: {
+              dayNames:       t(:day_names, scope: :date),
+              abbrDayNames:   t(:abbr_day_names, scope: :date),
+              monthNames:     t(:month_names, scope: :date)[1..-1],
+              abbrMonthNames: t(:abbr_month_names, scope: :date)[1..-1],
+              yesterday:      t(:yesterday),
+              today:          t(:today),
+              tomorrow:       t(:tomorrow),
+              on:             "am {date}",
+              formats: {
+                default:  "%e. %B %Y",
+                thisYear: "%e. %B"
+              }
+            },
+            time: {
+              am:         "am",
+              pm:         "pm",
+              singular:   "eine {time}",
+              singularAn: "eine {time}",
+              elapsed:    "vor {time}",
+              second:     "Sekunde",
+              seconds:    "Sekunden",
+              minute:     "Minute",
+              minutes:    "Minuten",
+              hour:       "Stunde",
+              hours:      "Stunden",
+              formats: {
+                default:     "%l:%M%P",
+                default_24h: "%-H:%M"
+              }
+            },
+            datetime: {
+              at: "{date} um {time}",
+              on_at: "am {date} um {time}",
+              formats: {
+                default: "%e. %B %Y um %l:%M%P %Z",
+                default_24h: "%e. %B %Y um %-H:%M %Z"
+              }
+            }
+          }
+        end
+      end
   end
 end

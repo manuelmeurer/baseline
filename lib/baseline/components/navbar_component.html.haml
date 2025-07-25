@@ -14,7 +14,7 @@
         = safe_join group.items
     = content
 
-%nav.navbar{ class: @css_class }
+%nav.navbar{ class: @css_class, data: @data }
   - if @container_css_class
     %div{ class: @container_css_class }
       = navbar_content
