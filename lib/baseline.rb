@@ -19,6 +19,7 @@ module Baseline
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
   autoload :RobotsSitemapManifest,              "baseline/controller_concerns/robots_sitemap_manifest"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
+  autoload :WebFramesControllable,              "baseline/controller_concerns/web_frames_controllable"
 
   # Model concerns
   autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"

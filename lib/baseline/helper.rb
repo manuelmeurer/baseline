@@ -693,5 +693,62 @@ module Baseline
       end
 
       def modal_default_size = "lg"
+
+      def set_color_mode
+        tag.script do
+          <<~JS.html_safe
+            document.documentElement.setAttribute(
+              "data-bs-theme",
+              (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            )
+          JS
+        end
+      end
+
+      def local_time_i18n(locale)
+        I18n.with_locale locale do
+          {
+            date: {
+              dayNames:       t(:day_names, scope: :date),
+              abbrDayNames:   t(:abbr_day_names, scope: :date),
+              monthNames:     t(:month_names, scope: :date)[1..-1],
+              abbrMonthNames: t(:abbr_month_names, scope: :date)[1..-1],
+              yesterday:      t(:yesterday),
+              today:          t(:today),
+              tomorrow:       t(:tomorrow),
+              on:             "am {date}",
+              formats: {
+                default:  "%e. %B %Y",
+                thisYear: "%e. %B"
+              }
+            },
+            time: {
+              am:         "am",
+              pm:         "pm",
+              singular:   "eine {time}",
+              singularAn: "eine {time}",
+              elapsed:    "vor {time}",
+              second:     "Sekunde",
+              seconds:    "Sekunden",
+              minute:     "Minute",
+              minutes:    "Minuten",
+              hour:       "Stunde",
+              hours:      "Stunden",
+              formats: {
+                default:     "%l:%M%P",
+                default_24h: "%-H:%M"
+              }
+            },
+            datetime: {
+              at: "{date} um {time}",
+              on_at: "am {date} um {time}",
+              formats: {
+                default: "%e. %B %Y um %l:%M%P %Z",
+                default_24h: "%e. %B %Y um %-H:%M %Z"
+              }
+            }
+          }
+        end
+      end
   end
 end

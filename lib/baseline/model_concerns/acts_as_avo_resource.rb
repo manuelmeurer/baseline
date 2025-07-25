@@ -18,6 +18,10 @@ module Baseline
 
         self.title = :to_s
 
+        self.row_controls_config = {
+          float: true
+        }
+
         if model_class.respond_to?(:friendly)
           self.find_record_method = -> {
             id.is_a?(Array) ?
