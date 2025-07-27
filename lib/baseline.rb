@@ -12,12 +12,12 @@ module Baseline
   autoload :ContactRequestControllable,         "baseline/controller_concerns/contact_request_controllable"
   autoload :ControllerCore,                     "baseline/controller_concerns/controller_core"
   autoload :ErrorsControllable,                 "baseline/controller_concerns/errors_controllable"
+  autoload :EssentialsControllable,             "baseline/controller_concerns/essentials_controllable"
   autoload :GoogleOauthControllable,            "baseline/controller_concerns/google_oauth_controllable"
   autoload :I18nScopes,                         "baseline/controller_concerns/i18n_scopes"
   autoload :MissionControlJobsBaseControllable, "baseline/controller_concerns/mission_control_jobs_base_controllable"
   autoload :NamespaceLayout,                    "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
-  autoload :RobotsSitemapManifest,              "baseline/controller_concerns/robots_sitemap_manifest"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
   autoload :WebFramesControllable,              "baseline/controller_concerns/web_frames_controllable"
 

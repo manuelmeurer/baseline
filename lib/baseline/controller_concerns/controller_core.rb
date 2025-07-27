@@ -5,8 +5,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      include I18nScopes,
-              RobotsSitemapManifest
+      include I18nScopes
 
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
