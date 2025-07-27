@@ -3,9 +3,12 @@
 module Baseline
   module Sitemaps
     class Fetch < ApplicationService
-      def call(namespace)
-        Rails.cache.read \
-          Helpers.cache_key(namespace)
+      def call
+        Helpers
+          .cache_key(::Current.namespace)
+          .then {
+            Rails.cache.read _1
+          }
       end
     end
   end
