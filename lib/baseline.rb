@@ -13,13 +13,13 @@ module Baseline
   autoload :ControllerCore,                     "baseline/controller_concerns/controller_core"
   autoload :ErrorsControllable,                 "baseline/controller_concerns/errors_controllable"
   autoload :EssentialsControllable,             "baseline/controller_concerns/essentials_controllable"
+  autoload :FramesControllable,                 "baseline/controller_concerns/frames_controllable"
   autoload :GoogleOauthControllable,            "baseline/controller_concerns/google_oauth_controllable"
   autoload :I18nScopes,                         "baseline/controller_concerns/i18n_scopes"
   autoload :MissionControlJobsBaseControllable, "baseline/controller_concerns/mission_control_jobs_base_controllable"
   autoload :NamespaceLayout,                    "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
-  autoload :WebFramesControllable,              "baseline/controller_concerns/web_frames_controllable"
 
   # Model concerns
   autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"

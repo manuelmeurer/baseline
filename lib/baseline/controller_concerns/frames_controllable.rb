@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  module WebFramesControllable
+  module FramesControllable
     extend ActiveSupport::Concern
 
     included do
