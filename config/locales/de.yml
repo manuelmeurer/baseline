@@ -3,6 +3,10 @@ de:
   today: heute
   tomorrow: morgen
 
+  password_hint:
+    minimum: "mindestens %{value} Zeichen"
+    maximum: "höchstens %{value} Zeichen"
+
   languages:
     names:
       az: Aserbaidschanisch

@@ -35,7 +35,7 @@ module Baseline
             before_action(:resume_session, **) # Set Current.user
           end
 
-          def enforce_unauthenticated_access(**)
+          def require_unauthenticated_access(**)
             allow_unauthenticated_access(**)
 
             before_action(**) do

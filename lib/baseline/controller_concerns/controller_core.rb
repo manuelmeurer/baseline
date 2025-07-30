@@ -197,14 +197,15 @@ module Baseline
       end
 
       def add_flash(type, text, now: false)
-        valid_types = %i(alert info notice warning)
+        valid_types = %i[alert info notice warning]
         unless type.in?(valid_types)
           raise "type is not valid, must be one of: #{valid_types.join(", ")}"
         end
 
-        desired_flash = now ?
-                        flash.now :
-                        flash
+        desired_flash =
+          now ?
+          flash.now :
+          flash
 
         desired_flash[type] = [
           desired_flash[type],

@@ -42,6 +42,12 @@ module Baseline
           delete :logout, action: "destroy"
         end
       end
+
+      routes.concern :password_reset do
+        resources :passwords,
+          param: :token,
+          only:  %i[new create edit update]
+      end
     end
   end
 end

@@ -203,8 +203,7 @@ module Baseline
           alert level, message
         end
         .compact
-        .join("\n")
-        .html_safe
+        .then { safe_join _1, "\n" }
     end
 
     def async_turbo_frame(name, loading_message: NOT_SET, loading_content: nil, **attributes, &block)
@@ -749,6 +748,17 @@ module Baseline
             }
           }
         end
+      end
+
+      def password_hint
+        return unless validator = User.validators_on(:password).grep(ActiveRecord::Validations::LengthValidator).first
+
+        validator
+          .options
+          .slice(:minimum, :maximum)
+          .map do |validation, value|
+            t validation, scope: :password_hint, value:
+          end.join(", ")
       end
   end
 end

@@ -5,6 +5,7 @@ module Baseline
 
   # Controller concerns
   autoload :AdminSessionsControllable,          "baseline/controller_concerns/admin_sessions_controllable"
+  autoload :PasswordsControllable,              "baseline/controller_concerns/passwords_controllable"
   autoload :APIControllerCore,                  "baseline/controller_concerns/api_controller_core"
   autoload :APITodoistControllable,             "baseline/controller_concerns/api_todoist_controllable"
   autoload :Authentication,                     "baseline/controller_concerns/authentication"
@@ -20,6 +21,7 @@ module Baseline
   autoload :NamespaceLayout,                    "baseline/controller_concerns/namespace_layout"
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
+  autoload :WebBaseControllable,                "baseline/controller_concerns/web_base_controllable"
 
   # Model concerns
   autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"
@@ -40,6 +42,7 @@ module Baseline
   autoload :HasGender,                          "baseline/model_concerns/has_gender"
   autoload :HasLocale,                          "baseline/model_concerns/has_locale"
   autoload :HasMessageable,                     "baseline/model_concerns/has_messageable"
+  autoload :HasPassword,                        "baseline/model_concerns/has_password"
   autoload :HasPDFFiles,                        "baseline/model_concerns/has_pdf_files"
   autoload :HasTimestamps,                      "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,                          "baseline/model_concerns/model_core"

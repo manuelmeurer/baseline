@@ -3,6 +3,10 @@ en:
   today: today
   tomorrow: tomorrow
 
+  password_hint:
+    minimum: "min %{value} characters"
+    maximum: "max %{value} characters"
+
   languages:
     names:
       az: Azerbaijani
