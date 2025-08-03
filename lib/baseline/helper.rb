@@ -56,7 +56,17 @@ module Baseline
 
     %i(tag path).each do |suffix|
       define_method :"attachment_image_#{suffix}" do |attached_or_blob, version, **options|
-        if attached_or_blob.respond_to?(:attached?) && !attached_or_blob.attached?
+        is_blob = !attached_or_blob.respond_to?(:attached?)
+
+        case
+        when is_blob
+          # We'll assume a dummy image and replace "thumb" with "fit" in the version,
+          # so that Cloudinary does not zoom in on the face.
+          version = version
+            .to_s
+            .sub("thumb", "fit")
+            .to_sym
+        when !attached_or_blob.attached?
           if Rails.env.production?
             raise "Attached is not attached_or_blob."
           else
