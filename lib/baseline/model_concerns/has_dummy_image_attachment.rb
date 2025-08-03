@@ -7,9 +7,12 @@ module Baseline
         extend ActiveSupport::Concern
 
         define_method :"#{attribute}_or_dummy" do
-          attached = public_send(attribute)
-          return attached if attached.attached?
+          public_send(attribute).unless(-> { _1.attached? }) do
+            public_send("dummy_#{attribute}")
+          end
+        end
 
+        define_method :"dummy_#{attribute}" do
           cache_key = [
             :attachment_dummy_blob_id,
             self.class.to_s.underscore,
