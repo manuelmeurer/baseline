@@ -97,3 +97,15 @@ de:
       text: |-
         Ein Fehler in der Anwendung ist aufgetreten.
         Wir wurden darüber informiert und kümmern uns so bald wie möglich darum!
+
+  activerecord:
+
+    attributes:
+
+      user:
+        email: E-Mail
+        first_name: Vorname
+        last_name: Nachname
+        password_confirmation: Passwortbestätigung
+        password: Passwort
+        username: Benutzername
