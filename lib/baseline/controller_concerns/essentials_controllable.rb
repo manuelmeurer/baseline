@@ -58,12 +58,8 @@ module Baseline
     end
 
     def manifest
-      id   = Rails.application.class.module_parent_name.underscore
-      name = id.titleize
-
       json = manifest_overrides.reverse_merge(
-        id:,
-        name:,
+        name: Rails.application.class.module_parent_name.underscore.titleize,
         icons: [
           {
             src:   view_context.asset_path("icons/icon-192.png"),
