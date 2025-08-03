@@ -17,7 +17,7 @@ module Baseline
       end
 
       before_action only: :robots do
-        unless params[:format] == "text"
+        unless params[:format] == "txt"
           redirect_to url_for(format: :text)
         end
       end
