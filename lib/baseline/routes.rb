@@ -36,7 +36,7 @@ module Baseline
       end
 
       routes.concern :auth do
-        scope controller: :sessions do
+        controller :sessions do
           get    :login,  action: "new"
           post   :login,  action: "create"
           delete :logout, action: "destroy"
