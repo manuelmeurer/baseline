@@ -6,8 +6,8 @@
     - case @imageable
     - when String
       = image_tag @imageable, class: css_class
-    - when ActiveStorage::Attached
-      - unless @imageable.attached?
+    - when ActiveStorage::Attached, ActiveStorage::Blob
+      - if @imageable.try(:attached?) == false
         - raise "Attachment is missing: #{@imageable.id}"
       = attachment_image_tag @imageable, :md_thumb, class: css_class
     - else
