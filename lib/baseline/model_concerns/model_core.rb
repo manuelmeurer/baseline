@@ -273,6 +273,8 @@ module Baseline
           }.compact
       end
 
+      def common_image_file_types = %i[jpeg png svg webp]
+
       if defined?(::Ransack)
         def ransackable_attributes(auth_object = nil)
           authorizable_ransackable_attributes
