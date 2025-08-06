@@ -21,7 +21,7 @@ module Baseline
     def create
       if user = find_user(params[:email])
         UserMailer
-          .with(user:)
+          .with(user:, namespace: ::Current.namespace)
           .password_reset
           .deliver_later
       end

@@ -194,6 +194,13 @@ module Baseline
         to: :class
     end
 
+    def human_enum_name(enum, modifier = nil)
+      self.class.human_enum_name \
+        enum,
+        public_send(enum),
+        modifier
+    end
+
     def method_missing(method, *args, _async: false, _after: nil, **kwargs)
       return super unless service_name = method[/\A_do_(.+)/, 1]&.camelize
 
@@ -273,6 +280,34 @@ module Baseline
           }.compact
       end
 
+      def enum_with_human_name(name, ...)
+        enum(name, ...)
+        define_method "human_#{name}" do
+          self.class.human_enum_name name, public_send(name)
+        end
+      end
+
+      def human_enum_name(enum, value, modifier = nil)
+        return if value.blank?
+
+        key = [
+          enum.to_s.pluralize,
+          modifier
+        ].compact
+          .join("_")
+
+        scope = [
+          :activerecord,
+          :attributes,
+          model_name.i18n_key,
+          key
+        ]
+
+        I18n.t value,
+          scope:,
+          default: value.to_s.humanize
+      end
+
       def common_image_file_types = %i[jpeg png svg webp]
 
       if defined?(::Ransack)
@@ -293,7 +328,7 @@ module Baseline
 
         return unless proceed
 
-        if @_baseline_finalized
+        if defined?(@_baseline_finalized)
           raise "Model #{name} has already been finalized."
         end
 

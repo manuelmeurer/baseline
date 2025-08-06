@@ -1,0 +1,11 @@
+-# frozen_string_literal: true
+
+%ul.nav{ role: "tablist", class: class_names(@nav_css_class, "nav-#{@style}" => @style) }
+  - panels.each_with_index do |panel, index|
+    %li.nav-item{ role: "presentation", class: panel.nav_css_class }
+      = link_to panel.title, "#", class: class_names("nav-link", active: index == 0), data: { bs_toggle: @style.to_s.singularize, bs_target: "##{panel.id}" }, "aria-current": ("page" if index == 0)
+
+.tab-content{ class: @content_css_class }
+  - panels.each_with_index do |panel, index|
+    .tab-pane.fade{ id: panel.id, class: class_names(panel.css_class, "show active" => index == 0), role: "tabpanel" }
+      = panel.content

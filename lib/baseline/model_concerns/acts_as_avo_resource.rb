@@ -16,6 +16,10 @@ module Baseline
           raise error
         end
 
+        if defined?(@_baseline_finalized)
+          raise "Avo resource #{name} has already been finalized."
+        end
+
         self.title = :to_s
 
         self.row_controls_config = {
@@ -36,6 +40,8 @@ module Baseline
             }
           }
         end
+
+        @_baseline_finalized = true
       end
     end
 

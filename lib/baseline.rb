@@ -22,9 +22,12 @@ module Baseline
   autoload :PageTitle,                          "baseline/controller_concerns/page_title"
   autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
   autoload :WebBaseControllable,                "baseline/controller_concerns/web_base_controllable"
+  autoload :Wizardify,                          "baseline/controller_concerns/wizardify"
 
   # Model concerns
   autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"
+  autoload :ActsAsCategory,                     "baseline/model_concerns/acts_as_category"
+  autoload :ActsAsCategoryAssociation,          "baseline/model_concerns/acts_as_category_association"
   autoload :ActsAsCreditNote,                   "baseline/model_concerns/acts_as_credit_note"
   autoload :ActsAsInvoicingDetails,             "baseline/model_concerns/acts_as_invoicing_details"
   autoload :ActsAsMessage,                      "baseline/model_concerns/acts_as_message"
@@ -32,6 +35,7 @@ module Baseline
   autoload :ActsAsPDFFile,                      "baseline/model_concerns/acts_as_pdf_file"
   autoload :ActsAsTask,                         "baseline/model_concerns/acts_as_task"
   autoload :ActsAsTodoistEvent,                 "baseline/model_concerns/acts_as_todoist_event"
+  autoload :HasCategories,                      "baseline/model_concerns/has_categories"
   autoload :HasChargeVAT,                       "baseline/model_concerns/has_charge_vat"
   autoload :HasCountry,                         "baseline/model_concerns/has_country"
   autoload :HasDummyImageAttachment,            "baseline/model_concerns/has_dummy_image_attachment"
@@ -47,6 +51,7 @@ module Baseline
   autoload :HasTimestamps,                      "baseline/model_concerns/has_timestamps"
   autoload :ModelCore,                          "baseline/model_concerns/model_core"
   autoload :TouchAsync,                         "baseline/model_concerns/touch_async"
+  autoload :Wizardable,                         "baseline/model_concerns/wizardable"
 
   # Services
   autoload :BaseService,                        "baseline/services/base_service"
@@ -145,9 +150,10 @@ module Baseline
   autoload :FormFieldComponent,                 "baseline/components/form_field_component"
   autoload :ItemListComponent,                  "baseline/components/item_list_component"
   autoload :ModalComponent,                     "baseline/components/modal_component"
-  autoload :NavbarComponent,                    "baseline/components/navbar_component"
-  autoload :ToastComponent,                     "baseline/components/toast_component"
   autoload :LoadingComponent,                   "baseline/components/loading_component"
+  autoload :NavbarComponent,                    "baseline/components/navbar_component"
+  autoload :TabPanelsComponent,                 "baseline/components/tab_panels_component"
+  autoload :ToastComponent,                     "baseline/components/toast_component"
 
   autoload :ApplicationCore,                    "baseline/application_core"
   autoload :ApplicationPolicy,                  "baseline/application_policy"

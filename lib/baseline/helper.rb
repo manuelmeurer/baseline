@@ -54,7 +54,7 @@ module Baseline
       brands
     ).freeze
 
-    %i(tag path).each do |suffix|
+    %i[tag path].each do |suffix|
       define_method :"attachment_image_#{suffix}" do |attached_or_blob, version, **options|
         is_blob = !attached_or_blob.respond_to?(:attached?)
 
@@ -155,6 +155,48 @@ module Baseline
           kwargs.delete(:class)
         ].compact,
         **kwargs
+    end
+
+    def common_stimco
+      [
+        controller_name,
+        :common
+      ].join(" ")
+        .then { stimco _1, to_h: false }
+    end
+
+    def action_stimco
+      controller_and_normalized_action_name
+        .join(" ")
+        .then { stimco _1, to_h: false }
+    end
+
+    def resource_stimco
+      return unless normalized_action_name == "show" && id = params[:id].presence
+
+      [
+        controller_name,
+        id
+      ].join(" ")
+        .then { stimco _1, to_h: false }
+    end
+
+    def body_data
+      stimcos = Rails
+        .configuration
+        .app_stimulus_namespaces
+        .fetch(::Current.namespace)
+        .map { stimco _1 }
+
+      [
+        *stimcos,
+        common_stimco.to_h,
+        action_stimco.to_h,
+        resource_stimco&.to_h
+      ].compact
+        .then {
+          data_merge(*_1)
+        }
     end
 
     def alert(level, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
