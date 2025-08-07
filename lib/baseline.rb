@@ -1,172 +1,24 @@
 # frozen_string_literal: true
 
+require "zeitwerk"
+require_relative "baseline/inflector"
+
+loader = Zeitwerk::Loader.for_gem
+
+loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
+loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
+
+loader.collapse("#{__dir__}/baseline/components")
+loader.collapse("#{__dir__}/baseline/controller_concerns")
+loader.collapse("#{__dir__}/baseline/model_concerns")
+loader.collapse("#{__dir__}/baseline/services")
+
+loader.inflector = Baseline::Inflector.new(__FILE__)
+
+loader.setup
+
 module Baseline
   NOT_SET = Object.new.freeze
-
-  # Controller concerns
-  autoload :AdminSessionsControllable,          "baseline/controller_concerns/admin_sessions_controllable"
-  autoload :PasswordsControllable,              "baseline/controller_concerns/passwords_controllable"
-  autoload :APIControllerCore,                  "baseline/controller_concerns/api_controller_core"
-  autoload :APITodoistControllable,             "baseline/controller_concerns/api_todoist_controllable"
-  autoload :Authentication,                     "baseline/controller_concerns/authentication"
-  autoload :AvoApplicationControllable,         "baseline/controller_concerns/avo_application_controllable"
-  autoload :ContactRequestControllable,         "baseline/controller_concerns/contact_request_controllable"
-  autoload :ControllerCore,                     "baseline/controller_concerns/controller_core"
-  autoload :ErrorsControllable,                 "baseline/controller_concerns/errors_controllable"
-  autoload :EssentialsControllable,             "baseline/controller_concerns/essentials_controllable"
-  autoload :FramesControllable,                 "baseline/controller_concerns/frames_controllable"
-  autoload :GoogleOauthControllable,            "baseline/controller_concerns/google_oauth_controllable"
-  autoload :I18nScopes,                         "baseline/controller_concerns/i18n_scopes"
-  autoload :MissionControlJobsBaseControllable, "baseline/controller_concerns/mission_control_jobs_base_controllable"
-  autoload :NamespaceLayout,                    "baseline/controller_concerns/namespace_layout"
-  autoload :PageTitle,                          "baseline/controller_concerns/page_title"
-  autoload :SetLocale,                          "baseline/controller_concerns/set_locale"
-  autoload :WebBaseControllable,                "baseline/controller_concerns/web_base_controllable"
-  autoload :Wizardify,                          "baseline/controller_concerns/wizardify"
-
-  # Model concerns
-  autoload :ActsAsAvoResource,                  "baseline/model_concerns/acts_as_avo_resource"
-  autoload :ActsAsCategory,                     "baseline/model_concerns/acts_as_category"
-  autoload :ActsAsCategoryAssociation,          "baseline/model_concerns/acts_as_category_association"
-  autoload :ActsAsCreditNote,                   "baseline/model_concerns/acts_as_credit_note"
-  autoload :ActsAsInvoicingDetails,             "baseline/model_concerns/acts_as_invoicing_details"
-  autoload :ActsAsMessage,                      "baseline/model_concerns/acts_as_message"
-  autoload :ActsAsNotification,                 "baseline/model_concerns/acts_as_notification"
-  autoload :ActsAsPDFFile,                      "baseline/model_concerns/acts_as_pdf_file"
-  autoload :ActsAsTask,                         "baseline/model_concerns/acts_as_task"
-  autoload :ActsAsTodoistEvent,                 "baseline/model_concerns/acts_as_todoist_event"
-  autoload :HasCategories,                      "baseline/model_concerns/has_categories"
-  autoload :HasChargeVAT,                       "baseline/model_concerns/has_charge_vat"
-  autoload :HasCountry,                         "baseline/model_concerns/has_country"
-  autoload :HasDummyImageAttachment,            "baseline/model_concerns/has_dummy_image_attachment"
-  autoload :HasEmail,                           "baseline/model_concerns/has_email"
-  autoload :HasFirstAndLastName,                "baseline/model_concerns/has_first_and_last_name"
-  autoload :HasFriendlyID,                      "baseline/model_concerns/has_friendly_id"
-  autoload :HasFullName,                        "baseline/model_concerns/has_full_name"
-  autoload :HasGender,                          "baseline/model_concerns/has_gender"
-  autoload :HasLocale,                          "baseline/model_concerns/has_locale"
-  autoload :HasMessageable,                     "baseline/model_concerns/has_messageable"
-  autoload :HasPassword,                        "baseline/model_concerns/has_password"
-  autoload :HasPDFFiles,                        "baseline/model_concerns/has_pdf_files"
-  autoload :HasTimestamps,                      "baseline/model_concerns/has_timestamps"
-  autoload :ModelCore,                          "baseline/model_concerns/model_core"
-  autoload :TouchAsync,                         "baseline/model_concerns/touch_async"
-  autoload :Wizardable,                         "baseline/model_concerns/wizardable"
-
-  # Services
-  autoload :BaseService,                        "baseline/services/base_service"
-  autoload :CreateDbBackup,                     "baseline/services/create_db_backup"
-  autoload :DownloadFile,                       "baseline/services/download_file"
-  autoload :ExternalService,                    "baseline/services/external_service"
-  autoload :MarkdownToHTML,                     "baseline/services/markdown_to_html"
-  autoload :ProcessInvoiceEmails,               "baseline/services/process_invoice_emails"
-  autoload :ReportError,                        "baseline/services/report_error"
-  autoload :SaveToTempfile,                     "baseline/services/save_to_tempfile"
-  autoload :Toucher,                            "baseline/services/toucher"
-  autoload :UpdateSchemaMigrations,             "baseline/services/update_schema_migrations"
-
-  module Avo
-    autoload :ActionHelpers,                    "baseline/avo/action_helpers"
-
-    module Filters
-      autoload :Search,                         "baseline/avo/filters/search"
-    end
-  end
-
-  module External
-    autoload :Cloudflare,                       "baseline/services/external/cloudflare"
-    autoload :Lexoffice,                        "baseline/services/external/lexoffice"
-    autoload :Pretix,                           "baseline/services/external/pretix"
-    autoload :SlackSimple,                      "baseline/services/external/slack_simple"
-    autoload :Todoist,                          "baseline/services/external/todoist"
-
-    module Google
-      module Oauth
-        autoload :Authorizer,                   "baseline/services/external/google/oauth/authorizer"
-        autoload :Helpers,                      "baseline/services/external/google/oauth/helpers"
-        autoload :Service,                      "baseline/services/external/google/oauth/service"
-      end
-    end
-  end
-
-  module GoogleDrive
-    autoload :Helpers,                          "baseline/services/google_drive/helpers"
-    autoload :SyncToLexoffice,                  "baseline/services/google_drive/sync_to_lexoffice"
-  end
-
-  module InvoicingDetails
-    autoload :UpsertLexoffice,                  "baseline/services/invoicing_details/upsert_lexoffice"
-  end
-
-  module Lexoffice
-    autoload :Helpers,                          "baseline/services/lexoffice/helpers"
-    autoload :DownloadPDF,                      "baseline/services/lexoffice/download_pdf"
-  end
-
-  module Messages
-    autoload :GeneratePartsFromI18n,            "baseline/services/messages/generate_parts_from_i18n"
-  end
-
-  module Notifications
-    autoload :Create,                           "baseline/services/notifications/create"
-  end
-
-  module Recurring
-    autoload :Base,                             "baseline/services/recurring/base"
-  end
-
-  module Sitemaps
-    autoload :Fetch,                            "baseline/services/sitemaps/fetch"
-    autoload :GenerateAll,                      "baseline/services/sitemaps/generate_all"
-    autoload :Helpers,                          "baseline/services/sitemaps/helpers"
-  end
-
-  module Spec
-    autoload :APIHelpers,                       "baseline/spec/api_helpers"
-    autoload :CapybaraHelpers,                  "baseline/spec/capybara_helpers"
-  end
-
-  module Tasks
-    autoload :Create,                           "baseline/services/tasks/create"
-
-    module Todoist
-      autoload :CreateAll,                      "baseline/services/tasks/todoist/create_all"
-      autoload :DeleteOld,                      "baseline/services/tasks/todoist/delete_old"
-      autoload :Update,                         "baseline/services/tasks/todoist/update"
-    end
-  end
-
-  module TodoistEvents
-    autoload :Process,                          "baseline/services/todoist_events/process"
-  end
-
-  # Components
-  autoload :AccordionComponent,                 "baseline/components/accordion_component"
-  autoload :AvatarBoxComponent,                 "baseline/components/avatar_box_component"
-  autoload :CardComponent,                      "baseline/components/card_component"
-  autoload :ContactRequestFormComponent,        "baseline/components/contact_request_form_component"
-  autoload :CopyableTextFieldComponent,         "baseline/components/copyable_text_field_component"
-  autoload :FormActionsComponent,               "baseline/components/form_actions_component"
-  autoload :FormFieldComponent,                 "baseline/components/form_field_component"
-  autoload :ItemListComponent,                  "baseline/components/item_list_component"
-  autoload :ModalComponent,                     "baseline/components/modal_component"
-  autoload :LoadingComponent,                   "baseline/components/loading_component"
-  autoload :NavbarComponent,                    "baseline/components/navbar_component"
-  autoload :TabPanelsComponent,                 "baseline/components/tab_panels_component"
-  autoload :ToastComponent,                     "baseline/components/toast_component"
-
-  autoload :ApplicationCore,                    "baseline/application_core"
-  autoload :ApplicationPolicy,                  "baseline/application_policy"
-  autoload :Current,                            "baseline/current"
-  autoload :Helper,                             "baseline/helper"
-  autoload :Importmap,                          "baseline/importmap"
-  autoload :Language,                           "baseline/language"
-  autoload :MailerCore,                         "baseline/mailer_core"
-  autoload :RedisURL,                           "baseline/redis_url"
-  autoload :Routes,                             "baseline/routes"
-  autoload :StimulusController,                 "baseline/stimulus_controller"
-  autoload :URLFormatValidator,                 "baseline/url_format_validator"
-  autoload :ZstdCompressor,                     "baseline/zstd_compressor"
 
   class << self
     def has_many_reflection_classes
