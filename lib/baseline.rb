@@ -212,7 +212,10 @@ module Baseline
 
     def lograge_config(config)
       config.lograge.enabled = true
-      config.lograge.base_controller_class = %w[ActionController::API ActionController::Base]
+      config.lograge.base_controller_class = %w[
+        ActionController::API
+        ActionController::Base
+      ]
       config.lograge.custom_options = ->(event) {
         event
           .payload
