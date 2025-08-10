@@ -4,12 +4,14 @@ unless $LOAD_PATH.include?(lib)
   $LOAD_PATH.unshift(lib)
 end
 
+require_relative "lib/baseline/version"
+
 Gem::Specification.new do |gem|
   files      = `git ls-files`.split($/)
   test_files = files.grep(%r{^spec/})
 
   gem.name                  = "baseline"
-  gem.version               = "1.0"
+  gem.version               = Baseline::VERSION
   gem.platform              = Gem::Platform::RUBY
   gem.author                = "Manuel Meurer"
   gem.email                 = "manuel@meurer.io"

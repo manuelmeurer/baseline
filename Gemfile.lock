@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    baseline (1.0)
+    baseline (1.0.0)
       zeitwerk
 
 GEM
