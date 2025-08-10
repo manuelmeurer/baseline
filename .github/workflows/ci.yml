@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: Enable debugging with tmate
+        type: boolean
+        required: false
+        default: false
+  push:
+    branches:
+      - main
+
+jobs:
+
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Debug with tmate
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
+
+      - name: Run tests
+        run: |
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          bin/rspec >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify Slack on failure
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: App CI
+          fields: repo,message,workflow,action
+        if: failure()
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tmp/capybara
+        if: failure()

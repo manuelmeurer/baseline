@@ -7,8 +7,9 @@ end
 require_relative "lib/baseline/version"
 
 Gem::Specification.new do |gem|
-  files      = `git ls-files`.split($/)
-  test_files = files.grep(%r{^spec/})
+  files         = `git ls-files`.split($/)
+  test_files    = files.grep(%r{^spec/})
+  ignored_files = files.select { _1.start_with?(".") }
 
   gem.name                  = "baseline"
   gem.version               = Baseline::VERSION
@@ -20,11 +21,12 @@ Gem::Specification.new do |gem|
   gem.homepage              = "https://github.com/manuelmeurer/baseline"
   gem.license               = "MIT"
   gem.required_ruby_version = ">= 3.1"
-  gem.files                 = files - test_files
-  gem.executables           = gem.files.grep(%r{\Abin/}).map(&File.method(:basename))
+  gem.files                 = files - test_files - ignored_files
+  gem.executables           = gem.files.grep(%r{\Abin/}).map { File.basename(_1) } - %w[rspec restart-apps]
   gem.test_files            = test_files
   gem.require_paths         = ["lib"]
 
   gem.add_dependency "zeitwerk"
   gem.add_development_dependency "rubocop-rails-omakase", "~> 1.1"
+  gem.add_development_dependency "rspec", "~> 3.13"
 end
