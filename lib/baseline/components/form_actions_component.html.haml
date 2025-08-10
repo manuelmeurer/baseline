@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-- actions = capture_haml do
+- actions = helpers.capture_haml do
   = content
   = @form.button class: "btn btn-#{@button_color}", data: @submit_data do
     -# For some reason, this content is output twice if we use `= icon :accept` here.

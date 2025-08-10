@@ -1,7 +1,7 @@
 -# frozen_string_literal: true
 
 - render_image = ->(css_class = nil) do
-  - image = capture_haml do
+  - image = helpers.capture_haml do
     - css_class = [css_class, class_names("border", "align-self-center", "square-#{@size}", "rounded-circle": @rounded_corners)].compact
     - case @imageable
     - when String

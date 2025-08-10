@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-- card = capture_haml do
+- card = helpers.capture_haml do
   - case @image
   - when Array
     - if @image.first.attached?

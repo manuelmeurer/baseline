@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-- navbar_content = capture_haml do
+- navbar_content = helpers.capture_haml do
   - if @brand_url
     = link_to @brand, @brand_url, class: "navbar-brand"
   - else
