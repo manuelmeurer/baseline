@@ -5,8 +5,6 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      try :allow_unauthenticated_access
-
       before_action do
         @template = "baseline/errors/show"
       end
