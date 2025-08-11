@@ -30,7 +30,8 @@ module Baseline
         value:              NOT_SET,
         label:              NOT_SET,
         help_text:          NOT_SET,
-        placeholder:        NOT_SET
+        placeholder:        NOT_SET,
+        autocomplete:       nil
       )
 
       field, attribute =
@@ -84,12 +85,14 @@ module Baseline
 
       %i[
         attribute
+        autocomplete
         data
         direct_upload
         disabled
         field
         file_label
         form
+        help_text
         hint
         i18n_key
         i18n_params
@@ -97,8 +100,10 @@ module Baseline
         id
         identifier
         include_blank
+        label
         multiple
         options
+        placeholder
         readonly
         required
         show_url_field
@@ -107,9 +112,6 @@ module Baseline
         value
         value_attributes
         wrapper_attributes
-        label
-        help_text
-        placeholder
       ].each {
         instance_variable_set "@#{_1}", binding.local_variable_get(_1)
       }
@@ -210,13 +212,14 @@ module Baseline
 
       def field_params
         {
-          class:       "form-control",
-          id:          @id,
-          data:        @data,
-          placeholder: @placeholder,
-          required:    @required,
-          disabled:    @disabled,
-          readonly:    @readonly
+          class:        "form-control",
+          id:           @id,
+          data:         @data,
+          placeholder:  @placeholder,
+          required:     @required,
+          disabled:     @disabled,
+          readonly:     @readonly,
+          autocomplete: @autocomplete
         }.if(@value != NOT_SET) {
           _1.merge value: @value
         }
