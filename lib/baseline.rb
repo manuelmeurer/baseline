@@ -7,6 +7,7 @@ loader = Zeitwerk::Loader.for_gem
 
 loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
 loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
+loader.ignore("#{__dir__}/baseline/initializers")
 
 loader.collapse("#{__dir__}/baseline/components")
 loader.collapse("#{__dir__}/baseline/controller_concerns")
