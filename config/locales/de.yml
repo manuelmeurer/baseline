@@ -2,6 +2,8 @@ de:
   yesterday: gestern
   today: heute
   tomorrow: morgen
+  step: Schritt
+  next: weiter
 
   password_hint:
     minimum: "mindestens %{value} Zeichen"

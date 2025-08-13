@@ -9,7 +9,7 @@
     - when ActiveStorage::Attached, ActiveStorage::Blob
       - if @imageable.try(:attached?) == false
         - raise "Attachment is missing: #{@imageable.id}"
-      = attachment_image_tag @imageable, :md_thumb, class: css_class
+      = helpers.attachment_image_tag @imageable, :md_thumb, class: css_class
     - else
       - raise "Unexpected @imageable: #{@imageable.class}"
   - @image_wrapper ? @image_wrapper.call(image) : image

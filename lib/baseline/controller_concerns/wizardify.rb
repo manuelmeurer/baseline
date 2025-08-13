@@ -36,9 +36,27 @@ module Baseline
       end
 
       before_action :setup_wizard
+    end
 
-      def index              = redirect_to_first_or_next_form_step
+    def index = redirect_to_first_or_next_form_step
+
+    def show
+      if wizard_resource.form_step_too_far_ahead?(step)
+        redirect_to_first_or_next_form_step
+      else
+        render_wizard
+      end
+    end
+
+    def success; end
+
+    private
+
       def finish_wizard_path = { action: :success }
+
+      def action_i18n_scope(_step = step)
+        super() + [_step].compact
+      end
 
       def redirect_to_finish_wizard(*)
         if wizard_resource.unfinished?
@@ -64,21 +82,6 @@ module Baseline
           html_redirect_to \
             finish_wizard_path
         end
-      end
-    end
-
-    def show
-      if wizard_resource.form_step_too_far_ahead?(step)
-        redirect_to_first_or_next_form_step
-      else
-        render_wizard
-      end
-    end
-
-    private
-
-      def action_i18n_scope(_step = step)
-        super() + [_step].compact
       end
 
       def redirect_to_first_or_next_form_step
