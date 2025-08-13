@@ -27,6 +27,9 @@ module Baseline
           inverse_of:  "category".if(many, &:pluralize).to_sym,
           source_type: klass.to_s
       end
+
+      def valid_for(resource_or_class)        = all
+      def valid_groups_for(resource_or_class) = all
     end
 
     def to_s
