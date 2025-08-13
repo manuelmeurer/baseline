@@ -13,25 +13,6 @@ This is a Ruby gem called "baseline" that provides a collection of modules and p
 bundle exec rubocop
 ```
 
-### Building
-```bash
-bin/build
-```
-This runs:
-- Bundle install
-- Dart Sass compilation
-- Assets precompilation
-- Database migrations (if CRON env var is set)
-
-### Database Operations
-```bash
-# Create database backup
-thor db:backup --host=HOSTNAME --app_path=PATH
-
-# Restore database from backup
-thor db:restore --host=HOSTNAME --app_path=PATH [--fresh] [--local_path=PATH]
-```
-
 ### Other Bin Scripts
 - `bin/deploy` - Deployment script
 - `bin/prod-console` - Production console access
