@@ -29,7 +29,7 @@ module Baseline
       end
 
       def valid_for(resource_or_class)        = all
-      def valid_groups_for(resource_or_class) = all
+      def valid_groups_for(resource_or_class) = groups.keys
     end
 
     def to_s
