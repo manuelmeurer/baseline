@@ -196,7 +196,18 @@ module Baseline
           **
       end
 
-      def add_flash(type, text, now: false)
+      def add_flash(type, *message_or_i18n_keys, now: false)
+        message =
+          if message_or_i18n_keys.one? && message_or_i18n_keys.first.is_a?(String)
+            message_or_i18n_keys.first
+          else
+            [
+              *action_i18n_scope(action_name),
+              *message_or_i18n_keys
+            ].join(".")
+              .then { t _1 }
+          end
+
         valid_types = %i[alert info notice warning]
         unless type.in?(valid_types)
           raise "type is not valid, must be one of: #{valid_types.join(", ")}"
@@ -209,9 +220,9 @@ module Baseline
 
         desired_flash[type] = [
           desired_flash[type],
-          text
+          message
         ].compact_blank
-         .join("\n\n")
+          .join("\n\n")
       end
 
       def html_redirect_to(options = {}, response_options = {})
