@@ -4,6 +4,9 @@ de:
   tomorrow: morgen
   step: Schritt
   next: weiter
+  save: speichern
+  cancel: abbrechen
+  submit: absenden
 
   password_hint:
     minimum: "mindestens %{value} Zeichen"
