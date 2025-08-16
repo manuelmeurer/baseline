@@ -4,19 +4,21 @@ module Baseline
   module Wizardify
     extend ActiveSupport::Concern
 
+    PROTECTED_STEPS = [
+      FINISH_STEP = "wizard_finish",
+      FIRST_STEP  = "wizard_first",
+      LAST_STEP   = "wizard_last"
+    ]
+
     included do
-      include Wicked::Wizard
+      helper_method :wizard_path, :current_step?, :past_step?, :future_step?, :next_step?,  :previous_step?, :previous_step, :next_step
 
-      # https://github.com/zombocom/wicked/issues/196
-      rescue_from Wicked::Wizard::InvalidStepError do
-        raise ActionController::RoutingError, "Invalid step"
-      end
-
-      helper_method :previous_step, :next_step
-      helper_method def first_step?   = step == steps.first
-      helper_method def last_step?    = step == steps.last
-      helper_method def step_number   = wizard_steps.index(step) + 1
-      helper_method def step_count    = wizard_steps.size
+      helper_method def current_step  = @current_step
+      helper_method def steps         = wizard_resource.form_steps
+      helper_method def first_step?   = current_step == steps.first
+      helper_method def last_step?    = current_step == steps.last
+      helper_method def step_number   = steps.index(current_step) + 1
+      helper_method def step_count    = steps.size
       helper_method def step_progress = (step_number.to_f * 100 / step_count).round
 
       before_action only: :success do
@@ -35,13 +37,24 @@ module Baseline
         end
       end
 
-      before_action :setup_wizard
+      before_action do
+        @skip_to = nil
+        @redirect_params = nil
+
+        raise "No steps defined." unless steps
+
+        if params[:id]
+          @current_step  = setup_step_from(params[:id])
+          @previous_step = previous_step(@current_step)
+          @next_step     = next_step(@current_step)
+        end
+      end
     end
 
     def index = redirect_to_first_or_next_form_step
 
     def show
-      if wizard_resource.form_step_too_far_ahead?(step)
+      if wizard_resource.form_step_too_far_ahead?(current_step)
         redirect_to_first_or_next_form_step
       else
         render_wizard
@@ -52,13 +65,115 @@ module Baseline
 
     private
 
-      def finish_wizard_path = { action: :success }
-
-      def action_i18n_scope(_step = step)
-        super() + [_step].compact
+      def action_i18n_scope(step = current_step)
+        super() + [step].compact
       end
 
-      def redirect_to_finish_wizard(*)
+      def previous_step(step = nil)
+        return @previous_step if step.nil?
+
+        index =  steps.index(step)
+        step  =  steps.at(index - 1) if index.present? && index != 0
+        step ||= steps.first
+      end
+
+      def next_step(step = nil)
+        return @next_step if step.nil?
+
+        index = steps.index(step)
+        step  = steps.at(index + 1) if index.present?
+        step  ||= FINISH_STEP
+      end
+
+      def jump_to(step, options = {})
+        @skip_to         = step
+        @redirect_params = options
+      end
+
+      def skip_step(options = {})
+        @skip_to         = @next_step
+        @redirect_params = options
+      end
+
+      def current_step_index = steps.index(current_step)
+
+      def current_and_given_step_exists?(step)
+        current_step_index && steps.index(step)
+      end
+
+      def current_step?(step)
+        current_and_given_step_exists?(step) && current_step == step
+      end
+
+      def past_step?(step)
+        current_and_given_step_exists?(step) && current_step_index > steps.index(step)
+      end
+
+      def future_step?(step)
+        current_and_given_step_exists?(step) && current_step_index < steps.index(step)
+      end
+
+      def previous_step?(step)
+        current_and_given_step_exists?(step) && (current_step_index - 1)  == steps.index(step)
+      end
+
+      def next_step?(step)
+        current_and_given_step_exists?(step) && (current_step_index + 1)  == steps.index(step)
+      end
+
+      # Overwrite to set a custom step value.
+      def wizard_value(step) = step
+
+      def render_wizard(resource = nil, options = {}, params = {})
+        process_resource!(resource, options)
+
+        if @skip_to
+          url_params = (@redirect_params || {}).merge(params)
+          redirect_to wizard_path(@skip_to, url_params), options
+        else
+          render_step(wizard_value(current_step), options, params)
+        end
+      end
+
+      def process_resource!(resource, options = {})
+        return unless resource
+
+        did_save = options[:context] ?
+          resource.save(context: options[:context]) :
+          resource.save
+
+        if did_save
+          @skip_to ||= @next_step
+        else
+          @skip_to = nil
+          options[:status] ||= :unprocessable_entity
+        end
+      end
+
+      def render_step(step, options = {}, params = {})
+        if step.nil? || step.to_s == FINISH_STEP
+          redirect_to_finish_wizard options, params
+        else
+          render step, options
+        end
+      end
+
+      def redirect_to_next(next_step, options = {}, params = {})
+        if next_step.nil?
+          redirect_to_finish_wizard(options, params)
+        else
+          redirect_to wizard_path(next_step, params), options
+        end
+      end
+
+      def wizard_path(step = nil, options = {})
+        url_for(options.merge(
+          action: :show,
+          id:     step || params[:id]
+        ))
+      end
+
+      def redirect_to_finish_wizard(...)
         if wizard_resource.unfinished?
           wizard_resource.transaction do
             if respond_to?(:before_finish_wizard, true)
@@ -74,7 +189,7 @@ module Baseline
           end
         end
 
-        if Current.modal_request
+        if ::Current.modal_request
           render_turbo_response \
             redirect:    finish_wizard_path,
             reload_main: true
@@ -82,6 +197,22 @@ module Baseline
           html_redirect_to \
             finish_wizard_path
         end
+      end
+
+      def finish_wizard_path = { action: :success }
+
+      def setup_step_from(step)
+        return if steps.nil?
+
+        step ||= steps.first
+
+        case step.to_s
+        when FIRST_STEP then redirect_to wizard_path(steps.first)
+        when LAST_STEP  then redirect_to wizard_path(steps.last)
+        end
+
+        step.to_s.presence_in(steps + PROTECTED_STEPS) or
+          raise ActionController::RoutingError, "Invalid step: #{step}"
       end
 
       def redirect_to_first_or_next_form_step

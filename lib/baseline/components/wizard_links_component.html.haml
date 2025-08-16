@@ -1,7 +1,7 @@
 -# frozen_string_literal: true
 
 .d-flex.flex-column.flex-sm-row.justify-content-sm-between.align-items-sm-center.mt-4.gap-3.gap-sm-0
-  - if helpers.previous_step != helpers.step
+  - if helpers.previous_step != helpers.current_step
     = link_to helpers.wizard_path(helpers.previous_step), class: "btn btn-lg btn-outline-dark order-4 order-sm-0", data: { turbo_frame: "_self", turbo_prefetch: false, turbo_action: (:advance if @advance_on_back) } do
       = icon :back, style: :solid
       = t(:back).capitalize

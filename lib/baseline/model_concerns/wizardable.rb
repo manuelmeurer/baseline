@@ -25,7 +25,7 @@ module Baseline
       return false unless next_step_index = next_form_step&.then { form_steps.index _1 }
 
       step_index =
-        step == Wicked::FINISH_STEP ?
+        step == Wizardify::FINISH_STEP ?
         form_steps.size :
         form_steps.index(step)
 
