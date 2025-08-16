@@ -22,14 +22,14 @@ module Baseline
       if flash.keys.any?
         url = url_for(options)
         if web_url?(url)
-          url = Addressable::URI
+          options = Addressable::URI
             .parse(url)
             .tap { _1.query_values = Hash(_1.query_values).merge(flash: nil) }
             .to_s
         end
       end
 
-      super url, response_options
+      super options, response_options
     end
 
     private def web_url?(url)
