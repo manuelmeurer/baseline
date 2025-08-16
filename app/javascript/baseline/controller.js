@@ -153,6 +153,20 @@ export default class extends Controller {
     })
   }
 
+  quickSubmitForms() {
+    this.element.addEventListener("keydown", event => {
+      if (event.metaKey && event.key == "Enter") {
+        const forms = document.querySelectorAll("main form")
+        if (forms.length !== 1)
+          return
+        const form = forms[0]
+        // Set submitter so that Turbo honors "submits-with".
+        const submitter = form.querySelector('button[type="submit"]')
+        form.requestSubmit(submitter)
+      }
+    })
+  }
+
   async showCookieConsent() {
     if (this.element.querySelector("[data-hide-cookie-consent]"))
       return
