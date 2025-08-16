@@ -74,12 +74,14 @@ module Baseline
         )
       end
 
-      # Don't use `object&.` here since `object` might be nil or false.
       id ||= [
         identifier,
-        form.object.then { _1.id if _1 },
+        form.object.then { _1.try(:slug) || _1.id if _1 }, # Don't use `form.object&.` since `form.object` might be false.
         attribute,
-        (value if type == :radio)
+        case type
+        when :radio  then value
+        when :switch then options[:checked_value]
+        end
       ].compact
         .join("_")
 
@@ -205,12 +207,16 @@ module Baseline
           }
       end
 
-      @form.label @attribute, @label, class: css_class, for: @id
+      @form.label \
+        @attribute,
+        @label,
+        class: css_class,
+        for:   @id
     end
 
     private
 
-      def field_params
+      def field_attributes
         {
           class:        "form-control",
           id:           @id,
@@ -226,9 +232,12 @@ module Baseline
       end
 
       def content_for_type
-        send :"#{@type}_content"
-      rescue NoMethodError
-        raise "Unknown content type: #{@type}"
+        content_method = :"#{@type}_content"
+        if respond_to?(content_method, true)
+          send content_method
+        else
+          raise "Unknown content type: #{@type}"
+        end
       end
 
       def base_content
@@ -238,37 +247,37 @@ module Baseline
 
       def text_content
         @form.text_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def email_content
         @form.email_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def password_content
         @form.password_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def url_content
         @form.url_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def date_content
         @form.date_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def number_content
         @form.number_field @attribute,
-          **field_params
+          **field_attributes
       end
 
       def text_area_content
         @form.text_area @attribute,
-          **field_params
+          **field_attributes
       end
 
       def select_content
@@ -293,31 +302,59 @@ module Baseline
       end
 
       def radio_content
-        params = field_params
+        options = field_attributes
           .merge(class: "form-check-input")
           .tap { _1.delete :value }
 
         tag.div class: "form-check" do
           safe_join [
-            @form.radio_button(@attribute, @value, params),
+            @form.radio_button(@attribute, @value, options),
             (label_tag("form-check-label") if @inline_label)
           ]
         end
       end
 
       def switch_content
-        params = field_params
+        # params expected by `checkbox`: method, options = {}, checked_value = "1", unchecked_value = "0"
+        params = []
+        %i[checked_value unchecked_value].each do |key|
+          if value = @options.delete(key)
+            params << value
+          end
+        end
+        options = field_attributes
+          .merge(@options)
           .merge(class: "form-check-input")
-          .if(-> { _1.delete :value }) {
-            _1.merge checked: !!_2
-          }
+        params.unshift(@attribute, options)
 
         tag.div class: "form-check form-switch" do
           safe_join [
-            @form.checkbox(@attribute, params),
+            @form.checkbox(*params),
             (label_tag("form-check-label") if @inline_label)
           ]
         end
+      end
+
+      def switches_content
+        checkboxes = @options.map do |value, options|
+          label = options.delete(:label) || value
+
+          options.merge! \
+            multiple:       true,
+            include_hidden: false,
+            checked_value:  value
+
+          helpers.render self.class.new(
+            @form,
+            :switch,
+            @field || @attribute,
+            label_style: :inline,
+            label:,
+            options:
+          )
+        end
+
+        safe_join checkboxes, "\n"
       end
 
       def file_content
@@ -340,7 +377,7 @@ module Baseline
                 direct_upload: @direct_upload,
                 accept:        @form.object.class.accepted_file_types(@attribute),
                 multiple:      @multiple,
-                **field_params
+                **field_attributes
               )
             ]
           end.if(@show_url_field) {
