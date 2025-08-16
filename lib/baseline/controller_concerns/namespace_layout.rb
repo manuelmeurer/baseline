@@ -10,14 +10,19 @@ module Baseline
           break "modal"
         end
 
-        request.xhr? ||
+        break false if
+          request.xhr? ||
           request.format.text? ||
           request.format.xml?  ||
           request.format.ics?  ||
           turbo_frame_request? ||
-          response.content_type&.downcase&.include?("turbo-stream") ?
-            false :
-            ::Current.namespace.to_s
+          response.content_type&.downcase&.include?("turbo-stream")
+
+        if ::Current.namespace.blank?
+          raise "Current namespace not set."
+        end
+
+        ::Current.namespace.to_s
       }
     end
   end
