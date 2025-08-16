@@ -623,6 +623,7 @@ module Baseline
 
       safe_join [
         head_tags,
+        csrf_meta_tags,
         csp_meta_tag,
         javascript_importmap_tags(::Current.namespace.to_s),
         javascripts.map { javascript_import_module_tag _1 },
