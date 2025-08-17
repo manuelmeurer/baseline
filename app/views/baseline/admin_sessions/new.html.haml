@@ -16,6 +16,5 @@
   %p
     Please log in with your business Google account:
 
-  = button_to url_for, class: "btn btn-primary btn-lg", data: { turbo: false } do
-    = icon "paper-plane"
-    Let's go
+  = form_with url: url_for, data: { turbo: false } do |form|
+    = component :form_actions, form, :submit, submit_label: "Let's go"
