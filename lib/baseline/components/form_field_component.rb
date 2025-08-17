@@ -19,7 +19,6 @@ module Baseline
         wrapper_attributes: {},
         data:               NOT_SET,
         direct_upload:      NOT_SET,
-        file_label:         NOT_SET,
         multiple:           NOT_SET,
         required:           NOT_SET,
         show_url_field:     !multiple || multiple == NOT_SET,
@@ -31,7 +30,8 @@ module Baseline
         label:              NOT_SET,
         help_text:          NOT_SET,
         placeholder:        NOT_SET,
-        autocomplete:       nil
+        autocomplete:       nil,
+        margin_bottom:      4
       )
 
       field, attribute =
@@ -49,7 +49,6 @@ module Baseline
       {
         data:          {},
         direct_upload: false,
-        file_label:    I18n.t(:select_file),
         multiple:      false,
         required:      false
       }.each do |attr, default|
@@ -92,7 +91,6 @@ module Baseline
         direct_upload
         disabled
         field
-        file_label
         form
         help_text
         hint
@@ -136,6 +134,10 @@ module Baseline
 
       @wrapper_attributes[:class] = Array(@wrapper_attributes[:class]) << "form-field-#{identifier}-#{attribute}"
 
+      if margin_bottom
+        @wrapper_attributes[:class] << "mb-#{margin_bottom}"
+      end
+
       if @horizontal_label
         @wrapper_attributes[:class] << "row"
       end
@@ -178,8 +180,7 @@ module Baseline
           @i18n_key,
           *Array(@i18n_scope)
         ].then {
-          t _1.pop,
-            scope:   _1,
+          t _1.join("."),
             default: (human_attribute_name if attr == :label),
             **@i18n_params
         }.then {
@@ -362,30 +363,23 @@ module Baseline
           @data = data_merge(@data, helpers.stimco(:direct_upload))
         end
 
-        # TODO: if a file is already attached, it should be displayed here,
-        # and a hidden field should be set so it is persisted (unless a new file or remote_*_url is set).
-        # if attachment.attached? && form.object.new_record?
-        #   image_tag attachment.blob.url
-        #   form.hidden_field attribute, value: attachment.blob.url
-        # end
+        field = @form.file_field(@attribute,
+          direct_upload: @direct_upload,
+          accept:        @form.object.class.accepted_file_types(@attribute),
+          multiple:      @multiple,
+          **field_attributes
+        )
+
+        return field unless @show_url_field
 
         tag.div class: "d-flex flex-column gap-3" do
-          tag.div class: "input-group file-input" do
-            safe_join [
-              @form.label(@attribute, @file_label, class: "input-group-text", for: @id),
-              @form.file_field(@attribute,
-                direct_upload: @direct_upload,
-                accept:        @form.object.class.accepted_file_types(@attribute),
-                multiple:      @multiple,
-                **field_attributes
-              )
-            ]
-          end.if(@show_url_field) {
-            _1 << @form.url_field(:"remote_#{@attribute}_url",
+          safe_join [
+            field,
+            @form.url_field(:"remote_#{@attribute}_url",
               class:       "form-control",
               placeholder: t(:or_enter_url)
             )
-          }
+          ], "\n"
         end
       end
 

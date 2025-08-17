@@ -8,6 +8,7 @@ en:
   cancel: cancel
   submit: send
   please_wait: Please wait...
+  or_enter_url: ...or enter URL
 
   password_hint:
     minimum: "min %{value} characters"
