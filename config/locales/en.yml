@@ -6,7 +6,7 @@ en:
   next: next
   save: save
   cancel: cancel
-  submit: send
+  send: send
   please_wait: Please wait...
   or_enter_url: ...or enter URL
 

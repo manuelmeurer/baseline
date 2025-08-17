@@ -4,7 +4,7 @@ module Baseline
   class FormActionsComponent < ApplicationComponent
     def initialize(
       form,
-      style =           :save,
+      style:            :save,
       horizontal:       false,
       submit_label:     nil,
       submit_icon:      nil,
@@ -23,8 +23,8 @@ module Baseline
       when :save
         @submit_label ||= t(:save).capitalize
         @submit_icon  ||= "circle-check"
-      when :submit
-        @submit_label ||= t(:submit).capitalize
+      when :send
+        @submit_label ||= t(:send).capitalize
         @submit_icon  ||= "paper-plane"
       else
         raise "Unexpected style: #{@style}"
