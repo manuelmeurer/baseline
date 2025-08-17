@@ -1,14 +1,18 @@
 en:
-  yesterday: yesterday
+  cancel: cancel
+  confirm: Are you sure?
+  copy: copy
+  log_out: Log out
+  next: next
+  or_enter_url: ...or enter URL
+  please_wait: Please wait...
+  save: save
+  send: send
+  step: step
+  submit: submit
   today: today
   tomorrow: tomorrow
-  step: step
-  next: next
-  save: save
-  cancel: cancel
-  send: send
-  please_wait: Please wait...
-  or_enter_url: ...or enter URL
+  yesterday: yesterday
 
   password_hint:
     minimum: "min %{value} characters"

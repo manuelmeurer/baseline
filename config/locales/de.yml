@@ -1,14 +1,18 @@
 de:
-  yesterday: gestern
+  cancel: abbrechen
+  confirm: Bist du sicher?
+  copy: kopieren
+  log_out: Abmelden
+  next: weiter
+  or_enter_url: ...oder URL eingeben
+  please_wait: Bitte warten...
+  save: speichern
+  send: absenden
+  step: Schritt
+  submit: absenden
   today: heute
   tomorrow: morgen
-  step: Schritt
-  next: weiter
-  save: speichern
-  cancel: abbrechen
-  send: absenden
-  please_wait: Bitte warten...
-  or_enter_url: ...oder URL eingeben
+  yesterday: gestern
 
   password_hint:
     minimum: "mindestens %{value} Zeichen"
