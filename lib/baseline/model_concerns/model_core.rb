@@ -308,7 +308,7 @@ module Baseline
           default: value.to_s.humanize
       end
 
-      def common_image_file_types = %i[jpeg png svg webp]
+      def common_image_file_types = %i[jpeg png svg webp gif]
 
       if defined?(::Ransack)
         def ransackable_attributes(auth_object = nil)
