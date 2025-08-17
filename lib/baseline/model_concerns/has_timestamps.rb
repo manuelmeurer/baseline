@@ -11,6 +11,12 @@ module Baseline
         attributes_and_verbs = attributes.index_with { _1.to_s.sub(/_(at|on|until)\z/, "") }
 
         included do
+          attributes.each do |attribute|
+            unless column_names.include?(attribute.to_s)
+              raise ArgumentError, "#{attribute} is not a valid datetime attribute for #{name}."
+            end
+          end
+
           @_timestamp_attributes_and_verbs ||= {}
           @_timestamp_attributes_and_verbs.merge!(attributes_and_verbs)
 
