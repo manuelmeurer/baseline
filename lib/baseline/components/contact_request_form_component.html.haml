@@ -24,5 +24,5 @@
         = render_field form, fields
 
     .d-flex.flex-column.gap-4{ class: class_names("justify-content-between flex-#{@button_row_breakpoint}-row gap-#{@button_row_breakpoint}-0": @button_row_breakpoint) }
-      = component :form_actions, form, :submit, submit_color: @button_color, submit_css_class: "align-self-sm-start"
+      = component :form_actions, form, style: :send, submit_color: @button_color, submit_css_class: "align-self-sm-start"
       .d-none.text-center{ data: @turnstile_stimco.target(:container) }

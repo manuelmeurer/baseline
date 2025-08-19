@@ -17,4 +17,4 @@
     Please log in with your business Google account:
 
   = form_with url: url_for, data: { turbo: false } do |form|
-    = component :form_actions, form, :submit, submit_label: "Let's go"
+    = component :form_actions, form, style: :send, submit_label: "Let's go"
