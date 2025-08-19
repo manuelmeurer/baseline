@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require "kramdown"
-require "kramdown-parser-gfm"
-
 module Baseline
   class MarkdownToHTML < ApplicationService
     LINE_BREAK_REGEX = %r{<br(\s*/)?>}.freeze
 
     def call(text, sanitize: false, avoid_paragraphs: false)
       return "" if text.blank?
+
+      require "kramdown"
+      require "kramdown-parser-gfm"
 
       cache_key = [
         :markdown_to_html,

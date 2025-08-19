@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require "http"
-require "addressable"
-
 module Baseline
   class DownloadFile < ApplicationService
     def call(url, filename = nil)
+      require "http"
+      require "addressable"
+
       filename ||= Addressable::URI
         .parse(url)
         .then {
