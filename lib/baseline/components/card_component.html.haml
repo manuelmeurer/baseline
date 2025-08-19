@@ -7,9 +7,10 @@
       = helpers.attachment_image_tag *@image, class: @image_css_class
   - when String
     = image_tag @image, class: @image_css_class
-  - when ActiveStorage::Attached::One
-    - if @image.attached?
-      = image_tag @image, class: @image_css_class
+  - when ActiveStorage::Attached, ActiveStorage::Blob
+    - if @image.try(:attached?) == false
+      - raise "Attachment is missing: #{@image.id}"
+    = image_tag @image, class: @image_css_class
   - when NilClass
   - else
     - raise "Unexpected @image: #{@image.class}"
