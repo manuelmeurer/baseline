@@ -110,7 +110,7 @@ module Baseline
     end
 
     def perform(*, **)
-      call *, **
+      call(*, **)
     end
 
     private
