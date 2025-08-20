@@ -21,6 +21,15 @@ export default class extends Controller {
     return document.modalController?.element.contains(element)
   }
 
+  modalVisible() {
+    const modalElement = document.modalController?.element
+
+    if (!modalElement)
+      return false
+
+    return window.getComputedStyle(modalElement).display !== "none"
+  }
+
   getFormMethod(form) {
     if (!form.tagName === "FORM")
       throw new Error(`Expected a form element but got a ${form.tagName}`)
@@ -156,7 +165,9 @@ export default class extends Controller {
   quickSubmitForms() {
     this.element.addEventListener("keydown", event => {
       if (event.metaKey && event.key == "Enter") {
-        const forms = document.querySelectorAll("main form")
+        const forms = this.modalVisible() ?
+          document.modalController.element.querySelectorAll(".modal-body form") :
+          document.querySelectorAll("main form")
         if (forms.length !== 1)
           return
         const form = forms[0]
