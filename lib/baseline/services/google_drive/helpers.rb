@@ -8,6 +8,8 @@ module Baseline
       extend self
 
       def download_file(file_or_id, drive: nil)
+        require "baseline/services/external/google/oauth/service"
+
         drive ||= Baseline::External::Google::Oauth::Service.new(:drive)
         file = file_or_id.if(String) {
           drive.get_file(_1, fields: ATTRIBUTES.join(","))
