@@ -85,10 +85,11 @@ module Baseline
       render json: JSON.pretty_generate(json)
     end
 
+    def render_manifest? = false
+
     private
 
       def manifest_overrides = {}
       def allow_robots?      = false
-      def render_manifest?   = false
   end
 end

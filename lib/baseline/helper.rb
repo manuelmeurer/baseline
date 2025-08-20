@@ -538,8 +538,10 @@ module Baseline
       tag.link(rel: "apple-touch-icon", href: image_path("icons/apple-touch-icon.png"))
     end
 
-    def manifest_link
-      tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
+    def manifest_link_if_allowed
+      if ::Current.namespace.to_s.classify.constantize.const_get(:EssentialsController).new.render_manifest?
+        tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
+      end
     end
 
     def og_data_tags(prefix = "og", data = og_data)
