@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 class Object
-  def if(condition, action = nil, _unless: false, &block)
+  def if(condition = Baseline::NOT_SET, action = nil, _unless: false, &block)
+    if condition == Baseline::NOT_SET
+      condition = block.call(self)
+      block = nil
+    end
+
     result =
       case condition
       when Proc   then condition.call(self)
