@@ -17,6 +17,7 @@ git push &&
   git switch deploy &&
   git reset --hard main &&
   git push --force &&
+  gh workflow run deploy &&
   git checkout main || exit 1
 
 if [[ "$stashed" ]]; then
