@@ -539,7 +539,7 @@ module Baseline
     end
 
     def manifest_link_if_allowed
-      if ::Current.namespace.to_s.classify.pluralize.constantize.const_get(:EssentialsController).new.render_manifest?
+      if controller_path.split("/").first.camelize.constantize.const_get(:EssentialsController).new.render_manifest?
         tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
       end
     end
