@@ -18,6 +18,7 @@ module Baseline
             self.class.to_s.underscore,
             attribute
           ]
+
           if blob_id = Rails.cache.read(cache_key)
             begin
               blob = ActiveStorage::Blob.find(blob_id)
@@ -30,7 +31,8 @@ module Baseline
 
           image_assets = Rails.application.image_assets("dummy")
           file = image_assets.values.detect {
-            File.basename(_1).start_with? "#{self.class.to_s.underscore}_#{attribute}."
+            File.basename(_1).start_with? \
+              "#{self.class.to_s.underscore}_#{attribute}."
           }
           unless file
             raise "No dummy image found for: #{self.class}##{attribute}"
