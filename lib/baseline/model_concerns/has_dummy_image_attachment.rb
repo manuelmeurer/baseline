@@ -19,7 +19,13 @@ module Baseline
             attribute
           ]
           if blob_id = Rails.cache.read(cache_key)
-            return ActiveStorage::Blob.find(blob_id)
+            begin
+              blob = ActiveStorage::Blob.find(blob_id)
+            rescue ActiveRecord::RecordNotFound
+              Rails.cache.delete(cache_key)
+            else
+              return blob
+            end
           end
 
           image_assets = Rails.application.image_assets("dummy")
