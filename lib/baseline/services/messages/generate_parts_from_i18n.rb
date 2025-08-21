@@ -73,7 +73,14 @@ module Baseline
         end
 
         def common_i18n_params
+          messageable_admin_cms_url = if @messageable.is_a?(ActiveRecord::Base) && defined?(::Avo)
+            suppress NoMethodError do
+              ::Avo::Engine.routes.url_helpers.url_for([:resources, @messageable])
+            end
+          end
+
           {
+            messageable_admin_cms_url:,
             admin_user_first_name: @admin_user&.first_name,
             admin_user_name:       @admin_user&.name,
             today:                 l(Date.current)
