@@ -16,9 +16,13 @@ fi
 git push &&
   git switch deploy &&
   git reset --hard main &&
-  git push --force &&
-  gh workflow run deploy &&
-  git checkout main || exit 1
+  git push --force || exit 1
+
+if [[ -f ".github/workflows/deploy.yml" ]]; then
+  gh workflow run deploy
+fi
+
+git checkout main || exit 1
 
 if [[ "$stashed" ]]; then
   git stash pop
