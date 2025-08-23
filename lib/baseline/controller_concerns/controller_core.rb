@@ -104,48 +104,6 @@ module Baseline
 
     def current_language = Language.new(locale: I18n.locale)
 
-    def render_turbo_response(
-      redirect:             nil,
-      success_message:      nil,
-      error_message:        nil,
-      reload_main:          false,
-      reload_main_or_modal: false,
-      reload_frames:        [],
-      close_modal:          false)
-
-      if success_message && error_message
-        raise "success_message and error_message cannot both be given."
-      end
-
-      if reload_main_or_modal && close_modal
-        raise "reload_main_or_modal and close_modal cannot both be given."
-      end
-
-      stream = turbo_stream.append_all(:body) do
-        view_context.tag.div \
-          data: stimco(:turbo_response,
-            redirect:      redirect&.then { url_for _1 },
-            reload_frames: Array(reload_frames),
-            close_modal:,
-            reload_main:,
-            reload_main_or_modal:,
-            success_message:,
-            error_message:
-          )
-      end
-
-      streams = [
-        stream,
-        *(Array(yield) if block_given?)
-      ]
-
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: streams
-        end
-      end
-    end
-
     def validate_turnstile
       unless Rails.env.production?
         return true
@@ -196,17 +154,72 @@ module Baseline
           **
       end
 
-      def add_flash(type, *message_or_i18n_keys, now: false)
-        message =
-          if message_or_i18n_keys.one? && message_or_i18n_keys.first.is_a?(String)
-            message_or_i18n_keys.first
-          else
-            [
-              *action_i18n_scope(action_name),
-              *message_or_i18n_keys
-            ].join(".")
-              .then { t _1 }
+      def resolve_message(arg)
+        case
+        when arg.is_a?(String)
+          arg
+        when arg.is_a?(Array) && arg.map(&:class) == [String]
+          arg.first
+        else
+          t [
+            *action_i18n_scope(action_name),
+            *arg
+          ].join(".")
+        end
+      end
+
+      def render_turbo_response(
+        redirect:             nil,
+        success_message:      nil,
+        error_message:        nil,
+        reload_main:          false,
+        reload_main_or_modal: false,
+        reload_frames:        [],
+        close_modal:          false)
+
+        if success_message && error_message
+          raise "success_message and error_message cannot both be given."
+        end
+
+        if reload_main_or_modal && close_modal
+          raise "reload_main_or_modal and close_modal cannot both be given."
+        end
+
+        %i[success_message error_message].each do |var|
+          if value = binding.local_variable_get(var)
+            binding.local_variable_set \
+              var,
+              resolve_message(value)
           end
+        end
+
+        stream = turbo_stream.append_all(:body) do
+          view_context.tag.div \
+            data: stimco(:turbo_response,
+              redirect:      redirect&.then { url_for _1 },
+              reload_frames: Array(reload_frames),
+              close_modal:,
+              reload_main:,
+              reload_main_or_modal:,
+              success_message:,
+              error_message:
+            )
+        end
+
+        streams = [
+          stream,
+          *(Array(yield) if block_given?)
+        ]
+
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: streams
+          end
+        end
+      end
+
+      def add_flash(type, *message_or_i18n_keys, now: false)
+        message = resolve_message(message_or_i18n_keys)
 
         valid_types = %i[alert info notice warning]
         unless type.in?(valid_types)
