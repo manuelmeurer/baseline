@@ -17,6 +17,7 @@ end
 loader.collapse("#{__dir__}/baseline/components")
 loader.collapse("#{__dir__}/baseline/controller_concerns")
 loader.collapse("#{__dir__}/baseline/model_concerns")
+loader.collapse("#{__dir__}/baseline/service_concerns")
 loader.collapse("#{__dir__}/baseline/services")
 
 loader.inflector = Baseline::Inflector.new(__FILE__)
