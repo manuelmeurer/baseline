@@ -10,10 +10,10 @@ module Baseline
           class_eval { @auth_user_class_name = user_class_name }
 
           before_action do
-            next unless user = params[:t]&.then { auth_user_class.find_signed(_1) }
-
-            authenticate user
-            redirect_to params.permit!.except(:t)
+            if params[:t].present? && user = auth_user_class.try(:find_by_login_token, params[:t])
+              authenticate user
+              redirect_to params.permit!.except(:t)
+            end
           end
 
           before_action :require_authentication
