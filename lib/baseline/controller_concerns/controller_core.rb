@@ -66,7 +66,7 @@ module Baseline
     end
 
     class_methods do
-      def redirect_to_clean_id_or_current_slug(only: :show, &block)
+      def redirect_to_clean_id_or_current_slug(only: :show, ignore_missing: false, &block)
         before_action only: do
           id = params.fetch(:id)
 
@@ -76,21 +76,29 @@ module Baseline
             cleaners = [
               -> { _1.delete_suffix(")") }
             ]
-            clean_id = nil
+            clean_id        = nil
+            clean_id_record = nil
 
             loop do
-              raise error unless cleaner = cleaners.shift
+              unless cleaner = cleaners.shift
+                break if ignore_missing
+                raise error
+              end
+
               clean_id = cleaner.call(id)
               redo if clean_id == id
-              record_found_with_clean_id = suppress ActiveRecord::RecordNotFound do
+
+              clean_id_record = suppress ActiveRecord::RecordNotFound do
                 instance_exec(clean_id, &block)
               end
-              break if record_found_with_clean_id
+              break if clean_id_record
             end
 
-            html_redirect_to \
-              params.permit!.merge(id: clean_id),
-              status: :moved_permanently
+            if clean_id_record
+              html_redirect_to \
+                params.permit!.merge(id: clean_id),
+                status: :moved_permanently
+            end
           else
             if record.respond_to?(:slug) && id != record.slug
               html_redirect_to \
