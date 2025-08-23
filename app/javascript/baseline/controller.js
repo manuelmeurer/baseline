@@ -27,7 +27,7 @@ export default class extends Controller {
     if (!modalElement)
       return false
 
-    return window.getComputedStyle(modalElement).display !== "none"
+    return !this.isElementOrParentHidden(modalElement)
   }
 
   getFormMethod(form) {
@@ -162,12 +162,26 @@ export default class extends Controller {
     })
   }
 
+  isElementOrParentHidden(element) {
+    while (element && element !== document.documentElement) {
+      if (window.getComputedStyle(element).display === "none")
+        return true
+      element = element.parentElement
+    }
+    return false
+  }
+
   quickSubmitForms() {
     this.element.addEventListener("keydown", event => {
       if (event.metaKey && event.key == "Enter") {
-        const forms = this.modalVisible() ?
-          document.modalController.element.querySelectorAll(".modal-body form") :
-          document.querySelectorAll("main form")
+        const forms =
+          Array.from(
+            this.modalVisible() ?
+              document.modalController.element.querySelectorAll(".modal-body form") :
+              document.querySelectorAll("main form")
+          ).filter(form =>
+            !this.isElementOrParentHidden(form)
+          )
         if (forms.length !== 1)
           return
         const form = forms[0]
