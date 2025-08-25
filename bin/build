@@ -20,17 +20,23 @@ class Build < Thor
 
   desc "build", "build"
   def build
-    run "asdf exec bundle install -j $(nproc)"
+    bundle "install -j $(nproc)"
 
     # TODO: this shouldn't be necessary, dartsass-rails should do this automatically before assets:precompile.
-    run "asdf exec bundle exec rails dartsass:build"
+    bundle "exec rails dartsass:build"
 
-    run "asdf exec bundle exec rails assets:precompile"
+    bundle "exec rails assets:precompile"
 
     if ENV.key?("CRON")
-      run "asdf exec bundle exec rails db:migrate"
+      bundle "exec rails db:migrate"
     end
   end
+
+  private
+
+    def bundle(cmd, capture: false)
+      run("asdf exec bundle #{cmd}", capture:).chomp
+    end
 end
 
 Build.start(ARGV)
