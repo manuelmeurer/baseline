@@ -26,13 +26,6 @@ module Baseline
           float: true
         }
 
-        if model_class.respond_to?(:friendly)
-          self.find_record_method = -> {
-            id.is_a?(Array) ?
-              query.where(slug: id) :
-              query.friendly.find(id)
-          }
-        end
         if model_class.respond_to?(:search)
           self.search = {
             query: -> {
