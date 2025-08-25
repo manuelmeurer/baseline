@@ -18,12 +18,7 @@ module Baseline
         value_attributes:   {},
         wrapper_attributes: {},
         data:               NOT_SET,
-        direct_upload:      NOT_SET,
-        multiple:           NOT_SET,
         required:           NOT_SET,
-        show_url_field:     !multiple || multiple == NOT_SET,
-        options:            {},
-        include_blank:      false,
         disabled:           false,
         readonly:           false,
         value:              NOT_SET,
@@ -31,7 +26,8 @@ module Baseline
         help_text:          NOT_SET,
         placeholder:        NOT_SET,
         autocomplete:       nil,
-        margin_bottom:      4
+        margin_bottom:      4,
+        **options
       )
 
       field, attribute =
@@ -47,10 +43,8 @@ module Baseline
       identifier ||= attribute
 
       {
-        data:          {},
-        direct_upload: false,
-        multiple:      false,
-        required:      false
+        data:     {},
+        required: false
       }.each do |attr, default|
         next unless binding.local_variable_get(attr) == NOT_SET
 
@@ -88,7 +82,6 @@ module Baseline
         attribute
         autocomplete
         data
-        direct_upload
         disabled
         field
         form
@@ -99,14 +92,11 @@ module Baseline
         i18n_scope
         id
         identifier
-        include_blank
         label
-        multiple
         options
         placeholder
         readonly
         required
-        show_url_field
         suffix
         type
         value
@@ -282,18 +272,28 @@ module Baseline
       end
 
       def select_content
+        expected_options = %i[
+          choices
+          disabled
+          include_blank
+        ]
+        invalid_options = @options.keys - expected_options
+        if invalid_options.any?
+          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
+        end
+
+        unless choices = @options.delete(:choices)
+          raise Error, "Missing choices."
+        end
+
+        @data = data_merge(@data, helpers.stimco(:select2))
+
+        html_options = field_attributes.merge(class: "form-select")
+
         @form.select @attribute,
+          choices,
           @options,
-          {
-            include_blank: @include_blank,
-            disabled:      @disabled_options
-          },
-          class:       "form-select",
-          id:          @id,
-          data:        data_merge(@data, helpers.stimco(:select2)),
-          placeholder: @placeholder,
-          required:    @required,
-          disabled:    @disabled
+          html_options
       end
 
       def country_content
@@ -305,7 +305,7 @@ module Baseline
       def radio_content
         options = field_attributes
           .merge(class: "form-check-input")
-          .tap { _1.delete :value }
+          .except(:value)
 
         tag.div class: "form-check" do
           safe_join [
@@ -316,28 +316,38 @@ module Baseline
       end
 
       def switch_content
+        expected_options = %i[
+          checked_value
+          unchecked_value
+          checked
+          include_hidden
+        ]
+        invalid_options = @options.keys - expected_options
+        if invalid_options.any?
+          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
+        end
+
         # params expected by `checkbox`: method, options = {}, checked_value = "1", unchecked_value = "0"
-        params = []
+        value_options = {}
         %i[checked_value unchecked_value].each do |key|
           if value = @options.delete(key)
-            params << value
+            value_options[key] = value
           end
         end
         options = field_attributes
           .merge(@options)
           .merge(class: "form-check-input")
-        params.unshift(@attribute, options)
 
         tag.div class: "form-check form-switch" do
           safe_join [
-            @form.checkbox(*params),
+            @form.checkbox(@attribute, options, **value_options),
             (label_tag("form-check-label") if @inline_label)
           ]
         end
       end
 
       def switches_content
-        checkboxes = @options.map do |value, options|
+        checkboxes = @options.fetch(:choices).map do |value, options|
           label = options.delete(:label) || value
 
           options.merge! \
@@ -359,18 +369,29 @@ module Baseline
       end
 
       def file_content
-        if @direct_upload
+        expected_options = %i[
+          direct_upload
+          multiple
+          show_url_field
+        ]
+        invalid_options = @options.keys - expected_options
+        if invalid_options.any?
+          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
+        end
+
+        show_url_field = @options.delete(:show_url_field, !@options[:multiple])
+
+        if @options[:direct_upload]
           @data = data_merge(@data, helpers.stimco(:direct_upload))
         end
 
-        field = @form.file_field(@attribute,
-          direct_upload: @direct_upload,
-          accept:        @form.object.class.accepted_file_types(@attribute),
-          multiple:      @multiple,
-          **field_attributes
-        )
+        options = field_attributes
+          .merge(@options)
+          .merge(accept: @form.object.class.accepted_file_types(@attribute))
 
-        return field unless @show_url_field
+        field = @form.file_field(@attribute, **options)
+
+        return field unless show_url_field
 
         tag.div class: "d-flex flex-column gap-3" do
           safe_join [
