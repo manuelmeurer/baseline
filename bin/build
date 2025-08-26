@@ -35,7 +35,9 @@ class Build < Thor
   private
 
     def bundle(cmd, capture: false)
-      run("asdf exec bundle #{cmd}", capture:).chomp
+      run("asdf exec bundle #{cmd}", capture:).then {
+        capture ? _1.chomp : _1
+      }
     end
 end
 
