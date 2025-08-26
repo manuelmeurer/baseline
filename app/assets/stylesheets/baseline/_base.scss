@@ -118,7 +118,7 @@ i[class^="fa-"] {
 }
 
 // "form-control" class is needed for specificity
-textarea.form-control {
+textarea.form-control:not([rows]) {
 
   &,
   .form-floating > & {
