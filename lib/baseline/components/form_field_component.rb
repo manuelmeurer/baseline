@@ -379,7 +379,9 @@ module Baseline
           raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
         end
 
-        show_url_field = @options.delete(:show_url_field, !@options[:multiple])
+        show_url_field = @options.key?(:show_url_field) ?
+          @options.delete(:show_url_field) :
+          !@options[:multiple]
 
         if @options[:direct_upload]
           @data = data_merge(@data, helpers.stimco(:direct_upload))
