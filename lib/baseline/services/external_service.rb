@@ -2,6 +2,13 @@
 
 module Baseline
   class ExternalService < ApplicationService
+    RETRY_ERRORS = [
+      Errno::ECONNRESET,
+      Net::ProtocolError,
+      OpenSSL::SSL::SSLError,
+      Timeout::Error
+    ].freeze
+
     class RequestError < Error
       attr_reader :status
 
@@ -88,15 +95,19 @@ module Baseline
         headers     = request_headers.merge(accept:)
 
         loop do
-          response = Octopoller.poll(retries: 10) do
+          response = Octopoller.poll(retries: 10, errors: RETRY_ERRORS) do
             HTTP
               .if(auth_header) { _1.auth(_2) }
               .if(request_basic_auth) { _1.basic_auth(_2) }
               .follow
               .headers(headers)
-              .public_send(method, url, params:, json:, form:, body:)
-          rescue Errno::ECONNRESET
-            :re_poll
+              .public_send \
+                method,
+                url,
+                params:,
+                json:,
+                form:,
+                body:
           end
 
           break unless
