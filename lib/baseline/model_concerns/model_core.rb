@@ -344,8 +344,8 @@ module Baseline
           include HasTimestamps[*timestamp_attributes]
         end
 
-        unless to_s == "Task" || columns.map(&:name).include?("tasks")
-          has_many :tasks, as: :taskable, dependent: :destroy
+        unless to_s == "Task" || column_names.include?("tasks")
+          include HasTasks
         end
 
         columns.each do |column|

@@ -65,6 +65,16 @@ module Baseline
       end
     end
 
+    class_methods do
+      def taskables
+        @taskables ||= Set.new
+      end
+
+      def add_taskable(klass)
+        taskables << klass.to_s
+      end
+    end
+
     def to_s
       %("#{title}" on #{due_on ? I18n.l(due_on) : "?"})
     end
