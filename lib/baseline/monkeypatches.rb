@@ -71,6 +71,19 @@ module I18n
   end
 end
 
+if defined?(GlobalID)
+  class GlobalID
+    find = :find!
+    if respond_to?(find)
+      raise "#{self}.#{find} already exists."
+    end
+    define_singleton_method find do |*args, **kwargs|
+      find(*args, **kwargs) or
+        raise ActiveRecord::RecordNotFound
+    end
+  end
+end
+
 module DeepFetch
   def deep_fetch(*keys, &block)
     keys.inject(self) {

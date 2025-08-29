@@ -19,5 +19,15 @@ module Baseline
     def to_s
       "#{kind&.humanize || "Unknown"} message to #{recipient || "?"} (#{sent? ? "sent on #{I18n.l sent_at}" : "unsent"})"
     end
+
+    def language
+      recipient&.try(:preferred_language) ||
+        recipient&.try(:language) or
+          raise "Could not determine language from recipient."
+    end
+
+    def valid_recipients
+      [recipient].compact
+    end
   end
 end
