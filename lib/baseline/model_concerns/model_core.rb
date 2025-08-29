@@ -201,42 +201,6 @@ module Baseline
         modifier
     end
 
-    def method_missing(method, *args, _async: false, _after: nil, **kwargs)
-      return super unless service_name = method[/\A_do_(.+)/, 1]&.camelize
-
-      service = service_namespaces
-        .lazy
-        .map do |namespace|
-          suppress NameError do
-            namespace.const_get(service_name)
-          end
-        end
-        .compact
-        .first
-
-      unless service
-        raise "Could not find service #{service_name} for #{self.class}."
-      end
-
-      if persisted?
-        if service.enqueued_or_processing?(self)
-          raise "#{self.class} {service_name} is already in progress."
-        end
-        if service.scheduled_at(self)
-          raise "#{self.class} {service_name} is already scheduled."
-        end
-      end
-
-      case
-      when _after
-        service.call_in _after, self, *args, **kwargs
-      when _async
-        service.call_async self, *args, **kwargs
-      else
-        service.call self, *args, **kwargs
-      end
-    end
-
     class_methods do
       def accepted_file_types(attribute)
         unless reflect_on_attachment(attribute)
@@ -454,6 +418,42 @@ module Baseline
         end
 
         @_baseline_finalized = true
+      end
+    end
+
+    def method_missing(method, *args, _async: false, _after: nil, **kwargs)
+      return super unless service_name = method[/\A_do_(.+)/, 1]&.camelize
+
+      service = service_namespaces
+        .lazy
+        .map do |namespace|
+          suppress NameError do
+            namespace.const_get(service_name)
+          end
+        end
+        .compact
+        .first
+
+      unless service
+        raise "Could not find service #{service_name} for #{self.class}."
+      end
+
+      if persisted?
+        if service.enqueued_or_processing?(self)
+          raise "#{self.class} {service_name} is already in progress."
+        end
+        if service.scheduled_at(self)
+          raise "#{self.class} {service_name} is already scheduled."
+        end
+      end
+
+      case
+      when _after
+        service.call_in _after, self, *args, **kwargs
+      when _async
+        service.call_async self, *args, **kwargs
+      else
+        service.call self, *args, **kwargs
       end
     end
   end
