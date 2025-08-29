@@ -316,6 +316,33 @@ module Baseline
         end
       end
 
+      def polymorphic_types(association)
+        unless reflect_on_association(association).try(:polymorphic?)
+          raise "#{association} is not a polymorphic association of #{self}."
+        end
+
+        models = ApplicationRecord.descendants
+        @polymorphic_types_cache ||= {}
+
+        cache_key = models
+          .map(&:name)
+          .sort
+          .to_json
+          .then {
+            ActiveSupport::Digest.hexdigest _1
+          }
+
+        @polymorphic_types_cache[cache_key] ||= begin
+          models.select {
+            it.reflections.values.any? {
+              (_1.try(:collection?) || _1.try(:has_one?)) &&
+                _1.klass == self &&
+                _1.options[:as] == association
+            }
+          }.map(&:name)
+        end
+      end
+
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
         if base_class != self

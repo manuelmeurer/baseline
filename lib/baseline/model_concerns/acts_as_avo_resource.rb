@@ -41,6 +41,13 @@ module Baseline
     def truncate_on_index = -> { value.if(view == "index") { truncate _1, length: 50 } }
     def link              = -> { link_to nil, value, target: "_blank" if value.present? }
 
+    def polymorphic_types_with_resource(attribute)
+      model_class
+        .polymorphic_types(attribute)
+        .select { ::Avo::Resources.const_defined?(_1, false) }
+        .map(&:constantize)
+    end
+
     def filters
       if model_class.respond_to?(:search)
         filter Baseline::Avo::Filters::Search
