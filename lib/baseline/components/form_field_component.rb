@@ -321,47 +321,63 @@ module Baseline
           unchecked_value
           checked
           include_hidden
+          multiple
         ]
         invalid_options = @options.keys - expected_options
         if invalid_options.any?
           raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
         end
 
-        # params expected by `checkbox`: method, options = {}, checked_value = "1", unchecked_value = "0"
-        value_options = {}
-        %i[checked_value unchecked_value].each do |key|
-          if value = @options.delete(key)
-            value_options[key] = value
-          end
-        end
+        value_options = {
+          checked_value:   1,
+          unchecked_value: 0
+        }.map {
+          @options.delete(_1) || _2
+        }
         options = field_attributes
           .merge(@options)
           .merge(class: "form-check-input")
 
         tag.div class: "form-check form-switch" do
           safe_join [
-            @form.checkbox(@attribute, options, **value_options),
+            @form.checkbox(@attribute, options, *value_options),
             (label_tag("form-check-label") if @inline_label)
           ]
         end
       end
 
       def switches_content
-        checkboxes = @options.fetch(:choices).map do |value, options|
-          label = options.delete(:label) || value
+        expected_options = %i[
+          choices
+        ]
+        invalid_options = @options.keys - expected_options
+        if invalid_options.any?
+          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
+        end
 
-          options.merge! \
-            multiple:       true,
-            include_hidden: false,
-            checked_value:  value
+        choices = @options.fetch(:choices)
+        expected_choice_options = %i[
+          checked
+          label
+        ]
+
+        checkboxes = choices.map do |value, options|
+          invalid_choice_options = options.keys - expected_choice_options
+          if invalid_choice_options.any?
+            raise ArgumentError, "Invalid choice options: #{invalid_choice_options.join(", ")}"
+          end
+
+          options[:label] ||= value
 
           helpers.render self.class.new(
             @form,
             :switch,
             @field || @attribute,
-            label_style: :inline,
-            label:,
-            options:
+            label_style:    :inline,
+            multiple:       true,
+            include_hidden: false,
+            checked_value:  value,
+            **options
           )
         end
 
