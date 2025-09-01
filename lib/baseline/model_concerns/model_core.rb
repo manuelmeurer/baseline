@@ -194,13 +194,6 @@ module Baseline
         to: :class
     end
 
-    def human_enum_name(enum, modifier = nil)
-      self.class.human_enum_name \
-        enum,
-        public_send(enum),
-        modifier
-    end
-
     class_methods do
       def accepted_file_types(attribute)
         unless reflect_on_attachment(attribute)
@@ -457,6 +450,13 @@ module Baseline
       else
         service.call self, *args, **kwargs
       end
+    end
+
+    def human_enum_name(enum, modifier = nil)
+      self.class.human_enum_name \
+        enum,
+        public_send(enum),
+        modifier
     end
   end
 end
