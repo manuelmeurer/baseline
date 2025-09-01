@@ -27,18 +27,18 @@ module Baseline
     end
 
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
-    option :local_path, type: :string, desc: "Path to the local backup file to restore"
+    option :local, type: :string, desc: "Path to the local backup file to restore"
     desc "restore", "restore"
     def restore
       case
-      when options[:fresh] && options[:local_path]
+      when options[:fresh] && options[:local]
         puts "Error: both 'fresh' and 'local_path' are set. Please set only one."
         exit 1
       when options[:fresh]
         puts "I will take a fresh database backup on #{options[:host]} and restore it to the current development database."
         puts "The development database will be overwritten."
-      when options[:local_path]
-        puts "I will restore the backup from #{options[:local_path]} to the current development database."
+      when options[:local]
+        puts "I will restore the backup from #{options[:local]} to the current development database."
         puts "The development database will be overwritten."
       else
         puts "I will attempt to download the latest database backup from #{options[:host]} and restore it to the current development database."
@@ -64,11 +64,12 @@ module Baseline
         end
 
         remote_path = result.delete_prefix(SUCCESS_PREFIX).strip
-      when options[:local_path]
-        unless File.exist?(options[:local_path])
-          puts "Error: file not found: #{options[:local_path]}"
+      when options[:local]
+        unless File.exist?(options[:local])
+          puts "Error: file not found: #{options[:local]}"
           exit 1
         end
+        local_path = options[:local]
       else
         puts "Locating latest database backup on #{options[:host]}..."
 
@@ -149,9 +150,11 @@ module Baseline
 
       def restore_postgresql(local_path)
         system <<~CMD
+          bin/rails db:drop:primary &&
+          bin/rails db:create:primary &&
           pg_restore \
             --dbname #{db_config.database} \
-            --clean \
+            --no-owner \
             --username #{db_config.username} \
             --role #{db_config.username} \
             #{local_path}
