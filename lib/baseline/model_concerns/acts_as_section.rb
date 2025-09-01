@@ -16,8 +16,8 @@ module Baseline
         inverse_of:  :sections
     end
 
-    def self.clone_fields
-      locale_columns(:headline, :content)
+    class_methods do
+      def clone_fields = locale_columns(:headline, :content)
     end
 
     def content_html(locale: nil)
@@ -26,12 +26,6 @@ module Baseline
         .then {
           Nokogiri::HTML.fragment _1
         }
-    end
-
-    %i[text html mjml].each do |format|
-      define_method "to_#{format}" do |**kwargs|
-        public_send "_do_render_as_#{format}", **kwargs
-      end
     end
 
     def to_s = headline
