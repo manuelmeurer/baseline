@@ -6,15 +6,7 @@ module Baseline
 
     class_methods do
       def _baseline_finalize
-        # Accessing the model class here will raise a ActiveRecord::StatementInvalid
-        # with cause PG::UndefinedTable if the table does not exist yet,
-        # which is the case when running db:setup in CI.
-        begin
-          model_class
-        rescue ActiveRecord::StatementInvalid => error
-          return if error.cause.is_a?(PG::UndefinedTable)
-          raise error
-        end
+        return unless model_class.db_and_table_exist?
 
         if defined?(@_baseline_finalized)
           raise "Avo resource #{name} has already been finalized."
