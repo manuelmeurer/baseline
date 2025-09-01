@@ -3,10 +3,12 @@
 module Baseline
   module Helper
     CLOUDINARY_VERSIONS = {
-      xs:  50,
-      sm: 100,
-      md: 250,
-      lg: 500
+      xs:    50,
+      sm:   100,
+      md:   250,
+      lg:   500,
+      xl:   750,
+      xxl: 1000
     }.inject({}) do |versions, (key, size)|
       {
         "#{key}_fit": {
