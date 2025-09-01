@@ -31,8 +31,8 @@ module Baseline
       end
 
       importmap.pin "application_controller"
-      importmap.pin "baseline_controller",        to: "baseline/controller.js"
       importmap.pin "controllers",                to: "controllers/index.js"
+      importmap.pin "base_controller",            to: "baseline/base_controller.js"
 
       Rails
         .root
