@@ -2,7 +2,7 @@
 
 module Baseline
   module ExceptionWrapper
-    def call(*, **)
+    def call(...)
       super
     rescue => error
       if !Baseline.configuration.wrap_exceptions || error.class <= self.class::Error
