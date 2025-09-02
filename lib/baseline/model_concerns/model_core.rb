@@ -433,10 +433,10 @@ module Baseline
 
       if persisted?
         if service.enqueued_or_processing?(self)
-          raise "#{self.class} {service_name} is already in progress."
+          raise "#{service} is already in progress."
         end
         if service.scheduled_at(self)
-          raise "#{self.class} {service_name} is already scheduled."
+          raise "#{service} is already scheduled."
         end
       end
 
