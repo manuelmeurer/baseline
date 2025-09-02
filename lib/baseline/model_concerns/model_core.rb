@@ -281,13 +281,11 @@ module Baseline
         models = ApplicationRecord.descendants
         @polymorphic_types_cache ||= {}
 
-        cache_key = models
-          .map(&:name)
-          .sort
-          .to_json
-          .then {
-            ActiveSupport::Digest.hexdigest _1
-          }
+        cache_key = {
+          association => models.map(&:name).sort
+        }.then {
+          ActiveSupport::Digest.hexdigest _1.to_json
+        }
 
         @polymorphic_types_cache[cache_key] ||= begin
           models.select {
