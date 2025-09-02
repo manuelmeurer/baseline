@@ -427,27 +427,6 @@ module Baseline
       render component.new(*, **), &
     end
 
-    def method_missing(method, *, **, &)
-      component = suppress NameError do
-        method
-          .to_s
-          .split("__")
-          .inject(Baseline) {
-            _1.const_get("#{_2.camelize}Component")
-          }
-      end
-
-      if Date.current > Date.new(2025, 9, 1)
-        ReportError.call "remove this!"
-      end
-      if component
-        ReportError.call "Use `component` to render components."
-        render component.new(*, **), &
-      else
-        super
-      end
-    end
-
     def form_classes(type:, prefix: "col")
       {
         label:            %w(md-3 lg-2),
