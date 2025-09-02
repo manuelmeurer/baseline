@@ -31,7 +31,7 @@ module Baseline
         subclass.const_set :Error, Class.new(StandardError)
 
         if defined?(Rails)
-          subclass.public_send :include, Rails.application.routes.url_helpers
+          subclass.include Rails.application.routes.url_helpers
         end
 
         modules = [
@@ -40,7 +40,7 @@ module Baseline
           (UniquenessChecker if defined?(UniquenessChecker))
         ].compact
 
-        subclass.public_send :prepend, *modules
+        subclass.prepend(*modules)
       end
 
       delegate :call, to: :new
