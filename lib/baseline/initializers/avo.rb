@@ -22,4 +22,23 @@ end
   host:      Rails.application.routes.default_url_options.fetch(:host)
 }
 
-::Avo::BaseAction.include Baseline::Avo::ActionHelpers
+class ::Avo::BaseAction
+  include Baseline::Avo::ActionHelpers
+
+  module ErrorHandler
+    def handle(...)
+      super
+    rescue => error
+      if error.class <= self.class::Error
+        raise error
+      else
+        raise self.class::Error, error
+      end
+    end
+  end
+
+  def self.inherited(subclass)
+    subclass.const_set :Error, Class.new(StandardError)
+    subclass.prepend ErrorHandler
+  end
+end
