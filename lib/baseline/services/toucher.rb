@@ -2,7 +2,7 @@
 
 module Baseline
   class Toucher < ApplicationService
-    CACHE_KEY = :toucher
+    CACHE_KEY = :toucher.freeze
 
     def add(resource)
       read_cache do |gids|
