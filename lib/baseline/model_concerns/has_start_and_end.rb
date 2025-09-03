@@ -9,9 +9,9 @@ module Baseline
         included do
           validates end_attribute,
             comparison: {
-              greater_than: start_attribute,
-              if:           start_attribute,
-              allow_nil:    true
+              greater_than_or_equal_to: start_attribute,
+              if:                       start_attribute,
+              allow_nil:                true
             }
 
           type = columns_hash
