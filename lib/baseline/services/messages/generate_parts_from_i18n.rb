@@ -55,7 +55,7 @@ module Baseline
         end
 
         def persisted_message_group
-          if @message_group&.persisted?
+          if defined?(@message_group) && @message_group.persisted?
             @message_group
           end
         end
