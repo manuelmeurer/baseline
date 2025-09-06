@@ -4,7 +4,7 @@ module Baseline
   module EmailDeliveries
     class Send < ApplicationService
       RETRY_ERRORS = [
-        Mjml::Parser::ParseError,
+        (Mjml::Parser::ParseError if defined?(Mjml)),
         Net::ProtocolError,
         OpenSSL::SSL::SSLError,
         Timeout::Error
