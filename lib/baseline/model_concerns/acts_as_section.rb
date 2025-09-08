@@ -9,6 +9,9 @@ module Baseline
               HasPosition[:sectionable],
               TouchAsync[:sectionable]
 
+      has_rich_text :content_de
+      has_rich_text :content_en
+
       translates_with_fallback :headline, :content
 
       belongs_to :sectionable,
