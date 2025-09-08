@@ -9,7 +9,7 @@
     Select user to log in as:
 
     = form_with url: url_for, data: stimco(:autosubmit) do |form|
-      = component :form_field, form, :select, :admin_user_id, options: options_from_collection_for_select(AdminUser.all, :id, :name), include_blank: true, label_style: false
+      = component :form_field, form, :select, :admin_user_id, choices: options_from_collection_for_select(AdminUser.all, :id, :name), include_blank: true, label_style: false
 
 - else
 
