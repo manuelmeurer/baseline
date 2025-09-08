@@ -4,7 +4,7 @@ module Baseline
   module HasYoutubeID
     SUFFIX_REGEX = /_id\z/
 
-    def self.[](attribute = :youtube_id)
+    def self.[](attribute)
       unless attribute.match?(SUFFIX_REGEX)
         raise ArgumentError, "Invalid attribute: #{attribute}"
       end
@@ -18,6 +18,10 @@ module Baseline
           end
         end
       end
+    end
+
+    def self.included(base)
+      base.include self[:youtube_id]
     end
   end
 end
