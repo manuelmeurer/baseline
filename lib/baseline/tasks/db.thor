@@ -150,8 +150,10 @@ module Baseline
 
       def restore_postgresql(local_path)
         system <<~CMD
-          bin/rails db:drop:primary &&
-          bin/rails db:create:primary &&
+          psql \
+            --dbname #{db_config.database} \
+            --username #{db_config.username} \
+            --command "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" &&
           pg_restore \
             --dbname #{db_config.database} \
             --no-owner \
