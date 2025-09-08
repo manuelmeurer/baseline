@@ -137,12 +137,12 @@ module Baseline
 
         def optional_i18n_scopes = []
 
-        def body_from_i18n(*i18n_keys)
+        def body_from_i18n(*i18n_key_suffix)
           fetch_from_i18n \
             :messages,
             @message_class_i18n_key,
             @kind,
-            *i18n_keys
+            *i18n_key_suffix
         end
 
         def subject_from_i18n
@@ -153,22 +153,11 @@ module Baseline
             @kind
         end
 
-        def fetch_from_i18n(*i18n_keys)
-          _optional_i18n_scopes = optional_i18n_scopes.compact.map(&:to_sym)
-
-          _optional_i18n_scopes
-            .size
-            .downto(0)
-            .map { _optional_i18n_scopes.take(_1) }
-            .map {
-              i18n_keys
-                .+(_1) # Don't concat
-                .compact
-                .join(".")
-            }.lazy
-            .map {
-              t(_1, **i18n_params, default: nil)&.chomp
-            }.detect(&:present?)
+        def fetch_from_i18n(*i18n_key)
+          i18n_translate_with_optional_scopes \
+            i18n_key,
+            optional_i18n_scopes.compact.map(&:to_sym),
+            **i18n_params
         end
 
         def resolve_with_recipient(hash)

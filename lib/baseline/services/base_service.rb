@@ -171,5 +171,22 @@ module Baseline
           end
         end
       end
+
+      def i18n_translate_with_optional_scopes(i18n_key, optional_i18n_scopes, **i18n_params)
+        optional_i18n_scopes
+          .size
+          .downto(0)
+          .map { optional_i18n_scopes.take(_1) }
+          .map {
+            [
+              *i18n_key,
+              *_1
+            ].compact
+              .join(".")
+          }.lazy
+          .map {
+            t(_1, **i18n_params, default: nil)
+          }.detect(&:present?)
+      end
   end
 end
