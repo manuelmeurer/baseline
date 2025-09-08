@@ -34,24 +34,59 @@ module Baseline
       private
 
         def do_generate
-          subject, body =
-            if persisted_message_group
-              %i[subject body].map {
-                I18n.interpolate \
-                  persisted_message_group.public_send(_1),
-                  i18n_params
+          if persisted_message_group
+            sections = persisted_message_group
+              .sections
+              .map(&:do_clone)
+              .if(i18n_params.present?) do |new_sections|
+                translated_attributes = Section.locale_columns(:headline, :content)
+                new_sections.each do |section|
+                  translated_attributes.each do |attribute|
+                    value = section.public_send(attribute)
+                    if value.is_a?(ActionText::RichText)
+                      value = value.body.to_html
+                    end
+                    next if value.blank?
+                    section.public_send "#{attribute}=",
+                      I18n.interpolate(value, i18n_params)
+                  end
+                end
+                new_sections
+              end
+          else
+            sections = I18n
+              .with_available_locales
+              .index_with {
+                body_from_i18n(:email)
+              }.then {
+                Baseline::Sections::InitializeFromMarkdown.call _1
               }
-            else
-              [
-                subject_from_i18n,
-                body_from_i18n
-              ]
-            end
 
-          {
-            subject:,
-            body:
+            if defined?(@message)
+              "Messages::Generate#{@message.class}#{@message.kind.to_s.classify}Sections"
+                .safe_constantize
+                &.call(@message)
+                &.then { sections.concat _1 }
+            end
+          end
+
+          result = {
+            sections:
           }
+
+          I18n.with_available_locales do |locale|
+            result[:"subject_#{locale}"] =
+              persisted_message_group&.subject(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
+              subject_from_i18n
+
+            if defined?(SlackDelivery)
+              result[:"slack_body_#{locale}"] =
+                persisted_message_group&.slack_body(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
+                body_from_i18n(:slack)
+            end
+          end
+
+          result
         end
 
         def persisted_message_group
