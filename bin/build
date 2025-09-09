@@ -30,6 +30,8 @@ class Build < Thor
     if ENV.key?("CRON")
       bundle "exec rails db:migrate"
     end
+
+    bundle "clean"
   end
 
   private
