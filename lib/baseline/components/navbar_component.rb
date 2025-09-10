@@ -139,6 +139,10 @@ module Baseline
       def call; end
     end
 
+    class ContentComponent < ApplicationComponent
+      def call = content
+    end
+
     class LinkComponent < ApplicationComponent
       include ActsAsLinkComponent
 
@@ -153,7 +157,7 @@ module Baseline
 
     class DropdownComponent < ApplicationComponent
       renders_many :items,
-        types: %i[link divider].index_with {
+        types: %i[link divider content].index_with {
           "#{_1.to_s.camelize}Component"
         }
 
@@ -164,6 +168,18 @@ module Baseline
       end
 
       def call
+        case
+        when items.none?
+          raise "No items found."
+        when items.any? { _1.instance_variable_get(:@__vc_component_instance).is_a?(ContentComponent) }
+          if items.many?
+            raise "If a content component is defined for a dropdown, it must be the only component."
+          end
+          dropdown_element = :div
+        else
+          dropdown_element = :ul
+        end
+
         dropdown_css_class = %w[dropdown-menu]
 
         {
@@ -191,10 +207,14 @@ module Baseline
             data:          { bs_toggle: "dropdown" },
             aria_expanded: "false"
           ) +
-          tag.ul(class: dropdown_css_class) do
+          tag.public_send(dropdown_element, class: dropdown_css_class) do
             safe_join items
           end
         end
+      end
+
+      class ContentComponent < ApplicationComponent
+        def call = content
       end
 
       class LinkComponent < ApplicationComponent
@@ -216,10 +236,6 @@ module Baseline
           end
         end
       end
-    end
-
-    class ContentComponent < ApplicationComponent
-      def call = content
     end
   end
 end
