@@ -30,6 +30,10 @@ module Baseline
           end
         end
 
+        define_method "#{attribute}_without_region" do
+          public_send(attribute)&.sub(/-[A-Z]{2}\z/, "")
+        end
+
         define_method language_attribute do
           public_send(attribute)
             &.then {
