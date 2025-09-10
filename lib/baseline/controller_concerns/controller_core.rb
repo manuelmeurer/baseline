@@ -265,5 +265,9 @@ module Baseline
           end
         end
       end
+
+      def non_dev_fresh_when(...)
+        !Rails.env.development? && fresh_when(...)
+      end
   end
 end
