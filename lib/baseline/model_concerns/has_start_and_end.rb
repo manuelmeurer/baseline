@@ -14,11 +14,19 @@ module Baseline
               allow_nil:                true
             }
 
-          type = columns_hash
-            .fetch_values(start_attribute.to_s, end_attribute.to_s)
-            .map(&:type)
-            .uniq
-            .sole
+          type =
+            if db_and_table_exist?
+              columns_hash
+                .fetch_values(start_attribute.to_s, end_attribute.to_s)
+                .map(&:type)
+                .uniq
+                .sole
+            else
+              # Let's guess!
+              [start_attribute, end_attribute].all? { _1.to_s.end_with?("_at") } ?
+                :datetime :
+                :date
+            end
 
           scope :upcoming,       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
           scope :past,           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
