@@ -54,8 +54,8 @@ module Baseline
                 new_sections
               end
           else
-            sections = I18n
-              .with_available_locales
+            sections = Section
+              .locales
               .index_with {
                 body_from_i18n(:email)
               }.then {
@@ -74,7 +74,7 @@ module Baseline
             sections:
           }
 
-          I18n.with_available_locales do |locale|
+          Section.locales.each do |locale|
             result[:"subject_#{locale}"] =
               persisted_message_group&.subject(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
               subject_from_i18n

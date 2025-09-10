@@ -21,6 +21,7 @@ module Baseline
 
     class_methods do
       def clone_fields = locale_columns(:headline, :content)
+      def locales      = %i[de en]
     end
 
     def content_html(locale: nil)
