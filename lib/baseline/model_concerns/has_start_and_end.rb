@@ -42,6 +42,20 @@ module Baseline
             }.inject(:merge)
           }
 
+          define_method :upcoming? do
+            return nil unless start_value = public_send(start_attribute)
+            type == :date ?
+              start_value >= Date.tomorrow :
+              start_value >= Time.current
+          end
+
+          define_method :past? do
+            return nil unless end_value = public_send(end_attribute)
+            type == :date ?
+              end_value <= Date.yesterday :
+              end_value <= Time.current
+          end
+
           define_method :current? do
             public_send(start_attribute).then { _1.nil? || _1 <= (type == :date ? Date : Time).current } &&
               public_send(end_attribute).then { _1.nil? || _1 >= (type == :date ? Date : Time).current }
