@@ -195,6 +195,37 @@ module Baseline
     end
 
     class_methods do
+      def inherited(subclass)
+        if subclass.base_class&.then { _1 != subclass }
+          return super
+        end
+
+        super
+
+        if defined?(PaperTrail) &&
+          Baseline.configuration.no_paper_trail_classes.exclude?(subclass.to_s) &&
+          !subclass.respond_to?(:paper_trail_options)
+
+          subclass.has_paper_trail
+
+          def subclass.versions
+            PaperTrail::Version.where(item_type: name)
+          end
+        end
+      end
+
+      def last_changed_after(attribute, datetime, by: nil)
+        if by && (!by.is_a?(ActiveRecord::Relation) || by.klass != User)
+          raise "Expected a relation on the User class."
+        end
+
+        PaperTrail::Version
+          .where(object_changes_contain_key_where(attribute))
+          .where(created_at: datetime..)
+          .if(by) { _1.where(whodunnit: by.select("id::text")) }
+          .then { with_versions _1 }
+      end
+
       def accepted_file_types(attribute)
         unless reflect_on_attachment(attribute)
           raise "#{attribute} is not an attachment."
@@ -302,6 +333,15 @@ module Baseline
         table_exists?
       rescue ActiveRecord::NoDatabaseError
         false
+      end
+
+      def object_changes_contain_key_where(key)
+        {
+          postgresql: ["object_changes ? :key", key:],
+          sqlite:     ["json_extract(object_changes, ?) IS NOT NULL", "$.#{key}"]
+        }.fetch(connection.adapter_name.downcase.to_sym) {
+          raise "Unexpected database adapter: #{connection.adapter_name}"
+        }
       end
 
       # Do not reference any ApplicationModel descendants in this method!
@@ -448,6 +488,16 @@ module Baseline
       else
         service.call self, *args, **kwargs
       end
+    end
+
+    def last_changed_at(attribute)
+      versions
+        .where(self.class.object_changes_contain_key_where(attribute))
+        .maximum(:created_at)
+    end
+
+    def last_changed_after?(attribute, datetime)
+      last_changed_at(attribute)&.after?(datetime)
     end
 
     def human_enum_name(enum, modifier = nil)
