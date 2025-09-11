@@ -165,6 +165,7 @@ module Baseline
 
       def db_config
         require "ostruct"
+
         ActiveRecord::Base
           .connection_db_config
           .configuration_hash
