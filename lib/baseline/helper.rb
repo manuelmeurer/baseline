@@ -582,7 +582,7 @@ module Baseline
     end
 
     def head_tags
-      @head_tags ||= []
+      @head_tags ||= Set.new
     end
 
     def add_head_tag(tag)
@@ -605,7 +605,7 @@ module Baseline
       end
 
       safe_join [
-        head_tags,
+        head_tags.to_a,
         csrf_meta_tags,
         csp_meta_tag,
         javascript_importmap_tags(::Current.namespace.to_s),
