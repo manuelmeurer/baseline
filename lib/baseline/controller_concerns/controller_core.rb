@@ -7,10 +7,6 @@ module Baseline
     included do
       include I18nScopes
 
-      if defined?(PaperTrail)
-        before_action :set_paper_trail_whodunnit
-      end
-
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }
