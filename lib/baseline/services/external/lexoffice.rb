@@ -3,7 +3,7 @@
 module Baseline
   module External
     class Lexoffice < ::External::Base
-      BASE_URL  = "https://api.lexoffice.io/v1".freeze
+      BASE_URL  = "https://api.lexware.io/v1".freeze
       PAGE_SIZE = 250.freeze
 
       class << self
@@ -18,9 +18,11 @@ module Baseline
         request :get, "invoices/#{id}"
       end
 
-      # https://developers.lexoffice.io/docs/#invoices-endpoint-render-an-invoice-document-pdf
-      add_action :get_invoice_document do |id|
-        request :get, "invoices/#{id}/document"
+      # https://developers.lexware.io/docs/#invoices-endpoint-download-an-invoice-file
+      add_action :get_invoice_file do |id|
+        request :get,
+          "invoices/#{id}/file",
+          accept: Mime[:pdf]
       end
 
       # https://developers.lexoffice.io/docs/#invoices-endpoint-create-an-invoice
@@ -81,9 +83,11 @@ module Baseline
         request :get, "credit-notes/#{id}"
       end
 
-      # https://developers.lexoffice.io/docs/#credit-notes-endpoint-render-a-credit-note-document-pdf
-      add_action :get_credit_note_document do |id|
-        request :get, "credit-notes/#{id}/document"
+      # https://developers.lexware.io/docs/#credit-notes-endpoint-download-a-credit-note-file
+      add_action :get_credit_note_file do |id|
+        request :get,
+          "credit-notes/#{id}/file",
+          accept: Mime[:pdf]
       end
 
       # https://developers.lexoffice.io/docs/#credit-notes-endpoint-create-a-credit-note
@@ -106,11 +110,6 @@ module Baseline
       end
 
       # Files
-
-      # https://developers.lexoffice.io/docs/#files-endpoint-download-a-file
-      add_action :get_file do |id|
-        request :get, "files/#{id}", accept: nil
-      end
 
       # https://developers.lexoffice.io/docs/#files-endpoint-upload-a-file
       add_action :create_file do |path_or_io, type: "voucher"|

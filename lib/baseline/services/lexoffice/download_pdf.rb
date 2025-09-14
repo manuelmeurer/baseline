@@ -13,27 +13,11 @@ module Baseline
           raise Error, "Unexpected voucher type: #{voucher_type}. Must be one of: #{VOUCHER_TYPES.join(", ")}."
         end
 
-        lexoffice_method = :"get_#{voucher_type}"
-        lexoffice_document_method = [
-          lexoffice_method,
-          :document
-        ].join("_")
-
-        file_id =
-          Baseline::External::Lexoffice
-            .public_send(lexoffice_method, record.lexoffice_id)
-            .dig(:files, :documentFileId)
-            .presence ||
-          Baseline::External::Lexoffice
-            .public_send(lexoffice_document_method, record.lexoffice_id)
-            .fetch(:documentFileId)
-            .presence
-
-        unless file_id
-          raise Error, "Cannot find File ID."
-        end
-
-        data = Baseline::External::Lexoffice.get_file(file_id)
+        data = Baseline::External::Lexoffice
+          .public_send(
+            :"get_#{voucher_type}_file",
+            record.lexoffice_id
+          )
 
         filename = [
           record.class.to_s.underscore,
