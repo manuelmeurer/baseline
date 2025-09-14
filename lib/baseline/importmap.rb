@@ -24,6 +24,7 @@ module Baseline
       importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3/+esm"
       importmap.pin "cookieconsent",              to: "https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.esm.js"
       importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3/dist/js.cookie.min.js"
+      importmap.pin "local-time",                 to: "local-time.es2017-esm.js"
       importmap.pin "sentry",                     to: "https://js.sentry-cdn.com/#{sentry_public_key}.min.js"
 
       if fontawesome_id = Rails.application.env_credentials.fontawesome_id
@@ -35,7 +36,10 @@ module Baseline
       importmap.pin "base_controller",            to: "baseline/base_controller.js"
 
       with_options preload: false do
+        importmap.pin "@rails/actiontext",        to: "actiontext.esm.js"
+        importmap.pin "@rails/activestorage",     to: "activestorage.esm.js"
         importmap.pin "gallery_controller",       to: "baseline/gallery_controller.js"
+        importmap.pin "lexxy",                    to: "lexxy.js"
         importmap.pin "photoswipe-lightbox",      to: "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe-lightbox.esm.min.js"
         importmap.pin "photoswipe",               to: "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.esm.min.js"
       end
