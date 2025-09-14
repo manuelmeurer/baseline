@@ -5,6 +5,8 @@ module Baseline
     def self.extended(importmap)
       require "addressable"
 
+      def importmap.jsdelivr(path) = File.join("https://cdn.jsdelivr.net/npm", path)
+
       sentry_public_key = Rails
         .application
         .env_credentials
@@ -20,10 +22,10 @@ module Baseline
       importmap.pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
       importmap.pin "@hotwired/stimulus",         to: "stimulus.min.js"
       importmap.pin "@hotwired/turbo-rails",      to: "turbo.min.js"
-      importmap.pin "@rails/request.js",          to: "https://cdn.jsdelivr.net/npm/@rails/request.js@0/dist/requestjs.min.js"
-      importmap.pin "bootstrap",                  to: "https://cdn.jsdelivr.net/npm/bootstrap@5.3/+esm"
-      importmap.pin "cookieconsent",              to: "https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.esm.js"
-      importmap.pin "js-cookie",                  to: "https://cdn.jsdelivr.net/npm/js-cookie@3/dist/js.cookie.min.js"
+      importmap.pin "@rails/request.js",          to: importmap.jsdelivr("@rails/request.js@0/dist/requestjs.min.js")
+      importmap.pin "bootstrap",                  to: importmap.jsdelivr("bootstrap@5.3/+esm")
+      importmap.pin "cookieconsent",              to: importmap.jsdelivr("vanilla-cookieconsent@3/dist/cookieconsent.esm.js")
+      importmap.pin "js-cookie",                  to: importmap.jsdelivr("js-cookie@3/dist/js.cookie.min.js")
       importmap.pin "local-time",                 to: "local-time.es2017-esm.js"
       importmap.pin "sentry",                     to: "https://js.sentry-cdn.com/#{sentry_public_key}.min.js"
 
@@ -36,12 +38,24 @@ module Baseline
       importmap.pin "base_controller",            to: "baseline/base_controller.js"
 
       with_options preload: false do
-        importmap.pin "@rails/actiontext",        to: "actiontext.esm.js"
-        importmap.pin "@rails/activestorage",     to: "activestorage.esm.js"
-        importmap.pin "gallery_controller",       to: "baseline/gallery_controller.js"
-        importmap.pin "lexxy",                    to: "lexxy.js"
-        importmap.pin "photoswipe-lightbox",      to: "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe-lightbox.esm.min.js"
-        importmap.pin "photoswipe",               to: "https://cdn.jsdelivr.net/npm/photoswipe@5/dist/photoswipe.esm.min.js"
+        importmap.pin "@rails/actiontext",
+          to:      "actiontext.esm.js",
+          preload: false
+        importmap.pin "@rails/activestorage",
+          to:      "activestorage.esm.js",
+          preload: false
+        importmap.pin "gallery_controller",
+          to:      "baseline/gallery_controller.js",
+          preload: false
+        importmap.pin "lexxy",
+          to:      "lexxy.js",
+          preload: false
+        importmap.pin "photoswipe-lightbox",
+          to:      importmap.jsdelivr("photoswipe@5/dist/photoswipe-lightbox.esm.min.js"),
+          preload: false
+        importmap.pin "photoswipe",
+          to:      importmap.jsdelivr("photoswipe@5/dist/photoswipe.esm.min.js"),
+          preload: false
       end
 
       Rails
