@@ -42,3 +42,7 @@ class ::Avo::BaseAction
     subclass.prepend ErrorHandler
   end
 end
+
+if defined?(Lexxy)
+  ::Avo.asset_manager.add_stylesheet "lexxy"
+end
