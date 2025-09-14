@@ -25,5 +25,22 @@ module Baseline
         end.each(&:destroy)
       end
     end
+
+    def sections_md
+      sections
+        .map(&:_do_render_as_markdown)
+        .join("\n\n")
+    end
+
+    def sections_md=(value)
+      # TODO: remove this when Avo does not assign `{}` anymore.
+      # See emails with Avo team from August 2025.
+      return unless value.nil? || value.is_a?(String)
+
+      self.sections =
+        value.present? ?
+        Baseline::Sections::InitializeFromMarkdown.call(value) :
+        []
+    end
   end
 end
