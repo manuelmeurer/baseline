@@ -615,11 +615,11 @@ module Baseline
         javascript_importmap_tags(::Current.namespace.to_s),
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
+          action_name:,
+          disabled_stylesheets:,
           revision:    Rails.configuration.revision,
           sentry_user: Sentry.get_current_scope.user,
-          rails_env:   Rails.env,
-          action_name:,
-          disabled_stylesheets:
+          rails_env:   Rails.env
         ),
         og_data_tags,
         plausible_javascript_tag,
