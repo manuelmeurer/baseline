@@ -262,10 +262,11 @@ module Baseline
           .take_while { _1 != ApplicationRecord }
           .grep(Class)
           .map {
-            _1.to_s
-              .pluralize
-              .safe_constantize
-          }.compact
+            _1.to_s.pluralize
+          }.then {
+            _1 + _1.map { "Baseline::#{it}" }
+          }.map(&:safe_constantize)
+          .compact
       end
 
       def enum_with_human_name(name, ...)
