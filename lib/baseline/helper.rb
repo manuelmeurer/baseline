@@ -568,6 +568,10 @@ module Baseline
 
       unless options.key?(:integrity)
         options[:integrity] = true
+        if options.key?(:crossorigin) && options[:crossorigin] != "anonymous"
+          raise "If integrity is set to true, crossorigin must be 'anonymous'."
+        end
+        options[:crossorigin] = "anonymous"
       end
 
       stylesheets[stylesheet] = {
@@ -623,7 +627,7 @@ module Baseline
         ),
         og_data_tags,
         plausible_javascript_tag,
-        stylesheet_link_tag(::Current.namespace.to_s, integrity: true, data: { turbo_track: "reload" }),
+        stylesheet_link_tag(::Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
       ], "\n"
