@@ -19,6 +19,7 @@ module Baseline
 
       klass
         .reflect_on_all_associations
+        .reject { _1.options[:polymorphic] }
         .each do |association|
           policy_klass = association
             .class_name
@@ -48,6 +49,8 @@ module Baseline
     def search?  = true
     def reorder? = true
     def act_on?  = true
+    def attach?  = true
+    def detach?  = true
 
     def method_missing(method, ...)
       return true if attachment_policy_method?(method)
