@@ -39,24 +39,16 @@ module Baseline
       importmap.pin "controllers",                to: "controllers/index.js"
       importmap.pin "base_controller",            to: "baseline/base_controller.js"
 
-      with_options preload: false do
-        importmap.pin "@rails/actiontext",
-          to:      "actiontext.esm.js",
-          preload: false
-        importmap.pin "@rails/activestorage",
-          to:      "activestorage.esm.js",
-          preload: false
-        importmap.pin "gallery_controller",
-          to:      "baseline/gallery_controller.js",
-          preload: false
-        importmap.pin "lexxy",
-          to:      "lexxy.js",
-          preload: false
-        importmap.pin "photoswipe-lightbox",
-          to:      importmap.jsdelivr("photoswipe@5/dist/photoswipe-lightbox.esm.min.js"),
-          preload: false
-        importmap.pin "photoswipe",
-          to:      importmap.jsdelivr("photoswipe@5/dist/photoswipe.esm.min.js"),
+      {
+        "@rails/actiontext"    => "actiontext.esm.js",
+        "@rails/activestorage" => "activestorage.esm.js",
+        "gallery_controller"   => "baseline/gallery_controller.js",
+        "lexxy"                => "lexxy.js",
+        "photoswipe-lightbox"  => importmap.jsdelivr("photoswipe@5/dist/photoswipe-lightbox.esm.min.js"),
+        "photoswipe"           => importmap.jsdelivr("photoswipe@5/dist/photoswipe.esm.min.js")
+      }.each do |name, to|
+        importmap.pin name,
+          to:,
           preload: false
       end
 
@@ -67,10 +59,19 @@ module Baseline
         .map { File.basename _1 if File.directory? _1 }
         .compact
         .each do |namespace|
-          importmap.pin namespace
-          importmap.pin_all_from "app/javascript/controllers/#{namespace}",
-            under:   "controllers/#{namespace}",
-            preload: Rails.configuration.stimulus_app_namespaces.fetch(namespace.to_sym).map(&:to_s)
+          preload = Rails
+            .configuration
+            .stimulus_app_namespaces
+            .fetch(namespace.to_sym)
+            .map(&:to_s)
+
+          importmap.pin(namespace, preload:)
+
+          importmap.pin_all_from(
+            "app/javascript/controllers/#{namespace}",
+            preload:,
+            under: "controllers/#{namespace}"
+          )
         end
     end
   end
