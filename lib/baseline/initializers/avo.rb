@@ -46,3 +46,7 @@ end
 if defined?(Lexxy)
   ::Avo.asset_manager.add_stylesheet "lexxy"
 end
+
+class ::Avo::Fields::BooleanField
+  def as_toggle? = @args.key?(:as_toggle) ? !!@args[:as_toggle] : true
+end
