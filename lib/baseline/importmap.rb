@@ -7,6 +7,8 @@ module Baseline
 
       def importmap.jsdelivr(path) = File.join("https://cdn.jsdelivr.net/npm", path)
 
+      importmap.enable_integrity!
+
       sentry_public_key = Rails
         .application
         .env_credentials

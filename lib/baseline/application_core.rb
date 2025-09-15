@@ -18,6 +18,8 @@ module Baseline
         routes.call(env)
       }
 
+      config.assets.integrity_hash_algorithm = "sha256"
+
       config.paths.add "app/models",
         eager_load: true,
         glob:       "**/*"

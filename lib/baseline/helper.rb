@@ -566,6 +566,10 @@ module Baseline
         options[:preload_links_header] = false
       end
 
+      unless options.key?(:integrity)
+        options[:integrity] = true
+      end
+
       stylesheets[stylesheet] = {
         name:,
         disabled:,
@@ -619,7 +623,7 @@ module Baseline
         ),
         og_data_tags,
         plausible_javascript_tag,
-        stylesheet_link_tag(::Current.namespace, data: { turbo_track: "reload" }),
+        stylesheet_link_tag(::Current.namespace.to_s, integrity: true, data: { turbo_track: "reload" }),
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
       ], "\n"
