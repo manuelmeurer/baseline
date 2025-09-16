@@ -57,7 +57,9 @@ module Baseline
             sections = Section
               .locales
               .index_with {
-                body_from_i18n(:email)
+                I18n.with_locale(_1) {
+                  body_from_i18n(:email)
+                }
               }.then {
                 Baseline::Sections::InitializeFromMarkdown.call _1
               }
@@ -75,14 +77,16 @@ module Baseline
           }
 
           Section.locales.each do |locale|
-            result[:"subject_#{locale}"] =
-              persisted_message_group&.subject(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
-              subject_from_i18n
+            I18n.with_locale locale do
+              result[:"subject_#{locale}"] =
+                persisted_message_group&.subject(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
+                subject_from_i18n
 
-            if defined?(SlackDelivery)
-              result[:"slack_body_#{locale}"] =
-                persisted_message_group&.slack_body(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
-                body_from_i18n(:slack)
+              if defined?(SlackDelivery)
+                result[:"slack_body_#{locale}"] =
+                  persisted_message_group&.slack_body(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
+                  body_from_i18n(:slack)
+              end
             end
           end
 
