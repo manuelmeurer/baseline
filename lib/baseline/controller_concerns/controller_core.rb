@@ -7,6 +7,14 @@ module Baseline
     included do
       include I18nScopes
 
+      before_action do
+        PaperTrail.request.whodunnit = -> {
+          (::Current.admin_user || ::Current.user)&.then {
+            _1.to_gid.to_s
+          }
+        }
+      end
+
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }
