@@ -166,7 +166,7 @@ module Baseline
         case
         when arg.is_a?(String)
           arg
-        when arg.is_a?(Array) && arg.map(&:class) == [String]
+        when arg.is_a?(Array) && arg.one? && arg.first.is_a?(String)
           arg.first
         else
           t [
