@@ -30,7 +30,7 @@ module Baseline
       end
     end
 
-    def truncate_on_index = -> { value.if(view == "index") { truncate _1, length: 50 } }
+    def truncate_on_index = -> { value.if(view == "index") { tag.span(truncate(_1, length: 50), title: _1) } }
     def link              = -> { link_to nil, value, target: "_blank" if value.present? }
 
     def polymorphic_types_with_resource(attribute)
