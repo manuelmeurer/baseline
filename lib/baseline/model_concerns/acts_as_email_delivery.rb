@@ -53,15 +53,6 @@ module Baseline
           }
       }
 
-      def form_of_address
-        recipients.first.try(:form_of_address) || :informal
-      end
-
-      def locale
-        deliverable.try(:locale) ||
-          deliverable.try(:language)&.locale
-      end
-
       after_initialize do
         if new_record? &&
           recipients.none? &&
@@ -108,28 +99,37 @@ module Baseline
           write_attribute attribute, value
         end
       end
+    end
 
-      def attached_files
-        deliverable.try(:attached_files) || {}
-      end
+    def form_of_address
+      recipients.first.try(:form_of_address) || :informal
+    end
 
-      def to_s
-        to   = recipients.map { "#{_1} (#{_2})" }.to_sentence.presence || "no recipients"
-        sent = sent? ? "sent on #{I18n.l sent_at}" : "unsent"
+    def locale
+      deliverable.try(:locale) ||
+        deliverable.try(:language)&.locale
+    end
 
-        "Email delivery to #{to} (#{sent})"
-      end
+    def attached_files
+      deliverable.try(:attached_files) || {}
+    end
 
-      def postmark_message_stream = nil
-      def header_url              = nil
-      def web_url                 = nil
-      def unsubscribe_params      = nil
-      def unsubscribe_url         = nil
+    def to_s
+      to   = recipients.map { "#{_1} (#{_2})" }.to_sentence.presence || "no recipients"
+      sent = sent? ? "sent on #{I18n.l sent_at}" : "unsent"
 
-      %i[bounced rejected].each do |type|
-        define_method "#{type}?" do
-          public_send("#{type}_emails").any?
-        end
+      "Email delivery to #{to} (#{sent})"
+    end
+
+    def postmark_message_stream = nil
+    def header_url              = nil
+    def web_url                 = nil
+    def unsubscribe_params      = nil
+    def unsubscribe_url         = nil
+
+    %i[bounced rejected].each do |type|
+      define_method "#{type}?" do
+        public_send("#{type}_emails").any?
       end
     end
   end
