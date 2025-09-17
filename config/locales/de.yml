@@ -18,6 +18,10 @@ de:
     minimum: "mindestens %{value} Zeichen"
     maximum: "höchstens %{value} Zeichen"
 
+  genders:
+    male: Herr
+    female: Frau
+
   languages:
     names:
       az: Aserbaidschanisch

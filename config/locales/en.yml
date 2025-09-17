@@ -18,6 +18,10 @@ en:
     minimum: "min %{value} characters"
     maximum: "max %{value} characters"
 
+  genders:
+    male: Mr.
+    female: Ms.
+
   languages:
     names:
       az: Azerbaijani
