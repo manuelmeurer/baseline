@@ -133,6 +133,8 @@ module Baseline
             raise Error, "Expected exactly two elements and the last one should be a link, but found #{elements.size}: #{elements.inspect}"
           end
 
+          require "baseline/services/external/html_css_to_image"
+
           href        = elements.last[:href]
           embed_image = External::HTMLCSSToImage.generate_embed_image_url(href)
 
