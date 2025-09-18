@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require "nokogiri"
-
-# from https://github.com/soundasleep/html2text_ruby
+# Based on https://github.com/soundasleep/html2text_ruby
 module Baseline
   module Converters
     class HTMLToText < ApplicationService
@@ -15,6 +13,15 @@ module Baseline
         ]
 
         Rails.cache.fetch cache_key do
+          generate(html)
+        end
+      end
+
+      private
+
+        def generate(html)
+          require "nokogiri"
+
           if html.exclude?("<html")
             # Stop Nokogiri from inserting in <p> tags
             html = "<div>#{html}</div>"
@@ -23,17 +30,13 @@ module Baseline
           html = fix_newlines(replace_entities(html))
           html = remove_keywords(html)
 
-          doc = Nokogiri::HTML.fragment(html)
-
-          output = iterate_over(doc)
-          output = remove_leading_and_trailing_whitespace(output)
-          output = remove_unnecessary_empty_lines(output)
-
-          output.strip
+          Nokogiri::HTML
+            .fragment(html)
+            .then { iterate_over(_1) }
+            .then { remove_leading_and_trailing_whitespace(_1) }
+            .then { remove_unnecessary_empty_lines(_1) }
+            .chomp
         end
-      end
-
-      private
 
         def fix_newlines(text)
           text
