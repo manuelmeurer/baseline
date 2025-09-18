@@ -43,7 +43,7 @@ module Baseline
           end
 
           retries = 100
-          Octopoller.poll wait: false, retries: do
+          Poller.poll wait: false, retries: do
             new_slug_identifier = SecureRandom.hex(3)
             begin
               self.class.friendly.find(new_slug_identifier)
@@ -53,7 +53,7 @@ module Baseline
               :re_poll
             end
           end
-        rescue Octopoller::TooManyAttemptsError
+        rescue Poller::TooManyAttemptsError
           raise "Could not find a unique slug identifier for #{inspect} after #{retries} attempts."
         end
       end

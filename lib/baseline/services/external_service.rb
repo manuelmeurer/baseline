@@ -95,7 +95,7 @@ module Baseline
         headers     = request_headers.merge(accept:)
 
         loop do
-          response = Octopoller.poll(retries: 10, errors: RETRY_ERRORS) do
+          response = Poller.poll(retries: 10, errors: RETRY_ERRORS) do
             HTTP
               .if(auth_header) { _1.auth(_2) }
               .if(request_basic_auth) { _1.basic_auth(_2) }

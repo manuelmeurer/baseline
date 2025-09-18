@@ -35,10 +35,10 @@ module Baseline
         mail = ApplicationMailer.email_delivery(email_delivery)
 
         begin
-          Octopoller.poll retries: 10, errors: RETRY_ERRORS do
+          Poller.poll retries: 10, errors: RETRY_ERRORS do
             mail.deliver_now
           end
-        rescue Octopoller::TooManyAttemptsError
+        rescue Poller::TooManyAttemptsError
           raise Error, "Could not send email."
         rescue Postmark::InactiveRecipientError => error
           email_delivery.rejected_emails += error.recipients

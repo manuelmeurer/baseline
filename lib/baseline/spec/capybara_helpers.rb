@@ -9,7 +9,7 @@ module Baseline
       end
 
       def visit_with_retry(url)
-        Octopoller.poll retries: 5, errors: Timeout::Error do
+        Poller.poll retries: 5, errors: Timeout::Error do
           visit url
         end
       end
