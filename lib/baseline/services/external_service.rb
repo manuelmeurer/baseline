@@ -87,7 +87,6 @@ module Baseline
         end
 
         require "http"
-        require "octopoller"
 
         response    = nil
         tries       = 0
