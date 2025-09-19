@@ -64,7 +64,7 @@ module I18n
         .without(locale)
         .tap {
           unless _1.one?
-            raise "Expected exactly one other locale, but got #{_1.size}."
+            raise "Expected exactly one other locale, but got #{_1.size}: #{_1}"
           end
         }.first
     end
