@@ -107,3 +107,38 @@ if defined?(ActionController::Parameters)
     include DeepFetch
   end
 end
+
+class Symbol
+  def method_missing(method, ...)
+    to_s.respond_to?(method) ?
+      to_s.public_send(method, ...).to_sym :
+      super
+  end
+end
+
+class Symbol
+  DELEGATE_TO_STRING_METHODS = [
+    %i[sub gsub delete_prefix delete_suffix].map { [_1, :"#{_1}!"] }
+  ].flatten.freeze
+
+  def method_missing(method, ...)
+    return super unless delegate_to_string?(method)
+
+    to_s
+      .public_send(method, ...)
+      .to_sym
+  end
+
+  def respond_to_missing?(method, include_private = false)
+    delegate_to_string?(method) ||
+      super
+  end
+
+  private def delegate_to_string?(method)
+    method.in?(DELEGATE_TO_STRING_METHODS) ||
+      (
+        defined?(ActiveSupport::Inflector) &&
+        ActiveSupport::Inflector.respond_to?(method)
+      )
+  end
+end
