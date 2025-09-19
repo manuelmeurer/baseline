@@ -1,0 +1,11 @@
+[data-target="table-empty-state-svg"] {
+  display: none;
+
+  div:has(> &) {
+    padding-block: 1rem;
+  }
+
+  + div {
+    margin: 0 !important;
+  }
+}
