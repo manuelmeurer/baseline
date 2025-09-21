@@ -34,8 +34,10 @@ module Baseline
           end
         end
 
-        define_method "#{attribute}_without_region" do
-          public_send(attribute)&.sub(/-[A-Z]{2}\z/, "")
+        class_methods do
+          define_method "valid_#{attribute.pluralize}" do
+            valid_locales
+          end
         end
 
         define_method language_attribute do
