@@ -3,10 +3,11 @@
 module Baseline
   module HasLocale
     def self.[](attribute = :locale, default: nil, valid_locales: I18n.available_locales, validate_presence: true)
-      language_attribute = attribute
-        .to_s
-        .sub("locale", "language")
-        .to_sym
+      language_attribute = attribute.sub(/locale\z/, "language")
+
+      if attribute == language_attribute
+        raise %(Attribute must equal or end with "locale".)
+      end
 
       Module.new do
         extend ActiveSupport::Concern
