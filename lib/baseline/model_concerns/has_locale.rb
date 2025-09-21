@@ -25,6 +25,8 @@ module Baseline
           validates attribute, inclusion: { in: valid_locales.map(&:to_s), allow_blank: true }
 
           validate do
+            next if errors[attribute].any?
+
             language = public_send(language_attribute)
             if language&.invalid?
               errors.add attribute, message: "is invalid: #{language.errors.full_messages.to_sentence}"
