@@ -19,6 +19,7 @@ module Baseline
 
           if validate_presence
             validates attribute, presence: true
+            validates language_attribute, presence: true
           end
 
           validates attribute, inclusion: { in: valid_locales.map(&:to_s), allow_blank: true }
