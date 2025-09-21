@@ -3,29 +3,12 @@
 module Baseline
   module Sections
     class InitializeFromMarkdown < ApplicationService
-      def call(locales_and_markdown)
-        return [] if locales_and_markdown.blank?
+      def call(markdown)
+        return [] if markdown.blank?
 
-        if locales_and_markdown.is_a?(String)
-          locales_and_markdown = { I18n.locale => locales_and_markdown }
-        end
-
-        sections = []
-        locales_and_markdown.each do |locale, markdown|
-          next if markdown.blank?
-
-          I18n.with_locale locale do
-            parse_markdown(markdown.strip)
-              .each_with_index do |attributes, index|
-                if existing_section = sections[index]
-                  existing_section.attributes = attributes
-                else
-                  sections << Section.new(attributes)
-                end
-              end
-          end
-        end
-        sections
+        parse_markdown(markdown.strip).map {
+          Section.new(_1)
+        }
       end
 
       private

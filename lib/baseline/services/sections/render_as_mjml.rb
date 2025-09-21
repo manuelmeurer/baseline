@@ -15,7 +15,6 @@ module Baseline
         if section.persisted?
           cache_key = [
             :section_mjml,
-            I18n.locale,
             section
           ]
 
@@ -36,11 +35,10 @@ module Baseline
       private
 
         def generate
-          headline = @section.headline(locale: (I18n.locale if @debug)).presence
-          html     = @section.content_html(locale: (I18n.locale if @debug))
+          html = @section.content_html
 
           [
-            headline&.then { tag.mj_text _1, "mj-class": "h1" },
+            @section.headline&.then { tag.mj_text _1, "mj-class": "h1" },
             *process(html.children)
           ].compact
             .join("\n")
@@ -79,10 +77,12 @@ module Baseline
               when keyword
                 new_tags = send("generate_#{keyword.downcase}_tags", text_elements)
                 tags.concat Array(new_tags)
-              when text_content = text_elements.map { _1.name == "text" ? _1.content : _1.to_s }
+              when text_content = text_elements
+                .map { _1.name == "text" ? _1.content : _1.to_s }
                 .compact_blank
                 .join(" ")
                 .presence
+
                 tags << tag.mj_text(text_content.html_safe)
               end
             end

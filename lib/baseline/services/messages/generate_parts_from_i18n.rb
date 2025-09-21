@@ -7,28 +7,28 @@ module Baseline
         case
         when message_or_group.is_a?(MessageGroup)
           @message_group = message_or_group
-          @message_class, @kind, @messageable, @recipient = [
-            @message_group.message_class,
-            @message_group.kind.to_sym,
-            @message_group.messageable,
-            recipient
-          ]
+          @message_class = @message_group.message_class
+          @kind          = @message_group.kind.to_sym
+          @messageable   = @message_group.messageable
+          @recipient     = recipient
+          locale         = @message_group.locale
         when recipient
           raise Error, "Cannot pass a message and a recipient. Assign the recipient to the message instead."
         else
-          @message = message_or_group
-          @message_class, @kind, @messageable, @recipient = [
-            @message.class,
-            @message.kind.to_sym,
-            @message.messageable,
-            @message.recipient
-          ]
+          @message       = message_or_group
+          @message_class = @message.class
+          @kind          = @message.kind.to_sym
+          @messageable   = @message.messageable
+          @recipient     = @message.recipient
+          locale         = @message.recipient.locale
         end
 
         @admin_user             = admin_user
         @message_class_i18n_key = @message_class.to_s.underscore.to_sym
 
-        do_generate
+        I18n.with_locale locale do
+          do_generate
+        end
       end
 
       private
@@ -39,55 +39,46 @@ module Baseline
               .sections
               .map(&:do_clone)
               .if(i18n_params.present?) do |new_sections|
-                translated_attributes = Section.locale_columns(:headline, :content)
                 new_sections.each do |section|
-                  translated_attributes.each do |attribute|
-                    value = section.public_send(attribute)
-                    if value.is_a?(ActionText::RichText)
-                      value = value.body.to_html
-                    end
-                    next if value.blank?
-                    section.public_send "#{attribute}=",
-                      I18n.interpolate(value, i18n_params)
+                  if section.headline.present?
+                    section.headline = I18n.interpolate(section.headline, i18n_params)
+                  end
+                  if section.content.present?
+                    section.content = I18n.interpolate(section.content.body.to_html, i18n_params)
                   end
                 end
                 new_sections
               end
           else
-            sections = Section
-              .locales
-              .index_with {
-                I18n.with_locale(_1) {
-                  body_from_i18n(:email)
-                }
-              }.then {
-                Baseline::Sections::InitializeFromMarkdown.call _1
-              }
+            sections = body_from_i18n(:email).then {
+              Baseline::Sections::InitializeFromMarkdown.call _1
+            }
 
-            if defined?(@message)
-              "Messages::Generate#{@message.class}#{@message.kind.to_s.classify}Sections"
-                .safe_constantize
-                &.call(@message)
-                &.then { sections.concat _1 }
-            end
+            kind_sections_service =
+              defined?(@message) ?
+                "Messages::Generate#{@message.class}#{@message.kind.to_s.classify}Sections" :
+                "MessageGroups::Generate#{@message_group.kind.to_s.classify}Sections"
+
+            kind_sections_service
+              .safe_constantize
+              &.call(@message)
+              &.then { sections.concat _1 }
           end
 
           result = {
             sections:
           }
 
-          Section.locales.each do |locale|
-            I18n.with_locale locale do
-              result[:"subject_#{locale}"] =
-                persisted_message_group&.subject(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
-                subject_from_i18n
+          result[:subject] =
+            persisted_message_group ?
+              I18n.interpolate(persisted_message_group.subject, i18n_params) :
+              subject_from_i18n
 
-              if defined?(SlackDelivery)
-                result[:"slack_body_#{locale}"] =
-                  persisted_message_group&.slack_body(locale:)&.then { I18n.interpolate(_1, i18n_params) } ||
-                  body_from_i18n(:slack)
-              end
-            end
+          if defined?(SlackDelivery)
+            result[:slack_body] =
+              persisted_message_group ?
+                I18n.interpolate(persisted_message_group.slack_body, i18n_params) :
+                body_from_i18n(:slack)
           end
 
           result
@@ -100,8 +91,7 @@ module Baseline
         end
 
         def i18n_params
-          @i18n_params ||= {}
-          @i18n_params[I18n.locale] ||= [
+          @i18n_params ||= [
             common_i18n_params,
             messageable_i18n_params,
             recipient_class_i18n_params,

@@ -15,13 +15,12 @@ module Baseline
 
       accepts_nested_attributes_for :sections,
         allow_destroy: true,
-        reject_if:     -> { _1.values_at(*Section.locale_columns(:headline, :content)).all?(&:blank?) }
+        reject_if:     -> { _1.values_at(:headline, :content).all?(&:blank?) }
 
       after_commit do
         sections.select do |section|
-          Section.locale_columns(:headline, :content).all? {
-            section.public_send(_1).blank?
-          }
+          section.headline.blank? &&
+            section.content.blank?
         end.each(&:destroy)
       end
     end

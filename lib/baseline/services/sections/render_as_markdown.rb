@@ -7,7 +7,6 @@ module Baseline
         if section.persisted?
           cache_key = [
             :section_md,
-            I18n.locale,
             section
           ]
 

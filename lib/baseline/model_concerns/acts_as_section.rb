@@ -9,10 +9,7 @@ module Baseline
               HasPosition[:sectionable],
               TouchAsync[:sectionable]
 
-      has_rich_text :content_de
-      has_rich_text :content_en
-
-      translates_with_fallback :headline, :content
+      has_rich_text :content
 
       belongs_to :sectionable,
         polymorphic: true,
@@ -20,16 +17,11 @@ module Baseline
     end
 
     class_methods do
-      def clone_fields = locale_columns(:headline, :content)
-      def locales      = %i[de en]
+      def clone_fields = %i[headline content]
     end
 
-    def content_html(locale: nil)
-      content(locale:)
-        .to_s
-        .then {
-          Nokogiri::HTML.fragment _1
-        }
+    def content_html
+      Nokogiri::HTML.fragment(content.to_s)
     end
 
     def to_s = headline
@@ -37,15 +29,14 @@ module Baseline
     private
 
       def should_generate_new_friendly_id?
-        headline_de_changed? ||
-          headline_en_changed? ||
+        headline_changed? ||
           super
       end
 
       def custom_slug
         [
           new_slug_identifier,
-          I18n.with_locale(:en) { headline }
+          headline
         ].join(" ")
       end
   end

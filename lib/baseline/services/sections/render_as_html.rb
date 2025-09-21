@@ -14,7 +14,6 @@ module Baseline
         if section.persisted?
           cache_key = [
             :section_html,
-            I18n.locale,
             section
           ]
 
@@ -35,8 +34,7 @@ module Baseline
       private
 
         def generate(section, debug)
-          headline = section.headline(locale: (I18n.locale if debug)).presence
-          html     = section.content_html(locale: (I18n.locale if debug))
+          html = section.content_html
 
           (1..6)
             .map { "h#{_1}" }
@@ -110,7 +108,7 @@ module Baseline
 
           tag.div id: section.slug do
             [
-              headline&.then { tag.h2 _1, id: _1.parameterize },
+              section.headline&.then { tag.h2 _1, id: _1.parameterize },
               html.to_s
             ].compact
               .join("\n")
