@@ -4,6 +4,21 @@ module Baseline
   class Toucher < ApplicationService
     CACHE_KEY = :toucher.freeze
 
+    @enabled = true
+
+    class << self
+      def disable
+        @enabled = false
+        yield
+      ensure
+        @enabled = true
+      end
+
+      def enabled?
+        @enabled
+      end
+    end
+
     def add(resource)
       read_cache do |gids|
         [

@@ -12,7 +12,7 @@ module Baseline
             associations.map(&:to_sym)
 
           after_commit on: %i[create update] do
-            if saved_changes?
+            if Toucher.enabled? && saved_changes?
               Toucher.new.add(self)
               unless Toucher.enqueued?
                 Toucher.call_async
