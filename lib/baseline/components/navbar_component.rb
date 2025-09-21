@@ -88,7 +88,7 @@ module Baseline
         brand, brand_url, Array(css_class), data
 
       if bg
-        @css_class << "bg-#{bg.to_s.dasherize}"
+        @css_class << "bg-#{bg.dasherize}"
       end
 
       if border_bottom
@@ -127,7 +127,7 @@ module Baseline
     class GroupComponent < ApplicationComponent
       renders_many :items,
         types: %i[link dropdown content].index_with {
-          "#{name.deconstantize}::#{_1.to_s.camelize}Component"
+          "#{name.deconstantize}::#{_1.camelize}Component"
         }
 
       attr_reader :css_class
@@ -158,7 +158,7 @@ module Baseline
     class DropdownComponent < ApplicationComponent
       renders_many :items,
         types: %i[link divider content].index_with {
-          "#{_1.to_s.camelize}Component"
+          "#{_1.camelize}Component"
         }
 
       def initialize(label, align_end: false, align_start: false, css_class: nil)

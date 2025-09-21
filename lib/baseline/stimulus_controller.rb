@@ -20,13 +20,13 @@ module Baseline
     def to_h(**more_values)
       {
         controller: name,
-        **outlets.transform_keys { :"#{name}-#{_1.to_s.dasherize}-outlet" },
-        **values.merge(more_values).transform_keys { :"#{name}-#{_1.to_s.dasherize}-value" }
+        **outlets.transform_keys { :"#{name}-#{_1.dasherize}-outlet" },
+        **values.merge(more_values).transform_keys { :"#{name}-#{_1.dasherize}-value" }
       }
     end
 
     def target(target_name)
-      { "#{name}-target": target_name.to_s.camelize(:lower) }
+      { "#{name}-target": target_name.camelize(:lower) }
     end
 
     def action(action_name = nil, option: nil, **params)
@@ -34,14 +34,14 @@ module Baseline
         event, action_name = params.shift
       end
 
-      value = [name, action_name.to_s.camelize(:lower)]
+      value = [name, action_name.camelize(:lower)]
         .join("#")
         .if(event) { [_2, _1].join "->" }
         .if(option) { _1 << ":#{option}" }
 
       {
         action: value,
-        **params.transform_keys { :"#{name}-#{_1.to_s.dasherize}-param" }
+        **params.transform_keys { :"#{name}-#{_1.dasherize}-param" }
       }
     end
   end

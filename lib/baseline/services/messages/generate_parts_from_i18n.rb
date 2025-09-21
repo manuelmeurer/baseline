@@ -56,8 +56,8 @@ module Baseline
 
             kind_sections_service =
               defined?(@message) ?
-                "Messages::Generate#{@message.class}#{@message.kind.to_s.classify}Sections" :
-                "MessageGroups::Generate#{@message_group.kind.to_s.classify}Sections"
+                "Messages::Generate#{@message.class}#{@message.kind.classify}Sections" :
+                "MessageGroups::Generate#{@message_group.kind.classify}Sections"
 
             kind_sections_service
               .safe_constantize

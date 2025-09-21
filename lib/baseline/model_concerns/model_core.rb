@@ -280,7 +280,7 @@ module Baseline
         return if value.blank?
 
         key = [
-          enum.to_s.pluralize,
+          enum.pluralize,
           modifier
         ].compact
           .join("_")
@@ -294,7 +294,7 @@ module Baseline
 
         I18n.t value,
           scope:,
-          default: value.to_s.humanize
+          default: value.humanize
       end
 
       def common_image_file_types = %i[jpeg png svg webp gif]
@@ -384,7 +384,7 @@ module Baseline
 
           case
           when column.type == :string
-            method_name = attribute.to_s.pluralize
+            method_name = attribute.pluralize
             unless respond_to?(method_name, true)
               define_singleton_method method_name do
                 pluck(Arel.sql("DISTINCT #{attribute}"))
