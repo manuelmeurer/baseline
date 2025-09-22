@@ -144,7 +144,7 @@ module Baseline
     def before_render
       human_attribute_name = @form.object ?
         helpers.custom_human_attribute_name(@form.object.class, @attribute) :
-        @attribute.humanize
+        @attribute.humanize.to_s
 
       # Handle nested forms with object names like `foo[bar_attributes][0]`.
       @i18n_scopes = @form
