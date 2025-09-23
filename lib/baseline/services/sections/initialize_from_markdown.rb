@@ -20,7 +20,7 @@ module Baseline
           ]
 
           Rails.cache.fetch cache_key do
-            Baseline::MarkdownToHTML
+            Baseline::Converters::MarkdownToHTML
               .call(markdown, avoid_paragraphs: true)
               .then { Nokogiri::HTML.fragment _1 }
               .children
