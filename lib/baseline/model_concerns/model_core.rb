@@ -458,19 +458,7 @@ module Baseline
     def method_missing(method, *args, _async: false, _after: nil, **kwargs)
       return super unless service_name = method[/\A_do_(.+)/, 1]&.camelize
 
-      service = service_namespaces
-        .lazy
-        .map do |namespace|
-          suppress NameError do
-            namespace.const_get(service_name)
-          end
-        end
-        .compact
-        .first
-
-      unless service
-        raise "Could not find service #{service_name} for #{self.class}."
-      end
+      service = resolve_service(service_name)
 
       if persisted?
         if service.enqueued_or_processing?(self)
@@ -489,6 +477,19 @@ module Baseline
       else
         service.call self, *args, **kwargs
       end
+    end
+
+    def resolve_service(service_name)
+      service_namespaces
+        .lazy
+        .map do |namespace|
+          suppress NameError do
+            namespace.const_get(service_name.camelize)
+          end
+        end
+        .compact
+        .first or
+          raise "Could not find service #{service_name} for #{self.class}."
     end
 
     def last_changed_at(attribute)
