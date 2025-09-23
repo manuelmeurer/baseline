@@ -40,6 +40,12 @@ module Baseline
           end
         end
 
+        define_method "#{attribute}_without_region" do
+          public_send(attribute)&.then {
+            _1.split("-").first
+          }
+        end
+
         define_method language_attribute do
           Language.new locale: public_send(attribute)
         end
