@@ -117,9 +117,11 @@ class Symbol
 end
 
 class Symbol
-  DELEGATE_TO_STRING_METHODS = [
-    %i[sub gsub delete_prefix delete_suffix].map { [_1, :"#{_1}!"] }
-  ].flatten.freeze
+  DELEGATE_TO_STRING_METHODS =
+    %i[
+      sub gsub delete_prefix delete_suffix
+    ].flat_map { [_1, :"#{_1}!"] }
+    .freeze
 
   def method_missing(method, ...)
     return super unless delegate_to_string?(method)
