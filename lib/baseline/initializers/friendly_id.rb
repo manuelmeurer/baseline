@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "friendly_id"
+
 FriendlyId.defaults do |config|
   config.use :reserved
   config.reserved_words = %w[
