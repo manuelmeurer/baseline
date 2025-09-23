@@ -14,16 +14,14 @@ module Baseline
       validates :kind, presence: true, inclusion: { in: -> { [_1.group.kind] }, if: :group }
       validates :messageable, inclusion: { in: -> { [_1.group.messageable] }, if: :group }
       validates :recipient_type, inclusion: { in: -> { [_1.class.to_s.delete_suffix("Message")] } }
+
+      delegate :language, :locale, :locale_without_region,
+        to:        :recipient,
+        allow_nil: true
     end
 
     def to_s
       "#{kind&.humanize || "Unknown"} message to #{recipient || "?"} (#{sent? ? "sent on #{I18n.l sent_at}" : "unsent"})"
-    end
-
-    def language
-      recipient&.try(:preferred_language) ||
-        recipient&.try(:language) or
-          raise "Could not determine language from recipient."
     end
 
     def valid_recipients
