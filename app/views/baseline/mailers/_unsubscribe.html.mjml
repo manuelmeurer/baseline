@@ -1,0 +1,7 @@
+-# frozen_string_literal: true
+-# locals: ()
+
+- if url = @email_delivery.unsubscribe_url
+  %mj-divider
+  %mj-text{ "mj-class": "small" }
+    = link_to t(:unsubscribe, scope: :messages), url

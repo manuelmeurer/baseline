@@ -1,0 +1,7 @@
+<%=
+  [
+    render("baseline/mailers/view_in_browser"),
+    *@sections.map(&:_do_render_as_text),
+    render("baseline/mailers/unsubscribe")
+  ].compact_blank.map(&:strip).join("\n\n---\n\n")
+%>

@@ -1,0 +1,38 @@
+-# frozen_string_literal: true
+
+%mjml
+
+  %mj-head
+
+    %mj-attributes
+      %mj-all{ "font-family": "system-ui, sans-serif", "font-size": "16px", "line-height": 1.6 }
+      %mj-button{ align: "left" }
+      %mj-divider{ "border-width": "1px", "border-style": "dashed", "border-color": "lightgrey", "padding-top": "20px", "padding-bottom": "20px" }
+      %mj-social{ align: "left" }
+      %mj-social-element{ "icon-size": "30px", "line-height": "30px" }
+
+      - { h1: 26, h2: 22, h3: 18 }.each do |heading, font_size|
+        %mj-class{ name: heading, "font-size": "#{font_size}px", "line-height": 1.4, "font-weight": "bold" }
+      %mj-class{ name: "small", "font-size": "14px" }
+      %mj-class{ name: "primary", "background-color": "#e9664c" }
+      %mj-class{ name: "block", width: "100%", "css-class": "btn-block" }
+
+      = content_for :mj_attributes
+
+    = content_for :mj_head
+
+    %mj-style{ inline: "inline" }
+      :plain
+        ol, ul {
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
+        }
+        li {
+          padding-top: 3px !important;
+          padding-bottom: 3px !important;
+        }
+        .btn-block a {
+          display: block !important;
+        }
+
+  = content_for :content

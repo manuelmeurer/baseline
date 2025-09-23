@@ -1,0 +1,23 @@
+-# frozen_string_literal: true
+
+- if @admin_user
+  %mj-section{ padding: 0 }
+    %mj-column
+      = sections @sections
+- else
+  - web_url = @email_delivery.web_url
+  = wrapper url: web_url do
+    - if header_url = @email_delivery.header_url
+      = header_image header_url, href: web_url, padding: 0
+    - else
+      = header_image asset_url("logo.png"), width: logo_width, align: "left"
+      %mj-section{ padding: 0 }
+        %mj-column
+          %mj-divider{ "padding-top": 0, "padding-bottom": 0 }
+
+    %mj-section
+      %mj-column
+        = sections @sections
+        %mj-text
+          = md_to_html t(@email_delivery.form_of_address, scope: %i[mailer farewell])
+        = render "mailers/footer"

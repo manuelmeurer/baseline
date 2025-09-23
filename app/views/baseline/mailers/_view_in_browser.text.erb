@@ -1,0 +1,6 @@
+<%# locals: () %>
+
+<%- if url = @email_delivery.web_url %>
+  <%= t :view_in_browser, scope: :messages %>:
+  <%= url %>
+<% end %>

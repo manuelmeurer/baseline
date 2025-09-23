@@ -11,7 +11,12 @@ module Baseline
 
           layout "mailers/default"
 
+          # Include ApplicationHelper and MailerHelper from app.
           helper :application
+          helper :mailer
+
+          # Include MailerHelper from Baseline.
+          helper MailerHelper
 
           after_action :deliver_via_postmark,
             if: -> { defined?(@email_delivery) && @email_delivery.postmark_message_stream }
@@ -107,7 +112,7 @@ module Baseline
           template =
             lookup_context.exists?(deliverable_template) ?
             deliverable_template :
-            "mailers/email_delivery"
+            "baseline/mailers/email_delivery"
 
           I18n.with_locale email_delivery.locale do
             @debug_sections = preview

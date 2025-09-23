@@ -14,6 +14,10 @@ de:
   tomorrow: morgen
   yesterday: gestern
 
+  messages:
+    unsubscribe: Von diesen Benachrichtigungen abmelden
+    view_in_browser: Im Browser ansehen
+
   password_hint:
     minimum: "mindestens %{value} Zeichen"
     maximum: "höchstens %{value} Zeichen"

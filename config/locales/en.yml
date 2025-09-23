@@ -14,6 +14,10 @@ en:
   tomorrow: tomorrow
   yesterday: yesterday
 
+  messages:
+    unsubscribe: Unsubscribe from these notifications
+    view_in_browser: View in browser
+
   password_hint:
     minimum: "min %{value} characters"
     maximum: "max %{value} characters"
