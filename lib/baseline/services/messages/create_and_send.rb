@@ -26,7 +26,7 @@ module Baseline
               :slack :
               :email
 
-          parts = GeneratePartsFromI18n.call(message, admin_user:)
+          parts = ::Messages::GeneratePartsFromI18n.call(message, admin_user:)
 
           case delivery_method.to_sym
           when :slack
