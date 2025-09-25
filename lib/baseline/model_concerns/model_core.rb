@@ -191,6 +191,7 @@ module Baseline
       delegate \
         :service_namespace,
         :service_namespaces,
+        :resolve_service,
         to: :class
     end
 
@@ -267,6 +268,22 @@ module Baseline
             _1 + _1.map { "Baseline::#{it}" }
           }.map(&:safe_constantize)
           .compact
+      end
+
+      def resolve_service(service_name)
+        @resolved_services ||= {}
+        @resolved_services[service_name] ||= begin
+          service_namespaces
+            .lazy
+            .map do |namespace|
+              suppress NameError do
+                namespace.const_get(service_name.camelize)
+              end
+            end
+            .compact
+            .first or
+              raise "Could not find service #{service_name} for #{self.class}."
+        end
       end
 
       def enum_with_human_name(name, ...)
@@ -477,19 +494,6 @@ module Baseline
       else
         service.call self, *args, **kwargs
       end
-    end
-
-    def resolve_service(service_name)
-      service_namespaces
-        .lazy
-        .map do |namespace|
-          suppress NameError do
-            namespace.const_get(service_name.camelize)
-          end
-        end
-        .compact
-        .first or
-          raise "Could not find service #{service_name} for #{self.class}."
     end
 
     def last_changed_at(attribute)
