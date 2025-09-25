@@ -276,7 +276,7 @@ module Baseline
           service_namespaces
             .lazy
             .map do |namespace|
-              suppress NameError do
+              Kernel.suppress NameError do
                 namespace.const_get(service_name.camelize)
               end
             end
