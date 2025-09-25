@@ -5,10 +5,7 @@ require "digest"
 
 require "baseline/call_logger"
 require "baseline/exception_wrapper"
-
-if defined?(Rails)
-  require "baseline/uniqueness_checker"
-end
+require "baseline/uniqueness_checker"
 
 module Baseline
   class BaseService < defined?(ActiveJob) ? ActiveJob::Base : Object
@@ -37,7 +34,7 @@ module Baseline
         modules = [
           CallLogger,
           ExceptionWrapper,
-          (UniquenessChecker if defined?(UniquenessChecker))
+          (UniquenessChecker if defined?(Rails))
         ].compact
 
         subclass.prepend(*modules)
