@@ -137,7 +137,7 @@ class Symbol
   end
 
   private def delegate_to_string?(method)
-    method.in?(DELEGATE_TO_STRING_METHODS) ||
+    DELEGATE_TO_STRING_METHODS.include?(method) ||
       (
         defined?(ActiveSupport::Inflector) &&
         ActiveSupport::Inflector.respond_to?(method)
