@@ -21,7 +21,7 @@ module Baseline
 
           Rails.cache.fetch cache_key do
             Baseline::Converters::MarkdownToHTML
-              .call(markdown, avoid_paragraphs: true)
+              .call(markdown)
               .then { Nokogiri::HTML.fragment _1 }
               .children
               .slice_before { _1.name == "h2" }
