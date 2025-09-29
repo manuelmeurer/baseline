@@ -34,7 +34,7 @@ module Baseline
       helper_method def stimco(name, to_h: true, outlets: {}, **values)
         StimulusController
           .new(name:, values:, outlets:)
-          .if(to_h) { _1.to_h }
+          .if(to_h, &:to_h)
       end
 
       helper_method def site_name

@@ -86,11 +86,10 @@ module Baseline
 
           importmap.pin(namespace, preload:)
 
-          importmap.pin_all_from(
+          importmap.pin_all_from \
             "app/javascript/controllers/#{namespace}",
             preload:,
             under: "controllers/#{namespace}"
-          )
         end
     end
   end
