@@ -37,12 +37,10 @@ module Baseline
 
       importmap.pin "application_controller"
       importmap.pin "controllers",                to: "controllers/index.js"
-      importmap.pin "base_controller",            to: "baseline/base_controller.js"
 
       {
         "@rails/actiontext"    => "actiontext.esm.js",
         "@rails/activestorage" => "activestorage.esm.js",
-        "gallery_controller"   => "baseline/gallery_controller.js",
         "lexxy"                => "lexxy.js",
         "photoswipe-lightbox"  => importmap.jsdelivr("photoswipe@5/dist/photoswipe-lightbox.esm.min.js"),
         "photoswipe"           => importmap.jsdelivr("photoswipe@5/dist/photoswipe.esm.min.js")
@@ -51,6 +49,27 @@ module Baseline
           to:,
           preload: false
       end
+
+      importmap.pin "baseline/base_controller"
+
+      # TODO: This should be possible with `pin_all_from` but it doesn't work for some reason.
+      # importmap.pin_all_from \
+      #   File.join(
+      #     Gem.loaded_specs["baseline"].full_gem_path,
+      #     "app/javascript/baseline/controllers"
+      #   ),
+      #   under:   "baseline",
+      #   preload: false
+      File.join(
+        Gem.loaded_specs["baseline"].full_gem_path,
+        "app/javascript/baseline/controllers/**/*.js"
+      ).then { Dir[_1] }
+        .map { File.basename(_1) }
+        .each do |basename|
+          importmap.pin "baseline/#{basename.delete_suffix(".js")}",
+            to:      "baseline/controllers/#{basename}",
+            preload: false
+        end
 
       Rails
         .root
