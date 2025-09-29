@@ -554,11 +554,9 @@ module Baseline
     end
 
     def add_stylesheet(stylesheet, name, disabled: false, **options)
-      unless stylesheet.match?(URLFormatValidator.regex)
-        path = javascript_path(name)
-        unless prefix = path[%r[.+@\d+(\.[^/]+)*/], 0]
-          raise "Could not determine prefix from path: #{path}"
-        end
+      if !stylesheet.match?(URLFormatValidator.regex) &&
+        prefix = javascript_path(name)[%r{.+@\d+(\.[^/]+)*/}, 0]
+
         stylesheet = File.join(prefix, stylesheet)
       end
 
