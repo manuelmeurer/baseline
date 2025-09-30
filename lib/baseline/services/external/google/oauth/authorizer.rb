@@ -19,8 +19,8 @@ module Baseline
 
           def auth_credentials(code)
             @authorizer.get_credentials_from_code \
-              user_id: "default",
-              code:
+              code:,
+              user_id: "default"
           end
 
           def scopes
