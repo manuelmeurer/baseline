@@ -12,7 +12,7 @@
       = helpers.attachment_image_tag @imageable, :md_thumb, class: css_class
     - else
       - raise "Unexpected @imageable: #{@imageable.class}"
-  - image.if(@image_wrapper) { _2.call _1 }
+  - image.if(@image_wrapper) { _2 } # Since `@image_wrapper` is a Proc, the second argument passed to the block is `@image_wrapper.call(image)`.
 
 - case
 - when content
