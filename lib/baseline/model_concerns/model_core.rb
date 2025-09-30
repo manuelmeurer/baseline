@@ -512,5 +512,81 @@ module Baseline
         public_send(enum),
         modifier
     end
+
+    def clone_of?(resource)
+      return false unless resource.is_a?(self.class)
+
+      self.class.clone_fields.all? do |field|
+        [resource, self]
+          .map { _1.public_send(field) }
+          .map { _1.if(ActionText::RichText, &:to_s) }
+          .uniq
+          .size == 1
+      end
+    end
+
+    def clone=(value)
+      self.clone_id = value&.id
+    end
+
+    def clone_id=(value)
+      @clone_id = value
+
+      if clone == self
+        raise "Cannot clone self."
+      end
+
+      self.class.clone_fields.each do |field|
+        field
+          .unless(Hash, { field => nil })
+          .each do |_field, copy_or_clone|
+            if self.class.reflect_on_association(_field) && !copy_or_clone
+              raise "#{_field} is an association of #{self.class}, please set copy_or_clone."
+            end
+
+            value = clone.public_send(_field)
+
+            if copy_or_clone
+              case copy_or_clone
+              when :copy
+              when :clone
+                value =
+                  case value
+                  when ActiveRecord::Relation then value.map(&:do_clone)
+                  when ActiveRecord::Base     then value.do_clone
+                  else raise "Unexpected value class: #{value.class}"
+                  end
+              else raise "Unexpected value for copy_or_clone: #{copy_or_clone}"
+              end
+            else
+              case value
+              when ActionText::RichText
+                value = value.to_s
+              when ActiveStorage::Attached::One
+                next unless value.attached?
+                _field = :"remote_#{_field}_url"
+                value  = Rails.application.routes.url_helpers.rails_blob_url(value)
+              end
+            end
+
+            public_send "#{_field}=", value
+          end
+        end
+    end
+
+    def clone
+      @clone_id&.then {
+        self.class.find _1
+      }
+    end
+
+    def do_clone(attributes = {})
+      if new_record?
+        raise "Must be persisted to clone."
+      end
+
+      self.class.new \
+        attributes.merge(clone_id: id)
+    end
   end
 end
