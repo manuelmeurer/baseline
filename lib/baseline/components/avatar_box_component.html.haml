@@ -12,18 +12,22 @@
       = helpers.attachment_image_tag @imageable, :md_thumb, class: css_class
     - else
       - raise "Unexpected @imageable: #{@imageable.class}"
-  - @image_wrapper ? @image_wrapper.call(image) : image
+  - image.if(@image_wrapper) { _2.call _1 }
 
-- if content
+- case
+- when content
   - if @vertical
-    .d-flex.flex-column.align-items-center
+    .d-flex.flex-column.align-items-center{ data: @data }
       = render_image.call "mb-#{@margin}"
       = content
   - else
-    .d-flex
+    .d-flex{ data: @data }
       = render_image.call "me-#{@margin}"
       .d-flex.overflow-auto
         .align-self-center.overflow-auto
           = content
+- when data
+  %div{ data: @data }
+    = render_image.call
 - else
   = render_image.call

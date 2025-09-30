@@ -2,9 +2,9 @@
 
 module Baseline
   class AvatarBoxComponent < ApplicationComponent
-    def initialize(imageable, size:, vertical: false, rounded_corners: true, image_wrapper: nil)
-      @imageable, @size, @vertical, @rounded_corners, @image_wrapper =
-        imageable, size, vertical, rounded_corners, image_wrapper
+    def initialize(imageable, size:, vertical: false, rounded_corners: true, image_wrapper: nil, data: nil)
+      @imageable, @size, @vertical, @rounded_corners, @image_wrapper, @data =
+        imageable, size, vertical, rounded_corners, image_wrapper, data
 
       @margin = {
         xs: 2,
