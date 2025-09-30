@@ -40,8 +40,12 @@ module Baseline
           end
         rescue Poller::TooManyAttemptsError
           raise Error, "Could not send email."
-        rescue Postmark::InactiveRecipientError => error
-          email_delivery.rejected_emails += error.recipients
+        rescue => error
+          if defined?(Postmark::InactiveRecipientError) && error.is_a?(Postmark::InactiveRecipientError)
+            email_delivery.rejected_emails += error.recipients
+          else
+            raise error
+          end
         else
           email_delivery.message_id = mail.message_id
 
