@@ -1,2 +1,5 @@
-.lexxy-content{ data: stimco(:lexxy_content) }
+-# frozen_string_literal: true
+
+-# Don't use `stimco` helper here, since this layout is sometimes used when helpers are not available.
+.lexxy-content{ data: { controller: "lexxy-content" } }
   = yield
