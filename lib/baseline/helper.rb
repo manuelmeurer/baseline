@@ -372,8 +372,7 @@ module Baseline
     end
 
     def data_merge(*datas)
-      datas = datas.compact_blank.map(&:to_h)
-      return {} if datas.empty?
+      return {} unless datas = datas.compact_blank.map(&:to_h).presence
 
       invalids = datas.reject { _1.is_a?(Hash) }
       if invalids.any?
