@@ -22,7 +22,7 @@ module Baseline
             validates language_attribute, presence: true
           end
 
-          validates attribute, inclusion: { in: valid_locales.map(&:to_s), allow_blank: true }
+          validates attribute, inclusion: { in: valid_locales.map(&:to_s), allow_nil: true }
 
           validate do
             next if errors[attribute].any?
@@ -47,7 +47,9 @@ module Baseline
         end
 
         define_method language_attribute do
-          Language.new locale: public_send(attribute)
+          public_send(attribute)&.then {
+            Language.new locale: _1
+          }
         end
 
         define_method "#{language_attribute}=" do |value|
