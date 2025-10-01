@@ -20,7 +20,7 @@ module Baseline
           @kind          = @message.kind.to_sym
           @messageable   = @message.messageable
           @recipient     = @message.recipient
-          locale         = @message.recipient.locale
+          locale         = @message.recipient&.locale || I18n.locale
         end
 
         @admin_user             = admin_user
