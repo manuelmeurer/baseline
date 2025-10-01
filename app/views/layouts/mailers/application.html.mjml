@@ -14,6 +14,7 @@
       - { h1: 26, h2: 22, h3: 18 }.each do |heading, font_size|
         %mj-class{ name: heading, "font-size": "#{font_size}px", "line-height": 1.4, "font-weight": "bold" }
       %mj-class{ name: "small", "font-size": "14px" }
+      %mj-class{ name: "bold", "font-weight": "bold" }
       %mj-class{ name: "primary", "background-color": "#e9664c" }
       %mj-class{ name: "block", width: "100%", "css-class": "btn-block" }
 

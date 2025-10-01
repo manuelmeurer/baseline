@@ -111,6 +111,8 @@ module Baseline
                   tag.mj_text element.to_s.html_safe
                 when "hr"
                   tag.mj_divider
+                when "b"
+                  tag.mj_text element.to_s.html_safe, "mj-class": "bold"
                 when "p", "div", "action-text-attachment", "figure", "pre"
                   send __method__, element.children
                 else raise "Unexpected element: #{element.name}"
