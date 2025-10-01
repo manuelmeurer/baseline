@@ -390,8 +390,8 @@ module Baseline
           if values.size == 1
             values.first
           else
-            unless values.all?(String)
-              raise "Don't know how to merge multiple data values that are not strings: #{values}"
+            if values.any? { !_1.is_a?(String) && !_1.is_a?(Symbol) }
+              raise "Don't know how to merge multiple data values that are not strings or symbols: #{values}"
             end
             values
               .compact_blank
