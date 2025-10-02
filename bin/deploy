@@ -5,9 +5,8 @@ if [[ -n $RAILS_ENV && $RAILS_ENV != "development" ]]; then
   exit 1
 fi
 
-stash_message="deploy-$(date +%s)"
-stash_output="$(git stash save --include-untracked $stash_message)"
-stashed="$(echo $stash_output | grep $stash_message)"
+stash_name="deploy-autostash"
+git stash push --include-untracked -m "$stash_name"
 
 if [ -f "bin/rails" ]; then
   bundle exec rails zeitwerk:check || exit 1
@@ -24,6 +23,6 @@ fi
 
 git checkout main || exit 1
 
-if [[ "$stashed" ]]; then
+if git stash list | head -1 | grep -q "$stash_name"; then
   git stash pop
 fi
