@@ -2,8 +2,8 @@
   box-sizing: border-box;
 }
 
-html {
-  // https://github.com/hotwired/turbo-rails/issues/165
+html[aria-busy="true"] {
+  // https://github.com/twbs/bootstrap/issues/38094#issuecomment-1525136083
   scroll-behavior: auto !important;
 }
 
