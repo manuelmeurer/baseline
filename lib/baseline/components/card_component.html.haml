@@ -22,11 +22,11 @@
   .card-body{ class: @body_css_class }
     - case @icon
     - when /\.svg\z/
-      = inline_svg @icon, class: "card-icon"
+      = inline_svg @icon, class: @icon_css_class
     - when /\.(jpg|png)\z/
-      = image_tag @icon, class: "card-icon"
+      = image_tag @icon, class: @icon_css_class
     - when /.+/
-      %span.card-icon
+      %div{ class: @icon_css_class }
         = @icon
 
     = @above_title

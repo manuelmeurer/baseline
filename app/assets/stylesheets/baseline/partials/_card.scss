@@ -1,0 +1,14 @@
+.card-icon-center {
+  @include font-size(3rem);
+
+  max-width: 100px;
+  height: auto;
+  margin: 1rem 0 1.5rem;
+}
+
+.card-icon-left {
+  @include font-size(2rem);
+
+  margin-bottom: 1rem;
+  line-height: 1;
+}
