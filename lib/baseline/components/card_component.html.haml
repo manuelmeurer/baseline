@@ -19,23 +19,24 @@
     %h5.card-header
       = @header.html_safe
 
-  .card-body{ class: @body_css_class }
-    - case @icon
-    - when /\.svg\z/
-      = inline_svg @icon, class: @icon_css_class
-    - when /\.(jpg|png)\z/
-      = image_tag @icon, class: @icon_css_class
-    - when /.+/
-      %div{ class: @icon_css_class }
-        = @icon
+  - if @icon || @above_title || @title || content
+    .card-body{ class: @body_css_class }
+      - case @icon
+      - when /\.svg\z/
+        = inline_svg @icon, class: @icon_css_class
+      - when /\.(jpg|png)\z/
+        = image_tag @icon, class: @icon_css_class
+      - when /.+/
+        %div{ class: @icon_css_class }
+          = @icon
 
-    = @above_title
+      = @above_title
 
-    - if @title
-      = tag.public_send(@title_tag, class: "card-title") do
-        = @title
+      - if @title
+        = tag.public_send(@title_tag, class: "card-title") do
+          = @title
 
-    = content
+      = content
 
   = @after_body
 
