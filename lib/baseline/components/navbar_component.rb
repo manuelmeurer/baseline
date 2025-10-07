@@ -124,6 +124,34 @@ module Baseline
       end
     end
 
+    def auth_group
+      with_group do |group|
+        unless ::Current.userable
+          next group.with_item_link([::Current.namespace, :login]) do
+            safe_join [
+              icon("sign-in", fixed_width: true, class: "me-1"),
+              "Login"
+            ], " "
+          end
+        end
+
+        avatar_and_name = safe_join([
+          helpers.attachment_image_tag(::Current.userable.photo_or_dummy, :sm_thumb),
+          ::Current.userable.first_name,
+          nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
+        ], " ")
+
+        group.with_item_dropdown(avatar_and_name, css_class: "avatar", align_end: true) do |dropdown|
+          dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
+            safe_join [
+              icon("sign-out", fixed_width: true, class: "me-1"),
+              "Log out"
+            ], " "
+          end
+        end
+      end
+    end
+
     class GroupComponent < ApplicationComponent
       renders_many :items,
         types: %i[link dropdown content].index_with {
