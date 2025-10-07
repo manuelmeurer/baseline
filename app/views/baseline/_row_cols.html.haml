@@ -6,7 +6,7 @@
 - gutter = { nil => gutter } if gutter.is_a?(Integer)
 
 - unless elements&.none?
-  .row.row-cols-1{ class: [css_class, *gutter.map { ["g", _1, _2].compact.join('-') }, *cols.map { ["row-cols", _1, _2].join("-") }].compact, data: }
+  .row.row-cols-1{ class: [css_class, *gutter.map { ["g", _1, _2].compact.join('-') }, *cols&.map { ["row-cols", _1, _2].join("-") }].compact, data: }
     - if elements
       - elements.each_with_index do |element, index|
         .col
