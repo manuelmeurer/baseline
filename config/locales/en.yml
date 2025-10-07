@@ -1,12 +1,15 @@
 en:
+  back: back
   cancel: cancel
   confirm: Are you sure?
   copy: copy
+  load_more: Load more
   log_out: Log out
   next: next
   or_enter_url: ...or enter URL
   please_wait: Please wait...
   save: save
+  search: search
   send: send
   share: share
   step: step
