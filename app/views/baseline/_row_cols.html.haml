@@ -1,12 +1,12 @@
 -# frozen_string_literal: true
--# locals: (cols: nil, gutter: { nil => 3, md: 4 }, elements: nil, count: nil, css_class: nil, data: nil)
+-# locals: (cols: nil, gutter: { nil => 3, md: 4 }, elements: nil, count: nil, css_class: nil, id: nil, data: nil)
 
 - count ||= elements&.size
 - cols  ||= { 1 => nil, 2 => { sm: 2 }, 3 => { sm: 2, lg: 3 }, 4 => { sm: 2, lg: 4 } }.fetch(count, { sm: 2, lg: 3, xl: 4 })
 - gutter = { nil => gutter } if gutter.is_a?(Integer)
 
 - unless elements&.none?
-  .row.row-cols-1{ class: [css_class, *gutter.map { ["g", _1, _2].compact.join('-') }, *cols&.map { ["row-cols", _1, _2].join("-") }].compact, data: }
+  .row.row-cols-1{ class: [css_class, *gutter.map { ["g", _1, _2].compact.join('-') }, *cols&.map { ["row-cols", _1, _2].join("-") }].compact, id:, data: }
     - if elements
       - elements.each_with_index do |element, index|
         .col
