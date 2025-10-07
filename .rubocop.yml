@@ -30,3 +30,13 @@ Layout/EmptyLinesAroundBlockBody:
 # e.g. if it has multiple arguments and thus spans multiple lines.
 Layout/EmptyLinesAroundMethodBody:
   Enabled: false
+
+# Override rubocop-rails-omakase
+Style/PercentLiteralDelimiters:
+  Enabled: true
+  PreferredDelimiters:
+    default: "[]"
+    "%r": "{}"
+
+Style/SymbolArray:
+  Enabled: true
