@@ -10,7 +10,7 @@ module Baseline
             section
           ]
 
-          Rails.cache.fetch(cache_key) do
+          Rails.cache.fetch(cache_key, force: Rails.env.development?) do
             generate section
           end
         else
