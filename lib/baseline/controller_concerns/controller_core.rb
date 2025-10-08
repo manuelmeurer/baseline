@@ -9,7 +9,10 @@ module Baseline
 
       before_action do
         PaperTrail.request.whodunnit = -> {
-          (::Current.admin_user || ::Current.user)&.then {
+          (
+            ::Current.try(:admin_user) ||
+            ::Current.try(:user)
+          )&.then {
             _1.to_gid.to_s
           }
         }
