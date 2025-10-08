@@ -5,6 +5,21 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      baseline_spec = Gem.loaded_specs["baseline"]
+      if baseline_spec.source.is_a?(Bundler::Source::Path)
+        baseline_lib_path = File.join(baseline_spec.full_gem_path, "lib")
+
+        config.watchable_dirs[baseline_lib_path] = %i[rb]
+
+        config.to_prepare do
+          Zeitwerk::Registry
+            .loaders
+            .each
+            .detect { _1.tag == "baseline" }
+            .reload
+        end
+      end
+
       # https://guides.rubyonrails.org/configuring.html#config-exceptions-app
       config.exceptions_app = ->(env) {
         request = ActionDispatch::Request.new(env)

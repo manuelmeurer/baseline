@@ -23,6 +23,10 @@ loader.collapse("#{__dir__}/baseline/services")
 
 loader.inflector = Baseline::Inflector.new(__FILE__)
 
+if defined?(Rails) && Rails.env.development?
+  loader.enable_reloading
+end
+
 loader.setup
 
 module Baseline
