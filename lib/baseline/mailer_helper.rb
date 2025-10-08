@@ -2,12 +2,12 @@
 
 module Baseline
   module MailerHelper
-    def wrapper(url: nil)
+    def wrapper
       link_or_spacer =
         tag.mj_section do
           tag.mj_column do
-            if url
-              render "baseline/mailers/view_in_browser", url:
+            if @email_delivery.web_url
+              render "baseline/mailers/view_in_browser"
             else
               tag.mj_spacer
             end
@@ -19,10 +19,10 @@ module Baseline
           yield
         end
 
-      [
+      safe_join [
         link_or_spacer,
         wrapper
-      ].join("\n").html_safe
+      ], "\n"
     end
 
     def header_image(url, **args)

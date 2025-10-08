@@ -5,10 +5,9 @@
     %mj-column
       = sections @sections
 - else
-  - web_url = @email_delivery.web_url
-  = wrapper url: web_url do
+  = wrapper do
     - if header_url = @email_delivery.header_url
-      = header_image header_url, href: web_url, padding: 0
+      = header_image header_url, href: @email_delivery.web_url, padding: 0
     - else
       = header_image asset_url("logo.png"), width: logo_width, align: "left"
       %mj-section{ padding: 0 }
