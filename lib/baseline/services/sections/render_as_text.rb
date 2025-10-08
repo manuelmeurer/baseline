@@ -22,9 +22,9 @@ module Baseline
 
         def generate(section)
           [
-            section.headline.presence&.upcase,
+            section.headline&.upcase,
             Converters::HTMLToText.call(section.content.to_s)
-          ].compact
+          ].compact_blank
             .join("\n\n")
             .html_safe
         end
