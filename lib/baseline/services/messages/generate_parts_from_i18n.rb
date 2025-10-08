@@ -53,35 +53,33 @@ module Baseline
             sections = body_from_i18n(:email).then {
               Baseline::Sections::InitializeFromMarkdown.call _1
             }
-
-            kind_sections_service =
-              defined?(@message) ?
-                "Messages::Generate#{@message.class}#{@message.kind.classify}Sections" :
-                "MessageGroups::Generate#{@message_group.kind.classify}Sections"
-
-            kind_sections_service
-              .safe_constantize
-              &.call(@message)
-              &.then { sections.concat _1 }
           end
 
-          result = {
+          parts = {
             sections:
           }
 
-          result[:subject] =
+          parts[:subject] =
             persisted_message_group ?
-              I18n.interpolate(persisted_message_group.subject, i18n_params) :
+              persisted_message_group.subject&.then { I18n.interpolate _1, i18n_params } :
               subject_from_i18n
 
           if defined?(SlackDelivery)
-            result[:slack_body] =
+            parts[:slack_body] =
               persisted_message_group ?
-                I18n.interpolate(persisted_message_group.slack_body, i18n_params) :
+                persisted_message_group.slack_body&.then { I18n.interpolate _1, i18n_params } :
                 body_from_i18n(:slack)
           end
 
-          result
+          update_parts_service_name =
+            ("Messages::Update#{@message.class}#{@message.kind.classify}Parts" if defined?(@message)) ||
+            ("MessageGroups::Update#{@message_group.kind.classify}Parts" unless @message_group.persisted?)
+
+          if update_parts_service = update_parts_service_name&.safe_constantize
+            parts = update_parts_service.call(parts, @message || @message_group)
+          end
+
+          parts
         end
 
         def persisted_message_group
