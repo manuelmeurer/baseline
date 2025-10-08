@@ -99,7 +99,7 @@ if defined?(Rails)
         Rails.configuration.revision,
         dir
       ]
-      Rails.cache.fetch cache_key, force: Rails.env.development? do
+      Rails.cache.fetch(cache_key, force: Rails.env.development?) do
         Rails
           .application
           .assets
