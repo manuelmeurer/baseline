@@ -35,7 +35,7 @@ module Baseline
             .then { iterate_over(_1) }
             .then { remove_leading_and_trailing_whitespace(_1) }
             .then { remove_unnecessary_empty_lines(_1) }
-            .chomp
+            .strip
         end
 
         def fix_newlines(text)
@@ -72,7 +72,7 @@ module Baseline
         end
 
         def remove_unnecessary_empty_lines(text)
-          text.gsub(/\n\n\n*/im, "\n\n")
+          text.gsub(/\n\n\n+/im, "\n\n")
         end
 
         def trimmed_whitespace(text)
@@ -201,9 +201,10 @@ module Baseline
               href != "http://#{output}" &&
               href != "https://#{output}"
 
-              output = output.empty? ?
-                      href :
-                      "[#{output}](#{href})"
+              output =
+                output.empty? ?
+                  href :
+                  "[#{output}](#{href})"
             end
           end
 
@@ -215,7 +216,8 @@ module Baseline
         end
 
         def image_text(node)
-          %w[title alt].map { node.attribute(_1).presence }
+          %w[title alt]
+            .map { node.attribute(_1).presence }
             .compact
             .first
             &.then { "[#{_1}]" }
