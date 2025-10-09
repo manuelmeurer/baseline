@@ -271,6 +271,8 @@ module Baseline
       end
 
       def resolve_service(service_name)
+        service_name = service_name.to_s.gsub("__", "/")
+
         @resolved_services ||= {}
         @resolved_services[service_name] ||= begin
           service_namespaces
