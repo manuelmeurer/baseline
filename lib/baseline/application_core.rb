@@ -6,7 +6,8 @@ module Baseline
 
     included do
       baseline_spec = Gem.loaded_specs["baseline"]
-      if baseline_spec.source.is_a?(Bundler::Source::Path)
+      # Don't use `is_a?` here, since Bundler::Source::Git inherits from Bundler::Source::Path.
+      if baseline_spec.source.class == Bundler::Source::Path
         baseline_lib_path = File.join(baseline_spec.full_gem_path, "lib")
 
         config.watchable_dirs[baseline_lib_path] = %i[rb]
