@@ -131,12 +131,9 @@ module Baseline
             ).then {
               ExpenseInvoices::Lexoffice::CreateFile.call_async _1
             }
+            incoming_invoice.processed!
           else
-            Tasks::Create.call \
-              taskable:   incoming_invoice,
-              title:      "Incoming Invoice bearbeiten",
-              identifier: :handle,
-              if_absent:  :ignore
+            incoming_invoice._do_process(_async: true)
           end
         end
       end
