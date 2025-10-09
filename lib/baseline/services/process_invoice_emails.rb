@@ -128,9 +128,7 @@ module Baseline
           if create_expense_invoice
             incoming_invoice.create_expense_invoice!(
               pdf_file: PDFFile.new(original: pdf_file)
-            ).then {
-              ExpenseInvoices::Lexoffice::CreateFile.call_async _1
-            }
+            )._do_lexoffice__create_file(_async: true)
             incoming_invoice.processed!
           else
             incoming_invoice._do_process(_async: true)
