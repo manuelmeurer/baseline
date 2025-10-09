@@ -85,24 +85,10 @@ turbo-frame {
   width: 300px;
 }
 
-.max-width-150 {
-  max-width: 150px;
-}
-
-.max-width-350 {
-  max-width: 350px;
-}
-
-.max-width-500 {
-  max-width: 500px;
-}
-
-.max-width-800 {
-  max-width: 800px;
-}
-
-.max-width-1000 {
-  max-width: 1000px;
+@each $width in (50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000) {
+  .max-width-#{$width} {
+    max-width: #{$width}px;
+  }
 }
 
 .height-300 {
