@@ -15,7 +15,7 @@ module Baseline
       @form.button class: ["btn", "btn-lg", "btn-primary", *css_class] do
         safe_join [
           t(helpers.last_step? ? :finish : :next).capitalize,
-          icon(:forward, style: :solid)
+          component(:icon, :forward, style: :solid)
         ], " "
       end
     end

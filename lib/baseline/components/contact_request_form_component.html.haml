@@ -5,7 +5,7 @@
 
     - if @contact_request.errors.any?
       .error-message.mb-3
-        = icon :warning
+        = component :icon, :warning
         = @texts.fetch(:error)
         %br
         = @contact_request.errors.full_messages.join(tag.br).html_safe

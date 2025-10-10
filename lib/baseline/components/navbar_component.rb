@@ -129,7 +129,7 @@ module Baseline
         unless ::Current.userable
           next group.with_item_link([::Current.namespace, :login]) do
             safe_join [
-              icon("sign-in", fixed_width: true, class: "me-1"),
+              component(:icon, "sign-in", fixed_width: true, class: "me-1"),
               "Login"
             ], " "
           end
@@ -144,7 +144,7 @@ module Baseline
         group.with_item_dropdown(avatar_and_name, css_class: "avatar", align_end: true) do |dropdown|
           dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
             safe_join [
-              icon("sign-out", fixed_width: true, class: "me-1"),
+              component(:icon, "sign-out", fixed_width: true, class: "me-1"),
               "Log out"
             ], " "
           end

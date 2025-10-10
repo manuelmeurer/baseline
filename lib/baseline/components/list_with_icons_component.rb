@@ -18,9 +18,9 @@ module Baseline
           unless @icon.size == 2 && @icon.last.is_a?(Hash)
             raise ArgumentError, "When passing an array as icon, it must be the icon identifier and options hash."
           end
-          icon = icon(@icon.first, **@icon.last)
+          icon = component(:icon, @icon.first, **@icon.last)
         else
-          icon = icon(@icon)
+          icon = component(:icon, @icon)
         end
 
         tag.li do

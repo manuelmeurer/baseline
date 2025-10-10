@@ -47,15 +47,6 @@ module Baseline
       }
     end.freeze
 
-    ICON_VERSIONS = %i(
-      solid
-      regular
-      light
-      duotone
-      thin
-      brands
-    ).freeze
-
     %i[tag path].each do |suffix|
       define_method :"attachment_image_#{suffix}" do |attached_or_blob, version, **options|
         is_blob = !attached_or_blob.respond_to?(:attached?)
@@ -109,54 +100,12 @@ module Baseline
       end
     end
 
-    def icon_classes
-      {
-        nil => {
-          accept:   "fa-circle-check",
-          reject:   "fa-circle-xmark",
-          add:      "fa-circle-plus",
-          remove:   "fa-trash",
-          edit:     "fa-pen",
-          view:     "fa-eye",
-          info:     "fa-circle-info",
-          warning:  "fa-triangle-exclamation",
-          announce: "fa-bullhorn",
-          external: "fa-square-up-right",
-          back:     "fa-arrow-left-long",
-          forward:  "fa-arrow-right-long",
-          yes:      "fa-thumbs-up",
-          no:       "fa-thumbs-down"
-        }
-      }
+    if Date.current > Date.new(2026, 1, 1)
+      ReportError.call "remove this!"
     end
-
-    def icon(identifier, scope: nil, version: :regular, size: nil, fixed_width: false, **kwargs)
-      unless version.in?(ICON_VERSIONS)
-        raise "#{version} is not a valid versions: #{ICON_VERSIONS.join(", ")}"
-      end
-
-      icon_class = case
-        when identifier.class.in?([Symbol, Integer])
-          case ic = icon_classes.fetch(scope)
-          when Hash  then ic.fetch(identifier.to_sym)
-          when Array then ic[identifier] or raise "#{identifier} not found in icon classes: #{ic.join(", ")}"
-          else raise "Unexpected classes: #{ic.class}"
-          end
-        when scope
-          raise "Scope should be nil if identifier is not a symbol."
-        else
-          "fa-#{identifier}"
-        end
-
-      tag.i \
-        class: [
-          "fa-#{version}",
-          size&.then { "fa-#{_1}" },
-          ("fa-fw" if fixed_width),
-          icon_class,
-          kwargs.delete(:class)
-        ].compact,
-        **kwargs
+    def icon(...)
+      ReportError.call "replace with `component(:icon, ...)`"
+      component(:icon, ...)
     end
 
     def common_stimco
@@ -220,7 +169,7 @@ module Baseline
 
       heading = if heading
         [
-          icon&.then { icon _1, version: :solid, class: "me-1" },
+          icon&.then { component :icon, _1, version: :solid, class: "me-1" },
           heading
         ].compact
           .join(" ")
@@ -229,7 +178,7 @@ module Baseline
       end
 
       icon_and_text = if icon && !heading
-        icon(icon, version: :solid, size: "lg", class: "me-3")
+        component(:icon, icon, version: :solid, size: "lg", class: "me-3")
           .concat(tag.div(text)) # Wrap text in <div> to ensure that "display: flex" works as expected.
           .then { tag.div _1, class: "d-flex align-items-center" }
       end

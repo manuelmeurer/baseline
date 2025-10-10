@@ -1,26 +1,26 @@
 -# frozen_string_literal: true
 
 - button = helpers.capture_haml do
-  = icon "share-nodes"
+  = component :icon, "share-nodes"
   = t(:share).capitalize
 
 - tooltip = helpers.capture_haml do
   -# Add .my-1 to compensate for Bootstrap tooltip padding.
   .d-flex.flex-wrap.gap-2.my-1{ data: @clipboard_stimco.to_h }
     = link_to "#", class: "btn btn-dark flex-grow-1", data: @clipboard_stimco.action(:copy) do
-      = icon "link", fixed_width: true
+      = component :icon, "link", fixed_width: true
     = link_to "https://api.whatsapp.com/send?text=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "whatsapp", version: :brands, fixed_width: true
+      = component :icon, "whatsapp", version: :brands, fixed_width: true
     = link_to "https://t.me/share/url?url=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "telegram", version: :brands, fixed_width: true
+      = component :icon, "telegram", version: :brands, fixed_width: true
     = link_to "https://www.linkedin.com/feed/?shareActive=true&text=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "linkedin", version: :brands, fixed_width: true
+      = component :icon, "linkedin", version: :brands, fixed_width: true
     = link_to "https://www.facebook.com/sharer/sharer.php?u=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "facebook", version: :brands, fixed_width: true
+      = component :icon, "facebook", version: :brands, fixed_width: true
     = link_to "https://x.com/intent/post?url=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "x-twitter", version: :brands, fixed_width: true
+      = component :icon, "x-twitter", version: :brands, fixed_width: true
     = link_to "mailto:?body=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
-      = icon "envelope", fixed_width: true
+      = component :icon, "envelope", fixed_width: true
 
 %span{ data: @share_button_stimco.to_h }
   = link_to button, "#", class: "#{@button_classes} d-none", data: data_merge(@share_button_stimco.target(:native_button), @share_button_stimco.action(:share))

@@ -31,7 +31,7 @@ module Baseline
       def call
         tag.span class: @css_class, data: @data do
           safe_join [
-            @icon&.then { icon(*_1, fixed_width: true) },
+            @icon&.then { component(:icon, *_1, fixed_width: true) },
             content
           ], " "
         end

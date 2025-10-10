@@ -7,8 +7,8 @@
   .toast{ data: @stimco.target(:template) }
     .toast-header
       .title-success
-        = icon :accept, version: :solid
+        = component :icon, :accept, version: :solid
       .title-error
-        = icon :warning, version: :solid
+        = component :icon, :warning, version: :solid
       %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }
     .toast-body

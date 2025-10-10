@@ -5,10 +5,10 @@
 - actions = helpers.capture_haml do
   = content
   = @form.button class: [*button_classes, "btn-#{@submit_color}", @submit_css_class], data: @submit_data, disabled: @submit_disabled do
-    - safe_join [icon(@submit_icon), @submit_label], " "
+    - safe_join [component(:icon, @submit_icon), @submit_label], " "
   - if ::Current.modal_request
     = link_to "#", class: [*button_classes, "btn-outline-dark"], data: { bs_dismiss: "modal" } do
-      = icon :reject
+      = component :icon, :reject
       = t(:cancel).capitalize
 
 - case
