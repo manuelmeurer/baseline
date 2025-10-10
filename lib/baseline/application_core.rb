@@ -8,9 +8,12 @@ module Baseline
       baseline_spec = Gem.loaded_specs["baseline"]
       # Don't use `is_a?` here, since Bundler::Source::Git inherits from Bundler::Source::Path.
       if baseline_spec.source.class == Bundler::Source::Path
-        baseline_lib_path = File.join(baseline_spec.full_gem_path, "lib")
-
-        config.watchable_dirs[baseline_lib_path] = %i[rb]
+        {
+          "lib"            => %i[rb haml],
+          "app/javascript" => %i[js]
+        }.each {
+          config.watchable_dirs[File.join(baseline_spec.full_gem_path, _1)] = _2
+        }
 
         config.to_prepare do
           Zeitwerk::Registry
