@@ -1,6 +1,10 @@
 -# frozen_string_literal: true
 
-- content = helpers.capture_haml do
+- button = helpers.capture_haml do
+  = icon "share-nodes"
+  = t(:share).capitalize
+
+- tooltip = helpers.capture_haml do
   -# Add .my-1 to compensate for Bootstrap tooltip padding.
   .d-flex.flex-wrap.gap-2.my-1{ data: @clipboard_stimco.to_h }
     = link_to "#", class: "btn btn-dark flex-grow-1", data: @clipboard_stimco.action(:copy) do
@@ -18,6 +22,6 @@
     = link_to "mailto:?body=#{@url}", class: "btn btn-dark flex-grow-1", **helpers.external_link_attributes do
       = icon "envelope", fixed_width: true
 
-= link_to "#", class: @button_classes, title: content, data: helpers.stimco(:tooltip, options: { trigger: "click", placement: "bottom" }) do
-  = icon "share-nodes"
-  = t(:share).capitalize
+%span{ data: @share_button_stimco.to_h }
+  = link_to button, "#", class: "#{@button_classes} d-none", data: data_merge(@share_button_stimco.target(:native_button), @share_button_stimco.action(:share))
+  = link_to button, "#", class: @button_classes, title: tooltip, data: data_merge(@tooltip_stimco, @share_button_stimco.target(:web_button))
