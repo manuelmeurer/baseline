@@ -5,6 +5,8 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      config.hotwire.spark.html_extensions += %w[haml]
+
       baseline_spec = Gem.loaded_specs["baseline"]
       # Don't use `is_a?` here, since Bundler::Source::Git inherits from Bundler::Source::Path.
       if baseline_spec.source.class == Bundler::Source::Path
