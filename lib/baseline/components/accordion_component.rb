@@ -4,9 +4,9 @@ module Baseline
   class AccordionComponent < ApplicationComponent
     renders_many :items, "ItemComponent"
 
-    def initialize(id, expanded: true, css_class: nil)
-      @id, @expanded, @css_class =
-        id, expanded, css_class
+    def initialize(id, expanded: true, css_class: nil, header_button_css_class: nil)
+      @id, @expanded, @css_class, @header_button_css_class =
+        id, expanded, css_class, header_button_css_class
     end
 
     class ItemComponent < ApplicationComponent
