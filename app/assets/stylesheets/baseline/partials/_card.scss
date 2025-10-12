@@ -26,6 +26,7 @@
   border-radius: 0 2rem 0 2rem;
 
   .card-img-top {
-    border-top-right-radius: 2rem;
+    border-top-right-radius: 2rem !important;
+    border-top-left-radius: 0 !important;
   }
 }
