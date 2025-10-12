@@ -4,8 +4,6 @@ module Baseline
   class IdentifyURL < ApplicationService
     Result = Data.define(:icon, :name, :icon_and_name)
 
-    delegate :icon, to: "ApplicationController.helpers"
-
     def call(url, square_icon: false)
       cache_key = [
         :identify_url,

@@ -13,8 +13,10 @@ module Baseline
       prepend MemoWise
     end
 
-    delegate :link_to, :tag, :link_to_modal, :pluralize, to: :"ApplicationController.helpers"
-    delegate :t, :l, to: :"I18n"
+    delegate :link_to, :tag, :link_to_modal, :pluralize, :component,
+      to: "ApplicationController.helpers"
+    delegate :t, :l,
+      to: "I18n"
 
     if defined?(ActiveJob)
       queue_as :default
