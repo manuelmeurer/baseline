@@ -597,6 +597,22 @@ module Baseline
         }
     end
 
+    def normalize_url(url)
+      case url
+      when Array
+        unless url.last.is_a?(Hash)
+          url << {}
+        end
+        url.last[:only_path] = false
+        url = url_for(url)
+      when Hash
+        url = url_for(**url, only_path: false)
+      when String
+        url
+      else raise "Unexpected URL: #{url.class}"
+      end
+    end
+
     private
 
       AUTO_LINK_RE = %r(

@@ -87,11 +87,11 @@ module Baseline
 
               case keyword
               when :embed
-                embed = ApplicationController.render(
-                  partial: "shared/iframely_embed",
-                  locals:  { url: link[:href] }
-                )
-                node.after tag.div(class: "mt-3 mb-3") { embed }
+                tag.div(class: "my-3") {
+                  component(:preview_card, link[:href])
+                }.then {
+                  node.after _1
+                }
                 if link.next&.name == "br"
                   link.next.remove
                 end

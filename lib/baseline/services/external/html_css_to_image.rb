@@ -58,26 +58,8 @@ module Baseline
           ].join(":")
 
           Rails.cache.fetch(cache_key, force:) do
-            embed = ApplicationController.render(
-              partial: "shared/iframely_embed",
-              locals:  { url: }
-            )
-            embed_url = Addressable::URI.new(
-              scheme: "https",
-              host:   "cdn.iframe.ly",
-              path:   "embed.js",
-              query_values: {
-                key: Rails.application.env_credentials.iframely_api_key_hash!
-              }
-            ).to_s
-            js = ApplicationController
-              .helpers
-              .javascript_include_tag(embed_url)
-            html = tag.html { tag.body { embed + js } }
-            image_url = call(:generate_image_url,
-              html:,
-              selector: ".iframely-embed"
-            )
+            html      = tag.html { tag.body { component(:preview_card, url) } }
+            image_url = call(:generate_image_url, html:)
 
             [
               Time.current.iso8601,
