@@ -5,6 +5,11 @@ module Baseline
     Result = Data.define(:icon, :name, :icon_and_name)
 
     def call(url, square_icon: false)
+      require "addressable/uri"
+
+      uri = Addressable::URI.parse(url)
+      url = uri.normalize.to_s
+
       cache_key = [
         :identify_url,
         ActiveSupport::Digest.hexdigest(url),
@@ -12,7 +17,7 @@ module Baseline
       ].join(":")
 
       Rails.cache.fetch cache_key do
-        case host = URI(url).host.delete_prefix("www.").downcase
+        case host = uri.host.delete_prefix("www.").downcase
         when "youtube.com"
           icon = component(:icon, "#{"square-" if square_icon}youtube", version: :brands)
           name = "YouTube"
