@@ -13,7 +13,7 @@ module Baseline
 
     def before_render
       @css_class       = class_names(:card, @css_class, "h-100": @equal_height)
-      @image_css_class = class_names("card-img-top", "cover": @image_cover)
+      @image_css_class = class_names("card-img-top", "cover": @image_cover, "height-#{@image_cover.unless(Integer, 200)}": @image_cover)
       @icon_css_class  = ["card-icon-#{@icon_position}", *@icon_css_class]
     end
   end
