@@ -6,7 +6,7 @@ module Baseline
       link_or_spacer =
         tag.mj_section do
           tag.mj_column do
-            if @email_delivery.web_url
+            if @email_delivery&.web_url
               render "baseline/mailers/view_in_browser"
             else
               tag.mj_spacer
