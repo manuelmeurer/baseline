@@ -74,6 +74,34 @@ module Baseline
         @og_data ||= {}
         @og_data.merge! data
       end
+
+      helper_method def namespaced_or_default_asset(source)
+        cache_key = [
+          ::Current.namespace,
+          Rails.configuration.revision,
+          ActiveSupport::Digest.hexdigest(source)
+        ]
+
+        Rails.cache.fetch cache_key, force: Rails.env.development? do
+          namespaced_source = File.join(::Current.namespace.to_s, source)
+          [
+            namespaced_source,
+            source
+          ].lazy.map {
+            Rails.application.assets.load_path.find(_1)
+          }.compact.first&.then {
+            {
+              url:  view_context.asset_path(_1.logical_path),
+              path: _1.path
+            }
+          } or
+            raise "Asset not found: neither '#{namespaced_source}' nor '#{source}' exist"
+        end.then {
+          Data
+            .define(:url, :path)
+            .new(**_1)
+        }
+      end
     end
 
     class_methods do

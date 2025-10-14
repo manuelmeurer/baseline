@@ -462,14 +462,37 @@ module Baseline
     end
 
     def icon_links
-      tag.link(rel: "icon",             href: "/favicon.ico", sizes: "32x32")
-      tag.link(rel: "icon",             href: image_path("icons/icon.svg"), type: "image/svg+xml")
-      tag.link(rel: "apple-touch-icon", href: image_path("icons/apple-touch-icon.png"))
+      [
+        tag.link(
+          rel:   "icon",
+          href:  "/favicon.ico",
+          sizes: "32x32"
+        ),
+        tag.link(
+          rel:  "icon",
+          href: namespaced_or_default_asset("icons/icon.svg").url,
+          type: "image/svg+xml"
+        ),
+        tag.link(
+          rel:  "apple-touch-icon",
+          href: namespaced_or_default_asset("icons/apple-touch-icon.png").url
+        )
+      ]
     end
 
     def manifest_link_if_allowed
-      if controller_path.split("/").first.camelize.constantize.const_get(:EssentialsController).new.render_manifest?
-        tag.link(rel: "manifest", href: url_for([::Current.namespace, :manifest, format: :json]))
+      if controller_path
+        .split("/")
+        .first
+        .camelize
+        .constantize
+        .const_get(:EssentialsController)
+        .new
+        .render_manifest?
+
+        tag.link \
+          rel:  "manifest",
+          href: url_for([::Current.namespace, :manifest, format: :json])
       end
     end
 
@@ -572,6 +595,8 @@ module Baseline
           rails_env:   Rails.env
         ),
         og_data_tags,
+        icon_links,
+        manifest_link_if_allowed,
         plausible_javascript_tag,
         stylesheet_link_tag(::Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
         stylesheet_tags,

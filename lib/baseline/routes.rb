@@ -14,6 +14,10 @@ module Baseline
           get :robots,
             defaults: { format: "text" },
             format:   true
+
+          get :favicon,
+            defaults: { format: "ico" },
+            format:   true
         end
       end
 

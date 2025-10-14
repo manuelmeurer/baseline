@@ -21,6 +21,21 @@ module Baseline
           redirect_to url_for(format: :text)
         end
       end
+
+      before_action only: :sitemap do
+        unless params[:format] == "xml"
+          redirect_to url_for(format: :xml)
+        end
+      end
+
+      before_action only: :favicon do
+        case
+        when !render_favicon?
+          head :not_found
+        when params[:format] != "ico"
+          redirect_to url_for(format: :ico)
+        end
+      end
     end
 
     def robots
@@ -57,20 +72,29 @@ module Baseline
       render xml: sitemap
     end
 
+    def favicon
+      asset_path = namespaced_or_default_asset("icons/favicon.ico").path
+      send_file asset_path, disposition: "inline"
+    end
+
     def manifest
+      asset_paths = [192, 512, :mask].index_with do |suffix|
+        namespaced_or_default_asset("icons/icon-#{suffix}.png").url
+      end
+
       json = manifest_overrides.reverse_merge(
         name: Rails.application.class.module_parent_name.underscore.titleize,
         icons: [
           {
-            src:   view_context.asset_path("icons/icon-192.png"),
+            src:   asset_paths.fetch(192),
             type:  "image/png",
             sizes: "192x192"
           }, {
-            src:   view_context.asset_path("icons/icon-512.png"),
+            src:   asset_paths.fetch(512),
             type:  "image/png",
             sizes: "512x512"
           }, {
-            src:     view_context.asset_path("icons/icon-mask.png"),
+            src:     asset_paths.fetch(:mask),
             type:    "image/png",
             sizes:   "512x512",
             purpose: "maskable"
@@ -86,6 +110,7 @@ module Baseline
     end
 
     def render_manifest? = false
+    def render_favicon?  = true
 
     private
 
