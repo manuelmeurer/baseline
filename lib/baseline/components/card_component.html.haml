@@ -16,7 +16,7 @@
     - raise "Unexpected @image: #{@image.class}"
 
   - if @header
-    %h5.card-header
+    %h5.card-header{ class: @header_css_class, data: @header_data }
       = @header.html_safe
 
   - if @icon || @above_title || @title || content
