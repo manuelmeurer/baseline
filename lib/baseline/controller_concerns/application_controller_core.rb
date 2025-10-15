@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  module ControllerCore
+  module ApplicationControllerCore
     extend ActiveSupport::Concern
 
     included do
