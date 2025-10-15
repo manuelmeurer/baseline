@@ -38,22 +38,22 @@ module Baseline
       # Invoices
 
       # https://docs.pretix.eu/en/latest/api/resources/invoices.html#list-of-all-invoices
-      add_action :list_invoices do |event, params = {}|
+      add_action :list_invoices do |event_id, params = {}|
         paginate_get \
-          path_with_prefix(event, "invoices"),
+          path_with_prefix(event_id, "invoices"),
           params
       end
 
       # https://docs.pretix.eu/en/latest/api/resources/invoices.html#fetching-individual-invoices
-      add_action :get_invoice do |event, id|
+      add_action :get_invoice do |event_id, id|
         request :get,
-          path_with_prefix(event, "invoices", id)
+          path_with_prefix(event_id, "invoices", id)
       end
 
       # https://docs.pretix.eu/en/latest/api/resources/invoices.html#get--api-v1-organizers-(organizer)-events-(event)-invoices-(number)-download-
-      add_action :download_invoice do |event, invoice_number|
+      add_action :download_invoice do |event_id, invoice_number|
         path_with_prefix(
-          event,
+          event_id,
           "invoices",
           invoice_number,
           "download"
@@ -118,6 +118,15 @@ module Baseline
           path_with_prefix(event_id, "quotas")
       end
 
+      # Gift cards
+
+      # https://docs.pretix.eu/dev/api/resources/giftcards.html#post--api-v1-organizers-(organizer)-giftcards-
+      add_action :create_gift_card do |params|
+        request :post,
+          path_with_prefix(nil, "giftcards"),
+          json: params
+      end
+
       private
 
         def request_auth = "Token #{Rails.application.env_credentials.pretix_token!}"
@@ -128,12 +137,14 @@ module Baseline
           end
         end
 
-        def path_with_prefix(*path, **params)
+        def path_with_prefix(event_id = nil, *path_parts, **params)
+          path = File.join("organizers", organizer)
+          if event_id
+            path = File.join(path, "events", event_id)
+          end
           File.join(
-            "organizers",
-            organizer,
-            "events",
-            *path.map(&:to_s),
+            path,
+            *path_parts.map(&:to_s),
             "" # Make sure the path has a trailing slash.
           ).then {
             Addressable::URI.new(
