@@ -15,6 +15,12 @@ module Baseline
       I18n.load_path += Dir[root.join("config", "locales", "**", "*.yml")]
 
       app.config.assets.paths << root.join("app", "javascript")
+
+      components_path = root.join("lib", "baseline", "components")
+      config.paths["app/views"] << components_path
+      ActiveSupport.on_load(:action_controller) do
+        append_view_path components_path
+      end
     end
 
     initializer "baseline.assets.precompile" do |app|
