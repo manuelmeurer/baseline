@@ -14,7 +14,15 @@ module Baseline
         "#{key}_fit": {
           crop: :fit
         },
-        "#{key}_fit_gray": {
+        "#{key}_fit_blackwhite": {
+          crop:   :fit,
+          effect: :blackwhite
+        },
+        "#{key}_fit_blackwhite_10": {
+          crop:   :fit,
+          effect: "blackwhite:10"
+        },
+        "#{key}_fit_grayscale": {
           crop:   :fit,
           effect: :grayscale
         },
