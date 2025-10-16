@@ -15,5 +15,11 @@ module Baseline
         raise "#{@ratio} is not a valid ratio. Valid ratios are #{RATIOS.join(', ')}"
       end
     end
+
+    def call
+      tag.div class: "ratio ratio-#{@ratio}" do
+        tag.iframe src: @url, allow: @allow.join("; ")
+      end
+    end
   end
 end

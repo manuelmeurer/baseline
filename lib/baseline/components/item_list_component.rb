@@ -22,6 +22,22 @@ module Baseline
         end
     end
 
+    def call
+      css_class = class_names(
+        *@css_class,
+        "d-flex",
+        "flex-column",
+        "row-gap-#{@gap.fetch(:row)}",
+        "column-gap-#{@gap.fetch(:column)}",
+        "flex-#{@breakpoint}-row" => @breakpoint,
+        "align-items-#{@breakpoint}-center" => @breakpoint && @center_vertically
+      )
+
+      tag.div class: css_class do
+        safe_join items, " "
+      end
+    end
+
     class ItemComponent < ApplicationComponent
       def initialize(icon: nil, css_class: nil, data: nil)
         @icon, @css_class, @data =

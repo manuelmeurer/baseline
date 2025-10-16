@@ -8,6 +8,12 @@ module Baseline
       @css_class = css_class
     end
 
+    def call
+      tag.ul class: ["fa-ul", @css_class] do
+        safe_join items, "\n"
+      end
+    end
+
     class ItemComponent < ApplicationComponent
       def initialize(icon: nil)
         @icon = icon
