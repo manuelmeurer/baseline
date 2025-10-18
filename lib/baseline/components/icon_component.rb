@@ -22,7 +22,7 @@ module Baseline
         info:     "fa-circle-info",
         warning:  "fa-triangle-exclamation",
         announce: "fa-bullhorn",
-        external: "fa-square-up-right",
+        external: "fa-arrow-up-right-from-square",
         back:     "fa-arrow-left-long",
         forward:  "fa-arrow-right-long",
         yes:      "fa-thumbs-up",
