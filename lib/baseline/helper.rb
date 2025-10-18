@@ -83,7 +83,8 @@ module Baseline
         # ActiveStorage::Service::* subclasses don't exist if they are not used.
         case service = attached_or_blob.service.class.to_s.demodulize
         when "DiskService"
-          transformation = case version
+          transformation =
+            case version
             when /_fit/   then :resize_to_fit
             when /_thumb/ then :resize_to_fill
             else raise "Unexpected version: #{version}"
