@@ -595,8 +595,8 @@ module Baseline
         csrf_meta_tags,
         csp_meta_tag,
         javascript_importmap_tags(
-          ::Current.namespace.to_s,
-          importmap: Rails.application.namespace_importmap
+          ::Current.namespace.to_s
+          # importmap: Rails.application.namespace_importmap
         ),
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
