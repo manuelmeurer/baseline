@@ -590,43 +590,14 @@ module Baseline
         end
       end
 
-      @importmaps ||= {}
-      importmap =
-        @importmaps[::Current.namespace] ||=
-          Rails.application.importmap.clone.tap {
-            # This should only be called once per revision and namespace in production.
-            if Date.current > Date.new(2025, 11, 1)
-              ReportError.call "remove this!"
-            end
-            cache_key = [
-              Rails.configuration.revision,
-              ::Current.namespace
-            ]
-            if Rails.cache.exist?(cache_key)
-              ReportError.call "cache_key #{cache_key} already exists, caching doesn't seem to work properly."
-            end
-            Rails.cache.write(cache_key, "")
-
-            dirs = _1.directories.select {
-              it.exclude?("/controllers/") ||
-                Rails
-                  .configuration
-                  .app_stimulus_namespaces
-                  .fetch(::Current.namespace)
-                  .include?(
-                    it[%r{/controllers/(\w+)}, 1].to_sym
-                  )
-            }
-            _1.instance_variable_set \
-              "@directories",
-              dirs
-          }
-
       safe_join [
         head_tags.to_a,
         csrf_meta_tags,
         csp_meta_tag,
-        javascript_importmap_tags(::Current.namespace.to_s, importmap:),
+        javascript_importmap_tags(
+          ::Current.namespace.to_s,
+          importmap: Rails.application.namespace_importmap
+        ),
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
           action_name:,
