@@ -2,17 +2,21 @@
 
 module Baseline
   class LoadMoreComponent < ApplicationComponent
-    def initialize(scope:)
-      @scope = scope
+    def initialize(pagy:)
+      @pagy = pagy
     end
 
     def call
-      return if @scope.none? || @scope.last_page?
+      @pagy.vars[:request_path] = url_for(format: :turbo_stream)
 
-      helpers.turbo_frame_tag :load_more,
-        src:     params.permit!.merge(page: @scope.next_page, format: :turbo_stream),
-        loading: :lazy do
+      url =
+        @pagy.is_a?(Pagy::Keyset) ?
+          pagy_keyset_next_url(@pagy) :
+          pagy_next_url(@pagy)
 
+      return unless url
+
+      helpers.turbo_frame_tag :load_more, src: url, loading: :lazy do
         tag.div class: "mt-5 text-center" do
           component :loading
         end
