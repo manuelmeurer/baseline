@@ -60,7 +60,7 @@ module Baseline
 
     def auth_group
       with_group do |group|
-        unless ::Current.userable
+        unless ::Current.userable&.then { _1.class.to_s == ::Current.userable_class }
           next group.with_item_link([::Current.namespace, :login]) do
             safe_join [
               component(:icon, "sign-in", fixed_width: true, class: "me-1"),
