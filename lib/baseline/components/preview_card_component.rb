@@ -22,10 +22,10 @@ module Baseline
     private
 
       def before_render_card
-        require "baseline/services/external/link_metadata"
+        require "baseline/services/external/microlink"
 
         @url         = helpers.normalize_url(@url)
-        metadata     = External::LinkMetadata.get_metadata(@url, cache: 1.year)
+        metadata     = External::Microlink.get_metadata(@url, cache: 1.year)
         @title       = metadata.fetch(:title)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
         @description = metadata.fetch(:description)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
         @image_url   = metadata.dig(:image, :url)&.then { CGI.unescapeHTML(_1) }
