@@ -105,6 +105,17 @@ module Baseline
     end
 
     class_methods do
+      def rate_limit_create
+        rate_limit \
+          to:     10,
+          within: 3.minutes,
+          only:   :create,
+          with: -> {
+            add_flash :alert, t(:generic_error)
+            html_redirect_to(new_session_path)
+          }
+      end
+
       def redirect_to_clean_id_or_current_slug(only: :show, ignore_missing: false, &block)
         before_action only: do
           id = params.fetch(:id)
