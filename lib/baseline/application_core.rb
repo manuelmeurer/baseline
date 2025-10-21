@@ -15,12 +15,14 @@ module Baseline
           config.watchable_dirs[File.join(baseline_spec.full_gem_path, _1)] = _2
         }
 
-        config.to_prepare do
-          Zeitwerk::Registry
-            .loaders
-            .each
-            .detect { _1.tag == "baseline" }
-            .reload
+        if Rails.env.development?
+          config.to_prepare do
+            Zeitwerk::Registry
+              .loaders
+              .each
+              .detect { _1.tag == "baseline" }
+              .reload
+          end
         end
       end
 
