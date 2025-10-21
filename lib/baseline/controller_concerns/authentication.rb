@@ -97,13 +97,15 @@ module Baseline
             cookies.signed.permanent[cookie_name] = {
               value:     user.id,
               httponly:  true,
-              same_site: :lax
+              secure:    true,
+              same_site: :lax,
+              domain:    :all
             }
           end
 
           def unauthenticate
             set_current_user
-            cookies.delete(cookie_name)
+            cookies.delete(cookie_name, domain: :all)
           end
       end
     end

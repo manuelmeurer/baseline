@@ -17,6 +17,7 @@ de:
   today: heute
   tomorrow: morgen
   yesterday: gestern
+  generic_error: Ein Fehler ist aufgetreten, bitte versuche es später noch einmal.
 
   messages:
     unsubscribe: Von diesen Benachrichtigungen abmelden
@@ -25,6 +26,14 @@ de:
   password_hint:
     minimum: "mindestens %{value} Zeichen"
     maximum: "höchstens %{value} Zeichen"
+
+  reset_password:
+    title: Passwort zurücksetzen
+    text: Bitte gib deine E-Mail an, um dein Passwort zurückzusetzen.
+    email_blank: Bitte gib deine E-Mail an.
+    email_sent: Wenn es diese E-Mail in unserem System gibt, wird gleich eine E-Mail mit Anweisungen zum Zurücksetzen des Passworts dorthin geschickt.
+    invalid_token: Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.
+    success: Dein Passwort wurde aktualisiert.
 
   genders:
     male: Herr

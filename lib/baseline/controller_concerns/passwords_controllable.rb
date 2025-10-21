@@ -10,8 +10,8 @@ module Baseline
       before_action only: %i[edit update] do
         @user = User.find_by_password_reset_token!(params[:token])
       rescue ActiveSupport::MessageVerifier::InvalidSignature
-        add_flash :alert, "Password reset link is invalid or has expired."
-        html_redirect_to [:new, ::Current.namespace, :password]
+        add_flash :alert, t(:invalid_token, scope: :reset_password)
+        html_redirect_to action: :new
       end
     end
 
@@ -19,15 +19,24 @@ module Baseline
     end
 
     def create
-      if user = find_user(params[:email])
-        UserMailer
-          .with(user:, namespace: ::Current.namespace)
-          .password_reset
-          .deliver_later
+      if params[:email].blank?
+        message = t(:email_blank, scope: :reset_password)
+        add_flash :alert, message
+        redirect_to action: :new
+        return
       end
 
-      add_flash :notice, "Password reset instructions sent (if user with that email address exists)."
-      html_redirect_to [::Current.namespace, :root]
+      if user = find_user(params[:email])
+        user
+          .messages
+          .password_reset
+          .build
+          ._do_create_and_send \
+            delivery_method: :email
+      end
+
+      add_flash :notice, t(:email_sent, scope: :reset_password)
+      html_redirect_to [::Current.namespace, :login]
     end
 
     def edit
@@ -35,7 +44,8 @@ module Baseline
 
     def update
       if @user.update(params.permit(:password, :password_confirmation))
-        add_flash :notice, "Password has been reset."
+        authenticate @user
+        add_flash :notice, t(:success, scope: :reset_password)
         html_redirect_to [::Current.namespace, :root]
       else
         error_details = @user.errors.details
@@ -58,15 +68,13 @@ module Baseline
           @user.errors.full_messages.to_sentence
         else
           ReportError.call "Unexpected errors: #{error_details}"
-          "Error, please try again."
+          t(:generic_error)
         end
         render_turbo_response \
           error_message:
       end
     end
 
-    private def find_user(email)
-      User.find_by(email:)
-    end
+    private def find_user(email) = User.find_by(email:)
   end
 end

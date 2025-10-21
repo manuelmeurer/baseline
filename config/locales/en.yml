@@ -17,6 +17,7 @@ en:
   today: today
   tomorrow: tomorrow
   yesterday: yesterday
+  generic_error: An error occurred, please try again later.
 
   messages:
     unsubscribe: Unsubscribe from these notifications
@@ -25,6 +26,14 @@ en:
   password_hint:
     minimum: "min %{value} characters"
     maximum: "max %{value} characters"
+
+  reset_password:
+    title: Reset password
+    text: Enter your email to reset your password.
+    email_blank: Please enter your email.
+    email_sent: If this email address exists in our system, an email with instructions for changing the password will be sent to it right away.
+    invalid_token: Password reset link is invalid or has expired.
+    success: Your password has been updated.
 
   genders:
     male: Mr.
