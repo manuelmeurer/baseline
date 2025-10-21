@@ -101,7 +101,7 @@ module Baseline
                 }
 
                 case param
-                when Class
+                when Class, String
                   unless polymorphic_reflection
                     raise "A parameter of type #{param.class} only makes sense for polymorphic associations."
                   end
