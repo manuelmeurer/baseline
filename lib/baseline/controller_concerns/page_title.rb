@@ -11,7 +11,7 @@ module Baseline
             private
 
               define_method :page_title do
-                t(:title, **page_title_attributes, scope: action_i18n_scope, default: nil) ||
+                t(:title, **page_title_attributes, scope: page_title_scope, default: nil) ||
                   default_method&.then { send _1 } ||
                   controller_name.titleize
               end.then {
@@ -19,7 +19,10 @@ module Baseline
               }
           end
 
-          private def page_title_attributes = {}
+          private
+
+            def page_title_attributes = {}
+            def page_title_scope      = action_i18n_scope
         end
       end
 
