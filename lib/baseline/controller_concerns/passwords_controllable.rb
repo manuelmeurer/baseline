@@ -6,6 +6,7 @@ module Baseline
 
     included do
       require_unauthenticated_access
+      rate_limit_create
 
       before_action only: %i[edit update] do
         @user = User.find_by_password_reset_token!(params[:token])
