@@ -5,7 +5,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      allow_unauthenticated_access
+      try :allow_unauthenticated_access
       layout false
     end
 
