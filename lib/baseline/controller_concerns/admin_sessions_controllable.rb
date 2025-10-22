@@ -20,7 +20,7 @@ module Baseline
         AdminUser
           .find(admin_user_id)
           .then {
-            authenticate_and_redirect(_1)
+            authenticate_and_redirect(_1.user)
           }
         return
       end
