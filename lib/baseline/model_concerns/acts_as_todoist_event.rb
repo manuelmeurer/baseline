@@ -21,7 +21,8 @@ module Baseline
       data["initiator"]
         .fetch("email")
         .then {
-          find_admin_user _1
+          AdminUser.with_email(_1).first ||
+            AdminUser.with_alternate_emails(_1).first
         }
     end
 
