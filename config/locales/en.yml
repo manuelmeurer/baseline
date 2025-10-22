@@ -19,6 +19,11 @@ en:
   yesterday: yesterday
   generic_error: An error occurred, please try again later.
 
+  authentication:
+    already_logged_in: You are already logged in.
+    cta: Please log in to continue.
+    success: Successfully logged in.
+
   messages:
     unsubscribe: Unsubscribe from these notifications
     view_in_browser: View in browser

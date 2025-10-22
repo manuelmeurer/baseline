@@ -2,16 +2,22 @@
 
 module Baseline
   module Authentication
-    def self.[](user_class_name)
+    def self.[](scope = :all)
       Module.new do
         extend ActiveSupport::Concern
 
         included do
-          class_eval { @auth_user_class_name = user_class_name }
+          class_eval { @auth_user_scope = "User.#{scope}" }
 
           before_action do
-            if user = params[:t].presence&.then { auth_user_class.try(:find_by_login_token, _1) }
+            if user = params[:t].presence&.then { auth_user_scope.try(:find_by_login_token, _1) }
+              if respond_to?(:login_token_guard, true)
+                next unless login_token_guard(user)
+              end
+
               authenticate user
+
+              # Don't use `html_redirect_to` here, because another format might be requested, e.g. ICS.
               redirect_to params.permit!.except(:t)
             end
           end
@@ -23,26 +29,24 @@ module Baseline
         end
 
         class_methods do
-          def auth_user_class_name
-            @auth_user_class_name || superclass.auth_user_class_name
-          end
+          def auth_user_scope = @auth_user_scope || superclass.auth_user_scope
 
           def allow_unauthenticated_access(**)
             # If the `require_authentication` callback has not been defined, an ArgumentError is raised.
             skip_before_action(:require_authentication, **)
           rescue ArgumentError
           else
-            before_action(:resume_session, **) # Set Current.user
+            before_action(:resume_session, **) # Set ::Current.user
           end
 
           def require_unauthenticated_access(**)
             allow_unauthenticated_access(**)
 
             before_action(**) do
-              if current_user
+              if ::Current.user
                 html_redirect_back_or_to \
                   [::Current.namespace, :root],
-                  alert: "You are already logged in."
+                  alert: t(:already_logged_in, scope: :authentication)
               end
             end
           end
@@ -50,31 +54,38 @@ module Baseline
 
         private
 
-          def auth_user_class               = @auth_user_class ||= self.class.auth_user_class_name.constantize
-          def auth_user_class_identifier    = self.class.auth_user_class_name.underscore
-          def cookie_name                   = :"#{auth_user_class_identifier}_id"
-          def current_user                  = ::Current.public_send(auth_user_class_identifier)
-          def set_current_user(value = nil) = ::Current.public_send("#{auth_user_class_identifier}=", value)
+          def auth_user_scope
+            @auth_user_scope ||=
+              self
+                .class
+                .auth_user_scope
+                .then { eval _1 }
+          end
+
+          def cookie_name = :remember_token
 
           def require_authentication
             request_authentication unless authenticated?
           end
 
           def resume_session
-            set_current_user(
-              current_user ||
-                cookies
-                  .signed[cookie_name]
-                  &.then {
-                    auth_user_class.find_by(id: _1)
-                  }
-            )
+            return if ::Current.user
+
+            user = cookies
+              .signed[cookie_name]
+              &.then {
+                auth_user_scope.find_by(remember_token: _1)
+              }
+
+            if user
+              ::Current.user = user
+            end
           end
 
           def request_authentication
             session[:return_to] = request.url
             redirect_to [::Current.namespace, :login],
-              alert: "Please log in to continue."
+              alert: t(:cta, scope: :authentication)
           end
 
           def after_authentication_url
@@ -84,18 +95,20 @@ module Baseline
 
           def authenticate_and_redirect(user)
             authenticate(user)
-            html_redirect_to after_authentication_url,
-              notice: "Successfully logged in."
+            html_redirect_to \
+              after_authentication_url,
+              notice: t(:success, scope: :authentication)
           end
 
           def authenticate(user)
-            unless user.is_a?(auth_user_class)
-              raise "Unexpected user class: #{user.class}"
+            unless auth_user_scope.exists?(id: user)
+              raise "Unexpected user: #{user}"
             end
 
-            set_current_user(user)
+            ::Current.user = user
+
             cookies.signed.permanent[cookie_name] = {
-              value:     user.id,
+              value:     user.remember_token,
               httponly:  true,
               secure:    true,
               same_site: :lax,
@@ -104,14 +117,15 @@ module Baseline
           end
 
           def unauthenticate
-            set_current_user
+            ::Current.user.reset_remember_token!
+            ::Current.user = nil
             cookies.delete(cookie_name, domain: :all)
           end
       end
     end
 
     def self.included(base)
-      base.include self["User"]
+      base.include self[]
     end
   end
 end

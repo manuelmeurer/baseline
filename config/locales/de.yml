@@ -19,6 +19,11 @@ de:
   yesterday: gestern
   generic_error: Ein Fehler ist aufgetreten, bitte versuche es später noch einmal.
 
+  authentication:
+    already_logged_in: Du bist bereits eingeloggt.
+    cta: Bitte logge dich ein, um fortzufahren.
+    success: Erfolgreich eingeloggt.
+
   messages:
     unsubscribe: Von diesen Benachrichtigungen abmelden
     view_in_browser: Im Browser ansehen
