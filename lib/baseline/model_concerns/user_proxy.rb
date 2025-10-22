@@ -21,10 +21,8 @@ module Baseline
       end
 
       def self.method_missing(method, ...)
-        @method_missing_admin_users ||= {}
-        @method_missing_admin_users[method] ||=
-          with_first_name(method.capitalize).first or
-            super
+        with_first_name(method.capitalize).first or
+          super
       end
     end
   end
