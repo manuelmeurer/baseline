@@ -384,7 +384,9 @@ module Baseline
         end
 
         unless to_s == "Task" || column_names.include?("tasks")
-          include HasTasks
+          has_many :tasks,
+            as:        :taskable,
+            dependent: :destroy
         end
 
         columns.each do |column|
