@@ -53,7 +53,7 @@ module Baseline
           }
       }
 
-      after_initialize do
+      before_validation do
         if new_record? &&
           recipients.none? &&
           deliverable.respond_to?(:valid_recipients) &&
