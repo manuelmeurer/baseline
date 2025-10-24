@@ -26,7 +26,7 @@ module Baseline
           avoid_paragraphs
         ]
 
-        Rails.cache.fetch cache_key do
+        Rails.cache.fetch cache_key, force: Rails.env.development? do
           text = text.gsub(URL_REGEX) do |url|
             TYPOGRAPHIC_CHARS.inject(url) do |escaped_url, (chars, escaped_chars)|
               escaped_url.gsub(chars, escaped_chars)
