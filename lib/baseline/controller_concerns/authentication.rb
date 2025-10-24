@@ -11,8 +11,8 @@ module Baseline
 
           before_action do
             if user = params[:t].presence&.then { auth_user_scope.try(:find_by_login_token, _1) }
-              if respond_to?(:login_token_guard, true)
-                next unless login_token_guard(user)
+              if respond_to?(:allow_login_with_token?, true)
+                next unless allow_login_with_token?(user)
               end
 
               authenticate user
