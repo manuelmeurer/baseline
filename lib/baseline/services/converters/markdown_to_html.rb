@@ -4,6 +4,14 @@ module Baseline
   module Converters
     class MarkdownToHTML < ApplicationService
       LINE_BREAK_REGEX = %r{<br(\s*/)?>}.freeze
+      URL_REGEX = %r{\bhttps?://\S+}.freeze
+      TYPOGRAPHIC_CHARS = {
+        "..." => '\.\.\.',
+        "--"  => '\-\-',
+        "---" => '\-\-\-',
+        "<<"  => '\<\<',
+        ">>"  => '\>\>'
+      }.freeze
 
       def call(text, sanitize: false, avoid_paragraphs: false)
         return "" if text.blank?
@@ -19,6 +27,12 @@ module Baseline
         ]
 
         Rails.cache.fetch cache_key do
+          text = text.gsub(URL_REGEX) do |url|
+            TYPOGRAPHIC_CHARS.inject(url) do |escaped_url, (chars, escaped_chars)|
+              escaped_url.gsub(chars, escaped_chars)
+            end
+          end
+
           # If we ever want to process the text without adding any block level elements (<p> etc.),
           # use this approach: https://island94.org/2025/07/customize-rails-i18n-key-suffixes-like-md-for-markdown
           Kramdown::Document
