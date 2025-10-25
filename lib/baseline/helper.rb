@@ -69,7 +69,7 @@ module Baseline
             .to_sym
         when !attached_or_blob.attached?
           if Rails.env.production?
-            raise "Attached is not attached_or_blob."
+            raise "Attached #{attached_or_blob.inspect} is not attached."
           else
             return
           end
