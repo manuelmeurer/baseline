@@ -3,14 +3,14 @@
 module Baseline
   class URLManager
     class << self
-      def domains = const_get(:DOMAINS).values
+      def domains = const_get(:NAMESPACE_DOMAINS).values
 
       def route_constraints(namespace)
-        if Rails.env.production? && domain = const_get(:DOMAINS)[namespace]
+        if Rails.env.production? && domain = const_get(:NAMESPACE_DOMAINS)[namespace]
           { host: domain }
         else
           {
-            subdomain: const_get(:SUBDOMAINS).fetch(namespace, namespace.to_s),
+            subdomain: const_get(:NAMESPACE_SUBDOMAINS).fetch(namespace, namespace.to_s),
             domain:    Rails.application.env_credentials.host!
           }
         end
