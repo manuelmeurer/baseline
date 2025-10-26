@@ -117,23 +117,25 @@ if defined?(Rails)
     end
 
     def namespace_importmap
-      @importmaps ||= {}
-      @importmaps[::Current.namespace] ||=
+      @importmaps ||= Rails
+        .configuration
+        .app_stimulus_namespaces
+        .transform_values do |entrypoints|
+
         Rails.application.importmap.clone.tap {
           dirs = _1.directories.select {
             it.exclude?("/controllers/") ||
-              Rails
-                .configuration
-                .app_stimulus_namespaces
-                .fetch(::Current.namespace)
-                .include?(
-                  it[%r{/controllers/(\w+)}, 1].to_sym
-                )
+              it.match?(%r{/controllers/(#{entrypoints.join("|")})\b})
           }
           _1.instance_variable_set \
             "@directories",
             dirs
+          _1.instance_variable_set \
+            "@cache",
+            {}
         }
+      end
+      @importmaps.fetch(::Current.namespace)
     end
   end
 end

@@ -590,13 +590,36 @@ module Baseline
         end
       end
 
+      # @importmaps ||= Rails
+      #   .configuration
+      #   .app_stimulus_namespaces
+      #   .transform_values do |entrypoints|
+
+      #   Rails.application.importmap.clone.tap {
+      #     dirs = _1.directories.select {
+      #       it.exclude?("/controllers/") ||
+      #         it.match?(%r{/controllers/(#{entrypoints.join("|")})\b})
+      #     }
+      #     _1.instance_variable_set \
+      #       "@directories",
+      #       dirs
+      #     # _1.instance_variable_set \
+      #     #   "@packages",
+      #     #   {}
+      #     _1.instance_variable_set \
+      #       "@cache",
+      #       {}
+      #   }
+      # end
+      # namespace_importmap = @importmaps.fetch(::Current.namespace)
+
       safe_join [
         head_tags.to_a,
         csrf_meta_tags,
         csp_meta_tag,
         javascript_importmap_tags(
-          ::Current.namespace.to_s
-          # importmap: Rails.application.namespace_importmap
+          ::Current.namespace.to_s,
+          importmap: Rails.application.namespace_importmap
         ),
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
