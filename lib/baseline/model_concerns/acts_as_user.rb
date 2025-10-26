@@ -12,6 +12,16 @@ module Baseline
       end
     end
 
+    class_methods do
+      def test_user
+        find_by(email: Rails.application.env_credentials.mail_from!)
+      end
+    end
+
+    def test_user?
+      email == Rails.application.env_credentials.mail_from!
+    end
+
     def reset_remember_token!
       begin
         token = SecureRandom.hex(3)
