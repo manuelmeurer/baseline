@@ -9,7 +9,10 @@ module Baseline
         if Rails.env.production? && domain = const_get(:DOMAINS)[namespace]
           { host: domain }
         else
-          { subdomain: const_get(:SUBDOMAINS).fetch(namespace, namespace.to_s) }
+          {
+            subdomain: const_get(:SUBDOMAINS).fetch(namespace, namespace.to_s),
+            domain:    Rails.application.env_credentials.host!
+          }
         end
       end
     end
