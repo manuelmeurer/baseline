@@ -109,14 +109,6 @@ module Baseline
       end
     end
 
-    if Date.current > Date.new(2026, 1, 1)
-      ReportError.call "remove this!"
-    end
-    def icon(...)
-      ReportError.call "replace with `component(:icon, ...)`"
-      component(:icon, ...)
-    end
-
     def common_stimco
       [
         controller_name,
