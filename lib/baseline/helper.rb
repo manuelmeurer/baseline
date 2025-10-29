@@ -75,9 +75,7 @@ module Baseline
           end
         end
 
-        options = CLOUDINARY_VERSIONS
-          .fetch(version)
-          .merge(options)
+        cloudinary_options = CLOUDINARY_VERSIONS.fetch(version)
 
         # Don't compare `attached_or_blob.service.class` directly since the
         # ActiveStorage::Service::* subclasses don't exist if they are not used.
@@ -90,7 +88,7 @@ module Baseline
             else raise "Unexpected version: #{version}"
             end
           variant = attached_or_blob.variant(
-            transformation => options.fetch_values(:width, :height)
+            transformation => cloudinary_options.fetch_values(:width, :height)
           )
           public_send \
             :"image_#{suffix}",
@@ -100,12 +98,11 @@ module Baseline
           public_send \
             :"cl_image_#{suffix}",
             attached_or_blob.key,
+            **cloudinary_options,
             **options
         else
           raise "Unexpected service: #{service}"
         end
-          .gsub(/\s+(width|height)=['"]\d+['"]/, "")
-          .html_safe
       end
     end
 
