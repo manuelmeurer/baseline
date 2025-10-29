@@ -353,7 +353,8 @@ GEM
     zstd-ruby (1.5.7.0)
 
 PLATFORMS
-  arm64-darwin
+  arm64-darwin-24
+  x86_64-linux
 
 DEPENDENCIES
   addressable (~> 2.8)
