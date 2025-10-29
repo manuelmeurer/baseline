@@ -4,7 +4,7 @@
   - case @image
   - when Array
     - if @image.first.attached?
-      = helpers.attachment_image_tag *@image, class: @image_css_class
+      = component(:attachment_image, *@image, class: @image_css_class)
   - when String
     = image_tag @image, class: @image_css_class
   - when ActiveStorage::Attached, ActiveStorage::Blob

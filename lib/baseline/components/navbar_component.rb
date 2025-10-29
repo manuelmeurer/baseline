@@ -70,7 +70,7 @@ module Baseline
         end
 
         avatar_and_name = safe_join([
-          helpers.attachment_image_tag(::Current.userable.photo_or_dummy, :sm_thumb),
+          component(:attachment_image, ::Current.userable.photo_or_dummy, :sm_thumb),
           ::Current.userable.first_name,
           nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
         ], " ")

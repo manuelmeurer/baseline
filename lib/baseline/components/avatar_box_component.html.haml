@@ -9,7 +9,7 @@
     - when ActiveStorage::Attached, ActiveStorage::Blob
       - if @imageable.try(:attached?) == false
         - raise "Attachment is missing: #{@imageable.id}"
-      = helpers.attachment_image_tag @imageable, :md_thumb, class: css_class
+      = component(:attachment_image, @imageable, :md_thumb, class: css_class)
     - else
       - raise "Unexpected @imageable: #{@imageable.class}"
   - image.if(@image_wrapper) { _2 } # Since `@image_wrapper` is a Proc, the second argument passed to the block is `@image_wrapper.call(image)`.
