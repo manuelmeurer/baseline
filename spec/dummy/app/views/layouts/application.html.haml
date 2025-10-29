@@ -1,0 +1,27 @@
+-# frozen_string_literal: true
+
+- raise "Need content!" unless content_for?(:content)
+
+!!!
+
+%html{ lang: I18n.locale, data: { bs_theme: :light } }
+
+  %head
+
+    %meta{ charset: "utf-8" }
+
+    %meta{ "http-equiv": "Content-Type", content: "text/html; charset=utf-8" }
+
+    %meta{ name: "viewport",        content: "width=device-width,initial-scale=1" }
+    %meta{ name: "view-transition", content: "same-origin" }
+    %meta{ name: "title",           content: "Baseline Dummy" }
+
+    %title
+      Baseline Dummy
+
+    = all_head_tags
+
+  %body{ class: body_css_class, data: body_data }
+    = yield :content
+    = component :toast
+    = component :modal

@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+unless %w[-h --help help -v version].include?(ARGV.first)
+  require_relative "config/environment"
+end
+
+Baseline.load_thor_tasks
+
+class << Thor
+  def exit_on_failure? = true
+end

@@ -1,0 +1,9 @@
+-# frozen_string_literal: true
+-# locals: ()
+
+= component :navbar, sticky: :top, brand: site_name do |navbar|
+  - if Current.user
+    = navbar.with_group css_class: "ms-auto" do |group|
+      = group.with_item_link admin_logout_path, data: { turbo_method: :delete } do
+        = component :icon, "power-off"
+        = t :log_out

@@ -1,0 +1,10 @@
+-# frozen_string_literal: true
+
+- content_for :content do
+  = render "admin/navbar"
+  %main
+    .container-lg
+      = flashes
+      = yield
+
+= render template: "layouts/application"
