@@ -2,15 +2,12 @@
 
 source "https://rubygems.org"
 
-ruby file: ".ruby-version"
+gemspec path: "../../"
 
 gem "addressable",                              "~> 2.8"
-gem "baseline",                                 path: "../../"
 gem "bcrypt",                                   "~> 3.1"
-gem "bootsnap",                                 "~> 1.17", require: false
 gem "bootstrap",                                "~> 5.3"
 gem "cloudinary",                               "~> 2.2"
-gem "csv",                                      "~> 3.3", require: false
 gem "dartsass-rails",                           "~> 0.5"
 gem "email_validator",                          "~> 2.2"
 gem "friendly_id",                              "~> 5.5"
@@ -21,10 +18,13 @@ gem "importmap-rails",                          "~> 2.0"
 gem "kramdown-parser-gfm",                      "~> 1.1"
 gem "kramdown",                                 "~> 2.5"
 gem "lexxy",                                    "~> 0.1"
+gem "listen",                                   "~> 3.9"
+gem "paper_trail",                              "~> 16.0"
 gem "propshaft",                                "~> 1.0"
 gem "rack-cors",                                "~> 3.0"
 gem "rails-i18n",                               "~> 8.0"
 gem "rails",                                    "~> 8.0.1"
+gem "sentry-rails",                             "~> 5.8"
 gem "solid_cable",                              "~> 3.0"
 gem "solid_cache",                              "~> 1.0"
 gem "solid_queue",                              "~> 1.0"
@@ -33,16 +33,3 @@ gem "stimulus-rails",                           "~> 1.3"
 gem "turbo-rails",                              "~> 2.0"
 gem "view_component",                           "~> 4.0"
 gem "zstd-ruby",                                "~> 1.5"
-
-group :development do
-  gem "annotaterb",                             "~> 4.4", require: false
-  gem "better_errors",                          "~> 2.8"
-  gem "binding_of_caller",                      "~> 1.0"
-  gem "database_consistency",                   "~> 2.0", require: false
-  gem "guard-rspec",                            "~> 4.2", require: false
-  gem "guard",                                  "~> 2.12"
-  gem "hotwire-spark",                          "~> 0.1"
-  gem "listen",                                 "~> 3.9"
-  gem "rubocop-rails-omakase",                  "~> 1.1", require: false
-  gem "rubocop",                                "~> 1.75", require: false
-end

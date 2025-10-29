@@ -1,2 +1,4 @@
 de:
-  hallo: welt
+  site_names:
+    admin: Dummy Admin DE
+    web: Dummy Web DE

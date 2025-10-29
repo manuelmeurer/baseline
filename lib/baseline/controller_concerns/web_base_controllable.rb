@@ -5,7 +5,9 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      helper :web
+      suppress NameError do
+        helper :web
+      end
 
       skip_forgery_protection
 

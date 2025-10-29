@@ -1,2 +1,4 @@
 en:
-  hello: world
+  site_names:
+    admin: Dummy Admin EN
+    web: Dummy Web EN

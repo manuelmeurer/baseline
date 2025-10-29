@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# require "baseline"
-
 RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.filter_run_when_matching :focus

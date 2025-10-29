@@ -27,6 +27,6 @@ Gem::Specification.new do |gem|
   gem.require_paths         = ["lib"]
 
   gem.add_dependency "zeitwerk"
-  gem.add_development_dependency "rubocop-rails-omakase", "~> 1.1"
-  gem.add_development_dependency "rspec", "~> 3.13"
+
+  gem.add_development_dependency "rspec-rails", "~> 8.0"
 end

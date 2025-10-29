@@ -6,7 +6,7 @@ require "rails/all"
 
 Bundler.require(*Rails.groups)
 
-module BaselineDummy
+module Dummy
   class Application < Rails::Application
     include Baseline::ApplicationCore
 

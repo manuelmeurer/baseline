@@ -3,20 +3,19 @@
 Rails.application.routes.draw do
   extend Baseline::Routes
 
+  direct :web_root do
+    %i[web home]
+  end
+
   constraints URLManager.route_constraints(:web) do
     namespace :web, path: "" do
       concerns :errors, :essentials, :health
 
-      I18n.with default_locale: :de do
-        localized do
-          Web::PagesController::PAGES.each do |id|
-            if id == "home"
-              root "pages#show", id:, as: id
-              get "v/:via" => "pages#show", id:, as: "#{id}_via"
-            else
-              get "#{id}(/v/:via)" => "pages#show", id:, as: id
-            end
-          end
+      Web::PagesController::PAGES.each do |id|
+        if id == "home"
+          root "pages#show", id:, as: id
+        else
+          get id => "pages#show", id:, as: id
         end
       end
     end
