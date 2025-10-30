@@ -25,5 +25,7 @@ module Baseline
           super
       end
     end
+
+    def user = super || build_user
   end
 end
