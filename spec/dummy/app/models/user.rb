@@ -47,12 +47,10 @@ end
 #  last_name       :string           not null
 #  locale          :string           not null
 #  password_digest :string
-#  raffle          :boolean          not null
 #  remember_token  :string
 #  slug            :string           not null
 #  subscriptions   :json             not null
 #  title           :string
-#  vip             :boolean          not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #

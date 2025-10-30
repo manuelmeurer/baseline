@@ -4,7 +4,9 @@ source "https://rubygems.org"
 
 gemspec path: "../../"
 
+gem "active_storage_validations",               "~> 3.0"
 gem "addressable",                              "~> 2.8"
+gem "annotaterb",                               "~> 4.4", require: false
 gem "bcrypt",                                   "~> 3.1"
 gem "bootstrap",                                "~> 5.3"
 gem "cloudinary",                               "~> 2.2"

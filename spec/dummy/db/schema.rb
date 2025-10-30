@@ -360,10 +360,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_075153) do
     t.datetime "updated_at", null: false
     t.string "slug", null: false
     t.string "title"
-    t.boolean "raffle", null: false
     t.json "subscriptions", default: [], null: false
     t.string "locale", null: false
-    t.boolean "vip", null: false
     t.string "remember_token"
     t.string "password_digest"
     t.integer "gender"
