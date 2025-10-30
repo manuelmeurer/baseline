@@ -28,5 +28,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "zeitwerk"
 
-  gem.add_development_dependency "rspec-rails", "~> 8.0"
+  gem.add_development_dependency "rspec-rails",      "~> 8.0"
+  gem.add_development_dependency "shoulda-matchers", "~> 6.0"
 end

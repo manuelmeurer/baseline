@@ -8,6 +8,7 @@ require File.expand_path("dummy/config/environment", __dir__)
 
 require "rspec/rails"
 require "view_component/test_helpers"
+require "shoulda/matchers"
 
 Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
@@ -33,5 +34,12 @@ RSpec.configure do |config|
 
   config.before :each, type: :request do
     host! Rails.application.env_credentials.host!
+  end
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end

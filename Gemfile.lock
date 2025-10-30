@@ -120,6 +120,8 @@ GEM
       rspec-support (~> 3.13)
     rspec-support (3.13.6)
     securerandom (0.4.1)
+    shoulda-matchers (6.5.0)
+      activesupport (>= 5.2.0)
     stringio (3.1.7)
     thor (1.4.0)
     tsort (0.2.0)
@@ -136,6 +138,7 @@ PLATFORMS
 DEPENDENCIES
   baseline!
   rspec-rails (~> 8.0)
+  shoulda-matchers (~> 6.0)
 
 BUNDLED WITH
    2.5.11
