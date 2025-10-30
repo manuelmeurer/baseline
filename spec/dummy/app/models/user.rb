@@ -9,7 +9,7 @@ class User < ApplicationRecord
           Baseline::HasFriendlyID,
           Baseline::HasLocale[default: :de],
           Baseline::HasLoginToken,
-          Baseline::HasPassword
+          Baseline::HasPassword[default: "password"]
 
   has_one :admin_user, dependent: :destroy
 
@@ -19,14 +19,7 @@ class User < ApplicationRecord
   validates :gender, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :password, length: { minimum: 8, allow_blank: true }
   validates :photo, content_type: common_image_file_types
-
-  after_initialize do
-    if new_record?
-      self.password ||= Rails.application.env_credentials.initial_password!
-    end
-  end
 
   private
 
