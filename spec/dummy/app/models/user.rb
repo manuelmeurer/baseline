@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_one_attached :photo
 
   validates :email, uniqueness: { allow_nil: true }
+  validates :gender, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :password, length: { minimum: 8, allow_blank: true }
