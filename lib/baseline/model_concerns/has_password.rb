@@ -20,12 +20,10 @@ module Baseline
             before_validation on: :create do
               self.password ||= default
             end
-          end
-        end
 
-        if default
-          def password_changed?
-            !authenticate(default)
+            define_method :password_changed? do
+              !authenticate(default)
+            end
           end
         end
       end
