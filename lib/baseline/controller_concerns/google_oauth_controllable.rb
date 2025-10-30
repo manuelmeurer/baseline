@@ -117,7 +117,11 @@ module Baseline
       def find_and_authenticate_admin_user(email, first_name, last_name)
         admin_user =
           AdminUser.with_email(email).first ||
-          AdminUser.create!(first_name:, last_name:, email:)
+          AdminUser.create!(
+            email:,
+            first_name: first_name.presence || email,
+            last_name:  last_name.presence  || email
+          )
 
         authenticate_and_redirect(admin_user.user)
       end
