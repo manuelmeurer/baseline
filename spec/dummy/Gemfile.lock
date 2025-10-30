@@ -191,6 +191,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.1.0)
+    memo_wise (1.13.0)
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
@@ -382,6 +383,7 @@ DEPENDENCIES
   kramdown-parser-gfm (~> 1.1)
   lexxy (~> 0.1)
   listen (~> 3.9)
+  memo_wise (~> 1.9)
   paper_trail (~> 16.0)
   propshaft (~> 1.0)
   rack-cors (~> 3.0)
@@ -463,6 +465,7 @@ CHECKSUMS
   loofah (2.24.1) sha256=655a30842b70ec476410b347ab1cd2a5b92da46a19044357bbd9f401b009a337
   mail (2.9.0) sha256=6fa6673ecd71c60c2d996260f9ee3dd387d4673b8169b502134659ece6d34941
   marcel (1.1.0) sha256=fdcfcfa33cc52e93c4308d40e4090a5d4ea279e160a7f6af988260fa970e0bee
+  memo_wise (1.13.0) sha256=30220c38c4cef410849bc73553c58664dc2c91c6379e4a1df22aea02358b716b
   mini_magick (5.3.1) sha256=29395dfd76badcabb6403ee5aff6f681e867074f8f28ce08d78661e9e4a351c4
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   minitest (5.26.0) sha256=f5817ad09f863a4f7eac917707c1ca5c09cdc4a35e17d91171760178324d2c30
