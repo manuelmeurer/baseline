@@ -2,7 +2,7 @@
 
 module Baseline
   module External
-    class Github < Base
+    class Github < ::External::Base
       add_action :dispatch_workflow do |repo, id, ref, **inputs|
         Poller.poll retries: 10, errors: Octokit::InternalServerError do
           client.workflow_dispatch \
