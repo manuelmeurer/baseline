@@ -53,9 +53,8 @@ module Baseline
           }
       }
 
-      before_validation do
-        if new_record? &&
-          recipients.none? &&
+      before_validation on: :create do
+        if recipients.none? &&
           deliverable.respond_to?(:valid_recipients) &&
           deliverable.valid_recipients.one?
 
