@@ -5,10 +5,11 @@ module Baseline
     class Genderize < ::External::Base
       BASE_URL = "https://api.genderize.io".freeze
 
-      add_action :get_gender, run_unless_prod: true do |name|
+      add_action :get_gender, run_unless_prod: true do |name, locale = :de|
         cache_key = [
-          self.class.to_s.parameterize,
-          __method__,
+          self.class.to_s,
+          :get_gender,
+          locale,
           name
         ]
 
@@ -17,7 +18,7 @@ module Baseline
             :get, "",
             params: {
               name:,
-              country_id: :DE
+              country_id: locale.upcase
             }
           ).fetch(:gender)
         end
