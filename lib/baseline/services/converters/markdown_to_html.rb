@@ -4,7 +4,12 @@ module Baseline
   module Converters
     class MarkdownToHTML < ApplicationService
       LINE_BREAK_REGEX = %r{<br(\s*/)?>}.freeze
-      URL_REGEX = %r{\bhttps?://\S+}.freeze
+      URL_REGEX = %r{
+        (?<!\]\() # avoid matching markdown links
+        \b
+        https?://
+        \S+
+      }ix.freeze
       TYPOGRAPHIC_CHARS = {
         "..." => '\.\.\.',
         "--"  => '\-\-',
