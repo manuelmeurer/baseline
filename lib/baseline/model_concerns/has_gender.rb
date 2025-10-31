@@ -13,14 +13,17 @@ module Baseline
           validate: { allow_nil: true }
       }
 
-      before_validation on: :create do
-        if gender.nil? &&
-          self.class.validators_on(:gender).any?(ActiveRecord::Validations::PresenceValidator) &&
-          try(:first_name).present?
+      before_validation :set_gender,
+        on: :create,
+        if: -> {
+          self.class.validators_on(:gender).any?(ActiveRecord::Validations::PresenceValidator)
+        }
+    end
 
-          require "baseline/services/external/genderize"
-          self.gender = Baseline::External::Genderize.get_gender(first_name)
-        end
+    def set_gender
+      if gender.nil? && try(:first_name).present?
+        require "baseline/services/external/genderize"
+        self.gender = Baseline::External::Genderize.get_gender(first_name)
       end
     end
   end
