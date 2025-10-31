@@ -20,6 +20,16 @@ module Baseline
         }
       end
 
+      validate if: :user do
+        user
+          .tap(&:valid?)
+          .errors
+          .each do |error|
+
+          errors.add :user, "#{error.attribute} #{error.message}"
+        end
+      end
+
       def self.method_missing(method, ...)
         with_first_name(method.capitalize).first or
           super
