@@ -20,9 +20,7 @@ module SessionsControllable
       return
     end
 
-    authenticate user
-    add_flash :notice, "You are now logged in."
-    html_redirect_to [Current.namespace, :root]
+    authenticate_and_redirect(user)
   end
 
   def destroy

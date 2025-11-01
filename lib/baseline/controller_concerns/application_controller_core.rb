@@ -319,5 +319,16 @@ module Baseline
       def non_dev_fresh_when(...)
         !Rails.env.development? && fresh_when(...)
       end
+
+      def allowed_host?(url)
+        url
+          .unless(-> { _1.present? }) { return false }
+          .unless(URLFormatValidator.regex) { "https://#{_1}" }
+          .then { Addressable::URI.parse(_1).host }
+          .then {
+            _1.match?(/\b#{Rails.application.env_credentials.host!}\z/) ||
+              _1.in?(URLManager.domains)
+          }
+      end
   end
 end

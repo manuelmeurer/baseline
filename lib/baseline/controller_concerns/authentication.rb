@@ -17,8 +17,8 @@ module Baseline
 
               authenticate user
 
-              # Don't use `html_redirect_to` here, because another format might be requested, e.g. ICS.
-              redirect_to params.permit!.except(:t)
+              redirect_to_return_to_or_to \
+                params.permit!.except(:t)
             end
           end
 
@@ -54,6 +54,24 @@ module Baseline
 
         private
 
+          def redirect_to_return_to_or_to(url, **kwargs)
+            if return_to = params[:return_to].presence || session.delete(:return_to).presence
+              unless return_to.start_with?("/")
+                unless allowed_host?(return_to)
+                  ReportError.call "Invalid return_to: #{return_to}"
+                end
+                kwargs[:allow_other_host] = true
+              end
+
+              url = return_to
+            end
+
+            # Don't use `html_redirect_to` here, because another format might be requested, e.g. ICS.
+            redirect_to \
+              url,
+              **kwargs
+          end
+
           def auth_user_scope
             @auth_user_scope ||=
               self
@@ -88,17 +106,15 @@ module Baseline
               alert: t(:cta, scope: :authentication)
           end
 
-          def after_authentication_url
-            session.delete(:return_to) ||
-              [::Current.namespace, :root]
-          end
-
           def authenticate_and_redirect(user)
             authenticate(user)
-            html_redirect_to \
+
+            redirect_to_return_to_or_to \
               after_authentication_url,
               notice: t(:success, scope: :authentication)
           end
+
+          def after_authentication_url = [::Current.namespace, :root]
 
           def authenticate(user)
             unless auth_user_scope.exists?(id: user)
