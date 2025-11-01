@@ -14,7 +14,7 @@
 - else
 
   %p
-    Please log in with your business Google account:
+    Please log in with your Google account:
 
   = form_with url: url_for, data: { turbo: false } do |form|
     = component :form_actions, form, style: :send, submit_label: "Let's go"
