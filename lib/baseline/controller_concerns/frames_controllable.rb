@@ -12,12 +12,11 @@ module Baseline
     def show
       set_noindex_header
 
-      template       = "web/frames/#{params[:id]}"
-      _cache_objects = cache_objects
+      template = "web/frames/#{params[:id]}"
 
       return if fresh_when(
-        _cache_objects,
-        etag: [*_cache_objects, ::Current.user&.id],
+        cache_objects,
+        etag: [*cache_objects, ::Current.user&.id],
         template:
       )
 
