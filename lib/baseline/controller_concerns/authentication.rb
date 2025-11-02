@@ -89,15 +89,13 @@ module Baseline
           def resume_session
             return if ::Current.user
 
-            user = cookies
+            cookies
               .signed[cookie_name]
               &.then {
                 auth_user_scope.find_by(remember_token: _1)
+              }&.then {
+                set_current_user(_1)
               }
-
-            if user
-              ::Current.user = user
-            end
           end
 
           def request_authentication
@@ -121,21 +119,33 @@ module Baseline
               raise "Unexpected user: #{user}"
             end
 
-            ::Current.user = user
-
-            cookies.signed.permanent[cookie_name] = {
-              value:     user.remember_token,
-              httponly:  true,
-              secure:    true,
-              same_site: :lax,
-              domain:    :all
-            }
+            set_current_user(user)
           end
 
           def unauthenticate
             ::Current.user.reset_remember_token!
-            ::Current.user = nil
-            cookies.delete(cookie_name, domain: :all)
+            set_current_user(nil)
+          end
+
+          def set_current_user(user)
+            if ::Current.user = user
+              %i[id email name].index_with {
+                user&.public_send _1
+              }.then {
+                Sentry.set_user(**_1)
+              }
+
+              cookies.signed.permanent[cookie_name] = {
+                value:     user.remember_token,
+                httponly:  true,
+                secure:    true,
+                same_site: :lax,
+                domain:    :all
+              }
+            else
+              Sentry.set_user({})
+              cookies.delete(cookie_name, domain: :all)
+            end
           end
       end
     end
