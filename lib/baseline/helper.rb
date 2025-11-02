@@ -96,7 +96,7 @@ module Baseline
     def flashes
       flash
         .map do |level, message|
-          level = { notice: "success", alert: "danger" }[level.to_sym] || level
+          level = { notice: "success", alert: "danger" }.fetch(level.to_sym, level)
           alert level, message
         end
         .compact
