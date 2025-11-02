@@ -104,7 +104,7 @@ module Baseline
         helpers.public_send \
           :"cl_image_#{suffix}",
           @attached_or_blob.key,
-          **cloudinary_options,
+          transformation: cloudinary_options,
           **@options
       else
         raise "Unexpected service: #{service_name}"
