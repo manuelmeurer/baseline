@@ -2,6 +2,19 @@
 
 module Baseline
   class PreviewCardComponent < ApplicationComponent
+    YOUTUBE_REGEX = %r{
+      (?:
+        youtube\.com/
+        (?:
+          watch\?v=|
+          embed/|
+          shorts/
+        )|
+        youtu\.be/
+      )
+      ([A-Za-z0-9_-]{11})
+    }x.freeze
+
     def initialize(url)
       @url = url
       @id  = "preview-card-#{SecureRandom.hex(3)}"
@@ -33,7 +46,7 @@ module Baseline
       end
 
       def before_render_youtube
-        unless youtube_id = @url[%r{/watch\?v=(.+)}, 1]
+        unless youtube_id = @url[YOUTUBE_REGEX, 1]
           raise "Could not determine YouTube ID from URL: #{@url}"
         end
         @url = "https://www.youtube.com/embed/#{youtube_id}"
