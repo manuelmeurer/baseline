@@ -7,15 +7,18 @@
     ##{@id} {
       display: flex;
       text-decoration: none;
-      max-width: 500px;
-      height: 125px;
+      width: 100%;
+      max-width: 650px;
+      min-height: 125px;
+      aspect-ratio: 4 / 1;
       border: 1px solid #ccc;
       border-radius: 4px;
       overflow: hidden;
+      container-type: inline-size;
 
       .preview-card-image {
         background: url("#{@image_url}") center/cover no-repeat;
-        width: 125px;
+        width: 25%;
       }
 
       .preview-card-content {
@@ -35,23 +38,35 @@
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           line-height: 1.3;
+
+          @container (min-width: 575px) {
+            line-height: 1.5;
+          }
         }
 
         .preview-card-title {
+          font-size: max(1rem, 3cqi);
           font-weight: bold;
           margin-bottom: 5px;
         }
 
         .preview-card-description,
         .preview-card-website {
-          font-size: 0.85em;
+          font-size: max(0.85rem, 2.5cqi);
         }
 
         .preview-card-website {
+          display: flex;
+          align-items: center;
+          row-gap: 5px;
           position: absolute;
           left: 15px;
           bottom: 5px;
           color: #666;
+
+          img {
+            height: 1em;
+          }
         }
       }
     }
@@ -64,6 +79,7 @@
       .preview-card-description
         = @description
       .preview-card-website
+        = image_tag @website_image
         = @website
 
 - when :youtube

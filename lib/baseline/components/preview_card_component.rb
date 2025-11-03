@@ -37,12 +37,13 @@ module Baseline
       def before_render_card
         require "baseline/services/external/microlink"
 
-        @url         = helpers.normalize_url(@url)
-        metadata     = External::Microlink.get_metadata(@url, cache: 1.year)
-        @title       = metadata.fetch(:title)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
-        @description = metadata.fetch(:description)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
-        @image_url   = metadata.dig(:image, :url)&.then { CGI.unescapeHTML(_1) }
-        @website     = IdentifyURL.call(@url).name
+        @url           = helpers.normalize_url(@url)
+        metadata       = External::Microlink.get_metadata(@url, cache: 1.year)
+        @title         = metadata.fetch(:title)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
+        @description   = metadata.fetch(:description)&.then { CGI.unescapeHTML(CGI.unescapeHTML(_1)) }
+        @image_url     = metadata.dig(:image, :url)&.then { CGI.unescapeHTML(_1) }
+        @website       = IdentifyURL.call(@url).name
+        @website_image = External::LogoDev.get_url(@url, size: 30)
       end
 
       def before_render_youtube
