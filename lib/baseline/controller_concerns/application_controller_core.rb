@@ -191,7 +191,7 @@ module Baseline
         .then { Addressable::URI.parse(_1).host }
         .then {
           _1.match?(/\b#{Rails.application.env_credentials.host!}\z/) ||
-            _1.in?(URLManager.domains)
+            _1.in?(::URLManager.domains)
         }
     end
 
