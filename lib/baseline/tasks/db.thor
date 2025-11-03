@@ -143,7 +143,7 @@ module Baseline
       end
 
       def restore_sqlite(local_path)
-        FileUtils.rm(db_config.database)
+        FileUtils.rm_f(db_config.database)
         FileUtils.cp(local_path, db_config.database)
         puts "Probably the -shm and -wal files need to be removed, otherwise we might get a corrupted file error."
       end
