@@ -73,9 +73,8 @@ module Baseline
         form:     nil,
         body:     nil)
 
-        base_url ||= begin
+        base_url ||= suppress NameError do
           self.class::BASE_URL
-        rescue NameError
         end
 
         url =
