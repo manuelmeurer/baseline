@@ -11,7 +11,7 @@ module Baseline
       delegate \
         :to_s, :login_token,
         *METHODS,
-        *User.genders.keys.map { "#{_1}?" },
+        *User.try(:genders)&.keys&.map { "#{_1}?" },
         to: :user
 
       FIELDS.each do |attribute|
