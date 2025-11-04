@@ -330,5 +330,11 @@ module Baseline
       def non_dev_fresh_when(...)
         !Rails.env.development? && fresh_when(...)
       end
+
+      def route_exists?(path)
+        suppress NoMethodError do
+          !!url_for(path)
+        end
+      end
   end
 end

@@ -1,20 +1,37 @@
 -# frozen_string_literal: true
 
-%h2
+%h1
   Login
 
-- if Rails.env.development?
+.row
+  .col-md-6.col-lg-4
 
-  %p
-    Select user to log in as:
+    - if Rails.env.development?
 
-    = form_with url: url_for, data: stimco(:autosubmit) do |form|
-      = component :form_field, form, :select, :admin_user_id, choices: options_from_collection_for_select(AdminUser.all, :id, :name), include_blank: true, label_style: false
+      .mt-5
+        %p
+          Select user to log in with:
 
-- else
+        = form_with url: url_for, data: stimco(:autosubmit) do |form|
+          = component :form_field, form, :select, :admin_user_id, choices: options_from_collection_for_select(AdminUser.all, :id, :name), include_blank: true, label_style: false
 
-  %p
-    Please log in with your Google account:
+    - else
 
-  = form_with url: url_for, data: { turbo: false } do |form|
-    = component :form_actions, form, style: :send, submit_label: "Let's go"
+      - if @oauth_available
+
+        .my-5.pb-5.border-bottom
+          %p
+            Log in with your Google account:
+
+          = form_with url: url_for, data: { turbo: false } do |form|
+            = component :form_actions, form, style: :send, submit_label: "Let's go"
+
+      .mt-5
+        %p
+          Log in with email and password:
+
+        = form_with url: url_for do |form|
+          = component :form_field, form, :email, :email, required: true
+          = component :form_field, form, :password, :password, required: true
+
+          = component :form_actions, form, style: :send
