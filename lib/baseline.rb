@@ -115,27 +115,5 @@ if defined?(Rails)
         File.open(images_path.join(_1))
       }
     end
-
-    def namespace_importmap
-      @importmaps ||= Rails
-        .configuration
-        .app_stimulus_namespaces
-        .transform_values do |entrypoints|
-
-        Rails.application.importmap.clone.tap {
-          dirs = _1.directories.select {
-            it.exclude?("/controllers/") ||
-              it.match?(%r{/controllers/(#{entrypoints.join("|")})\b})
-          }
-          _1.instance_variable_set \
-            "@directories",
-            dirs
-          _1.instance_variable_set \
-            "@cache",
-            {}
-        }
-      end
-      @importmaps.fetch(::Current.namespace)
-    end
   end
 end
