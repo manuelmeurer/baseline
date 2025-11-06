@@ -7,7 +7,9 @@ module Baseline
         Rails.configuration.importmaps = nil
       end
 
-      Rails.configuration.importmaps ||= generate_importmaps
+      unless Rails.configuration.try(:importmaps)
+        Rails.configuration.importmaps = generate_importmaps
+      end
 
       Rails.configuration.importmaps.fetch(::Current.namespace)
     end
