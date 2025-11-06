@@ -127,6 +127,21 @@ module Baseline
           json: params
       end
 
+      # Campaigns
+
+      # https://docs.pretix.eu/dev/api/resources/campaigns.html#get--api-v1-organizers-(organizer)-events-(event)-campaigns-(id)-
+      add_action :get_campaign do |event_id, campaign_id|
+        request :get,
+          path_with_prefix(event_id, "campaigns", campaign_id)
+      end
+
+      # https://docs.pretix.eu/dev/api/resources/campaigns.html#post--api-v1-organizers-(organizer)-events-(event)-campaigns-
+      add_action :create_campaign do |event_id, params|
+        request :post,
+          path_with_prefix(event_id, "campaigns"),
+          json: params
+      end
+
       private
 
         def request_auth = "Token #{Rails.application.env_credentials.pretix_token!}"
