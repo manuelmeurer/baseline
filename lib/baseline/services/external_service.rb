@@ -124,7 +124,7 @@ module Baseline
 
         unless response.status.success?
           error_message = [
-            "Error #{response.status} calling #{method.upcase} #{url} (#{params.inspect})",
+            "Error #{response.status} calling #{method.upcase} #{url} (#{params || "no params"})",
             response.to_s
           ].compact_blank
           .join(": ")
