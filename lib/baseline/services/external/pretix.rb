@@ -146,7 +146,7 @@ module Baseline
 
       # https://docs.pretix.eu/dev/api/resources/item_variations.html#get--api-v1-organizers-(organizer)-events-(event)-items-(item)-variations-
       add_action :list_item_variations do |event_id, item_id|
-        request :get,
+        paginate_get \
           path_with_prefix(event_id, "items", item_id, "variations")
       end
 
