@@ -142,6 +142,14 @@ module Baseline
           json: params
       end
 
+      # Item variations
+
+      # https://docs.pretix.eu/dev/api/resources/item_variations.html#get--api-v1-organizers-(organizer)-events-(event)-items-(item)-variations-
+      add_action :list_item_variations do |event_id, item_id|
+        request :get,
+          path_with_prefix(event_id, "items", item_id, "variations")
+      end
+
       private
 
         def request_auth = "Token #{Rails.application.env_credentials.pretix_token!}"
