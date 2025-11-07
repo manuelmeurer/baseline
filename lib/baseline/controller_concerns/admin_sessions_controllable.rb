@@ -17,17 +17,14 @@ module Baseline
 
     def create
       case
-      when Rails.env.development?
-        unless admin_user_id = params[:admin_user_id]
-          raise "Admin user ID is missing."
-        end
+      when admin_user_id = params[:admin_user_id]
         AdminUser
           .find(admin_user_id)
           .then {
             authenticate_and_redirect(_1.user)
           }
         return
-      when credentials = params.permit(:email, :password).presence
+      when params.key?(:session) && credentials = params.expect(session: %i[email password])
         unless admin_user = User.authenticate_by(credentials)&.admin_user
           render_turbo_response \
             error_message: "No admin user with this email found."

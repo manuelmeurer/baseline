@@ -30,8 +30,8 @@
         %p
           Log in with email and password:
 
-        = form_with url: url_for do |form|
+        = form_with scope: :session, url: url_for do |form|
           = component :form_field, form, :email, :email, required: true
           = component :form_field, form, :password, :password, required: true
 
-          = component :form_actions, form, style: :send
+          = component :form_actions, form, style: :send, submit_label: "Log in"
