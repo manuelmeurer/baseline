@@ -87,7 +87,7 @@ module Baseline
           end
 
           def resume_session
-            return if ::Current.user
+            return ::Current.user if ::Current.user
 
             cookies
               .signed[cookie_name]
@@ -146,6 +146,8 @@ module Baseline
               Sentry.set_user({})
               cookies.delete(cookie_name, domain: :all)
             end
+
+            ::Current.user
           end
       end
     end
