@@ -9,6 +9,4 @@ Rails.application.configure do
       self.create_unlogged_tables = true
     end
   end
-
-  config.log_level = :fatal
 end
