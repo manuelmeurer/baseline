@@ -138,7 +138,7 @@ module Baseline
               cookies.signed.permanent[cookie_name] = {
                 value:     user.remember_token,
                 httponly:  true,
-                secure:    true,
+                secure:    request.ssl?,
                 same_site: :lax,
                 domain:    :all
               }
