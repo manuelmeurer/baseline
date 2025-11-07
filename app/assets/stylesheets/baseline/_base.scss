@@ -124,3 +124,19 @@ textarea.form-control:not([rows]) {
     min-height: 6rem;
   }
 }
+
+label.required::after {
+  content: " *";
+
+  :is(.form-floating, .no-required-indicator) & {
+    content: none;
+  }
+}
+
+label:not(.required)::after {
+  content: " (optional)";
+
+  :is(.form-floating, .no-optional-indicator) & {
+    content: none;
+  }
+}
