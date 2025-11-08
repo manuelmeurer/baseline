@@ -5,14 +5,14 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      if column_names.include?("tokens")
+      if db_and_table_exist? && column_names.include?("tokens")
         store_accessor :tokens,
           :todoist_access_token,
           :google_access_token,
           :google_refresh_token
       end
 
-      if column_names.include?("alternate_emails")
+      if db_and_table_exist? && column_names.include?("alternate_emails")
         validate do
           invalid_alternate_emails = alternate_emails.select { EmailValidator.invalid? _1 }
           case
