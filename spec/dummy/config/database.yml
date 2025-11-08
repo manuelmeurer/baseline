@@ -1,0 +1,30 @@
+sqlite: &sqlite
+  adapter: sqlite3
+  pool: 100 # https://island94.org/2024/09/secret-to-rails-database-connection-pool-size
+  timeout: 5000
+
+default: &default
+  primary:
+    <<: *sqlite
+    database: storage/<%= Rails.env %>.sqlite3
+  cable:
+    <<: *sqlite
+    database: storage/<%= Rails.env %>_cable.sqlite3
+    migrations_paths: db/cable_migrate
+  cache:
+    <<: *sqlite
+    database: storage/<%= Rails.env %>_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *sqlite
+    database: storage/<%= Rails.env %>_queue.sqlite3
+    migrations_paths: db/queue_migrate
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
