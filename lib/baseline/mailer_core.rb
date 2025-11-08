@@ -13,7 +13,10 @@ module Baseline
 
           # Include ApplicationHelper and MailerHelper from app.
           helper :application
-          helper :mailer
+
+          suppress NameError do
+            helper :mailer
+          end
 
           # Include MailerHelper from Baseline.
           helper MailerHelper
