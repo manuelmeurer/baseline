@@ -37,6 +37,9 @@ Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: "[]"
     "%r": "{}"
+    "%": "()"
+    "%q": "()"
+    "%Q": "()"
 
 Style/SymbolArray:
   Enabled: true
