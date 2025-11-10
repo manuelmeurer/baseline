@@ -471,7 +471,7 @@ module Baseline
       end
     end
 
-    def method_missing(method, *args, _async: false, _after: nil, **kwargs)
+    def method_missing(method, *args, **kwargs, &block)
       return super unless service_name = method[/\A_do_(.+)/, 1]
 
       service = resolve_service(service_name)
@@ -485,13 +485,15 @@ module Baseline
         end
       end
 
+      after, async = kwargs.delete(:_after), kwargs.delete(:_async)
+
       case
-      when _after
-        service.call_in _after, self, *args, **kwargs
-      when _async
-        service.call_async self, *args, **kwargs
+      when after
+        service.call_in after, self, *args, **kwargs, &block
+      when async
+        service.call_async self, *args, **kwargs, &block
       else
-        service.call self, *args, **kwargs
+        service.call self, *args, **kwargs, &block
       end
     end
 
