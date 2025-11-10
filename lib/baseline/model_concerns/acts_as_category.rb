@@ -32,9 +32,9 @@ module Baseline
       def valid_groups_for(resource_or_class) = groups.keys
     end
 
-    def to_s
+    def to_s(include_group: true)
       [
-        group&.humanize,
+        (group&.humanize if include_group),
         identifier&.then { I18n.t _1, scope: [:categories, group] }
       ].compact
         .join(" » ")
