@@ -36,6 +36,7 @@ jobs:
 
       - name: Run tests
         run: |
+          set -o pipefail
           echo '```' >> $GITHUB_STEP_SUMMARY
           bin/rspec | tee -a $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
