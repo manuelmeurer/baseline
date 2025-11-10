@@ -37,7 +37,7 @@ jobs:
       - name: Run tests
         run: |
           echo '```' >> $GITHUB_STEP_SUMMARY
-          bin/rspec >> $GITHUB_STEP_SUMMARY
+          bin/rspec | tee -a $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Notify Slack on failure
