@@ -32,6 +32,18 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
 
+  config.before :suite do
+    unless ENV["SKIP_ASSETS_PRECOMPILE"]
+      puts "Precompiling assets..."
+      system("
+        cd spec/dummy &&
+          bundle exec rails dartsass:build &&
+          bundle exec rails assets:precompile
+      ") ||
+        raise("Asset precompilation failed")
+    end
+  end
+
   config.before :each, type: :request do
     host! Rails.application.env_credentials.host!
   end
