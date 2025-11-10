@@ -9,7 +9,7 @@ stash_name="deploy-autostash"
 git stash push --include-untracked -m "$stash_name"
 
 if [ -f "bin/rails" ]; then
-  bundle exec rails zeitwerk:check || exit 1
+  bin/rails zeitwerk:check || exit 1
 fi
 
 git push &&

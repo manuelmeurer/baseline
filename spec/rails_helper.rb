@@ -37,8 +37,8 @@ RSpec.configure do |config|
       puts "Precompiling assets..."
       system("
         cd spec/dummy &&
-          bundle exec rails dartsass:build &&
-          bundle exec rails assets:precompile
+          bin/rails dartsass:build &&
+          bin/rails assets:precompile
       ") ||
         raise("Asset precompilation failed")
     end
