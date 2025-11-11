@@ -133,10 +133,6 @@ label.required::after {
   }
 }
 
-label:not(.required)::after {
+.optional-indicator label:not(.required)::after {
   content: " (optional)";
-
-  :is(.form-floating, .no-optional-indicator) & {
-    content: none;
-  }
 }
