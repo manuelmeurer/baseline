@@ -127,7 +127,7 @@ export default class extends Controller {
         continue
 
       checkbox.checked = checked
-      checkbox.dispatchEvent(new Event("change"), { bubbles: true })
+      checkbox.dispatchEvent(new Event("change", { bubbles: true }))
     }
   }
 
