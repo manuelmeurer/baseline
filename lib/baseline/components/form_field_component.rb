@@ -106,6 +106,10 @@ module Baseline
         instance_variable_set "@#{_1}", binding.local_variable_get(_1)
       }
 
+      if type == :file && label_style == :floating
+        label_style = false
+      end
+
       case label_style
       when :horizontal then @horizontal_label = true
       when :vertical   then @vertical_label   = true
