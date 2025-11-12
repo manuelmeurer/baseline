@@ -6,17 +6,24 @@ export default class extends ApplicationController {
   }
 
   connect() {
-    this.element.querySelectorAll("select, input[type='text'], input[type='checkbox'], input[type='radio']").forEach(input => {
+    this
+      .element
+      .querySelectorAll("select, input[type='text'], input[type='checkbox'], input[type='radio']")
+      .forEach(input => {
+
       input.addEventListener("change", () =>
-        this.waitForConstant("Turbo")
+        this
+          .waitForConstant("Turbo")
           .then(() =>
             this.element.requestSubmit()
           )
       )
     })
 
-    this.element.querySelectorAll('input[type="text"], textarea')
-                .forEach(element => {
+    this
+      .element
+      .querySelectorAll('input[type="text"], textarea')
+      .forEach(element => {
 
       element.addEventListener("input", event => {
         if (this.shouldIgnore(event))
