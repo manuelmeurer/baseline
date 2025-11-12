@@ -9,6 +9,10 @@ module Baseline
       Module.new do
         extend ActiveSupport::Concern
 
+        define_singleton_method :enum_array_attribute do
+          attribute
+        end
+
         included do
           validates attribute, array_uniqueness: true
 
@@ -16,14 +20,6 @@ module Baseline
             if invalids = public_send(attribute).difference(self.class.public_send(valid_method_name)).presence
               errors.add attribute, message: "contain invalid elements: #{invalids.join(", ")}"
             end
-          end
-
-          if default = try(:default_subscriptions)
-            attribute attribute, default: -> {
-              default.if(-> { _1 == :all }) {
-                public_send(valid_method_name)
-              }
-            }
           end
         end
 

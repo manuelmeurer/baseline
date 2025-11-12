@@ -371,6 +371,17 @@ module Baseline
           raise "Model #{name} has already been finalized."
         end
 
+        included_modules.each do |mod|
+          next unless attribute = mod.try(:enum_array_attribute)
+          next unless default   = try(:"default_#{attribute}")
+
+          attribute attribute, default: -> {
+            default.if(-> { _1 == :all }) {
+              public_send("valid_#{attribute}")
+            }
+          }
+        end
+
         if instance_method(:to_s).owner == Kernel
           define_method :to_s do
             try(:name) ||
