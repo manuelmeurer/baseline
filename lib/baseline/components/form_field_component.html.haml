@@ -11,8 +11,13 @@
     - if @suffix
       .input-group
         = content_for_type
-        %span.input-group-text
-          = @suffix
+        - case @suffix
+        - when String
+          %span.input-group-text
+            = @suffix
+        - when Proc
+          = @suffix.call(self)
+        - else raise "Unexpected suffix type: #{@suffix.class}"
     - else
       = content_for_type
 
