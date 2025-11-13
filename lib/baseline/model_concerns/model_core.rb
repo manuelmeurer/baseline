@@ -395,6 +395,14 @@ module Baseline
         end
 
         if to_s == "User" && reflect_on_association(:subscriptions)
+          scope :subscribed, ->(identifier) {
+            unless Subscription.identifiers.include?(identifier.to_s)
+              raise "Identifier is not valid for user: #{identifier}"
+            end
+
+            with_subscriptions(Subscription.public_send(identifier))
+          }
+
           define_method :subscribe do |identifier|
             identifier = identifier.to_s
 
