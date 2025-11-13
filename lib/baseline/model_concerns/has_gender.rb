@@ -23,7 +23,7 @@ module Baseline
     def set_gender
       if gender.nil? && try(:first_name).present?
         require "baseline/services/external/genderize"
-        self.gender = Baseline::External::Genderize.get_gender(first_name)
+        self.gender = Baseline::External::Genderize.get_gender(first_name) || "male"
       end
     end
   end
