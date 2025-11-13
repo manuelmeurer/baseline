@@ -5,6 +5,8 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      config.load_defaults Rails.version.to_f
+
       baseline_spec = Gem.loaded_specs["baseline"]
       # Don't use `is_a?` here, since Bundler::Source::Git inherits from Bundler::Source::Path.
       if baseline_spec.source.class == Bundler::Source::Path
@@ -70,6 +72,43 @@ module Baseline
               config.asset_host = Addressable::URI.new(_1).to_s
             }
         end
+
+      config.active_job.queue_adapter = :solid_queue
+
+      config.active_storage.queues.analysis        = :default
+      config.active_storage.queues.purge           = :default
+      config.active_storage.variant_processor      = :vips
+      config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
+      config.solid_queue.clear_finished_jobs_after = 1.month
+      config.solid_queue.connects_to = { database: { writing: :queue } }
+
+      config.mission_control.jobs.base_controller_class   = "MissionControl::Jobs::BaseController"
+      config.mission_control.jobs.http_basic_auth_enabled = false
+
+      config.cache_store = :solid_cache_store, { compressor: Baseline::ZstdCompressor }
+
+      config.autoload_lib ignore: %w[tasks]
+
+      config.dartsass.builds = {
+        "." => "."
+      }
+
+      config.time_zone = "Europe/Berlin"
+
+      config.i18n.raise_on_missing_translations = true
+
+      config.action_controller.include_all_helpers = false
+
+      config.middleware.insert 0, Rack::Deflater
+      config.middleware.insert_before 0, Rack::Cors do
+        allow do
+          origins "*"
+          resource "*", headers: :any, methods: :get
+        end
+      end
+
+      config.action_view.image_loading = :lazy
     end
 
     def env_credentials(env = Rails.env)
