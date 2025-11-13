@@ -394,6 +394,38 @@ module Baseline
           include HasTimestamps[*timestamp_attributes]
         end
 
+        if to_s == "User" && reflect_on_association(:subscriptions)
+          define_method :subscribe do |identifier|
+            identifier = identifier.to_s
+
+            unless Subscription.valid_identifiers_for(self).include?(identifier)
+              raise "Identifier is not valid for user: #{identifier}"
+            end
+
+            subscription = Subscription.public_send(identifier)
+
+            unless subscriptions.exists?(id: subscription)
+              subscriptions << subscription
+            end
+          end
+
+          define_method :unsubscribe do |identifier|
+            identifier = identifier.to_s
+
+            unless Subscription.valid_identifiers_for(self).include?(identifier)
+              raise "Identifier is not valid for user: #{identifier}"
+            end
+
+            if subscriptions.exists?(id: subscription)
+              subscriptions.destroy(subscription)
+            end
+          end
+
+          define_method :subscribed? do |identifier|
+            subscriptions.exists?(identifier:)
+          end
+        end
+
         unless to_s == "Task" || column_names.include?("tasks")
           has_many :tasks,
             as:        :taskable,
