@@ -432,6 +432,10 @@ module Baseline
           end
 
           define_method :subscribed? do |identifier|
+            unless Subscription.valid_identifiers_for(self).include?(identifier)
+              raise "Identifier is not valid for user: #{identifier}"
+            end
+
             subscriptions.exists?(identifier:)
           end
         end
