@@ -438,6 +438,21 @@ module Baseline
 
             subscriptions.exists?(identifier:)
           end
+
+          define_method :update_subscriptions do |params|
+            invalid_subscriptions = params.keys - Subscription.valid_identifiers_for(self)
+            if invalid_subscriptions.any?
+              raise "Invalid subscription identifiers for this user: #{invalid_subscriptions.join(", ")}"
+            end
+
+            params.each do |identifier, active|
+              if ActiveRecord::Type::Boolean.new.cast(active)
+                subscribe(identifier)
+              else
+                unsubscribe(identifier)
+              end
+            end
+          end
         end
 
         unless to_s == "Task" || column_names.include?("tasks")

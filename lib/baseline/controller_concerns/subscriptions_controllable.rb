@@ -43,19 +43,7 @@ module Baseline
     end
 
     def update
-      invalid_subscriptions = update_params.keys - @subscription_identifiers
-      if invalid_subscriptions.any?
-        raise "Invalid subscription identifiers for this user: #{invalid_subscriptions.join(", ")}"
-      end
-
-      update_params.each do |identifier, active|
-        if ActiveRecord::Type::Boolean.new.cast(active)
-          @user.subscribe(identifier)
-        else
-          @user.unsubscribe(identifier)
-        end
-      end
-
+      @user.update_subscriptions(update_params)
       render_turbo_response \
         success_message: t(:success, scope: action_i18n_scope)
     end
