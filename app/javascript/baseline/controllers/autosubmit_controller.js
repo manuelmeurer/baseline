@@ -6,18 +6,15 @@ export default class extends ApplicationController {
   }
 
   connect() {
-    this
-      .element
-      .querySelectorAll("select, input[type='text'], input[type='checkbox'], input[type='radio']")
-      .forEach(input => {
+    this.element.addEventListener("change", (event) => {
+      if (!event.target.matches("select, input[type='checkbox'], input[type='radio']"))
+        return
 
-      input.addEventListener("change", () =>
-        this
-          .waitForConstant("Turbo")
-          .then(() =>
-            this.element.requestSubmit()
-          )
-      )
+      this
+        .waitForConstant("Turbo")
+        .then(() =>
+          this.element.requestSubmit()
+        )
     })
 
     this
