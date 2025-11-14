@@ -127,7 +127,11 @@ export default class extends Controller {
         continue
 
       checkbox.checked = checked
-      checkbox.dispatchEvent(new Event("change", { bubbles: true }))
+
+      // Add a small delay so that any controllers on the form (e.g. autosubmit) are properly connected.
+      setTimeout(() => {
+        checkbox.dispatchEvent(new Event("change", { bubbles: true }))
+      }, 100)
     }
   }
 
