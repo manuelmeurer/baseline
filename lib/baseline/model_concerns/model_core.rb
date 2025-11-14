@@ -424,6 +424,8 @@ module Baseline
               raise "Identifier is not valid for user: #{identifier}"
             end
 
+            subscription = Subscription.public_send(identifier)
+
             if subscriptions.exists?(id: subscription)
               subscriptions.destroy(subscription)
             end
