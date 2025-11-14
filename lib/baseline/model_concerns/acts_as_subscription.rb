@@ -28,7 +28,7 @@ module Baseline
     def title
       I18n.t identifier,
         scope:   :subscriptions,
-        default: identifier.humanize
+        default: identifier.titleize
     end
 
     def to_param = identifier
