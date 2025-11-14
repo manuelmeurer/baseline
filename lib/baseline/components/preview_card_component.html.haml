@@ -15,10 +15,19 @@
       border-radius: 4px;
       overflow: hidden;
       container-type: inline-size;
+      transition: border-color 0.2s ease;
 
       .preview-card-image {
         background: url("#{@image_url}") center/cover no-repeat;
         width: 25%;
+      }
+
+      &:hover {
+        border-color: #adb5bd;
+
+        .preview-card-content {
+          background-color: #f8f9fa;
+        }
       }
 
       .preview-card-content {
@@ -30,6 +39,7 @@
         position: relative;
         background-color: white;
         color: #212529;
+        transition: background-color 0.2s ease;
 
         .preview-card-title,
         .preview-card-description {
