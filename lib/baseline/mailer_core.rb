@@ -77,8 +77,7 @@ module Baseline
 
           if unsubscribe_params = email_delivery.unsubscribe_params
             unsubscribe_params[:sgid] = unsubscribe_params
-              .delete(:record)
-              .settings
+              .delete(:user)
               .to_sgid
               .to_s
             unsubscribe_urls = [
