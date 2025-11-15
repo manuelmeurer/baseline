@@ -15,8 +15,8 @@ module Baseline
               HasLoginToken,
               HasPassword
 
-      after_initialize do
-        if new_record? && remember_token.blank?
+      after_initialize if: :new_record? do
+        if remember_token.blank?
           reset_remember_token!
         end
       end

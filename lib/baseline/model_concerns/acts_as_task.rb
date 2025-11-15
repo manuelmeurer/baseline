@@ -57,11 +57,9 @@ module Baseline
         end
       end
 
-      after_initialize do
-        if new_record?
-          self.due_on      ||= Date.current
-          self.responsible ||= default_responsible
-        end
+      after_initialize if: :new_record? do
+        self.due_on      ||= Date.current
+        self.responsible ||= default_responsible
       end
     end
 
