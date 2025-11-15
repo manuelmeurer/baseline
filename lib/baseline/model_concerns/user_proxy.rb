@@ -12,10 +12,15 @@ module Baseline
         last_name
         locale
         login_token
-        email
         name
       ] + User.genders.keys.map { "#{_1}?" }
     ).freeze
+    EMAIL_METHODS = %i[
+      current_email_confirmation
+      email
+      email_confirmations
+      email_confirmed?
+    ].freeze
     DEACTIVATABLE_METHODS = %i[
       active?
       deactivate!
@@ -36,6 +41,7 @@ module Baseline
     ]
     METHODS =
       USER_METHODS +
+      EMAIL_METHODS +
       DEACTIVATABLE_METHODS +
       SUBSCRIPTION_METHODS
     METHODS += METHODS
@@ -50,6 +56,7 @@ module Baseline
       deactivated_after
       deactivated_before
       deactivated_between
+      email_confirmed
       subscribed
     ].freeze
 

@@ -8,6 +8,7 @@ module Baseline
       include Deactivatable,
               HasDummyImageAttachment[:photo],
               HasEmail,
+              HasEmailConfirmations,
               HasFirstAndLastName,
               HasGender,
               HasLoginToken,
