@@ -5,6 +5,12 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      include HasEmail,
+              HasFirstAndLastName,
+              HasGender,
+              HasLoginToken,
+              HasPassword
+
       after_initialize do
         if new_record? && remember_token.blank?
           reset_remember_token!
