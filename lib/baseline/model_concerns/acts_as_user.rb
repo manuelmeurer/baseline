@@ -43,5 +43,12 @@ module Baseline
       self.remember_token = token
       save! if persisted?
     end
+
+    def to_s
+      [
+        name || "Anonymous",
+        email&.then { "(#{_1})" }
+      ].compact.join(" ")
+    end
   end
 end
