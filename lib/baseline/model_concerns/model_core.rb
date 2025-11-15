@@ -382,6 +382,16 @@ module Baseline
           }
         end
 
+        if respond_to?(:password) && default_password
+          before_validation on: :create do
+            self.password ||= default_password
+          end
+
+          define_method :password_changed? do
+            !authenticate(default_password)
+          end
+        end
+
         if instance_method(:to_s).owner == Kernel
           define_method :to_s do
             try(:name) ||
