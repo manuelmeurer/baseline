@@ -5,18 +5,23 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      include HasEmail,
+      include Deactivatable,
+              HasDummyImageAttachment[:photo],
+              HasEmail,
               HasFirstAndLastName,
               HasGender,
               HasLoginToken,
-              HasPassword,
-              Deactivatable
+              HasPassword
 
       after_initialize do
         if new_record? && remember_token.blank?
           reset_remember_token!
         end
       end
+
+      has_one_attached_and_accepts_nested_attributes_for :photo
+
+      validates :photo, content_type: common_image_file_types
     end
 
     class_methods do
