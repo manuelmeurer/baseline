@@ -4,21 +4,70 @@ module Baseline
   module UserProxy
     extend ActiveSupport::Concern
 
-    FIELDS  = %i[first_name last_name email gender locale language].freeze
-    METHODS = [*FIELDS, :name].flat_map { [_1, "#{_1}="] }.freeze
+    USER_METHODS = (
+      %i[
+        first_name
+        gender
+        language
+        last_name
+        locale
+        login_token
+        email
+        name
+      ] + User.genders.keys.map { "#{_1}?" }
+    ).freeze
+    DEACTIVATABLE_METHODS = %i[
+      active?
+      deactivate!
+      deactivated_after?
+      deactivated_at
+      deactivated_before?
+      deactivated_between?
+      deactivated?
+      deactivation
+      deactivations
+      reactivate!
+    ].freeze
+    SUBSCRIPTION_METHODS = %i[
+      subscribed
+      subscribed?
+      unsubscribe
+      update_subscriptions
+    ]
+    METHODS =
+      USER_METHODS +
+      DEACTIVATABLE_METHODS +
+      SUBSCRIPTION_METHODS
+    METHODS += METHODS
+      .reject { _1.end_with?("?", "!") }
+      .map { "#{_1}=" }
+      .select { User.new.respond_to? _1 }
+    METHODS.freeze
+
+    SCOPES = %i[
+      active
+      deactivated
+      deactivated_after
+      deactivated_before
+      deactivated_between
+      subscribed
+    ].freeze
 
     included do
-      delegate \
-        :to_s, :login_token,
-        *METHODS,
-        *User.try(:genders)&.keys&.map { "#{_1}?" },
-        to: :user
+      delegate *METHODS, :to_s, to: :user
 
-      FIELDS.each do |attribute|
-        scope :"with_#{attribute}", ->(value) {
-          with_user User.where(attribute => value)
+      SCOPES.each do |scope_name|
+        scope scope_name, ->(*args) {
+          with_user(User.public_send(scope_name, *args))
         }
       end
+      USER_METHODS
+        .intersection(User.columns)
+        .each do |column|
+          scope :"with_#{column}", -> {
+            with_user(User.where(column => _1))
+          }
+        end
 
       validate if: :user do
         user
