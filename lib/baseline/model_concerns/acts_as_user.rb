@@ -9,7 +9,8 @@ module Baseline
               HasFirstAndLastName,
               HasGender,
               HasLoginToken,
-              HasPassword
+              HasPassword,
+              Deactivatable
 
       after_initialize do
         if new_record? && remember_token.blank?
