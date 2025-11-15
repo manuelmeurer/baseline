@@ -372,18 +372,20 @@ module Baseline
         end
 
         included_modules.each do |mod|
-          next unless attribute = mod.try(:enum_array_attribute)
-          next unless default   = try(:"default_#{attribute}")
+          next unless enum_array_attribute = mod.try(:enum_array_attribute)
 
-          attribute attribute, default: -> {
-            default.if(-> { _1 == :all }) {
-              public_send("valid_#{attribute}")
-            }
-          }
+          default_enum_array_method = :"default_#{enum_array_attribute}"
+          if instance_methods.include?(default_enum_array_method)
+            after_initialize if: :new_record? do
+              unless public_send(enum_array_attribute).present?
+                public_send "#{enum_array_attribute}=", public_send(default_enum_array_method)
+              end
+            end
+          end
         end
 
-        if respond_to?(:password) && default_password
-          before_validation on: :create do
+        if instance_methods.include?(:password) && instance_methods.include?(:default_password)
+          after_initialize if: :new_record? do
             self.password ||= default_password
           end
 
@@ -392,8 +394,18 @@ module Baseline
           end
         end
 
-        if respond_to?(:locale) && respond_to?(:default_locale)
-          attribute :locale, default: default_locale
+        column_names
+          .select { _1.match?(/(?:\A|_)locale\z/) }
+          .each do |locale_attribute|
+
+          default_locale_method = :"default_#{locale_attribute}"
+          if instance_methods.include?(default_locale_method)
+            after_initialize if: :new_record? do
+              unless public_send(locale_attribute)
+                public_send "#{locale_attribute}=", public_send(default_locale_method)
+              end
+            end
+          end
         end
 
         if instance_method(:to_s).owner == Kernel
