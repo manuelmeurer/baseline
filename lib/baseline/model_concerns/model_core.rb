@@ -392,6 +392,10 @@ module Baseline
           end
         end
 
+        if respond_to?(:locale) && respond_to?(:default_locale)
+          attribute :locale, default: default_locale
+        end
+
         if instance_method(:to_s).owner == Kernel
           define_method :to_s do
             try(:name) ||

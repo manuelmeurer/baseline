@@ -11,6 +11,7 @@ module Baseline
               HasEmailConfirmations,
               HasFirstAndLastName,
               HasGender,
+              HasLocale,
               HasLoginToken,
               HasPassword
 
