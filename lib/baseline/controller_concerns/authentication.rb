@@ -7,7 +7,7 @@ module Baseline
         extend ActiveSupport::Concern
 
         included do
-          class_eval { @auth_user_scope = "User.#{scope}" }
+          class_eval { @auth_user_scope = "User.active.#{scope}" }
 
           before_action do
             if user = params[:t].presence&.then { auth_user_scope.try(:find_by_login_token, _1) }
