@@ -17,4 +17,23 @@ RSpec.describe User do
       expect(female_user.gender).to eq("female")
     end
   end
+
+  describe ".schema_columns" do
+    it "returns the correct hash of column metadata" do
+      expect(User.schema_columns).to eq(
+        created_at:      { type: :datetime, null: false },
+        email:           { type: :string },
+        first_name:      { type: :string, null: false },
+        gender:          { type: :integer },
+        last_name:       { type: :string, null: false },
+        locale:          { type: :string, null: false },
+        password_digest: { type: :string },
+        remember_token:  { type: :string },
+        slug:            { type: :string, null: false },
+        subscriptions:   { type: :json, default: [], null: false },
+        title:           { type: :string },
+        updated_at:      { type: :datetime, null: false }
+      )
+    end
+  end
 end

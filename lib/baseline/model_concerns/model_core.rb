@@ -364,6 +364,62 @@ module Baseline
         }
       end
 
+      def schema_columns
+        @schema_columns ||= begin
+          schema_path = Rails.root.join("db", "schema.rb")
+          unless File.exist?(schema_path)
+            raise "Could not find schema file at #{schema_path}."
+          end
+
+          content = File.read(schema_path)
+
+          # Find the create_table block for this model
+          create_table_regex = /create_table\s+"#{Regexp.escape(table_name)}".*?do\s+\|t\|(.*?)\n\s+end/m
+          unless table_block = content[create_table_regex, 1]
+            raise "Could not find create_table block for #{table_name} in schema.rb."
+          end
+
+          columns = {}
+          table_block.each_line do |line|
+            # Skip non-column lines (indexes, check_constraints, etc.)
+            next unless line.match?(/^\s+t\.(\w+)\s+"(\w+)"/)
+
+            # Parse lines like:
+            # t.datetime "updated_at", precision: nil, null: false
+            # t.integer "min_days"
+            # t.string "sluggable_type", limit: 50
+            match = line.match(/^\s+t\.(\w+)\s+"(\w+)"(?:,\s*(.*))?/)
+            next unless match
+
+            column_type = match[1].to_sym
+            column_name = match[2]
+            options     = match[3]
+
+            column_data = { type: column_type }
+
+            options&.scan(/(\w+):\s*([^,]+)/) do |key, value|
+              parsed_value =
+                case value.strip
+                when "nil"      then nil
+                when "true"     then true
+                when "false"    then false
+                when /^\d+$/    then value.to_i
+                when /^"(.+)"$/ then $1
+                when /^\[\]$/   then []
+                when /^\{\}$/   then {}
+                else value.strip
+                end
+
+              column_data[key.to_sym] = parsed_value
+            end
+
+            columns[column_name.to_sym] = column_data
+          end
+
+          columns.sort.to_h
+        end
+      end
+
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
         return unless db_and_table_exist?
