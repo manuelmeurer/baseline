@@ -6,7 +6,7 @@ module Baseline
 
     included do
       has_many :user_subscriptions, dependent: :destroy
-      has_many :users, through: :user_subscriptions
+      has_many :users, through: :user_subscriptions, inverse_of: :subscriptions
 
       validates :identifier,
         presence:   true,
