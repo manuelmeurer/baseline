@@ -9,6 +9,7 @@ require File.expand_path("dummy/config/environment", __dir__)
 require "rspec/rails"
 require "view_component/test_helpers"
 require "shoulda/matchers"
+require "factory_bot_rails"
 
 Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
@@ -27,6 +28,7 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers,       type: :component
   config.include ViewComponent::SystemSpecHelpers, type: :feature
   config.include ViewComponent::SystemSpecHelpers, type: :system
+  config.include FactoryBot::Syntax::Methods
 
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!

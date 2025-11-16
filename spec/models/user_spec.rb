@@ -10,20 +10,10 @@ RSpec.describe User do
     end
 
     it "determines genders correctly" do
-      male_user = User.create!(
-        first_name: "Peter",
-        last_name: "Müller",
-        email: "peter.mueller@example.com"
-      )
-
+      male_user = create(:user, :male)
       expect(male_user.gender).to eq("male")
 
-      female_user = User.create!(
-        first_name: "Petra",
-        last_name: "Müller",
-        email: "petra.mueller@example.com"
-      )
-
+      female_user = create(:user, :female)
       expect(female_user.gender).to eq("female")
     end
   end
