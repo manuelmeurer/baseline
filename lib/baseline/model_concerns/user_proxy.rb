@@ -71,8 +71,13 @@ module Baseline
         }
       end
 
+      user_columns =
+        User.db_and_table_exist? ?
+        User.column_names.map(&:to_sym) :
+        []
+
       USER_METHODS
-        .intersection(User.column_names.map(&:to_sym))
+        .intersection(user_columns)
         .each do |column|
           scope :"with_#{column}", -> {
             with_user(User.where(column => _1))
