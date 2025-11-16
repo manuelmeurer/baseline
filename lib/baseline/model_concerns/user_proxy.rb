@@ -69,15 +69,13 @@ module Baseline
         }
       end
 
-      if User.db_and_table_exist?
-        USER_ATTRIBUTES
-          .intersection(User.column_names.map(&:to_sym))
-          .each do |column|
-            scope :"with_#{column}", -> {
-              with_user(User.where(column => _1))
-            }
-          end
-      end
+      USER_ATTRIBUTES
+        .intersection(User.schema_columns.keys)
+        .each do |column|
+          scope :"with_#{column}", -> {
+            with_user(User.where(column => _1))
+          }
+        end
 
       validate if: :user do
         user

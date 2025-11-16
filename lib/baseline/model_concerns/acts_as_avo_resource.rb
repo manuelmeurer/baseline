@@ -6,8 +6,6 @@ module Baseline
 
     class_methods do
       def _baseline_finalize
-        return unless model_class.db_and_table_exist?
-
         if defined?(@_baseline_finalized)
           raise "Avo resource #{name} has already been finalized."
         end

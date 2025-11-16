@@ -422,8 +422,6 @@ module Baseline
 
       # Do not reference any ApplicationModel descendants in this method!
       def _baseline_finalize
-        return unless db_and_table_exist?
-
         if base_class != self
           raise "Don't call #{__method__} in a class that does not inherit from ApplicationRecord."
         end
@@ -455,7 +453,8 @@ module Baseline
           end
         end
 
-        column_names
+        schema_columns
+          .keys
           .select { _1.match?(/(?:\A|_)locale\z/) }
           .each do |locale_attribute|
 
@@ -477,7 +476,7 @@ module Baseline
           end
         end
 
-        if timestamp_attributes = %w(created_at updated_at).intersection(column_names).presence
+        if timestamp_attributes = %i[created_at updated_at].intersection(schema_columns.keys).presence
           include HasTimestamps[*timestamp_attributes]
         end
 
@@ -542,23 +541,23 @@ module Baseline
           end
         end
 
-        unless to_s == "Task" || column_names.include?("tasks")
+        unless to_s == "Task" || schema_columns.key?(:tasks)
           has_many :tasks,
             as:        :taskable,
             dependent: :destroy
         end
 
-        columns.each do |column|
-          attribute = column.name.to_sym
-          array     = column.try(:array) # Postgres only
+        schema_columns.each do |attribute, options|
+          column_type = options.fetch(:type)
+          array       = options[:array] # Postgres only
 
-          if column.type.in?(%i[string text]) && !array
+          if column_type.in?(%i[string text]) && !array
             normalizes attribute,
               with: -> { _1.to_s.encode("UTF-8").strip.unicode_normalize.presence }
           end
 
           case
-          when column.type == :string
+          when column_type == :string
             method_name = attribute.pluralize
             unless respond_to?(method_name, true)
               define_singleton_method method_name do
@@ -567,7 +566,7 @@ module Baseline
                   .sort
               end
             end
-          when column.type == :boolean
+          when column_type == :boolean
             not_attributes = %i(un not_).map {
               [_1, attribute].join.to_sym
             }
@@ -592,13 +591,13 @@ module Baseline
             scope :"with_#{attribute}", ->(*values) {
               where.overlap(attribute => values)
             }
-          when column.type.in?(%i(json jsonb))
+          when column_type.in?(%i[json jsonb])
             scope :"with_#{attribute}", ->(*values) {
               if values.empty?
                 case connection.adapter_name
                 when "PostgreSQL"
                   [[], {}].inject(self) {
-                    _1.where("#{attribute} != '#{_2}'::#{column.type}")
+                    _1.where("#{attribute} != '#{_2}'::#{column_type}")
                   }
                 when "SQLite"
                   [[], {}].inject(self) {

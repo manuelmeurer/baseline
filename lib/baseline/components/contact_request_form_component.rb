@@ -44,7 +44,7 @@ module Baseline
           **options
       end
 
-      if ContactRequest.column_names.include?(field.to_s)
+      if ContactRequest.schema_columns.key?(field.to_sym)
         render_field_tag.call(form)
       else
         form.fields_for :details do |details_form|

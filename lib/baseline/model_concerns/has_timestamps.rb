@@ -11,11 +11,9 @@ module Baseline
         attributes_and_verbs = attributes.index_with { _1.to_s.sub(/_(at|on|until)\z/, "") }
 
         included do
-          if db_and_table_exist?
-            attributes.each do |attribute|
-              unless column_names.include?(attribute.to_s)
-                raise ArgumentError, "#{attribute} is not a valid datetime attribute for #{name}."
-              end
+          attributes.each do |attribute|
+            unless schema_columns.key?(attribute)
+              raise ArgumentError, "#{attribute} is not a valid datetime attribute for #{name}."
             end
           end
 
@@ -48,7 +46,7 @@ module Baseline
                   before_after_attribute_with_table_name =
                     attribute_with_table_name.if(
                       connection.adapter_name == "PostgreSQL" &&
-                      columns_hash.fetch(attribute.to_s).type == :date
+                      schema_columns.deep_fetch(attribute, :type) == :date
                     ) {
                       "#{_1}::timestamp"
                     }
