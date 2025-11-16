@@ -70,7 +70,7 @@ module Baseline
         }
       end
       USER_METHODS
-        .intersection(User.columns)
+        .intersection(User.column_names.map(&:to_sym))
         .each do |column|
           scope :"with_#{column}", -> {
             with_user(User.where(column => _1))
