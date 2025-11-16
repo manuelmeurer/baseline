@@ -2,24 +2,17 @@
 
 class User < ApplicationRecord
   include Baseline::ActsAsUser,
-          Baseline::HasDummyImageAttachment[:photo],
-          Baseline::HasEmail,
-          Baseline::HasGender,
-          Baseline::HasFirstAndLastName,
-          Baseline::HasFriendlyID,
-          Baseline::HasLocale[default: :de],
-          Baseline::HasLoginToken,
-          Baseline::HasPassword[default: "password"]
+          Baseline::HasFriendlyID
 
   has_one :admin_user, dependent: :destroy
-
-  has_one_attached :photo
 
   validates :email, uniqueness: { allow_nil: true }
   validates :gender, presence: true
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :photo, content_type: common_image_file_types
+
+  def default_password = "password"
+  def default_locale   = :de
 
   private
 
