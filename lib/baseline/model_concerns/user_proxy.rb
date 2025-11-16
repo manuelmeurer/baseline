@@ -88,6 +88,11 @@ module Baseline
       end
 
       def self.method_missing(method, ...)
+        unless respond_to?(:with_first_name)
+          ReportError.call "Expected #{self} to have method with_first_name."
+          return super
+        end
+
         with_first_name(method.capitalize).first or
           super
       end
