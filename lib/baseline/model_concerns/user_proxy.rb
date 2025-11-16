@@ -4,20 +4,20 @@ module Baseline
   module UserProxy
     extend ActiveSupport::Concern
 
-    USER_METHODS = (
-      %i[
-        first_name
-        gender
-        language
-        last_name
-        locale
-        login_token
-        name
-      ] + User.genders.keys.map { :"#{_1}?" }
-    ).freeze
-    EMAIL_METHODS = %i[
-      current_email_confirmation
+    USER_METHODS = %i[
       email
+      first_name
+      gender
+      language
+      last_name
+      locale
+      login_token
+      name
+    ].concat(
+      User.genders.keys.map { :"#{_1}?" }
+    ).freeze
+    EMAIL_CONFIRMATION_METHODS = %i[
+      current_email_confirmation
       email_confirmations
       email_confirmed?
     ].freeze
@@ -40,16 +40,17 @@ module Baseline
       unsubscribe
       update_subscriptions
     ]
-    METHODS =
+    METHODS = (
       USER_METHODS +
-      EMAIL_METHODS +
+      EMAIL_CONFIRMATION_METHODS +
       DEACTIVATABLE_METHODS +
       SUBSCRIPTION_METHODS
-    METHODS += METHODS
-      .reject { _1.end_with?("?", "!") }
-      .map { "#{_1}=" }
-      .select { User.new.respond_to? _1 }
-    METHODS.freeze
+    ).flat_map do |method|
+      [
+        method,
+        :"#{method}=".if(-> { User.instance_methods.exclude?(_1) })
+      ]
+    end.compact.freeze
 
     SCOPES = %i[
       active
@@ -69,6 +70,7 @@ module Baseline
           with_user(User.public_send(scope_name, *args))
         }
       end
+
       USER_METHODS
         .intersection(User.column_names.map(&:to_sym))
         .each do |column|
@@ -86,8 +88,10 @@ module Baseline
           errors.add :user, "#{error.attribute} #{error.message}"
         end
       end
+    end
 
-      def self.method_missing(method, ...)
+    class_methods do
+      def method_missing(method, ...)
         unless respond_to?(:with_first_name)
           ReportError.call "Expected #{self} to have method with_first_name."
           return super
