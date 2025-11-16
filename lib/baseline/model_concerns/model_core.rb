@@ -329,11 +329,16 @@ module Baseline
           raise "#{association} is not a polymorphic association of #{self}."
         end
 
+        cache_key = ApplicationRecord
+          .descendants
+          .map(&:name)
+          .sort
+          .push(association.to_s)
+          .join
+          .then { ActiveSupport::Digest.hexdigest(_1) }
+
         @polymorphic_types_cache ||= {}
-        @polymorphic_types_cache[association.to_sym] ||= begin
-          unless Rails.application.config.eager_load
-            Rails.application.eager_load!
-          end
+        @polymorphic_types_cache[cache_key] ||= begin
           ApplicationRecord.descendants.select {
             it.reflections.values.any? {
               (_1.try(:collection?) || _1.try(:has_one?)) &&
