@@ -13,7 +13,7 @@ module Baseline
         locale
         login_token
         name
-      ] + User.genders.keys.map { "#{_1}?" }
+      ] + User.genders.keys.map { :"#{_1}?" }
     ).freeze
     EMAIL_METHODS = %i[
       current_email_confirmation
