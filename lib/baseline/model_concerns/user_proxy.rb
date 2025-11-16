@@ -36,6 +36,7 @@ module Baseline
     SUBSCRIPTION_METHODS = %i[
       subscribed
       subscribed?
+      subscriptions
       unsubscribe
       update_subscriptions
     ]
