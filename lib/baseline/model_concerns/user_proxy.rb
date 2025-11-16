@@ -4,53 +4,51 @@ module Baseline
   module UserProxy
     extend ActiveSupport::Concern
 
-    USER_METHODS = %i[
+    USER_ATTRIBUTES = %i[
       email
       first_name
-      gender
-      language
       last_name
-      locale
-      login_token
       name
-    ].concat(
-      User.genders.keys.map { :"#{_1}?" }
-    ).freeze
-    EMAIL_CONFIRMATION_METHODS = %i[
-      current_email_confirmation
-      email_confirmations
-      email_confirmed?
-    ].freeze
-    DEACTIVATABLE_METHODS = %i[
-      active?
-      deactivate!
-      deactivated_after?
-      deactivated_at
-      deactivated_before?
-      deactivated_between?
-      deactivated?
-      deactivation
-      deactivations
-      reactivate!
-    ].freeze
-    SUBSCRIPTION_METHODS = %i[
-      subscribed
-      subscribed?
-      subscriptions
-      unsubscribe
-      update_subscriptions
+      gender
+      locale
+      language
+      login_token
     ]
-    METHODS = (
-      USER_METHODS +
-      EMAIL_CONFIRMATION_METHODS +
-      DEACTIVATABLE_METHODS +
-      SUBSCRIPTION_METHODS
-    ).flat_map do |method|
-      [
-        method,
-        :"#{method}=".if(-> { User.instance_methods.exclude?(_1) })
-      ]
-    end.compact.freeze
+    METHODS = USER_ATTRIBUTES
+      .flat_map {
+        [_1, :"#{_1}="]
+      }.push(
+        *User.genders.keys.map { :"#{_1}?" },
+
+        # Dummy image attachment
+        :dummy_photo,
+        :photo_or_dummy,
+
+        # Email confirmations
+        :current_email_confirmation,
+        :email_confirmations,
+        :email_confirmed?,
+
+        # Deactivatable
+        :active?,
+        :deactivate!,
+        :deactivated_after?,
+        :deactivated_at,
+        :deactivated_before?,
+        :deactivated_between?,
+        :deactivated?,
+        :deactivation,
+        :deactivations,
+        :deactivations=,
+        :reactivate!,
+
+        # Subscriptions
+        :subscribed,
+        :subscribed?,
+        :subscriptions,
+        :unsubscribe,
+        :update_subscriptions
+      ).freeze
 
     SCOPES = %i[
       active
@@ -71,18 +69,15 @@ module Baseline
         }
       end
 
-      user_columns =
-        User.db_and_table_exist? ?
-        User.column_names.map(&:to_sym) :
-        []
-
-      USER_METHODS
-        .intersection(user_columns)
-        .each do |column|
-          scope :"with_#{column}", -> {
-            with_user(User.where(column => _1))
-          }
-        end
+      if User.db_and_table_exist?
+        USER_ATTRIBUTES
+          .intersection(User.column_names.map(&:to_sym))
+          .each do |column|
+            scope :"with_#{column}", -> {
+              with_user(User.where(column => _1))
+            }
+          end
+      end
 
       validate if: :user do
         user
