@@ -50,5 +50,7 @@ module Baseline
         email&.then { "(#{_1})" }
       ].compact.join(" ")
     end
+
+    private def after_deactivate = reset_remember_token!
   end
 end
