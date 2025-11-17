@@ -5,7 +5,7 @@ module Baseline
     class Microlink < ::External::Base
       BASE_URL = "https://api.microlink.io/".freeze
 
-      add_action :get_metadata, run_unless_prod: true do |url, cache: false|
+      add_action :get_metadata, return_unless_prod: { title: "Dummy", description: "Dummy" } do |url, cache: false|
         return do_get(url) unless cache
 
         cache_key = [
@@ -24,12 +24,8 @@ module Baseline
       private
 
         def do_get(url)
-          response = request(:get, "", params: { url: })
-          unless response[:status] == "success"
-            ReportError.call "how to handle non-sucess?",
-              response:
-          end
-          response.fetch(:data)
+          request(:get, "", params: { url: })
+            .fetch(:data)
         end
     end
   end
