@@ -46,6 +46,7 @@ module Baseline
         # Subscriptions
         :subscribed,
         :subscribed?,
+        :subscription_ids,
         :subscriptions,
         :unsubscribe,
         :update_subscriptions
