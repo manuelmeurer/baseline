@@ -37,14 +37,14 @@ module Baseline
       add_action :generate_embed_image_url, return_unless_prod: DUMMY_URL do |url|
         timestamp, embed_image_url = do_generate_embed_image_url(url)
 
-        # if Time.parse(timestamp) < 1.day.ago
+        if Time.parse(timestamp) < 1.day.ago
           begin
             new_embed_image_url = do_generate_embed_image_url(url, force: true).last
           rescue Cooldown
           else
             embed_image_url = new_embed_image_url
           end
-        # end
+        end
 
         embed_image_url
       end
