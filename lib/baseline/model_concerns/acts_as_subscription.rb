@@ -5,7 +5,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      has_many :user_subscriptions, dependent: :destroy
+      has_many :user_subscriptions, dependent: :destroy, inverse_of: :subscription
       has_many :users, through: :user_subscriptions, inverse_of: :subscriptions
 
       validates :identifier,
