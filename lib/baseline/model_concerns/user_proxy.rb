@@ -13,6 +13,7 @@ module Baseline
       locale
       language
       login_token
+      photo
     ]
     METHODS = USER_ATTRIBUTES
       .flat_map {
