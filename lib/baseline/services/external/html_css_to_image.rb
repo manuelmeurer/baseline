@@ -59,7 +59,7 @@ module Baseline
 
           Rails.cache.fetch(cache_key, force:) do
             html      = tag.html { tag.body { component(:preview_card, url) } }
-            image_url = call(:generate_image_url, html:)
+            image_url = call(:generate_image_url, html:, selector: "body > a")
 
             [
               Time.current.iso8601,
