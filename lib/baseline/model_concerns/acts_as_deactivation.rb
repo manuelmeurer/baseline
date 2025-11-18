@@ -28,6 +28,7 @@ module Baseline
           begin
             deactivatable.send(AFTER_DEACTIVATE_METHOD)
           rescue
+            raise unless Rails.env.production?
             ReportError.call "Error calling `#{AFTER_DEACTIVATE_METHOD}` after deactivating #{deactivatable}.",
               deactivatable_gid: deactivatable.to_gid.to_s
           end
