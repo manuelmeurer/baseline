@@ -10,6 +10,7 @@ loader.ignore("#{__dir__}/baseline/initializers")
 loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
 loader.ignore("#{__dir__}/baseline/services/external")
 loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
+loader.ignore("#{__dir__}/baseline/spec/rails_helper.rb")
 
 unless defined?(::Avo)
   loader.ignore("#{__dir__}/baseline/avo")
