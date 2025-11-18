@@ -48,17 +48,6 @@ module Baseline
           @sections       = email_delivery.sections.to_a
           @messageable    = email_delivery.deliverable.try(:messageable)
 
-          @messageable
-            .try(:survey_connections)
-            .to_a
-            .sort_by { -_1.position }
-            .each do |survey_connection|
-
-            @sections.insert \
-              survey_connection.position - 1,
-              *survey_connection.survey.sections
-          end
-
           email_delivery.attached_files.each do |filename, file_generator|
             unless mime_type = Marcel::MimeType.for(filename)
               raise "Could not determine content type for #{filename}"
