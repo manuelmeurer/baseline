@@ -1,10 +1,14 @@
 en:
+  "no": "no"
+  "yes": "yes"
   back: back
   cancel: cancel
   confirm: Are you sure?
   copy: copy
+  generic_error: An error occurred, please try again later.
   load_more: Load more
   log_out: Log out
+  maybe: maybe
   next: next
   or_enter_url: ...or enter URL
   please_wait: Please wait...
@@ -17,7 +21,6 @@ en:
   today: today
   tomorrow: tomorrow
   yesterday: yesterday
-  generic_error: An error occurred, please try again later.
 
   authentication:
     already_logged_in: You are already logged in.

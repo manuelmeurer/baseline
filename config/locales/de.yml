@@ -1,10 +1,14 @@
 de:
+  "no": nein
+  "yes": ja
   back: zurück
   cancel: abbrechen
   confirm: Bist du sicher?
   copy: kopieren
+  generic_error: Ein Fehler ist aufgetreten, bitte versuche es später noch einmal.
   load_more: Mehr laden
   log_out: Abmelden
+  maybe: vielleicht
   next: weiter
   or_enter_url: ...oder URL eingeben
   please_wait: Bitte warten...
@@ -17,7 +21,6 @@ de:
   today: heute
   tomorrow: morgen
   yesterday: gestern
-  generic_error: Ein Fehler ist aufgetreten, bitte versuche es später noch einmal.
 
   authentication:
     already_logged_in: Du bist bereits eingeloggt.
