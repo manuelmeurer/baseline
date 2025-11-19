@@ -14,6 +14,7 @@ module Baseline
       language
       login_token
       photo
+      remote_photo_url
     ]
     METHODS = USER_ATTRIBUTES
       .flat_map {
