@@ -283,7 +283,8 @@ module Baseline
           raise Error, "Missing choices."
         end
 
-        @data = data_merge(@data, helpers.stimco(:select2))
+        placeholder = @options[:include_blank].if(true, t(:please_select))
+        @data       = data_merge(@data, helpers.stimco(:select2, placeholder:))
 
         html_options = field_attributes.merge(class: "form-select")
 
@@ -379,6 +380,48 @@ module Baseline
         end
 
         safe_join checkboxes, "\n"
+      end
+
+      def button_group_content
+        expected_options = %i[
+          choices
+          color_css_class
+          option_i18n_key
+          option_i18n_scope
+        ]
+        invalid_options = @options.keys - expected_options
+        if invalid_options.any?
+          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
+        end
+
+        stimco = helpers.stimco(:button_group, to_h: false)
+
+
+        tag.div data: stimco.to_h do
+          safe_join [
+            @form.hidden_field(@attribute, value: nil),
+            tag.div(class: "btn-group") do
+              safe_join(
+                @options[:choices].map do |option|
+                  label_css_class = [
+                    "btn",
+                    "btn-outline-#{@options[:color_css_class].call(option)}",
+                    "border-dark-subtle"
+                  ]
+                  label = @options[:option_i18n_key]&.call(option) || option
+
+                  safe_join [
+                    @form.radio_button(@attribute, option, class: "btn-check"),
+                    @form.label([@attribute, option].join("_"), class: label_css_class) do
+                      t label, scope: @options.fetch(:option_i18n_scope)
+                    end
+                  ], "\n"
+                end, "\n"
+              )
+            end,
+            link_to(t(:clear), "#", class: "ms-3 small button-group-clear", data: stimco.action(:clear))
+          ], "\n"
+        end
       end
 
       def file_content

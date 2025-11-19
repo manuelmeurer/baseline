@@ -136,3 +136,7 @@ label.required::after {
 .optional-indicator label:not(.required)::after {
   content: " (optional)";
 }
+
+.btn-group:not(:has(input:checked)) + .button-group-clear {
+  display: none;
+}
