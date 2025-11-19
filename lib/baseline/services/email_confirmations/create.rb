@@ -9,7 +9,7 @@ module Baseline
         email_confirmation = EmailConfirmation
           .new(args)
           .tap {
-            _1.confirmable ||= Current.user
+            _1.confirmable ||= ::Current.user
             _1.email       ||= _1.confirmable.email
             _1.expired_at  ||= 15.minutes.from_now
           }
