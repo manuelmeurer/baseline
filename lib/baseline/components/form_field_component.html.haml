@@ -8,6 +8,9 @@
   .form-value{ @value_attributes }
     = try :extra_field_content, :above, @form, @attribute
 
+    - if @hint
+      = md_to_html @hint
+
     - if @suffix
       .input-group
         = content_for_type
@@ -35,7 +38,3 @@
     = suggestions
 
     = try :extra_field_content, :below, @form, @attribute
-
-    - if @hint
-      .small.text-body-secondary.mt-1
-        = md_to_html @hint

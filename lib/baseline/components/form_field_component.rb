@@ -7,7 +7,6 @@ module Baseline
 
     def initialize(form, type, field_or_attribute,
         full_width:         false,
-        hint:               NOT_SET,
         i18n_key:           nil,
         i18n_params:        {},
         i18n_scope:         nil,
@@ -24,6 +23,7 @@ module Baseline
         value:              NOT_SET,
         label:              NOT_SET,
         help_text:          NOT_SET,
+        hint:               NOT_SET,
         placeholder:        NOT_SET,
         autocomplete:       nil,
         margin_bottom:      4,
@@ -57,14 +57,6 @@ module Baseline
         end
 
         binding.local_variable_set(attr, val)
-      end
-
-      if hint == NOT_SET
-        hint = I18n.t(attribute,
-          scope:   [::Current.namespace, :form_hints, identifier],
-          default: nil,
-          **i18n_params
-        )
       end
 
       id ||= [
@@ -163,6 +155,7 @@ module Baseline
       %i[
         label
         help_text
+        hint
         placeholder
       ].each do |attr|
         next unless instance_variable_get("@#{attr}") == NOT_SET
