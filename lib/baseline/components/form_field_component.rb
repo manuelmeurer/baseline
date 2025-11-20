@@ -273,6 +273,7 @@ module Baseline
           choices
           disabled
           include_blank
+          multiple
         ]
         invalid_options = @options.keys - expected_options
         if invalid_options.any?
