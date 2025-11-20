@@ -24,7 +24,7 @@ module Baseline
         end
 
         define_method "#{attribute}=" do |value|
-          super Array(value).map(&:to_s)
+          super Array(value).map(&:to_s).compact_blank
         end
 
         define_method "add_#{singular_attribute}" do |value|
