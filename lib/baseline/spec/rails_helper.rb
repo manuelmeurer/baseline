@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+Baseline.configuration.async_inline = true
+
 require "rspec/rails"
 require "view_component/test_helpers"
 require "capybara/rspec"

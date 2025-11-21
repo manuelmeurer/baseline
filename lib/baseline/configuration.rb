@@ -2,7 +2,7 @@
 
 module Baseline
   class Configuration
-    attr_accessor :wrap_exceptions, :root, :no_paper_trail_classes, :custom_icon_classes
+    attr_accessor :wrap_exceptions, :root, :no_paper_trail_classes, :custom_icon_classes, :async_inline
     attr_reader :env
 
     def initialize
@@ -11,6 +11,7 @@ module Baseline
       @env                    = Rails.env.to_sym if defined?(Rails)
       @no_paper_trail_classes = []
       @custom_icon_classes    = []
+      @async_inline           = false
 
       super
     end

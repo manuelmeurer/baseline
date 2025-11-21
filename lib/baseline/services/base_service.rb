@@ -45,7 +45,13 @@ module Baseline
       delegate :call, to: :new
 
       if defined?(ActiveJob)
-        alias_method :call_async, :perform_later
+        def call_async(*, **)
+          if Baseline.configuration.async_inline
+            call(*, **)
+          else
+            perform_later(*, **)
+          end
+        end
 
         def call_in(wait, *, **)
           set(wait:).perform_later(*, **)
