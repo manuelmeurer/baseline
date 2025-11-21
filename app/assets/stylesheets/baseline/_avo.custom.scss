@@ -9,3 +9,11 @@
     margin: 0 !important;
   }
 }
+
+[data-field-type="file"] {
+
+  img {
+    max-height: 300px;
+    width: auto;
+  }
+}
