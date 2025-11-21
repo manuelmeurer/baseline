@@ -264,9 +264,11 @@ module Baseline
         .tap { _1.last << "_component" }
         .inject(Baseline) {
           _1.const_get(_2.camelize)
-        }
+        }.new(*, **)
 
-      render component.new(*, **), &
+      respond_to?(:render) ?
+        render(component, &) :
+        component
     end
 
     def form_classes(type:, prefix: "col")
