@@ -537,6 +537,23 @@ module Baseline
       end
     end
 
+    def pretty_url(url, truncate: true)
+      truncate = 30 if truncate == true
+
+      url
+        .unless(URLFormatValidator.regex) { "https://#{_1}" }
+        .then { Addressable::URI.parse(_1) }
+        .tap {
+          _1.host = _1.host.delete_prefix("www.")
+          _1.path = nil if _1.path == "/"
+        }
+        .to_s
+        .sub(URLFormatValidator.regex, "")
+        .if(truncate) { _1.truncate(_2) }
+    rescue Addressable::URI::InvalidURIError
+      url
+    end
+
     private
 
       AUTO_LINK_RE = %r(
