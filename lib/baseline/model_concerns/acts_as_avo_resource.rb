@@ -28,8 +28,27 @@ module Baseline
       end
     end
 
-    def truncate_on_index = -> { value.if(view == "index") { tag.span(truncate(_1, length: 50), title: _1) } }
-    def link              = -> { link_to nil, value, target: "_blank" if value.present? }
+    def truncate_on_index
+      -> {
+        value.if(view == "index") {
+          tag.span \
+            truncate(_1, length: 50),
+            title: _1
+        }
+      }
+    end
+
+    def link
+      -> {
+        if value.present?
+          link_to \
+            helpers.pretty_url(value, truncate: view == "index"),
+            value,
+            **helpers.external_link_attributes,
+            title: value
+        end
+      }
+    end
 
     def polymorphic_types_with_resource(attribute)
       model_class
