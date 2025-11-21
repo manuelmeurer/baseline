@@ -63,14 +63,42 @@ module Baseline
       end
     end
 
+    def locale_field
+      field :locale,
+        as:      :select,
+        options: Baseline::Avo::Filters::Language.new.options.invert
+    end
+
+    def image_field(attribute)
+      field attribute,
+        as:       :file,
+        is_image: true,
+        only_on:  :forms
+      field attribute,
+        as: :text,
+        only_on: :display,
+        format_using: -> {
+          if value.attached?
+            size = view == "index" ? :xs_thumb : :md_fit
+            link_to Rails.application.routes.url_helpers.url_for(value), **helpers.external_link_attributes do
+              render helpers.component(:attachment_image, value, size)
+            end
+          end
+        }
+    end
+
     def fields
       discover_columns
       discover_associations
     end
 
     def timestamps
-      field :created_at, as: :date_time, only_on: :display
-      field :updated_at, as: :date_time, only_on: :show
+      field :created_at, as: :text, only_on: :display do
+        l record.created_at
+      end
+      field :updated_at, as: :text, only_on: :show do
+        l record.updated_at
+      end
     end
   end
 end
