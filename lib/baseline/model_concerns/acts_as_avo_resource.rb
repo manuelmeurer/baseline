@@ -38,18 +38,6 @@ module Baseline
       }
     end
 
-    def link
-      -> {
-        if value.present?
-          link_to \
-            helpers.pretty_url(value, truncate: view == "index"),
-            value,
-            **helpers.external_link_attributes,
-            title: value
-        end
-      }
-    end
-
     def polymorphic_types_with_resource(attribute)
       model_class
         .polymorphic_types(attribute)
@@ -63,19 +51,52 @@ module Baseline
       end
     end
 
-    def locale_field
-      field :locale,
-        as:      :select,
-        options: Baseline::Avo::Filters::Language.new.options.invert
+    def email_field(attribute = :email, **options)
+      field attribute,
+        **options.reverse_merge(
+          as: :text
+        ) do
+          mail_to record.send(attribute)
+        end
     end
 
-    def image_field(attribute)
+    def url_field(attribute = :url, **options)
+      field attribute,
+        **options.reverse_merge(
+          as: :text,
+          format_display_using: -> {
+            if value.present?
+              link_to \
+                helpers.pretty_url(value, truncate: view == "index"),
+                value,
+                title: value,
+                **helpers.external_link_attributes
+            end
+          }
+        )
+    end
+
+    def enum_field(attribute, **options)
+      field attribute,
+        as:   :select,
+        enum: model_class.public_send(attribute.pluralize)
+    end
+
+    def locale_field(attribute = :locale, **options)
+      field attribute,
+        **options.reverse_merge(
+          as:      :select,
+          options: Baseline::Avo::Filters::Language.new.options.invert
+        )
+    end
+
+    def image_field(attribute = :photo)
       field attribute,
         as:       :file,
         is_image: true,
         only_on:  :forms
       field attribute,
-        as: :text,
+        as:      :text,
         only_on: :display,
         format_using: -> {
           if value.attached?
@@ -87,12 +108,23 @@ module Baseline
         }
     end
 
-    def fields
+    def polymorphic_field(attribute, **options)
+      field attribute,
+        **options.reverse_merge(
+          as:             :belongs_to,
+          polymorphic_as: attribute,
+          types:          polymorphic_types_with_resource(attribute),
+          default:        -> { params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) } },
+          searchable:     true
+        )
+    end
+
+    def discover_fields
       discover_columns
       discover_associations
     end
 
-    def timestamps
+    def timestamp_fields
       field :created_at, as: :text, only_on: :display do
         l record.created_at
       end
