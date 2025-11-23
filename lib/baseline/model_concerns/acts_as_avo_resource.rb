@@ -119,6 +119,21 @@ module Baseline
         )
     end
 
+    def array_field(attribute, **options)
+      field attribute,
+        **options.reverse_merge(
+          as: :textarea,
+          format_using: -> {
+            view.form? ?
+              value.join("\n") :
+              value.join(", ")
+          },
+          update_using: -> {
+            value.split("\n")
+          }
+        )
+    end
+
     def discover_fields
       discover_columns
       discover_associations
