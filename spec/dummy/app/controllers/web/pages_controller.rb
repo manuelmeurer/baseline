@@ -18,5 +18,7 @@ module Web
       def action_i18n_scope
         super params[:id].tr("-", "_")
       end
+
+      _baseline_finalize
   end
 end

@@ -5,5 +5,7 @@ module Admin
     def show
       render "admin/dashboard"
     end
+
+    _baseline_finalize
   end
 end

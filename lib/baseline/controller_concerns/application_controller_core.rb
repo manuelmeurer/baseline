@@ -7,6 +7,12 @@ module Baseline
     included do
       include I18nScopes
 
+      if defined?(MemoWise)
+        prepend MemoWise
+      end
+
+      stale_when_importmap_changes
+
       before_action do
         PaperTrail.request.whodunnit = -> {
           (
@@ -105,6 +111,20 @@ module Baseline
     end
 
     class_methods do
+      def _baseline_finalize
+        if defined?(@_baseline_finalized)
+          raise "Controller #{name} has already been finalized."
+        end
+
+        before_action prepend: true do
+          ::Current.modal_request = specific_turbo_frame_request?(:modal)
+          ::Current.namespace     = controller_path.split("/").first.to_sym
+          ::Current.action_name   = action_name
+        end
+
+        @_baseline_finalized = true
+      end
+
       def rate_limit_create
         rate_limit \
           to:     10,

@@ -9,5 +9,7 @@ module Web
     private
 
       def allow_robots? = true
+
+      _baseline_finalize
   end
 end
