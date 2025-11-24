@@ -22,7 +22,7 @@ module Baseline
             end
           end
 
-          before_action :require_authentication
+          before_action :require_authentication, prepend: true
 
           helper_method def authenticated?   = !!resume_session
           helper_method def unauthenticated? = !authenticated?
