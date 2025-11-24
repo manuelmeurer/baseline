@@ -73,18 +73,22 @@ module Baseline
             }
         end
 
-      config.active_job.queue_adapter = :solid_queue
-
       config.active_storage.queues.analysis        = :default
       config.active_storage.queues.purge           = :default
       config.active_storage.variant_processor      = :vips
       config.active_storage.resolve_model_to_route = :rails_storage_proxy
 
-      config.solid_queue.clear_finished_jobs_after = 1.month
-      config.solid_queue.connects_to = { database: { writing: :queue } }
+      if defined?(SolidQueue)
+        config.active_job.queue_adapter = :solid_queue
 
-      config.mission_control.jobs.base_controller_class   = "MissionControl::Jobs::BaseController"
-      config.mission_control.jobs.http_basic_auth_enabled = false
+        config.solid_queue.clear_finished_jobs_after = 1.month
+        config.solid_queue.connects_to = { database: { writing: :queue } }
+      end
+
+      if defined?(MissionControl::Jobs)
+        config.mission_control.jobs.base_controller_class   = "MissionControl::Jobs::BaseController"
+        config.mission_control.jobs.http_basic_auth_enabled = false
+      end
 
       config.cache_store = :solid_cache_store, { compressor: Baseline::ZstdCompressor }
 
