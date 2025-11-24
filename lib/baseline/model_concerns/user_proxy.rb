@@ -20,7 +20,9 @@ module Baseline
       .flat_map {
         [_1, :"#{_1}="]
       }.push(
-        *User.genders.keys.map { :"#{_1}?" },
+        # Genders
+        :male?,
+        :female?,
 
         # Dummy image attachment
         :dummy_photo,
