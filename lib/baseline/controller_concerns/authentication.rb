@@ -130,7 +130,7 @@ module Baseline
           def set_current_user(user)
             if ::Current.user = user
               %i[id email name].index_with {
-                user&.public_send _1
+                user.public_send _1
               }.then {
                 Sentry.set_user(**_1)
               }
