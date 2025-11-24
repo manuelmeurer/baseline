@@ -23,6 +23,10 @@ de:
   tomorrow: morgen
   yesterday: gestern
 
+  navbar:
+    login: Einloggen
+    log_out: Ausloggen
+
   authentication:
     already_logged_in: Du bist bereits eingeloggt.
     cta: Bitte logge dich ein, um fortzufahren.

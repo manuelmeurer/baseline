@@ -60,26 +60,27 @@ module Baseline
 
     def auth_group
       with_group do |group|
-        unless ::Current.userable&.then { _1.class.to_s == ::Current.userable_class }
-          next group.with_item_link([::Current.namespace, :login]) do
+        if ::Current.userable&.then { _1.class.to_s == ::Current.userable_class }
+          avatar_and_name = safe_join([
+            component(:attachment_image, ::Current.userable.photo_or_dummy, :sm_thumb),
+            ::Current.userable.then { _1.try(:formal?) ? _1.name : _1.first_name },
+            nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
+          ], " ")
+
+          group.with_item_dropdown(avatar_and_name, css_class: "avatar", align_end: true) do |dropdown|
+            yield dropdown if block_given?
+            dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
+              safe_join [
+                component(:icon, "sign-out", fixed_width: true, class: "me-1"),
+                t(:log_out, scope: :navbar)
+              ], " "
+            end
+          end
+        else
+          group.with_item_link([::Current.namespace, :login]) do
             safe_join [
               component(:icon, "sign-in", fixed_width: true, class: "me-1"),
-              "Login"
-            ], " "
-          end
-        end
-
-        avatar_and_name = safe_join([
-          component(:attachment_image, ::Current.userable.photo_or_dummy, :sm_thumb),
-          ::Current.userable.first_name,
-          nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
-        ], " ")
-
-        group.with_item_dropdown(avatar_and_name, css_class: "avatar", align_end: true) do |dropdown|
-          dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
-            safe_join [
-              component(:icon, "sign-out", fixed_width: true, class: "me-1"),
-              "Log out"
+              t(:login, scope: :navbar)
             ], " "
           end
         end

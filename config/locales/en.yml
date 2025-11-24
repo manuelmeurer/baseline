@@ -23,6 +23,10 @@ en:
   tomorrow: tomorrow
   yesterday: yesterday
 
+  navbar:
+    login: Login
+    log_out: Log out
+
   authentication:
     already_logged_in: You are already logged in.
     cta: Please log in to continue.
