@@ -5,7 +5,7 @@ module Baseline
     class Genderize < ::External::Base
       BASE_URL = "https://api.genderize.io".freeze
 
-      add_action :get_gender, run_unless_prod: true do |name, locale = :de|
+      add_action :get_gender, return_unless_prod: "male" do |name, locale = :de|
         cache_key = [
           self.class.to_s,
           :get_gender,
