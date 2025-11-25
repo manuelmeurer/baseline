@@ -36,17 +36,37 @@ module Baseline
         puts "No backup file found to sync."
         exit 1
       end
+      puts "Found latest backup file: #{file}"
+
+      puts "Compressing backup file..."
+      `gzip -9 -k #{file}`
 
       compressed_file = "#{file}.gz"
 
-      `gzip -9 #{compressed_file} #{file}`
+      unless File.exist?(compressed_file)
+        puts "Error: compressed file not found: #{compressed_file}"
+        exit 1
+      end
 
-      # This command expects a configured rclone remote with the name of the app_path.
-      `rclone copy #{compressed_file} #{options[:app_path]}`
+      rclone_remote = options[:app_path]
+      puts "Checking if rclone remote '#{rclone_remote}' exists..."
+      remotes = `rclone listremotes`.split("\n").map { _1.delete_suffix(":") }
+      unless remotes.include?(rclone_remote)
+        puts "Error: rclone remote '#{rclone_remote}' not found. Please configure it first."
+        exit 1
+      end
+      puts "Rclone remote '#{rclone_remote}' found."
 
+      r2_bucket = "#{options[:app_path]}-db-backups"
+
+      puts "Uploading compressed file to remote host..."
+      `rclone copy #{compressed_file} #{rclone_remote}:#{r2_bucket}/`
+
+      puts "Deleting compressed file..."
       File.delete compressed_file
 
-      `rclone --min-age 30d delete #{options[:app_path]}`
+      puts "Deleting remote backups older than 30 days..."
+      `rclone --min-age 30d delete #{rclone_remote}:#{r2_bucket}/`
     end
 
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
