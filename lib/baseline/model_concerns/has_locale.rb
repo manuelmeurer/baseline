@@ -14,8 +14,9 @@ module Baseline
 
         included do
           if validate_presence
-            validates attribute, presence: true
-            validates language_attribute, presence: true
+            [attribute, language_attribute].each {
+              validates _1, presence: validate_presence
+            }
           end
 
           validates attribute, inclusion: { in: valid_locales.map(&:to_s), allow_nil: true }
