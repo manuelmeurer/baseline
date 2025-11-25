@@ -30,7 +30,6 @@ RSpec.describe User do
         password_digest: { type: :string },
         remember_token:  { type: :string },
         slug:            { type: :string, null: false },
-        subscriptions:   { type: :json, default: [], null: false },
         title:           { type: :string },
         updated_at:      { type: :datetime, null: false }
       )

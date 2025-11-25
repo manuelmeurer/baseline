@@ -6,6 +6,9 @@ class User < ApplicationRecord
 
   has_one :admin_user, dependent: :destroy
 
+  has_many :user_subscriptions, dependent: :destroy
+  has_many :subscriptions, through: :user_subscriptions
+
   validates :email, uniqueness: { allow_nil: true }
   validates :gender, presence: true
   validates :first_name, presence: true
@@ -42,7 +45,6 @@ end
 #  password_digest :string
 #  remember_token  :string
 #  slug            :string           not null
-#  subscriptions   :json             not null
 #  title           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

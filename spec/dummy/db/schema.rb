@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_075153) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_25_152551) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -352,6 +352,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_075153) do
     t.index ["user_id"], name: "index_tickets_on_user_id"
   end
 
+  create_table "user_subscriptions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "subscription_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subscription_id"], name: "index_user_subscriptions_on_subscription_id"
+    t.index ["user_id"], name: "index_user_subscriptions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -360,14 +369,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_075153) do
     t.datetime "updated_at", null: false
     t.string "slug", null: false
     t.string "title"
-    t.json "subscriptions", default: [], null: false
     t.string "locale", null: false
     t.string "remember_token"
     t.string "password_digest"
     t.integer "gender"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["slug"], name: "index_users_on_slug", unique: true
-    t.check_constraint "JSON_TYPE(subscriptions) = 'array'", name: "user_subscriptions_is_array"
   end
 
   create_table "versions", force: :cascade do |t|
@@ -401,4 +408,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_075153) do
   add_foreign_key "tickets", "admin_users"
   add_foreign_key "tickets", "events"
   add_foreign_key "tickets", "users"
+  add_foreign_key "user_subscriptions", "subscriptions"
+  add_foreign_key "user_subscriptions", "users"
 end
