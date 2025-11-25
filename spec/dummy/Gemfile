@@ -6,6 +6,7 @@ gemspec path: "../../"
 
 gem "active_storage_validations",               "~> 3.0"
 gem "addressable",                              "~> 2.8"
+gem "amazing_print",                            "~> 2.0", require: false
 gem "annotaterb",                               "~> 4.4", require: false
 gem "bcrypt",                                   "~> 3.1"
 gem "bootstrap",                                "~> 5.3"
@@ -25,6 +26,7 @@ gem "memo_wise",                                "~> 1.9"
 gem "mission_control-jobs",                     "~> 1.0"
 gem "paper_trail",                              "~> 16.0"
 gem "propshaft",                                "~> 1.0"
+gem "pry-rails",                                "~> 0.3"
 gem "rack-cors",                                "~> 3.0"
 gem "rails-i18n",                               "~> 8.0"
 gem "rails",                                    "~> 8.0.1"
