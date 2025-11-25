@@ -26,6 +26,29 @@ module Baseline
       puts "#{SUCCESS_PREFIX} #{pathname}"
     end
 
+    desc "sync", "sync"
+    def sync
+      file = Pathname(DIR)
+        .children
+        .last
+
+      unless file
+        puts "No backup file found to sync."
+        exit 1
+      end
+
+      compressed_file = "#{file}.gz"
+
+      `gzip -9 #{compressed_file} #{file}`
+
+      # This command expects a configured rclone remote with the name of the app_path.
+      `rclone copy #{compressed_file} #{options[:app_path]}`
+
+      File.delete compressed_file
+
+      `rclone --min-age 30d delete #{options[:app_path]}`
+    end
+
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
     option :local, type: :string, desc: "Path to the local backup file to restore"
     desc "restore", "restore"
