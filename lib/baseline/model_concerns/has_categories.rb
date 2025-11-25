@@ -35,13 +35,11 @@ module Baseline
 
             accepts_nested_attributes_for :category
 
-            validates :category, inclusion: { in: -> { Category.valid_for _1 } }
-          end
-        end
-
-        unless many
-          def category
-            super || build_category
+            validates :category,
+              inclusion: {
+                in:        -> { Category.valid_for _1 },
+                allow_nil: true
+              }
           end
         end
       end
