@@ -51,13 +51,11 @@ module Baseline
       end
     end
 
-    def email_field(attribute = :email, **options)
-      field attribute,
-        **options.reverse_merge(
-          as: :text
-        ) do
-          mail_to record.send(attribute)
-        end
+    def email_field(attribute = :email)
+      field attribute, as: :text, only_on: :forms
+      field attribute, as: :text, only_on: :display do
+        mail_to record.send(attribute)
+      end
     end
 
     def url_field(attribute = :url, **options)
