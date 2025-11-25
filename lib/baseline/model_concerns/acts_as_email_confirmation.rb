@@ -12,7 +12,6 @@ module Baseline
 
       validates :email, presence: true
       validates :expired_at, presence: true
-      validates :revoked_at, absence: { if: :unconfirmed? }
 
       validate on: :create, if: :confirmable do
         if confirmable.email_confirmations.unconfirmed.expired_after.any?
