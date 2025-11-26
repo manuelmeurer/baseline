@@ -64,8 +64,8 @@ module Baseline
         form.object.then { _1.try(:slug) || _1.id if _1 }, # Don't use `form.object&.` since `form.object` might be false.
         attribute,
         case type
-        when :radio  then value
-        when :switch then options[:checked_value]
+        when :radio             then value
+        when :checkbox, :switch then options[:checked_value]
         end
       ].compact
         .join("_")
@@ -268,12 +268,40 @@ module Baseline
           **field_attributes
       end
 
+      def country_select_content
+        if @options[:choices]
+          raise ArgumentError, "Don't provide choices for country_select."
+        end
+
+        countries = ISO3166::Country.translations(I18n.locale)
+        selected = @form.object.public_send(@attribute)&.alpha2
+
+        if priority = @options.delete(:priority)
+          unless priority == :dach
+            raise ArgumentError, "Unexpected priority option: #{priority}."
+          end
+
+          priority_countries = countries.slice("DE", "AT", "CH")
+          countries.except!(*priority_countries.keys)
+          grouped_options = {
+            "DACH"   => priority_countries.invert,
+            "Global" => countries.invert
+          }
+          @options[:choices] = grouped_options_for_select(grouped_options, selected)
+        else
+          @options[:choices] = options_for_select(countries.invert, selected)
+        end
+
+        select_content
+      end
+
       def select_content
         expected_options = %i[
           choices
           disabled
           include_blank
           multiple
+          enhance
         ]
         invalid_options = @options.keys - expected_options
         if invalid_options.any?
@@ -281,11 +309,13 @@ module Baseline
         end
 
         unless choices = @options.delete(:choices)
-          raise Error, "Missing choices."
+          raise ArgumentError, "Missing choices."
         end
 
-        placeholder = @options[:include_blank].if(true, t(:please_select))
-        @data       = data_merge(@data, helpers.stimco(:select2, placeholder:))
+        if @options.delete(:enhance)
+          placeholder = @options[:include_blank].if(true, t(:please_select))
+          @data       = data_merge(@data, helpers.stimco(:select2, placeholder:))
+        end
 
         html_options = field_attributes.merge(class: "form-select")
 
@@ -293,12 +323,6 @@ module Baseline
           choices,
           @options,
           html_options
-      end
-
-      def country_content
-        helpers.select_country @form,
-          data:     @data,
-          required: @required
       end
 
       def radio_content
@@ -315,12 +339,18 @@ module Baseline
       end
 
       def switch_content
+        @options[:class] = [@options[:class], "form-switch"].compact.join(" ")
+        checkbox_content
+      end
+
+      def checkbox_content
         expected_options = %i[
           checked_value
           unchecked_value
           checked
           include_hidden
           multiple
+          class
         ]
         invalid_options = @options.keys - expected_options
         if invalid_options.any?
@@ -333,11 +363,12 @@ module Baseline
         }.map {
           @options.delete(_1) || _2
         }
+        css_class = [@options.delete(:class), "form-check"]
         options = field_attributes
           .merge(@options)
           .merge(class: "form-check-input")
 
-        tag.div class: "form-check form-switch" do
+        tag.div class: css_class do
           safe_join [
             @form.checkbox(@attribute, options, *value_options),
             (label_tag("form-check-label") if @inline_label)
