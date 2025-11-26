@@ -5,7 +5,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      generates_token_for :login, expires_in: 2.hours
+      generates_token_for :login, expires_in: 1.day
     end
 
     class_methods do
