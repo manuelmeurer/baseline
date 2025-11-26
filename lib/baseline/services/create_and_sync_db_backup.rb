@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
+require "open3"
+
 module Baseline
   class CreateAndSyncDbBackup < ApplicationService
     def call
       check_uniqueness
 
-      unless system("bin/db backup")
-        raise Error, "Error creating DB backup."
-      end
-
-      unless system("bin/db sync")
-        raise Error, "Error syncing DB backup."
+      [
+        "bin/db backup",
+        "bin/db sync"
+      ].each do |command|
+        stdout, stderr, status = Open3.capture3(command)
+        unless status.success?
+          raise Error, "Error running #{command}.\nSTDOUT: #{stdout}\nSTDERR: #{stderr}"
+        end
       end
     end
   end
