@@ -9,20 +9,17 @@ module Baseline
         included do
           class_eval { @auth_user_scope = "User.active.#{scope}" }
 
-          before_action do
-            if user = params[:t].presence&.then { auth_user_scope.try(:find_by_login_token, _1) }
-              if respond_to?(:allow_login_with_token?, true)
-                next unless allow_login_with_token?(user)
-              end
-
-              authenticate user
-
-              redirect_to_return_to_or_to \
-                params.permit!.except(:t)
-            end
-          end
-
+          # The order of these two before_actions is important.
           before_action :require_authentication, prepend: true
+          before_action prepend: true do
+            next unless user = params[:t].presence&.then { auth_user_scope.try(:find_by_login_token, _1) }
+            next if respond_to?(:allow_login_with_token?, true) && !allow_login_with_token?(user)
+
+            authenticate user
+
+            redirect_to_return_to_or_to \
+              params.permit!.except(:t)
+          end
 
           helper_method def authenticated?   = !!resume_session
           helper_method def unauthenticated? = !authenticated?
