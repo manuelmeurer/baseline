@@ -3,16 +3,16 @@
 require "avo"
 
 ::Avo.configure do |config|
-  config.app_name                      = "Admin Dashboard"
-  config.click_row_to_view_record      = true
-  config.currency                      = "EUR"
-  config.license_key                   = Rails.application.env_credentials.avo.license_key!
-  config.raise_error_on_missing_policy = true
-  config.root_path                     = "cms"
+  config.app_name                 = "Admin Dashboard"
+  config.click_row_to_view_record = true
+  config.currency                 = "EUR"
+  config.license_key              = Rails.application.env_credentials.avo.license_key!
+  config.root_path                = "cms"
 
   if @auth
-    config.explicit_authorization = true
-    config.authorization_client   = :pundit
+    config.explicit_authorization        = true
+    config.authorization_client          = :pundit
+    config.raise_error_on_missing_policy = true
     config.current_user_method do
       ::Current.admin_user
     end
