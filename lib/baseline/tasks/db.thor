@@ -61,14 +61,16 @@ module Baseline
       end
       puts "Rclone remote '#{rclone_remote}' found."
 
+      remote = "#{rclone_remote}:#{r2_bucket}/#{options[:app_path]}/"
+
       puts "Uploading compressed file to remote host..."
-      `rclone copy #{compressed_file} #{rclone_remote}:#{r2_bucket}/`
+      `rclone copy #{compressed_file} #{remote}`
 
       puts "Deleting compressed file..."
       File.delete compressed_file
 
       puts "Deleting remote backups older than 30 days..."
-      `rclone --min-age 30d delete #{rclone_remote}:#{r2_bucket}/`
+      `rclone --min-age 30d delete #{remote}`
     end
 
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
