@@ -48,7 +48,10 @@ module Baseline
         exit 1
       end
 
-      rclone_remote = :db_backups
+      rclone_remote =
+        r2_bucket =
+          "db-backups"
+
       puts "Checking if rclone remote '#{rclone_remote}' exists..."
       remotes = `rclone listremotes`.split("\n").map { _1.delete_suffix(":") }
       unless remotes.include?(rclone_remote)
@@ -56,8 +59,6 @@ module Baseline
         exit 1
       end
       puts "Rclone remote '#{rclone_remote}' found."
-
-      r2_bucket = :"db-backups"
 
       puts "Uploading compressed file to remote host..."
       `rclone copy #{compressed_file} #{rclone_remote}:#{r2_bucket}/`
