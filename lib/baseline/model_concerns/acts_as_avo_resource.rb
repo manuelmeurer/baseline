@@ -52,7 +52,7 @@ module Baseline
     end
 
     def email_field(attribute = :email)
-      field attribute, as: :text, only_on: :forms
+      field attribute, as: :text, only_on: :forms, default: params[attribute]
       field attribute, as: :text, only_on: :display do
         mail_to record.send(attribute)
       end
@@ -61,7 +61,8 @@ module Baseline
     def url_field(attribute = :url, **options)
       field attribute,
         **options.reverse_merge(
-          as: :text,
+          as:      :text,
+          default: params[attribute],
           format_display_using: -> {
             if value.present?
               link_to \
@@ -76,14 +77,18 @@ module Baseline
 
     def enum_field(attribute, **options)
       field attribute,
-        as:   :select,
-        enum: model_class.public_send(attribute.pluralize)
+        **options.reverse_merge(
+          as:      :select,
+          default: params[attribute],
+          enum:    model_class.public_send(attribute.pluralize)
+        )
     end
 
     def locale_field(attribute = :locale, **options)
       field attribute,
         **options.reverse_merge(
           as:      :select,
+          default: params[attribute],
           options: Baseline::Avo::Filters::Language.new.options.invert
         )
     end
@@ -120,7 +125,8 @@ module Baseline
     def array_field(attribute, **options)
       field attribute,
         **options.reverse_merge(
-          as: :textarea,
+          as:      :textarea,
+          default: params[attribute],
           format_using: -> {
             view.form? ?
               value.join("\n") :
