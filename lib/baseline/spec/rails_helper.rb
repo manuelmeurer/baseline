@@ -73,4 +73,24 @@ RSpec.configure do |config|
   config.before :each, type: :system do
     driven_by Capybara.javascript_driver
   end
+
+  config.define_derived_metadata(file_path: %r{spec/components}) do |metadata|
+    metadata[:type] = :component
+  end
+
+  config.before :each, type: :request do |example|
+    file_path = example.metadata[:file_path]
+
+    unless namespace = file_path[%r{spec/requests/([^/]+)/}i, 1]&.to_sym
+      raise "Cannot determine namespace from file path: #{file_path}"
+    end
+
+    URLManager
+      .route_constraints(namespace)
+      .fetch_values(:subdomain, :domain)
+      .join(".")
+      .then {
+        host! _1
+      }
+  end
 end

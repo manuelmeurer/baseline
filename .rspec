@@ -1,2 +1,2 @@
---require spec_helper
+--require baseline/spec/spec_helper
 --exclude-pattern "spec/dummy/vendor/**/*_spec.rb"

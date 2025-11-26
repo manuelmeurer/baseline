@@ -1,39 +1,32 @@
 # frozen_string_literal: true
 
-require "spec_helper"
+require "baseline/spec/spec_helper"
+
+# Gems that are included in the gemspec, not in the Gemfile, are not automatically required.
+require "shoulda/matchers"
+require "factory_bot_rails"
 
 ENV["RAILS_ENV"] ||= "test"
 
 require File.expand_path("dummy/config/environment", __dir__)
 
-require "rspec/rails"
-require "view_component/test_helpers"
-require "shoulda/matchers"
-require "factory_bot_rails"
+require "baseline/spec/rails_helper"
 
-Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
+# Explicitly configure FactoryBot to load factories from spec/factories
+# since the baseline engine structure is non-standard.
+FactoryBot.definition_file_paths = [
+  File.expand_path("factories", __dir__)
+]
+FactoryBot.find_definitions
 
-begin
-  ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
-  exit 1
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end
 
 RSpec.configure do |config|
-  config.define_derived_metadata(file_path: %r{spec/components}) do |metadata|
-    metadata[:type] = :component
-  end
-
-  config.include ViewComponent::TestHelpers,       type: :component
-  config.include ViewComponent::SystemSpecHelpers, type: :feature
-  config.include ViewComponent::SystemSpecHelpers, type: :system
-  config.include FactoryBot::Syntax::Methods
-
-  config.use_transactional_fixtures = true
-  config.infer_spec_type_from_file_location!
-  config.filter_rails_from_backtrace!
-
   config.before :suite do
     unless ENV["SKIP_ASSETS_PRECOMPILE"]
       puts "Precompiling assets..."
@@ -44,16 +37,5 @@ RSpec.configure do |config|
       ") ||
         raise("Asset precompilation failed")
     end
-  end
-
-  config.before :each, type: :request do
-    host! Rails.application.env_credentials.host!
-  end
-end
-
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
   end
 end

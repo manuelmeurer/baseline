@@ -97,6 +97,19 @@ GEM
     bootstrap (5.3.5)
       popper_js (>= 2.11.8, < 3)
     builder (3.3.0)
+    capybara (3.40.0)
+      addressable
+      matrix
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.11)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
+    capybara-playwright-driver (0.5.7)
+      addressable
+      capybara
+      playwright-ruby-client (>= 1.16.0)
     cloudinary (2.4.0)
       faraday (>= 2.0.1, < 3.0.0)
       faraday-follow_redirects (~> 0.3.0)
@@ -207,8 +220,13 @@ GEM
       net-pop
       net-smtp
     marcel (1.1.0)
+    matrix (0.4.3)
     memo_wise (1.13.0)
     method_source (1.1.0)
+    mime-types (3.7.0)
+      logger
+      mime-types-data (~> 3.2025, >= 3.2025.0507)
+    mime-types-data (3.2025.0924)
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
@@ -244,6 +262,9 @@ GEM
     paper_trail (16.0.0)
       activerecord (>= 6.1)
       request_store (~> 1.4)
+    playwright-ruby-client (1.56.0)
+      concurrent-ruby (>= 1.1.6)
+      mime-types (>= 3.0)
     popper_js (2.11.8)
     pp (0.6.3)
       prettyprint
@@ -315,6 +336,7 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
     request_store (1.7.0)
@@ -393,6 +415,8 @@ GEM
       base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
     zeitwerk (2.7.3)
     zstd-ruby (1.5.7.0)
 
@@ -408,6 +432,8 @@ DEPENDENCIES
   baseline!
   bcrypt (~> 3.1)
   bootstrap (~> 5.3)
+  capybara (~> 3.38)
+  capybara-playwright-driver (~> 0.5)
   cloudinary (~> 2.2)
   dartsass-rails (~> 0.5)
   email_validator (~> 2.2)
@@ -464,6 +490,8 @@ CHECKSUMS
   bigdecimal (3.3.1) sha256=eaa01e228be54c4f9f53bf3cc34fe3d5e845c31963e7fcc5bedb05a4e7d52218
   bootstrap (5.3.5) sha256=d57c9b7a21eaf2182c32fe93d1c0eaa0e1ebe82c46676c5a1fd66dd3a6ac41f8
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
+  capybara (3.40.0)
+  capybara-playwright-driver (0.5.7)
   cloudinary (2.4.0) sha256=61e34d2fbe454cb88da3e500f8eea0eea355b6fa178032d3190a44df3bd26380
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   concurrent-ruby (1.3.5) sha256=813b3e37aca6df2a21a3b9f1d497f8cbab24a2b94cab325bffe65ee0f6cbebc6
@@ -512,8 +540,11 @@ CHECKSUMS
   loofah (2.24.1) sha256=655a30842b70ec476410b347ab1cd2a5b92da46a19044357bbd9f401b009a337
   mail (2.9.0) sha256=6fa6673ecd71c60c2d996260f9ee3dd387d4673b8169b502134659ece6d34941
   marcel (1.1.0) sha256=fdcfcfa33cc52e93c4308d40e4090a5d4ea279e160a7f6af988260fa970e0bee
+  matrix (0.4.3)
   memo_wise (1.13.0) sha256=30220c38c4cef410849bc73553c58664dc2c91c6379e4a1df22aea02358b716b
   method_source (1.1.0) sha256=181301c9c45b731b4769bc81e8860e72f9161ad7d66dd99103c9ab84f560f5c5
+  mime-types (3.7.0)
+  mime-types-data (3.2025.0924)
   mini_magick (5.3.1) sha256=29395dfd76badcabb6403ee5aff6f681e867074f8f28ce08d78661e9e4a351c4
   mini_mime (1.1.5) sha256=8681b7e2e4215f2a159f9400b5816d85e9d8c6c6b491e96a12797e798f8bccef
   minitest (5.26.0) sha256=f5817ad09f863a4f7eac917707c1ca5c09cdc4a35e17d91171760178324d2c30
@@ -529,6 +560,7 @@ CHECKSUMS
   nokogiri (1.18.10-x86_64-linux-gnu) sha256=ff5ba26ba2dbce5c04b9ea200777fd225061d7a3930548806f31db907e500f72
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
   paper_trail (16.0.0) sha256=e9b9f0fb1b8b590c8231cfa931b282ba92f90e066e393930a5e1c61ae4c5019d
+  playwright-ruby-client (1.56.0)
   popper_js (2.11.8) sha256=f4b0be717fc0d50bdb3dbbc55788525a9e0e8f640b76c9971fc34ee609eadbd2
   pp (0.6.3) sha256=2951d514450b93ccfeb1df7d021cae0da16e0a7f95ee1e2273719669d0ab9df6
   prettyprint (0.2.0) sha256=2bc9e15581a94742064a3cc8b0fb9d45aae3d03a1baa6ef80922627a0766f193
@@ -553,6 +585,7 @@ CHECKSUMS
   rb-fsevent (0.11.2) sha256=43900b972e7301d6570f64b850a5aa67833ee7d87b458ee92805d56b7318aefe
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rdoc (6.15.0) sha256=0f0e68864969e77c2acd4063a9585baa5216d362701d827a93feaa9cbae78b05
+  regexp_parser (2.11.3)
   reline (0.6.2) sha256=1dad26a6008872d59c8e05244b119347c9f2ddaf4a53dce97856cd5f30a02846
   request_store (1.7.0) sha256=e1b75d5346a315f452242a68c937ef8e48b215b9453a77a6c0acdca2934c88cb
   rexml (3.4.4) sha256=19e0a2c3425dfbf2d4fc1189747bdb2f849b6c5e74180401b15734bc97b5d142
@@ -587,6 +620,7 @@ CHECKSUMS
   view_component (4.1.0) sha256=e9a26a8cc5bb59241d410a49a83339055739d0c867049b2f24d94a28391d316c
   websocket-driver (0.8.0) sha256=ed0dba4b943c22f17f9a734817e808bc84cdce6a7e22045f5315aa57676d4962
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241
+  xpath (3.2.0)
   zeitwerk (2.7.3) sha256=b2e86b4a9b57d26ba68a15230dcc7fe6f040f06831ce64417b0621ad96ba3e85
   zstd-ruby (1.5.7.0) sha256=893819f6b95244ca8885c62f9b3be7edfbf604f055bdef0574f4ccca175e87db
 
