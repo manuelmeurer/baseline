@@ -94,6 +94,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_25_152551) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "deactivations", force: :cascade do |t|
+    t.string "reason", null: false
+    t.text "details"
+    t.datetime "revoked_at"
+    t.string "deactivatable_type", null: false
+    t.integer "deactivatable_id", null: false
+    t.string "initiator_type"
+    t.integer "initiator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deactivatable_type", "deactivatable_id"], name: "index_deactivations_on_deactivatable"
+    t.index ["initiator_type", "initiator_id"], name: "index_deactivations_on_initiator"
+  end
+
   create_table "email_deliveries", force: :cascade do |t|
     t.string "subject", null: false
     t.string "message_id"
