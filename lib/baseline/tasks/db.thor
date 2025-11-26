@@ -30,6 +30,7 @@ module Baseline
     def sync
       file = Pathname(DIR)
         .children
+        .select { _1.extname == ".sql" }
         .last
 
       unless file
