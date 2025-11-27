@@ -257,7 +257,7 @@ module Baseline
         end
       end
 
-      def render_turbo_response(
+      def turbo_response_stream(
         redirect:             nil,
         success_message:      nil,
         error_message:        nil,
@@ -282,7 +282,7 @@ module Baseline
           end
         end
 
-        stream = turbo_stream.append_all(:body) do
+        turbo_stream.append_all(:body) do
           view_context.tag.div \
             data: stimco(:turbo_response,
               redirect:      redirect&.then { url_for _1 },
@@ -294,9 +294,11 @@ module Baseline
               error_message:
             )
         end
+      end
 
+      def render_turbo_response(**kwargs)
         streams = [
-          stream,
+          turbo_response_stream(**kwargs),
           *(Array(yield) if block_given?)
         ]
 
