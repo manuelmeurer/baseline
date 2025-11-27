@@ -28,10 +28,19 @@ module Baseline
 
     desc "sync", "sync"
     def sync
+      extension =
+        case db_config.adapter
+        when "sqlite"     then "sqlite"
+        when "postgresql" then "sql"
+        else
+          say "Error: unsupported database adapter: #{db_config.adapter}"
+          exit 1
+        end
+
       file = Pathname(DIR)
         .children
         .sort
-        .select { _1.extname == ".sql" }
+        .select { _1.extname == ".#{extension}" }
         .last
 
       unless file
