@@ -268,6 +268,13 @@ module Baseline
           **field_attributes
       end
 
+      # TODO: Remove this when Uplink does not use it anymore.
+      def country_content
+        helpers.select_country @form,
+          data:     @data,
+          required: @required
+      end
+
       def country_select_content
         if @options[:choices]
           raise ArgumentError, "Don't provide choices for country_select."
