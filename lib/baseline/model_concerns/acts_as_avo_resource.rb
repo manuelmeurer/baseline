@@ -138,11 +138,6 @@ module Baseline
         )
     end
 
-    def discover_fields
-      discover_columns
-      discover_associations
-    end
-
     def timestamp_fields
       field :created_at, as: :text, only_on: :display do
         l record.created_at
