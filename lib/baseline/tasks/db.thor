@@ -23,7 +23,7 @@ module Baseline
         .select { File.ctime(_1) < 3.days.ago.beginning_of_day }
         .each { File.delete _1 }
 
-      puts "#{SUCCESS_PREFIX} #{pathname}"
+      say "#{SUCCESS_PREFIX} #{pathname}"
     end
 
     desc "sync", "sync"
@@ -35,18 +35,18 @@ module Baseline
         .last
 
       unless file
-        puts "No backup file found to sync."
+        say "No backup file found to sync."
         exit 1
       end
-      puts "Found latest backup file: #{file}"
+      say "Found latest backup file: #{file}"
 
-      puts "Compressing backup file..."
-      `gzip -9 -k #{file}`
+      say "Compressing backup file..."
+      run "gzip -9 -k #{file}"
 
       compressed_file = "#{file}.gz"
 
       unless File.exist?(compressed_file)
-        puts "Error: compressed file not found: #{compressed_file}"
+        say "Error: compressed file not found: #{compressed_file}"
         exit 1
       end
 
@@ -54,24 +54,24 @@ module Baseline
         r2_bucket =
           "db-backups"
 
-      puts "Checking if rclone remote '#{rclone_remote}' exists..."
-      remotes = `rclone listremotes`.split("\n").map { _1.delete_suffix(":") }
+      say "Checking if rclone remote '#{rclone_remote}' exists..."
+      remotes = run("rclone listremotes", capture: true).split("\n").map { _1.delete_suffix(":") }
       unless remotes.include?(rclone_remote)
-        puts "Error: rclone remote '#{rclone_remote}' not found. Please configure it first."
+        say "Error: rclone remote '#{rclone_remote}' not found. Please configure it first."
         exit 1
       end
-      puts "Rclone remote '#{rclone_remote}' found."
+      say "Rclone remote '#{rclone_remote}' found."
 
       remote = "#{rclone_remote}:#{r2_bucket}/#{options[:app_path]}/"
 
-      puts "Uploading compressed file to remote host..."
-      `rclone copy #{compressed_file} #{remote}`
+      say "Uploading compressed file to remote host..."
+      run "rclone copy #{compressed_file} #{remote}"
 
-      puts "Deleting compressed file..."
+      say "Deleting compressed file..."
       File.delete compressed_file
 
-      puts "Deleting remote backups older than 30 days..."
-      `rclone --min-age 30d delete #{remote}`
+      say "Deleting remote backups older than 30 days..."
+      run "rclone --min-age 30d delete #{remote}"
     end
 
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
@@ -80,70 +80,78 @@ module Baseline
     def restore
       case
       when options[:fresh] && options[:local]
-        puts "Error: both 'fresh' and 'local_path' are set. Please set only one."
+        say "Error: both 'fresh' and 'local_path' are set. Please set only one."
         exit 1
       when options[:fresh]
-        puts "I will take a fresh database backup on #{options[:host]} and restore it to the current development database."
-        puts "The development database will be overwritten."
+        say <<~MSG
+          I will take a fresh database backup on #{options[:host]} and restore it to the current development database.
+          The development database will be overwritten.
+        MSG
       when options[:local]
-        puts "I will restore the backup from #{options[:local]} to the current development database."
-        puts "The development database will be overwritten."
+        say <<~MSG
+          I will restore the backup from #{options[:local]} to the current development database.
+          The development database will be overwritten.
+        MSG
       else
-        puts "I will attempt to download the latest database backup from #{options[:host]} and restore it to the current development database."
-        puts "The development database will be overwritten."
-        puts "If you want to create a fresh backup instead, run this command with the --fresh option"
-        puts "If you want to restore a local_path backup file, run this command with --local path_to_local_backup.sql"
+        say <<~MSG
+          I will attempt to download the latest database backup from #{options[:host]} and restore it to the current development database.
+          The development database will be overwritten.
+          If you want to create a fresh backup instead, run this command with the --fresh option
+          If you want to restore a local_path backup file, run this command with --local path_to_local_backup.sql
+        MSG
       end
-      puts "Press Ctrl+C to cancel or Enter to continue."
+      say "Press Ctrl+C to cancel or Enter to continue."
 
       STDIN.gets
 
       case
       when options[:fresh]
-        puts "Creating database backup on #{options[:host]}..."
+        say "Creating database backup on #{options[:host]}..."
 
-        result = `ssh #{options[:host]} 'cd #{options[:app_path]}/current && bin/db backup'`
+        result = run("ssh #{options[:host]} 'cd #{options[:app_path]}/current && bin/db backup'", capture: true)
           .split("\n")
           .last
 
         unless result.start_with?(SUCCESS_PREFIX)
-          puts "Error: expected the result to start with '#{SUCCESS_PREFIX}': #{result}"
+          say "Error: expected the result to start with '#{SUCCESS_PREFIX}': #{result}"
           exit 1
         end
 
         remote_path = result.delete_prefix(SUCCESS_PREFIX).strip
       when options[:local]
         unless File.exist?(options[:local])
-          puts "Error: file not found: #{options[:local]}"
+          say "Error: file not found: #{options[:local]}"
           exit 1
         end
         local_path = options[:local]
       else
-        puts "Locating latest database backup on #{options[:host]}..."
+        say "Locating latest database backup on #{options[:host]}..."
 
-        remote_path = `ssh #{options[:host]} 'cd #{options[:app_path]}/current && if [ -d #{DIR} ]; then ls #{DIR}/*.* | xargs realpath; fi'`
+        remote_path = run("ssh #{options[:host]} 'cd #{options[:app_path]}/current && if [ -d #{DIR} ]; then ls #{DIR}/*.* | xargs realpath; fi'", capture: true)
           .split("\n")
           .first
 
         unless remote_path
-          puts "Error: no database backups found, aborting..."
+          say "Error: no database backups found, aborting..."
           exit 1
         end
 
-        puts "Found latest database backup: #{remote_path}"
-        puts "Restore this backup?"
-        puts "Press Ctrl+C to cancel or Enter to continue."
+        say <<~MSG
+          Found latest database backup: #{remote_path}
+          Restore this backup?
+          Press Ctrl+C to cancel or Enter to continue.
+        MSG
 
         STDIN.gets
       end
 
       if remote_path
-        puts "Downloading database backup: #{remote_path}"
-        system "scp #{options[:host]}:#{remote_path} ."
+        say "Downloading database backup: #{remote_path}"
+        run "scp #{options[:host]}:#{remote_path} ."
         local_path = File.basename(remote_path)
       end
 
-      puts "Restoring database backup: #{local_path}"
+      say "Restoring database backup: #{local_path}"
 
       send :"restore_#{db_config.adapter}", local_path
     end
@@ -182,8 +190,8 @@ module Baseline
                 > #{pathname}
         CMD
 
-        unless system(pg_dump_command)
-          puts "Error creating database backup. Command executed: #{pg_dump_command}"
+        unless run(pg_dump_command)
+          say "Error creating database backup. Command executed: #{pg_dump_command}"
           exit 1
         end
 
@@ -193,11 +201,11 @@ module Baseline
       def restore_sqlite(local_path)
         FileUtils.rm_f(db_config.database)
         FileUtils.cp(local_path, db_config.database)
-        puts "Probably the -shm and -wal files need to be removed, otherwise we might get a corrupted file error."
+        say "Probably the -shm and -wal files need to be removed, otherwise we might get a corrupted file error."
       end
 
       def restore_postgresql(local_path)
-        system <<~CMD
+        run <<~CMD
           psql \
             --dbname #{db_config.database} \
             --username #{db_config.username} \
