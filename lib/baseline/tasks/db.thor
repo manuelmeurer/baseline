@@ -28,14 +28,13 @@ module Baseline
 
     desc "sync", "sync"
     def sync
-      extension =
-        case db_config.adapter
-        when "sqlite"     then "sqlite"
-        when "postgresql" then "sql"
-        else
-          say "Error: unsupported database adapter: #{db_config.adapter}"
-          exit 1
-        end
+      extension = {
+        sqlite:     "sqlite3",
+        postgresql: "sql"
+      }.fetch(db_config.adapter.to_sym) {
+        say "Error: unsupported database adapter: #{db_config.adapter}"
+        exit 1
+      }
 
       file = Pathname(DIR)
         .children
