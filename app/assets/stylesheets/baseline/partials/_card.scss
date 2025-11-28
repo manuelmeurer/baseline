@@ -1,3 +1,32 @@
+.card {
+  transition: background-color 0.1s ease;
+}
+
+a.card:hover,
+label .card:has(input:checked) {
+  border-color: $gray-500;
+}
+
+a.card:hover,
+label .card:hover {
+  background-color: $gray-100;
+}
+
+label .card {
+
+  &:has(input:checked) {
+    background-color: $gray-200;
+  }
+
+  &:hover {
+
+    &,
+    & * {
+      cursor: pointer;
+    }
+  }
+}
+
 .card-icon-center {
   @include font-size(3rem);
 
