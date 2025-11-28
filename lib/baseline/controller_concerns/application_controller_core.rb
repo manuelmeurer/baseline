@@ -215,6 +215,20 @@ module Baseline
         }
     end
 
+    def append_info_to_payload(payload)
+      super
+
+      payload.merge! \
+        request_id: request.uuid,
+        remote_ip:  request.remote_ip
+
+      if ::Current.user
+        payload.merge! \
+          current_user_id:   ::Current.user.id,
+          current_user_name: ::Current.user.name
+      end
+    end
+
     private
 
       def expires_soon
