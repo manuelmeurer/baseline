@@ -280,14 +280,6 @@ module Baseline
         .map { [prefix, _1].join("-") }
     end
 
-    def custom_human_attribute_name(klass, attribute)
-      human_attribute_name = klass.human_attribute_name(attribute)
-
-      t attribute,
-        scope:   [::Current.namespace, :human_attribute_names, klass.to_s.underscore],
-        default: human_attribute_name
-    end
-
     def md_to_html(...)
       Converters::MarkdownToHTML.call(...)
     end

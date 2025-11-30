@@ -215,6 +215,12 @@ module Baseline
         end
       end
 
+      def custom_human_attribute_name(attribute)
+        I18n.t attribute,
+          scope:   [::Current.namespace, :human_attribute_names, to_s.underscore],
+          default: human_attribute_name(attribute)
+      end
+
       def last_changed_after(attribute, datetime, by: nil)
         if by && (!by.is_a?(ActiveRecord::Relation) || by.klass != User)
           raise "Expected a relation on the User class."
