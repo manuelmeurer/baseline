@@ -61,12 +61,46 @@ module Baseline
       end
     end
 
+    def update
+      wizard_resource.attributes = resource_params
+
+      try :before_wizard_resource_update
+
+      if wizard_resource.save
+        try :after_wizard_resource_update
+        render_wizard(wizard_resource)
+      else
+        render_turbo_response \
+          error_message: wizard_resource.errors.full_messages.join(", ")
+      end
+    end
+
     def success; end
 
     private
 
+      def resource_params
+        params_for_step = wizard_resource
+          .form_step_params
+          .fetch(current_step.to_sym) {
+            raise "Unexpected step: #{current_step}"
+          }
+
+        key = wizard_resource.class.to_s.underscore
+
+        if params.key?(key)
+          params.expect(key => params_for_step)
+        else
+          {}
+        end.merge(form_step: current_step)
+      end
+
       def action_i18n_scope(step = current_step)
         super() + [step].compact
+      end
+
+      def page_title_scope
+        method(:action_i18n_scope).super_method.call
       end
 
       def previous_step(step = nil)
@@ -83,16 +117,6 @@ module Baseline
         index = steps.index(step)
         step  = steps.at(index + 1) if index.present?
         step  ||= FINISH_STEP
-      end
-
-      def jump_to(step, options = {})
-        @skip_to         = step
-        @redirect_params = options
-      end
-
-      def skip_step(options = {})
-        @skip_to         = @next_step
-        @redirect_params = options
       end
 
       def current_step_index = steps.index(current_step)
@@ -128,8 +152,8 @@ module Baseline
         process_resource!(resource, options)
 
         if @skip_to
-          url_params = (@redirect_params || {}).merge(params)
-          redirect_to wizard_path(@skip_to, url_params), options
+          url_params = params.reverse_merge(@redirect_params || {})
+          redirect_to(wizard_path(@skip_to, url_params), options)
         else
           render_step(wizard_value(current_step), options, params)
         end
@@ -138,9 +162,10 @@ module Baseline
       def process_resource!(resource, options = {})
         return unless resource
 
-        did_save = options[:context] ?
-          resource.save(context: options[:context]) :
-          resource.save
+        did_save =
+          options[:context] ?
+            resource.save(context: options[:context]) :
+            resource.save
 
         if did_save
           @skip_to ||= @next_step
@@ -162,15 +187,17 @@ module Baseline
         if next_step.nil?
           redirect_to_finish_wizard(options, params)
         else
-          redirect_to wizard_path(next_step, params), options
+          redirect_to(wizard_path(next_step, params), options)
         end
       end
 
       def wizard_path(step = nil, options = {})
-        url_for(options.merge(
+        options.merge(
           action: :show,
           id:     step || params[:id]
-        ))
+        ).then {
+          url_for _1
+        }
       end
 
       def redirect_to_finish_wizard(...)

@@ -7,9 +7,10 @@ module Baseline
     included do
       validates :form_step,
         absence:   { if: :finished? },
-        presence:  { unless: :finished? },
         inclusion: { in: :form_steps, allow_nil: true }
     end
+
+    def form_steps = form_step_params.keys.map(&:to_s)
 
     def next_form_step
       if finished?
@@ -26,8 +27,8 @@ module Baseline
 
       step_index =
         step == Wizardify::FINISH_STEP ?
-        form_steps.size :
-        form_steps.index(step)
+          form_steps.size :
+          form_steps.index(step)
 
       step_index > next_step_index
     end
