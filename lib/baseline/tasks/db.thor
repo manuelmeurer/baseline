@@ -78,8 +78,39 @@ module Baseline
       say "Deleting compressed file..."
       File.delete compressed_file
 
-      say "Deleting remote backups older than 30 days..."
-      run "rclone --min-age 30d delete #{remote}"
+      say "Deleting remote files older than 90 days..."
+      run "rclone --min-age 90d delete #{remote}"
+
+      say "Listing remote files to keep only the first file per day (for files older than 7 days)..."
+      files = run(
+        "rclone lsjson #{remote}",
+        capture: true
+      ).then { JSON.parse(_1) }
+
+      seven_days_ago = 7.days.ago.beginning_of_day
+
+      # Separate files into recent (keep all) and old (keep one per day)
+      files.select! do |file|
+        Time.parse(file["ModTime"]) < seven_days_ago
+      end
+
+      # For each date, keep only the first file (earliest time) and delete the rest
+      files_to_delete = files
+        .group_by {
+          Time.parse(_1["ModTime"]).to_date
+        }.flat_map {
+          _2.sort_by { Time.parse(it["ModTime"]) }
+            .drop(1) # Keep first, delete rest
+        }
+
+      if files_to_delete.any?
+        say "Deleting #{files_to_delete.size} file(s)..."
+        files_to_delete.each do |file|
+          run "rclone delete #{remote}#{file["Path"]}"
+        end
+      else
+        say "No files to delete."
+      end
     end
 
     option :fresh, default: false, type: :boolean, desc: "Create a fresh backup on the remote host"
