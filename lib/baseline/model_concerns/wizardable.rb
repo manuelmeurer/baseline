@@ -13,16 +13,15 @@ module Baseline
     def form_steps = form_step_params.keys.map(&:to_s)
 
     def next_form_step
-      if finished?
-        raise "#{self.class.model_name.human} is already finished."
-      end
-
       form_step ?
         form_steps[form_steps.index(form_step) + 1] :
         form_steps.first
     end
 
     def form_step_too_far_ahead?(step)
+      # If the wizard is finished, no step is too far ahead.
+      return false if finished?
+
       return false unless next_step_index = next_form_step&.then { form_steps.index _1 }
 
       step_index =
