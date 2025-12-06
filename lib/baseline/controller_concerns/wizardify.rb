@@ -13,14 +13,6 @@ module Baseline
     included do
       helper_method :wizard_resource, :wizard_path, :current_step?, :past_step?, :future_step?, :next_step?,  :previous_step?, :previous_step, :next_step
 
-      helper_method def current_step  = @current_step
-      helper_method def steps         = wizard_resource.form_steps
-      helper_method def first_step?   = current_step == steps.first
-      helper_method def last_step?    = current_step == steps.last
-      helper_method def step_number   = steps.index(current_step) + 1
-      helper_method def step_count    = steps.size
-      helper_method def step_progress = (step_number.to_f * 100 / step_count).round
-
       before_action only: :success do
         unless wizard_resource.finished?
           redirect_to_first_or_next_form_step
@@ -49,6 +41,16 @@ module Baseline
           @next_step     = next_step(@current_step)
         end
       end
+
+      private
+
+        helper_method def current_step  = @current_step
+        helper_method def steps         = wizard_resource.form_steps
+        helper_method def first_step?   = current_step == steps.first
+        helper_method def last_step?    = current_step == steps.last
+        helper_method def step_number   = steps.index(current_step) + 1
+        helper_method def step_count    = steps.size
+        helper_method def step_progress = (step_number.to_f * 100 / step_count).round
     end
 
     def index = redirect_to_first_or_next_form_step
