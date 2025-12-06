@@ -51,6 +51,7 @@ module Baseline
         helper_method def step_number   = steps.index(current_step) + 1
         helper_method def step_count    = steps.size
         helper_method def step_progress = (step_number.to_f * 100 / step_count).round
+        helper_method def frame_id      = :wizard
     end
 
     def index = redirect_to_first_or_next_form_step

@@ -1,9 +1,0 @@
--# frozen_string_literal: true
--# locals: (frame_id: :wizard)
-
-= turbo_frame_tag frame_id do
-  = form_with model: wizard_resource, url: wizard_path, method: :patch, class: "step-#{current_step}", data: data_merge(action_stimco.to_h, turbo_frame: "_self") do |form|
-    %h2
-      = page_title
-    = yield form
-    = component :wizard_links, form:
