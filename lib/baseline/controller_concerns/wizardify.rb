@@ -14,7 +14,7 @@ module Baseline
           extend ActiveSupport::Concern
 
           included do
-            helper_method :wizard_path, :current_step?, :past_step?, :future_step?, :next_step?,  :previous_step?, :previous_step, :next_step
+            helper_method :wizard_resource, :wizard_path, :current_step?, :past_step?, :future_step?, :next_step?,  :previous_step?, :previous_step, :next_step
 
             helper_method def current_step  = @current_step
             helper_method def steps         = wizard_resource.form_steps
