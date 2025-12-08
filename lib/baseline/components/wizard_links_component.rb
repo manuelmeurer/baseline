@@ -2,9 +2,8 @@
 
 module Baseline
   class WizardLinksComponent < ApplicationComponent
-    def initialize(form:, step_label: nil, advance_on_back: false)
-      @form, @step_label, @advance_on_back =
-        form, step_label, advance_on_back
+    def initialize(form:, step_label: nil)
+      @form, @step_label = form, step_label
     end
 
     def before_render
