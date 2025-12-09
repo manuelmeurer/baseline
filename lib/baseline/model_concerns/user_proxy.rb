@@ -74,13 +74,22 @@ module Baseline
         }
       end
 
-      USER_ATTRIBUTES
-        .intersection(User.schema_columns.keys)
-        .each do |column|
-          scope :"with_#{column}", -> {
-            with_user(User.where(column => _1))
+      USER_ATTRIBUTES.each do |column|
+        scope_name = :"with_#{column}"
+        find_users =
+          case
+          when User.schema_columns.keys.include?(column)
+            -> { User.where(column => _1) }
+          when User.respond_to?(scope_name)
+            -> { User.public_send(scope_name, _1) }
+          end
+
+        if find_users
+          scope scope_name, -> {
+            with_user(find_users.call(_1))
           }
         end
+      end
 
       validate if: :user do
         user

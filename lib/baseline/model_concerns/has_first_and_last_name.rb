@@ -4,6 +4,24 @@ module Baseline
   module HasFirstAndLastName
     extend ActiveSupport::Concern
 
+    included do
+      scope :with_name, ->(name) {
+        name_parts = name.strip.split(/\s+/)
+
+        if name_parts.empty?
+          raise ArgumentError, "Name cannot be blank"
+        end
+
+        first_name = name_parts.shift
+        last_name  = name_parts.join(" ")
+
+        where(first_name:)
+          .if(last_name.present?) {
+            _1.where(last_name:)
+          }
+      }
+    end
+
     def name=(value)
       return if value.blank?
 
