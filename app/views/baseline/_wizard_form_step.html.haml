@@ -7,6 +7,6 @@
       %h2
         = page_title
       = yield form
-      = component :wizard_links, form:
+      = component :wizard_links, form:, cancel_url: wizard_cancel_url
   - else
     = yield

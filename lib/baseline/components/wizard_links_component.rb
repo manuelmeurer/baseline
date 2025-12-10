@@ -2,8 +2,10 @@
 
 module Baseline
   class WizardLinksComponent < ApplicationComponent
-    def initialize(form:, step_label: nil)
-      @form, @step_label = form, step_label
+    def initialize(form:, step_label: nil, cancel_url: nil)
+      @form, @step_label, @cancel_url =
+        form, step_label, cancel_url
+      @back_css_class = "btn btn-lg btn-outline-dark order-4 order-sm-0"
     end
 
     def before_render

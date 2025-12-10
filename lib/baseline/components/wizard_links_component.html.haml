@@ -1,11 +1,15 @@
 -# frozen_string_literal: true
 
 .d-flex.flex-column.flex-sm-row.justify-content-sm-between.align-items-sm-center.mt-4.gap-3.gap-sm-0
-  - if helpers.previous_step != helpers.current_step
-    = link_to helpers.wizard_path(helpers.previous_step), class: "btn btn-lg btn-outline-dark order-4 order-sm-0", data: { turbo_frame: "_self", turbo_prefetch: false } do
+  - case
+  - when helpers.previous_step != helpers.current_step
+    = link_to helpers.wizard_path(helpers.previous_step), class: @back_css_class, data: { turbo_frame: "_self", turbo_prefetch: false } do
       = component :icon, :back, style: :solid
       = t(:back).capitalize
-
+  - when @cancel_url
+    = link_to @cancel_url, class: @back_css_class do
+      = component :icon, :reject, style: :solid
+      = t(:cancel).capitalize
   - else
     -# Add invisible submit button so that "justify-content: between" works properly.
     .invisible.d-none.d-sm-block
