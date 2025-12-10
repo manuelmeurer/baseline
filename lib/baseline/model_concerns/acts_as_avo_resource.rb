@@ -118,14 +118,20 @@ module Baseline
         }
     end
 
-    def polymorphic_field(attribute, **options)
+    def belongs_to_field(attribute, **options)
       field attribute,
         **options.reverse_merge(
-          as:             :belongs_to,
+          as:         :belongs_to,
+          default:    -> { params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) } },
+          searchable: true
+        )
+    end
+
+    def polymorphic_field(attribute, **options)
+      belongs_to_field attribute,
+        **options.reverse_merge(
           polymorphic_as: attribute,
-          types:          polymorphic_types_with_resource(attribute),
-          default:        -> { params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) } },
-          searchable:     true
+          types:          polymorphic_types_with_resource(attribute)
         )
     end
 
