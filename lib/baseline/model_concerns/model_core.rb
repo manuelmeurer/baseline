@@ -752,5 +752,7 @@ module Baseline
       self.class.new \
         attributes.merge(clone_id: id)
     end
+
+    def search_description = I18n.l(created_at)
   end
 end

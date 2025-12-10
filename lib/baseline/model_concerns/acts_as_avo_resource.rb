@@ -19,7 +19,14 @@ module Baseline
         if model_class.respond_to?(:search)
           self.search = {
             query: -> {
-              query.search(params[:q])
+              query
+                .search(params[:q])
+                .order(created_at: :desc)
+            },
+            item: -> {
+              {
+                description: record.search_description
+              }
             }
           }
         end
