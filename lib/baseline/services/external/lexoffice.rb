@@ -91,14 +91,10 @@ module Baseline
       end
 
       # https://developers.lexoffice.io/docs/#credit-notes-endpoint-create-a-credit-note
-      add_action :create_credit_note do |params|
-        if params.key?(:preceding_sales_voucher_id) && params.many?
-          raise Error, "If preceding_sales_voucher_id is passed, no other params are allowed."
-        end
-
+      add_action :create_credit_note do |params, preceding_sales_voucher_id: nil|
         url_params = {
           finalize:                true,
-          precedingSalesVoucherId: params.delete(:preceding_sales_voucher_id)
+          precedingSalesVoucherId: preceding_sales_voucher_id
         }.compact
 
         request(
