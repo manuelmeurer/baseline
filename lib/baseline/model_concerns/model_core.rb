@@ -754,5 +754,11 @@ module Baseline
     end
 
     def search_description = I18n.l(created_at)
+
+    def avo_url
+      suppress NoMethodError do
+        Avo::Engine.routes.url_helpers.url_for([:resources, self])
+      end
+    end
   end
 end

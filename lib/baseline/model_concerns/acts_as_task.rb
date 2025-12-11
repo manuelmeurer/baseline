@@ -79,28 +79,19 @@ module Baseline
 
     def todoist_description
       meta = [
-        Rails.application.routes.url_helpers.url_for(admin_url_parts),
+        avo_url,
         if taskable
-          Rails
-            .application
-            .routes
-            .url_helpers
-            .then { _1.url_for(taskable_admin_url_parts) rescue nil }
-            .then {
-              [
-                %(#{taskable.model_name.human} "#{taskable}"),
-                _1
-              ]
-            }.compact
-            .join("\n")
+          [
+            %(#{taskable.model_name.human} "#{taskable}"),
+            taskable.avo_url
+          ].compact.join("\n")
         end
-      ].compact
-        .join("\n\n")
+      ].compact.join("\n\n")
 
       [
         details,
         meta
-      ].join("\n\n#{TODOIST_DESCRIPTION_DIVIDER}\n\n")
+      ].compact.join("\n\n#{TODOIST_DESCRIPTION_DIVIDER}\n\n")
     end
 
     def todoist_description=(value)
