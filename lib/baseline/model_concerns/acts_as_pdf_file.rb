@@ -15,10 +15,23 @@ module Baseline
 
       has_one_attached_and_accepts_nested_attributes_for :file, production_service: :cloudflare
 
-      before_validation on: :create do
-        if original && respond_to?(:assign_attributes_from_original, true)
-          assign_attributes_from_original
+      before_validation on: :create, if: :original do
+        io = if Rails.env.development? && original.file.service_name != Rails.application.config.active_storage.service.to_s
+          Rails
+            .root
+            .join("spec", "support", "dummy.pdf")
+            .then {
+              File.open _1
+            }
+        else
+          StringIO.new(original.file.download)
         end
+
+        self.title = original.title
+        self.file  = {
+          io:,
+          filename: original.file.filename.to_s
+        }
       end
 
       validates :title, presence: true
@@ -35,14 +48,6 @@ module Baseline
 
       def custom_slug
         [new_slug_identifier, title].join(" ")
-      end
-
-      def assign_attributes_from_original
-        self.title = original.title
-        self.file  = {
-          io:       StringIO.new(original.file.download),
-          filename: original.file.filename.to_s
-        }
       end
   end
 end
