@@ -196,6 +196,19 @@ export default class extends Controller {
     })
   }
 
+  async pollUntil(check, timeoutMs = 3000, intervalMs = 50) {
+    const deadline = Date.now() + timeoutMs
+
+    while (Date.now() < deadline) {
+      if (await check())
+        return true
+
+      await new Promise(resolve => setTimeout(resolve, intervalMs))
+    }
+
+    return false
+  }
+
   async showCookieConsent() {
     if (this.element.querySelector("[data-hide-cookie-consent]"))
       return
