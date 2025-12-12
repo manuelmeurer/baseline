@@ -158,7 +158,7 @@ All under `Baseline::` namespace.
 
 **Content:** IconComponent, AvatarBoxComponent, AttachmentImageComponent, PreviewCardComponent, IframeComponent, ItemListComponent, ListWithIconsComponent
 
-**Interaction:** LoadMoreComponent, LoadingComponent, ToastComponent, ShareButtonComponent, WizardLinksComponent
+**Interaction:** LoadMoreComponent, LoadingComponent, ToastComponent, ShareButtonComponent, WizardActionsComponent
 
 See: [lib/baseline/components/*.rb](lib/baseline/components/)
 
