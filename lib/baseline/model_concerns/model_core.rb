@@ -757,7 +757,7 @@ module Baseline
 
     def avo_url
       suppress NoMethodError do
-        Avo::Engine.routes.url_helpers.url_for([:resources, self])
+        ::Avo::Engine.routes.url_helpers.url_for([:resources, self])
       end
     end
   end
