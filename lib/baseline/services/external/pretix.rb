@@ -130,7 +130,7 @@ module Baseline
       # Campaigns
 
       # https://docs.pretix.eu/dev/api/resources/campaigns.html#get--api-v1-organizers-(organizer)-events-(event)-campaigns-(id)-
-      add_action :get_campaign do |event_id, campaign_id|
+      add_action :get_campaign, return_unless_prod: ->(*args) { { code: "dummy_#{args.join("_")}" } } do |event_id, campaign_id|
         request :get,
           path_with_prefix(event_id, "campaigns", campaign_id)
       end

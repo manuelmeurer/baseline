@@ -38,7 +38,9 @@ module Baseline
               self.class.calls << [Time.current, name, args, kwargs]
               run_unless_prod ?
                 instance_exec(*args, **kwargs, &block) :
-                return_unless_prod
+                return_unless_prod.if(Proc) {
+                  _1.call(*args, **kwargs)
+                }
             }
           end
       end
