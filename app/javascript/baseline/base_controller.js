@@ -27,7 +27,7 @@ export default class extends Controller {
     if (!modalElement)
       return false
 
-    return !this.isElementOrParentHidden(modalElement)
+    return this.isVisible(modalElement)
   }
 
   getFormMethod(form) {
@@ -166,13 +166,8 @@ export default class extends Controller {
     })
   }
 
-  isElementOrParentHidden(element) {
-    while (element && element !== document.documentElement) {
-      if (window.getComputedStyle(element).display === "none")
-        return true
-      element = element.parentElement
-    }
-    return false
+  isVisible(element) {
+    return element.getClientRects().length > 0
   }
 
   quickSubmitForms() {
@@ -184,7 +179,7 @@ export default class extends Controller {
               document.modalController.element.querySelectorAll(".modal-body form") :
               document.querySelectorAll("main form")
           ).filter(form =>
-            !this.isElementOrParentHidden(form)
+            this.isVisible(form)
           )
         if (forms.length !== 1)
           return
