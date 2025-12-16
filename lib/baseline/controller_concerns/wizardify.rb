@@ -155,7 +155,7 @@ module Baseline
 
         if @skip_to
           url_params = params.reverse_merge(@redirect_params || {})
-          redirect_to(wizard_path(@skip_to, url_params), options)
+          html_redirect_to(wizard_path(@skip_to, url_params), options)
         else
           render_step(wizard_value(current_step), options, params)
         end
@@ -189,7 +189,7 @@ module Baseline
         if next_step.nil?
           redirect_to_finish_wizard(options, params)
         else
-          redirect_to(wizard_path(next_step, params), options)
+          html_redirect_to(wizard_path(next_step, params), options)
         end
       end
 
@@ -237,8 +237,8 @@ module Baseline
         step ||= steps.first
 
         case step.to_s
-        when FIRST_STEP then redirect_to wizard_path(steps.first)
-        when LAST_STEP  then redirect_to wizard_path(steps.last)
+        when FIRST_STEP then html_redirect_to wizard_path(steps.first)
+        when LAST_STEP  then html_redirect_to wizard_path(steps.last)
         end
 
         step.to_s.presence_in(steps + PROTECTED_STEPS) or

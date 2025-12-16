@@ -1,9 +1,9 @@
 -# frozen_string_literal: true
 -# locals: ()
 
-= turbo_frame_tag frame_id do
+- content = capture_haml do
   - if current_step
-    = form_with model: wizard_resource, url: wizard_path, method: :patch, class: "step-#{current_step}", data: data_merge(action_stimco.to_h, turbo_frame: "_self") do |form|
+    = form_with model: wizard_resource, url: wizard_path, method: :patch, class: "step-#{current_step.dasherize}", data: data_merge(action_stimco.to_h, turbo_frame: ("modal" if ::Current.modal_request)) do |form|
       - unless ::Current.modal_request
         %h2
           = page_title
@@ -12,3 +12,12 @@
   - else
     = component :modal_close_button
     = yield
+
+-# If this is rendered in a modal, do not wrap the content in a turbo frame.
+-# This would produce nested frames which Turbo cannot handle.
+-# Links or forms in the inner frame cannot target the outer frame.
+- if ::Current.modal_request
+  = content
+- else
+  = turbo_frame_tag frame_id do
+    = content

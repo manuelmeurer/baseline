@@ -4,7 +4,7 @@
   .d-flex.flex-column.flex-sm-row.justify-content-sm-between.align-items-sm-center.gap-3.gap-sm-0
     - case
     - when helpers.previous_step != helpers.current_step
-      = link_to helpers.wizard_path(helpers.previous_step), class: @back_css_class, data: { turbo_prefetch: false } do
+      = link_to helpers.wizard_path(helpers.previous_step), class: @back_css_class do
         = component :icon, :back, style: :solid
         = t(:back).capitalize
     - when ::Current.modal_request

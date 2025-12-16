@@ -251,7 +251,7 @@ module Baseline
       html_options[:data] ||= {}
       html_options[:data].merge!(
         bs_toggle: "modal",
-        bs_target: "#modal",
+        bs_target: "#modal-container",
         url:       url_for(options)
       )
       link_to name, "#", html_options
