@@ -1,7 +1,7 @@
 -# frozen_string_literal: true
 
 - actions = helpers.capture_haml do
-  .d-flex.flex-column.flex-sm-row.justify-content-sm-between.align-items-sm-center.gap-3.gap-sm-0
+  .d-flex.flex-column.flex-sm-row.align-items-sm-center.gap-2{ class: class_names("justify-content-sm-between" => @show_current_step, "justify-content-sm-end" => !@show_current_step) }
     - case
     - when helpers.previous_step != helpers.current_step
       = link_to helpers.wizard_path(helpers.previous_step), class: @back_css_class do
@@ -18,14 +18,15 @@
       .invisible.d-none.d-sm-block
         = submit_button
 
-    .small.text-center.order-5.order-sm-1.d-flex.flex-column.align-items-center
-      %div
-        \~
-        = @step_label
-        #{helpers.step_number}/#{helpers.step_count}
-        \~
-      .progress.bg-primary.bg-opacity-25.w-100{ style: "height: 10px; max-width: 150px" }
-        .progress-bar{ style: "width: #{helpers.step_progress}%" }
+    - if @show_current_step
+      .small.text-center.order-5.order-sm-1.d-flex.flex-column.align-items-center
+        %div
+          \~
+          = @step_label
+          #{helpers.step_number}/#{helpers.step_count}
+          \~
+        .progress.bg-primary.bg-opacity-25.w-100{ style: "height: 10px; max-width: 150px" }
+          .progress-bar{ style: "width: #{helpers.step_progress}%" }
 
     = submit_button(css_class: "order-3 order-sm-2")
 

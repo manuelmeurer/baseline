@@ -8,7 +8,7 @@
         %h2
           = page_title
       = yield form
-      = component :wizard_actions, form:, cancel_url: wizard_cancel_url
+      = component :wizard_actions, form:, cancel_url: wizard_cancel_url, show_current_step: show_current_wizard_step
   - else
     = component :modal_close_button
     = yield

@@ -2,9 +2,9 @@
 
 module Baseline
   class WizardActionsComponent < ApplicationComponent
-    def initialize(form:, step_label: nil, cancel_url: nil)
-      @form, @step_label, @cancel_url =
-        form, step_label, cancel_url
+    def initialize(form:, step_label: nil, cancel_url: nil, show_current_step: true)
+      @form, @step_label, @cancel_url, @show_current_step =
+        form, step_label, cancel_url, show_current_step
       @back_css_class = class_names("btn", "btn-outline-dark", "order-4", "order-sm-0", "btn-lg" => !::Current.modal_request)
     end
 
