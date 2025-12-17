@@ -436,6 +436,33 @@ module Baseline
           raise "Model #{name} has already been finalized."
         end
 
+        if respond_to?(:status_scopes)
+          define_singleton_method :statuses do
+            status_scopes.keys
+          end
+
+          status_scopes.each do |status, scopes|
+            next unless scopes
+
+            scope status, -> {
+              scopes.inject(all) {
+                _1.public_send(_2)
+              }
+            }
+
+            define_method "#{status}?" do
+              scopes.all? { public_send "#{_1}?" }
+            end
+          end
+
+          define_method :status do
+            self.class.status_scopes.each do |status, scopes|
+              return status if Array(scopes || status).all? { public_send "#{_1}?" }
+            end
+            raise "Could not determine status."
+          end
+        end
+
         included_modules.each do |mod|
           next unless enum_array_attribute = mod.try(:enum_array_attribute)
 
