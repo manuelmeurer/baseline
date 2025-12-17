@@ -177,20 +177,20 @@ module Baseline
         end
       end
 
-      def i18n_translate_with_optional_scopes(i18n_key, optional_i18n_scopes, **i18n_params)
-        optional_i18n_scopes
+      def translate_with_optional_scopes(key, optional_scopes, **params)
+        optional_scopes
           .size
           .downto(0)
-          .map { optional_i18n_scopes.take(_1) }
+          .map { optional_scopes.take(_1) }
           .map {
             [
-              *i18n_key,
+              *key,
               *_1
             ].compact
               .join(".")
           }.lazy
           .map {
-            t(_1, **i18n_params, default: nil)
+            t(_1, **params, default: nil)
           }.detect(&:present?)
       end
   end

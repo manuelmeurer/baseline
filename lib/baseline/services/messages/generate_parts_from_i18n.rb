@@ -146,7 +146,7 @@ module Baseline
         end
 
         def fetch_from_i18n(*i18n_key)
-          i18n_translate_with_optional_scopes \
+          translate_with_optional_scopes \
             i18n_key,
             optional_i18n_scopes.compact.map(&:to_sym),
             **i18n_params
