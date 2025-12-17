@@ -4,9 +4,9 @@
 
 - actions = helpers.capture_haml do
   = content
+  = component :modal_close_button, wrapper: false
   = @form.button class: [*button_classes, "btn-#{@submit_color}", @submit_css_class], data: @submit_data, disabled: @submit_disabled do
     - safe_join [component(:icon, @submit_icon), @submit_label], " "
-  = component :modal_close_button, wrapper: false
 
 - case
 - when ::Current.modal_request
