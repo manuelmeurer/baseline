@@ -8,6 +8,10 @@ Rails.application.configure do
     config.hotwire.spark.html_paths      += %w[app/components]
   end
 
+  if defined?(SolidQueue)
+    config.solid_queue.logger = ActiveSupport::Logger.new(STDOUT)
+  end
+
   config.hosts.push(
     *Rails.application.env_credentials.host!.then { [_1, ".#{_1}"] }
   )
