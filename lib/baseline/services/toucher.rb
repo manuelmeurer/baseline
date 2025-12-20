@@ -14,9 +14,7 @@ module Baseline
         @enabled = true
       end
 
-      def enabled?
-        @enabled
-      end
+      def enabled? = @enabled
     end
 
     def add(resource)
