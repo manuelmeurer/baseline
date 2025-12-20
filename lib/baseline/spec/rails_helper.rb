@@ -6,6 +6,8 @@ require "rspec/rails"
 require "view_component/test_helpers"
 require "capybara/rspec"
 
+ActiveJob::Base.queue_adapter = :test
+
 if defined?(Geocoder)
   Geocoder.configure(lookup: :test)
   Geocoder::Lookup::Test.set_default_stub [{
