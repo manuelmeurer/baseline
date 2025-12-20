@@ -2,8 +2,8 @@
 
 module Baseline
   class LoadingComponent < ApplicationComponent
-    def initialize(message: NOT_SET)
-      @message = message
+    def initialize(message: NOT_SET, margin: true)
+      @message, @margin = message, margin
     end
 
     def call
@@ -11,12 +11,12 @@ module Baseline
         @message = t(:please_wait)
       end
 
-      tag.div class: "m-1" do
-        safe_join [
-          component(:icon, "spinner", version: :solid, class: "fa-pulse"),
-          @message
-        ], " "
-      end
+      safe_join([
+        component(:icon, "spinner", version: :solid, class: "fa-pulse"),
+        @message
+      ], " ").then {
+        tag.div _1, class: ("m-1" if @margin)
+      }
     end
   end
 end
