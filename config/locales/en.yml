@@ -23,6 +23,7 @@ en:
   tomorrow: tomorrow
   yesterday: yesterday
   preview: preview
+  new: new
 
   navbar:
     login: Login
