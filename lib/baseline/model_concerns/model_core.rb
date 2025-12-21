@@ -247,12 +247,11 @@ module Baseline
           .then { _1[:in] || _1.fetch(:with) }
           .then { Array(_1) }
           .map {
-            case _1
-            when String
-            when Symbol then Marcel::MimeType.for(extension: _1) || raise("Unexpected extension: #{_1}")
-            else raise "Unexpected value: #{_1.class}"
-            end
-          }.join(", ")
+            it.if(Symbol) {
+              Marcel::MimeType.for(extension: _1) or
+                raise "Unexpected extension: #{_1}"
+            }
+          }
       end
 
       def translates_with_fallback(*)
