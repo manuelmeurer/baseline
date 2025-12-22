@@ -179,7 +179,8 @@ export default class extends Controller {
               document.modalController.element.querySelectorAll(".modal-body form") :
               document.querySelectorAll("main form")
           ).filter(form =>
-            this.isVisible(form)
+            this.isVisible(form) &&
+              form.getAttribute("data-quick-submit") !== "false"
           )
         if (forms.length !== 1)
           return
