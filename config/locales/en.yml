@@ -24,6 +24,7 @@ en:
   yesterday: yesterday
   preview: preview
   new: new
+  got_it: Got it
 
   navbar:
     login: Login

@@ -10,7 +10,7 @@
       = yield form
       = component :wizard_actions, form:, cancel_url: wizard_cancel_url, show_current_step: show_current_wizard_step
   - else
-    = component :modal_close_button
+    = component :modal_close_button, text: t(:got_it), icon: :yes, button_color: Baseline::Current.default_button_color
     = yield
 
 -# If this is rendered in a modal, do not wrap the content in a turbo frame.
