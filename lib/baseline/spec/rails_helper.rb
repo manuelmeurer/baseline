@@ -6,7 +6,9 @@ require "rspec/rails"
 require "view_component/test_helpers"
 require "capybara/rspec"
 
-ActiveJob::Base.queue_adapter = :test
+if defined?(ActiveJob)
+  ActiveJob::Base.queue_adapter = :test
+end
 
 if defined?(Geocoder)
   Geocoder.configure(lookup: :test)
