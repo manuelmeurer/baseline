@@ -2,11 +2,18 @@
 
 module Baseline
   module HasStartAndEnd
-    def self.[](start_attribute, end_attribute)
+    def self.[](start_attribute, end_attribute, type: nil)
       Module.new do
         extend ActiveSupport::Concern
 
         included do
+          type ||=
+            schema_columns
+              .fetch_values(start_attribute, end_attribute)
+              .map { _1.fetch :type }
+              .uniq
+              .sole
+
           validates end_attribute,
             comparison: {
               greater_than_or_equal_to: start_attribute,
@@ -14,26 +21,21 @@ module Baseline
               allow_nil:                true
             }
 
-          type =
-            schema_columns
-              .fetch_values(start_attribute, end_attribute)
-              .map { _1.fetch :type }
-              .uniq
-              .sole
+          if self < ActiveRecord::Base
+            scope :upcoming,       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
+            scope :past,           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
+            scope :current,        -> { covering((type == :date ? Date : Time).current) }
+            scope :starting_today, -> { started_between(*Date.today.all_day.minmax) }
 
-          scope :upcoming,       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
-          scope :past,           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
-          scope :current,        -> { covering((type == :date ? Date : Time).current) }
-          scope :starting_today, -> { started_between(*Date.today.all_day.minmax) }
-
-          scope :covering,  ->(_start, _end = _start) {
-            {
-              start_attribute => .._start,
-              end_attribute   => _end..
-            }.map {
-              where(_1 => nil).or(where(_1 => _2))
-            }.inject(:merge)
-          }
+            scope :covering,  ->(_start, _end = _start) {
+              {
+                start_attribute => .._start,
+                end_attribute   => _end..
+              }.map {
+                where(_1 => nil).or(where(_1 => _2))
+              }.inject(:merge)
+            }
+          end
 
           define_method :upcoming? do
             return nil unless start_value = public_send(start_attribute)
