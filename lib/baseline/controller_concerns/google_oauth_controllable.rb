@@ -84,7 +84,7 @@ module Baseline
         credentials = authorizer.auth_credentials(code)
         %i[access_token refresh_token].each {
           ::Current.admin_user.public_send \
-            "google_#{token}=",
+            "google_#{_1}=",
             credentials.public_send(_1)
         }
         ::Current.admin_user.save!
