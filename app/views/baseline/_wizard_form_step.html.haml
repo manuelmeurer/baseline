@@ -16,6 +16,12 @@
 -# If this is rendered in a modal, do not wrap the content in a turbo frame.
 -# This would produce nested frames which Turbo cannot handle.
 -# Links or forms in the inner frame cannot target the outer frame.
+-# https://github.com/hotwired/turbo/issues/1480
+
+- require "turbo/version"
+- if Turbo::VERSION > "2.0.20"
+  - ReportError.call "Check if this bug is fixed in Turbo #{Turbo::VERSION}."
+
 - if ::Current.modal_request
   = content
 - else
