@@ -89,6 +89,7 @@ module Baseline
       if defined?(MissionControl::Jobs)
         config.mission_control.jobs.base_controller_class   = "MissionControl::Jobs::BaseController"
         config.mission_control.jobs.http_basic_auth_enabled = false
+        config.mission_control.jobs.show_console_help       = false
       end
 
       config.cache_store = :solid_cache_store, { compressor: Baseline::ZstdCompressor }
