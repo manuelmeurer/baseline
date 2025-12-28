@@ -76,7 +76,7 @@ module Baseline
 
         authorizer = External::Google::Oauth::Authorizer.new(::Current.admin_user)
 
-        unless scope.split == authorizer.scopes
+        if (authorizer.scopes - scope.split).any?
           render plain: "Scopes don't match."
           return
         end
