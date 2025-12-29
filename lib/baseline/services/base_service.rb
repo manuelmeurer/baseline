@@ -193,5 +193,19 @@ module Baseline
             t(_1, **params, default: nil)
           }.detect(&:present?)
       end
+
+      def run_command(command)
+        require "open3"
+        stdout, stderr, status = Open3.capture3(command)
+        unless status.success?
+          error_message = [
+           "Error running #{command}.",
+           ("STDOUT: #{stdout}" if stdout.present?),
+           ("STDERR: #{stderr}" if stderr.present?)
+          ].compact.join("\n")
+          raise Error, error_message
+        end
+        stdout
+      end
   end
 end

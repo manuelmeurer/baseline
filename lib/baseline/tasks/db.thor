@@ -6,8 +6,10 @@ module Baseline
 
     namespace :db
 
-    SUCCESS_PREFIX = "SUCCESS!"
-    DIR            = File.join("storage", "db_backups")
+    SUCCESS_PREFIX = "SUCCESS!".freeze
+    DIR            = File.join("storage", "db_backups").freeze
+    RCLONE_REMOTE  = "db-backups".freeze
+    R2_BUCKET      = "db-backups".freeze
 
     class_option :host, type: :string, required: true
     class_option :app_path, type: :string, required: true
@@ -58,32 +60,18 @@ module Baseline
         exit 1
       end
 
-      rclone_remote =
-        r2_bucket =
-          "db-backups"
-
-      say "Checking if rclone remote '#{rclone_remote}' exists..."
-      remotes = run("rclone listremotes", capture: true).split("\n").map { _1.delete_suffix(":") }
-      unless remotes.include?(rclone_remote)
-        say "Error: rclone remote '#{rclone_remote}' not found. Please configure it first."
-        exit 1
-      end
-      say "Rclone remote '#{rclone_remote}' found."
-
-      remote = "#{rclone_remote}:#{r2_bucket}/#{options[:app_path]}/"
-
       say "Uploading compressed file to remote host..."
-      run "rclone copy #{compressed_file} #{remote}"
+      run "rclone copy #{compressed_file} #{remote_path}"
 
       say "Deleting compressed file..."
       File.delete compressed_file
 
       say "Deleting remote files older than 90 days..."
-      run "rclone --min-age 90d delete #{remote}"
+      run "rclone --min-age 90d delete #{remote_path}"
 
       say "Listing remote files to keep only the first file per day (for files older than 7 days)..."
       files = run(
-        "rclone lsjson #{remote}",
+        "rclone lsjson #{remote_path}",
         capture: true
       ).then { JSON.parse(_1) }
 
@@ -106,10 +94,63 @@ module Baseline
       if files_to_delete.any?
         say "Deleting #{files_to_delete.size} file(s)..."
         files_to_delete.each do |file|
-          run "rclone delete #{remote}#{file["Path"]}"
+          run "rclone delete #{remote_path}#{file["Path"]}"
         end
       else
         say "No files to delete."
+      end
+    end
+
+    desc "validate_synced", "validate that remote backups exist as expected"
+    def validate_synced
+      say "Fetching remote file list..."
+      files = run(
+        "rclone lsjson #{remote_path}",
+        capture: true
+      ).then { JSON.parse(_1) }
+
+      files_by_date = files
+        .map { { path: _1["Path"], time: Time.parse(_1["ModTime"]) } }
+        .group_by { _1[:time].to_date }
+
+      today           = Date.current
+      seven_days_ago  = today - 7
+      thirty_days_ago = today - 30
+
+      errors = []
+
+      # Check today: expect one backup every 3 hours, starting at 3am
+      current_hour = Time.current.hour
+      expected_today = current_hour / 3
+      count = files_by_date[today]&.size || 0
+      if count < expected_today
+        errors << "#{today}: expected at least #{expected_today} backups (one every 3 hours), found #{count}"
+      end
+
+      # Check last 7 days (excluding today): expect 4 backups per day
+      ((seven_days_ago)...today).each do |date|
+        count = files_by_date[date]&.size || 0
+        if count < 4
+          errors << "#{date}: expected at least 4 backups, found #{count}"
+        end
+      end
+
+      # Check days 8-30: expect 1 backup per day
+      ((thirty_days_ago)...(seven_days_ago)).each do |date|
+        count = files_by_date[date]&.size || 0
+        if count < 1
+          errors << "#{date}: expected at least 1 backup, found #{count}"
+        end
+      end
+
+      if errors.any?
+        say "Validation FAILED:"
+        errors.each {
+          say "  - #{_1}"
+        }
+        exit 1
+      else
+        say "All expected backups are present."
       end
     end
 
@@ -196,6 +237,32 @@ module Baseline
     end
 
     private
+
+      def remote_path
+        return @remote_path if defined?(@remote_path)
+
+        say "Checking if rclone remote '#{RCLONE_REMOTE}' exists..."
+        remotes = run("rclone listremotes", capture: true)
+          .split("\n")
+          .map { _1.delete_suffix(":") }
+        unless remotes.include?(RCLONE_REMOTE)
+          say "Error: rclone remote '#{RCLONE_REMOTE}' not found. Please configure it first."
+          exit 1
+        end
+        say "Rclone remote '#{RCLONE_REMOTE}' found."
+
+        say "Checking if bucket '#{R2_BUCKET}' exists..."
+        buckets = run("rclone lsd #{RCLONE_REMOTE}:", capture: true)
+          .split("\n")
+          .map { _1.split.last }
+        unless buckets.include?(R2_BUCKET)
+          say "Error: bucket '#{R2_BUCKET}' not found in remote '#{RCLONE_REMOTE}'."
+          exit 1
+        end
+        say "Bucket '#{R2_BUCKET}' found."
+
+        @remote_path = "#{RCLONE_REMOTE}:#{R2_BUCKET}/#{options[:app_path]}/"
+      end
 
       def backup_sqlite
         pathname = backup_pathname(
