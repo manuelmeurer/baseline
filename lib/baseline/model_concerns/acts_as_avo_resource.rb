@@ -110,6 +110,14 @@ module Baseline
             value.format
           }
         )
+      when attribute_suffix == :country
+        options.reverse_merge(
+          as:      :country,
+          default: params[attribute],
+          format_using: -> {
+            value.alpha2
+          }
+        )
       when attachment_reflection.is_a?(ActiveStorage::Reflection::HasOneAttachedReflection)
         [
           options.reverse_merge(
@@ -178,12 +186,12 @@ module Baseline
       when column && column[:type] == :text
         options.reverse_merge(as: :textarea, format_index_using: -> { value&.truncate(50) })
       when column && column[:type].in?(%i[json jsonb])
-        options.reverse_merge(as: :key_value)
+        options.reverse_merge(as: :code, pretty_generated: true)
       when column && column[:type] == :datetime
         options.reverse_merge(as: :date_time)
       when column && column[:type] == :date
         options.reverse_merge(as: :date)
-      when column && column[:type].in?(%i[float integer])
+      when column && column[:type].in?(%i[float integer bigint decimal])
         options.reverse_merge(as: :number)
       else
         raise "Unexpected attribute: #{attribute}"
