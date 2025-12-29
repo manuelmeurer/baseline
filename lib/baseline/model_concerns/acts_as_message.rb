@@ -15,6 +15,15 @@ module Baseline
       validates :messageable, inclusion: { in: -> { [_1.group.messageable] }, if: :group }
       validates :recipient_type, inclusion: { in: -> { [_1.class.to_s.delete_suffix("Message")] } }
 
+      %i[subject sections_md].each do |attribute|
+        delegate \
+          attribute,
+          "#{attribute}=",
+          to:        :email_delivery,
+          prefix:    true,
+          allow_nil: true
+      end
+
       delegate :language, :locale, :locale_without_region,
         to:        :recipient,
         allow_nil: true
