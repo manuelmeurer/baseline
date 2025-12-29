@@ -184,7 +184,11 @@ module Baseline
       when attribute.end_with?("?") || (column && column[:type] == :boolean)
         options.reverse_merge(as: :boolean)
       when column && column[:type] == :text
-        options.reverse_merge(as: :textarea, format_index_using: -> { value&.truncate(50) })
+        options.reverse_merge(
+          as: :textarea,
+          format_index_using: -> { value&.truncate(50) },
+          format_show_using:  -> { auto_link(value, sanitize: false).html_safe }
+        )
       when column && column[:type].in?(%i[json jsonb])
         options.reverse_merge(as: :code, pretty_generated: true)
       when column && column[:type] == :datetime
