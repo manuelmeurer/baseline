@@ -41,6 +41,12 @@ module Baseline
         routes.call(env)
       }
 
+      config.to_prepare do
+        ::Avo::Fields::BaseField.include \
+          ApplicationHelper,
+          ActionView::Helpers::TagHelper
+      end
+
       config.assets.integrity_hash_algorithm = "sha256"
 
       config.paths.add "app/models",
