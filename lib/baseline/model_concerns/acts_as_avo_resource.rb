@@ -73,19 +73,20 @@ module Baseline
       attribute_suffix       = attribute.to_s.split("_").last.to_sym
       association_reflection = model_class.reflections[attribute.to_s]
       attachment_reflection  = model_class.reflect_on_all_attachments.detect { _1.name == attribute }
+      default                = params[attribute] || try(:"default_#{attribute}")
 
       case
       when attribute == :id
         options.merge(as: :id)
       when attribute_suffix == :email
         [
-          options.merge(as: :text, only_on: :forms, default: params[attribute]),
+          options.merge(as: :text, only_on: :forms, default: default),
           options.merge(as: :text, only_on: :display, format_using: -> { mail_to value })
         ]
       when attribute_suffix == :url
         options.reverse_merge(
           as:      :text,
-          default: params[attribute],
+          default: default,
           format_display_using: -> {
             if value.present?
               link_to \
@@ -99,13 +100,13 @@ module Baseline
       when attribute_suffix == :locale
         options.reverse_merge(
           as:      :select,
-          default: params[attribute],
+          default: default,
           options: Baseline::Avo::Filters::Language.new.options.invert
         )
       when attribute_suffix == :amount
         options.reverse_merge(
           as:      :text,
-          default: params[attribute],
+          default: default,
           format_display_using: -> {
             value.format
           }
@@ -113,7 +114,7 @@ module Baseline
       when attribute_suffix == :country
         options.reverse_merge(
           as:      :country,
-          default: params[attribute],
+          default: default,
           format_using: -> {
             value.alpha2
           }
@@ -149,13 +150,13 @@ module Baseline
           }
         options.reverse_merge(
           as:      :select,
-          default: params[attribute],
+          default: default,
           options: choices
         )
       when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
         options.reverse_merge({
           as:         :belongs_to,
-          default:    -> { params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) } },
+          default:    params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) },
           searchable: true
         }.if(association_reflection.options[:polymorphic]) {
           _1.merge \
@@ -169,7 +170,7 @@ module Baseline
       when column && column[:array]
         options.reverse_merge(
           as:      :textarea,
-          default: params[attribute],
+          default: default,
           format_using: -> {
             view.form? ?
               value.join("\n") :
