@@ -6,7 +6,7 @@ module Baseline
 
     def initialize(cols: { sm: 2, lg: 3, xl: 4 }, gutter: { nil => 3, md: 4 }, css_class: nil, id: nil, data: nil)
       if css_class&.if(Array) { _1.join(" ") }&.match?(/\bm[ty]?-/)
-        ReportError.call "Don't set a top margin on row cols, it messes up the negative top margin that is added by Bootstrap to offset the gutter."
+        raise "Don't set a top margin on row cols, it messes up the negative top margin that is added by Bootstrap to offset the gutter."
       end
 
       @cols, @gutter, @css_class, @id, @data =
