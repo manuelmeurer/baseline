@@ -6,10 +6,10 @@ module Baseline
       module Oauth
         module Helpers
           SERVICES = {
+            calendar: %w[v3 AUTH_CALENDAR],
             drive:    %w[v3 AUTH_DRIVE],
             gmail:    %w[v1 AUTH_GMAIL_READONLY],
             indexing: %w[v3 AUTH_INDEXING],
-            meet:     %w[v2 AUTH_MEETINGS_SPACE_CREATED],
             people:   %w[v1 AUTH_CONTACTS],
             youtube:  %w[v3 AUTH_YOUTUBE]
           }.freeze
