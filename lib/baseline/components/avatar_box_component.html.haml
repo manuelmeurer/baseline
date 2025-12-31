@@ -2,7 +2,7 @@
 
 - render_image = ->(css_class = nil) do
   - image = helpers.capture_haml do
-    - css_class = [css_class, class_names("border", "align-self-center", "square-#{@size}", "rounded-circle": @rounded_corners)].compact
+    - css_class = [css_class, class_names("border", "align-self-center", "square-#{@size}", "rounded-circle": @circle)].compact
     - case @imageable
     - when String
       = image_tag @imageable, class: css_class
