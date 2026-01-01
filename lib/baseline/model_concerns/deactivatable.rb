@@ -15,11 +15,17 @@ module Baseline
           .if(range) { _1.where(created_at: _2) }
           .then { with_deactivations(_1) }
       }
-
-      scope :active,              -> { without_deactivations(Deactivation.unrevoked) }
       scope :deactivated_before,  -> { deactivated(.._1) }
       scope :deactivated_after,   -> { deactivated(_1..) }
       scope :deactivated_between, -> { deactivated(_1.._2) }
+
+      scope :active, ->(range = nil) {
+        Deactivation
+          .unrevoked
+          .if(range) { _1.where(created_at: _2) }
+          .then { without_deactivations(_1) }
+      }
+      scope :active_before,  -> { active(.._1) }
     end
 
     def deactivation              = deactivations.detect(&:unrevoked?)
