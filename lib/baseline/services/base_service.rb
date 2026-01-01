@@ -203,7 +203,7 @@ module Baseline
            ("STDOUT: #{stdout}" if stdout.present?),
            ("STDERR: #{stderr}" if stderr.present?)
           ].compact.join("\n")
-          raise Error, error_message
+          raise self.class::Error, error_message
         end
         stdout
       end
