@@ -251,17 +251,25 @@ module Baseline
         end
         say "Rclone remote '#{RCLONE_REMOTE}' found."
 
-        say "Checking if bucket '#{R2_BUCKET}' exists..."
-        buckets = run("rclone lsd #{RCLONE_REMOTE}:", capture: true)
-          .split("\n")
-          .map { _1.split.last }
-        unless buckets.include?(R2_BUCKET)
-          say "Error: bucket '#{R2_BUCKET}' not found in remote '#{RCLONE_REMOTE}'."
+        folder = options[:app_path]
+
+        say "Checking if bucket '#{R2_BUCKET}' exists and contains the folder '#{folder}'..."
+        result = run("rclone lsjson #{RCLONE_REMOTE}:#{R2_BUCKET}", capture: true)
+        begin
+          entries = JSON.parse(result)
+        rescue JSON::ParserError
+          say "Error: bucket '#{R2_BUCKET}' not found or not accessible in remote '#{RCLONE_REMOTE}'."
+          say "rclone output: #{result}"
           exit 1
         end
-        say "Bucket '#{R2_BUCKET}' found."
+        unless entries.any? { _1["Name"] == folder }
+          say "Error: folder '#{folder}' not found in bucket '#{R2_BUCKET}'."
+          say "rclone output: #{result}"
+          exit 1
+        end
+        say "Folder '#{folder}' found in bucket '#{R2_BUCKET}'."
 
-        @remote_path = "#{RCLONE_REMOTE}:#{R2_BUCKET}/#{options[:app_path]}/"
+        @remote_path = "#{RCLONE_REMOTE}:#{R2_BUCKET}/#{folder}/"
       end
 
       def backup_sqlite
