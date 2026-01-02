@@ -1,56 +1,102 @@
+$toast-width: 300px;
+
 #toast-container {
   position: fixed;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
+  right: 20px;
   z-index: $zindex-tooltip + 100;
-  row-gap: 1rem;
+  width: $toast-width;
+
+  // Invisible area that covers expanded toasts
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: $toast-width;
+    height: $toast-width; // Covers full expanded area
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    pointer-events: auto; // Capture hover in gaps between toasts
+  }
+
+  &:hover .toast:not(:first-child) {
+    width: 100%;
+    right: 0;
+  }
+
+  @for $i from 2 through 5 {
+    &:hover .toast:nth-child(#{$i}) {
+      transform: translateY(#{($i - 1) * -60}px);
+    }
+  }
 
   .toast {
-    width: 300px;
     background-color: white;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transition: all 0.2s;
+    overflow: hidden;
+
+    // Newest toast on top
+    &:first-child {
+      position: relative;
+      z-index: 10;
+    }
+
+    // Older toasts peek behind: narrower and offset up
+    @for $i from 2 through 4 {
+      $selector: if($i == 4, "n+4", "#{$i}");
+      &:nth-child(#{$selector}) {
+        z-index: #{11 - $i};
+        width: $toast-width - ($i - 1) * 10px;
+        right: #{($i - 1) * 5}px;
+        transform: translateY(#{($i - 1) * -5}px);
+      }
+    }
 
     p:not(:last-child) {
       margin-bottom: 0.5rem;
     }
 
-    .title-success,
-    .title-error {
-      display: none;
-      font-weight: bold;
-      margin-right: auto;
+    .icons {
+      font-size: 1.2rem;
+      line-height: 1;
+
+      .icon-success {
+        color: $green;
+      }
+
+      .icon-error {
+        color: $red;
+      }
     }
 
-    .title-success {
-      color: $green;
-    }
+    .toast-body {
+      display: flex;
+      column-gap: 0.75rem;
+      align-items: center;
 
-    .title-error {
-      color: $red;
+      .text {
+        flex: 1;
+        font-weight: bold;
+      }
     }
 
     &.success {
 
-      .toast-header {
+      .toast-body {
         background-color: $green-100;
-
-        .title-success {
-          display: block;
-        }
       }
     }
 
     &.error {
 
-      .toast-header {
+      .toast-body {
         background-color: $red-100;
-
-        .title-error {
-          display: block;
-        }
       }
     }
   }

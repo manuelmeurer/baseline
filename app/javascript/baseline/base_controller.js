@@ -185,6 +185,14 @@ export default class extends Controller {
     })
   }
 
+  simpleFormat(text) {
+    return text
+      .split(/\n\n+/)
+      .map(paragraph =>
+        `<p>${paragraph.replace(/\n/g, "<br>")}</p>`
+      ).join("\n")
+  }
+
   async pollUntil(check, timeoutMs = 3000, intervalMs = 50) {
     const deadline = Date.now() + timeoutMs
 

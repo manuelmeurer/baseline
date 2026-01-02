@@ -5,10 +5,9 @@
   #toast-container{ data: data_merge(@stimco.target(:container), turbo_permanent: true) }
 
   .toast{ data: @stimco.target(:template) }
-    .toast-header
-      .title-success
-        = component :icon, :accept, version: :solid
-      .title-error
-        = component :icon, :warning, version: :solid
-      %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }
     .toast-body
+      .icons
+        = component :icon, :accept, version: :solid, class: "icon-success d-none"
+        = component :icon, :warning, version: :solid, class: "icon-error d-none"
+      .text
+      %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }
