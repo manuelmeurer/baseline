@@ -4,6 +4,10 @@ import { Toast }             from "bootstrap"
 export default class extends ApplicationController {
   static targets = ["container", "template"]
 
+  connect() {
+    document.toastController = this
+  }
+
   show(type, body) {
     if (!["success", "error"].includes(type))
       throw new Error(`${type} is not a valid toast type.`)

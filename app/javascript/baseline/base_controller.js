@@ -73,13 +73,6 @@ export default class extends Controller {
       .find(link => link.href === url)
   }
 
-  showToast(type, body) {
-    const toastController = document.querySelector("[data-controller='toast']")
-    this.application
-      .getControllerForElementAndIdentifier(toastController, "toast")
-      .show(type, body)
-  }
-
   elementIsInViewport(element) {
     var rect = element.getBoundingClientRect()
 

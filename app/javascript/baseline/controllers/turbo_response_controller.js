@@ -39,9 +39,9 @@ export default class extends ApplicationController {
     )
 
     if (this.successMessageValue)
-      this.showToast("success", this.successMessageValue)
+      document.toastController.show("success", this.successMessageValue)
 
     if (this.errorMessageValue)
-      this.showToast("error", this.errorMessageValue)
+      document.toastController.show("error", this.errorMessageValue)
   }
 }
