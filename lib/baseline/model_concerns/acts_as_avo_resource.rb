@@ -116,7 +116,7 @@ module Baseline
           default:,
           as: :country,
           format_using: -> {
-            value.alpha2
+            value&.alpha2
           }
         )
       when attachment_reflection.is_a?(ActiveStorage::Reflection::HasOneAttachedReflection)
