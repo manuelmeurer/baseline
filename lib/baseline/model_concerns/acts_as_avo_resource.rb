@@ -80,13 +80,13 @@ module Baseline
         options.merge(as: :id)
       when attribute_suffix == :email
         [
-          options.merge(as: :text, only_on: :forms, default: default),
+          options.merge(as: :text, only_on: :forms, default:),
           options.merge(as: :text, only_on: :display, format_using: -> { mail_to value })
         ]
       when attribute_suffix == :url
         options.reverse_merge(
-          as:      :text,
-          default: default,
+          default:,
+          as: :text,
           format_display_using: -> {
             if value.present?
               link_to \
@@ -99,22 +99,22 @@ module Baseline
         )
       when attribute_suffix == :locale
         options.reverse_merge(
+          default:,
           as:      :select,
-          default: default,
           options: Baseline::Avo::Filters::Language.new.options.invert
         )
       when attribute_suffix == :amount
         options.reverse_merge(
-          as:      :text,
-          default: default,
+          default:,
+          as: :text,
           format_display_using: -> {
             value.format
           }
         )
       when attribute_suffix == :country
         options.reverse_merge(
-          as:      :country,
-          default: default,
+          default:,
+          as: :country,
           format_using: -> {
             value.alpha2
           }
@@ -149,8 +149,8 @@ module Baseline
             model_class.human_enum_name attribute, _1
           }
         options.reverse_merge(
+          default:,
           as:      :select,
-          default: default,
           options: choices
         )
       when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
@@ -169,8 +169,8 @@ module Baseline
         options.merge(as: :has_one)
       when column && column[:array]
         options.reverse_merge(
-          as:      :textarea,
-          default: default,
+          default:,
+          as: :textarea,
           format_using: -> {
             view.form? ?
               value.join("\n") :
