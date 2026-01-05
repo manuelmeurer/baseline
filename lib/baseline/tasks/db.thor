@@ -334,15 +334,15 @@ module Baseline
       end
 
       def db_config
-        require "ostruct"
-
-        ActiveRecord::Base
+        @db_config ||= ActiveRecord::Base
           .connection_db_config
           .configuration_hash
           .merge(
             adapter: ActiveRecord::Base.connection.adapter_name.downcase
           ).then {
-            OpenStruct.new _1
+            Data
+              .define(*_1.keys)
+              .new(*_1.values)
           }
       end
 
