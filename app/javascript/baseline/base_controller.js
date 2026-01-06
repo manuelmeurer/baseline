@@ -213,6 +213,39 @@ export default class extends Controller {
     })
   }
 
+  initSentry() {
+    import("sentry")
+      .then(() => {
+        Sentry.init({
+          release:     this.metaContent("revision"),
+          environment: this.metaContent("rails_env"),
+          initialScope: scope => {
+            const sentryUser = this.metaContent("sentry_user")
+            if (sentryUser)
+              scope.setUser(JSON.parse(sentryUser))
+            return scope
+          }
+        })
+      })
+      .catch(error =>
+        console.log(`Could not load Sentry: ${error.message}`)
+      )
+  }
+
+  handleMissingFrames() {
+    this.element.addEventListener("turbo:frame-missing", async event => {
+      event.preventDefault()
+      if (this.metaContent("rails_env") == "development") {
+        event.detail.visit(event.detail.response)
+      } else {
+        if (typeof Sentry !== "undefined")
+          Sentry.captureMessage(`Turbo frame missing: ${event.target.id}`)
+        // Need to call `clone()` to avoid the "body stream already read" error.
+        event.target.innerHTML = await event.detail.response.clone().text()
+      }
+    })
+  }
+
   async pollUntil(check, timeoutMs = 3000, intervalMs = 50) {
     const deadline = Date.now() + timeoutMs
 
