@@ -193,6 +193,26 @@ export default class extends Controller {
       ).join("\n")
   }
 
+  scrollToFrameOnSubmitEnd(...idsOrFrames) {
+    idsOrFrames.forEach(idOrFrame => {
+      const frame = typeof idOrFrame === "string" ?
+                    this.element.querySelector(`turbo-frame#${idOrFrame}`) :
+                    idOrFrame
+
+      frame.addEventListener("turbo:submit-end", () => {
+        const container = this.inModal() ?
+                          document.modalController.element :
+                          window
+
+        // Add a small delay to allow the frame to render,
+        // since this might change `window.scrollY`.
+        setTimeout(() => {
+          container.scrollTo(0, frame.getBoundingClientRect().top + container.scrollY - 100)
+        }, 100)
+      })
+    })
+  }
+
   async pollUntil(check, timeoutMs = 3000, intervalMs = 50) {
     const deadline = Date.now() + timeoutMs
 
