@@ -100,10 +100,8 @@ module Baseline
         end
 
         def common_i18n_params
-          messageable_admin_cms_url = if @messageable.is_a?(ActiveRecord::Base) && defined?(::Avo)
-            suppress NoMethodError do
-              ::Avo::Engine.routes.url_helpers.url_for([:resources, @messageable])
-            end
+          messageable_admin_cms_url = if defined?(::Avo)
+            @messageable.try(:avo_url)
           end
 
           {
