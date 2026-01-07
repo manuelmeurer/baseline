@@ -64,9 +64,13 @@ module Baseline
         %i[first_name last_name].each do |field|
           user_params[field] ||= email
         end
-        @user = User
-          .create_with(user_params)
-          .find_or_create_by!(email: create_params[:email])
+        @user =
+          User.find_by(email: create_params[:email]) ||
+          User
+            .new(user_params)
+            .tap { _1.email = create_params[:email] }
+            .tap { before_create_user(_1) }
+            .tap(&:save!)
 
         message_kind = @user.subscribed?(@subscription.identifier) ?
           :subscription_existing :
@@ -86,5 +90,8 @@ module Baseline
       def update_params
         params.expect(subscription: @subscription_identifiers)
       end
+
+      # Hook method to be overridden in including controllers.
+      def before_create_user(user); end
   end
 end
