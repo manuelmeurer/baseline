@@ -62,27 +62,31 @@ $toast-width: 300px;
       margin-bottom: 0.5rem;
     }
 
-    .icons {
-      font-size: 1.2rem;
-      line-height: 1;
-
-      .icon-success {
-        color: $green;
-      }
-
-      .icon-error {
-        color: $red;
-      }
-    }
-
     .toast-body {
       display: flex;
       column-gap: 0.75rem;
       align-items: center;
 
+      .icons {
+        font-size: 1.2rem;
+        line-height: 1;
+
+        .icon-success {
+          color: $green;
+        }
+
+        .icon-error {
+          color: $red;
+        }
+      }
+
       .text {
         flex: 1;
         font-weight: bold;
+      }
+
+      .btn-close {
+        align-self: flex-start;
       }
     }
 
