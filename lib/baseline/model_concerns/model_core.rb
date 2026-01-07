@@ -443,22 +443,37 @@ module Baseline
           status_scopes.each do |status, scopes|
             next unless scopes
 
+            predicate_method = "#{status}?".to_sym
+
+            if respond_to?(status, true)
+              raise "Status scope #{status} is invalid, a scope or class method by that name already exists in #{name}."
+            end
+            if instance_methods.include?(predicate_method)
+              raise "Status scope #{status} is invalid, an instance method named `#{predicate_method}` already exists in #{name}."
+            end
+
             scope status, -> {
               scopes.inject(all) {
                 _1.public_send(_2)
               }
             }
 
-            define_method "#{status}?" do
-              scopes.all? { public_send "#{_1}?" }
+            define_method predicate_method do
+              self
+                .class
+                .public_send(status)
+                .exists?(id)
             end
           end
 
           define_method :status do
-            self.class.status_scopes.each do |status, scopes|
-              return status if Array(scopes || status).all? { public_send "#{_1}?" }
-            end
-            raise "Could not determine status."
+            self
+              .class
+              .statuses
+              .detect {
+                public_send "#{_1}?"
+              } or
+                raise "Could not determine status."
           end
         end
 
