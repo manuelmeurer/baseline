@@ -14,6 +14,12 @@ module Baseline
     end
 
     class_methods do
+      def create_all!
+        identifiers.each {
+          find_or_create_by!(identifier: _1)
+        }
+      end
+
       def valid_identifiers_for(user) = identifiers
 
       def method_missing(method, ...)
