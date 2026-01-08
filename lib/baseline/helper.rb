@@ -342,7 +342,7 @@ module Baseline
         ::Current.namespace != :admin
 
       javascript_include_tag "/qwerty/js/script.js",
-        host:  "", # Use the current host instead of the asset host, if one is configured.
+        host:  request.base_url, # Use the request host instead of the asset host, if one is configured.
         defer: true,
         data: {
           domain: request.host,
