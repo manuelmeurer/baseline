@@ -47,6 +47,13 @@ module Baseline
             ApplicationHelper,
             ActionView::Helpers::TagHelper
         end
+
+        # Tell Zeitwerk that url_helpers.rb defines UrlHelpers (not URLHelpers).
+        # This is needed because Avo uses UrlHelpers but we have URL as an acronym.
+        if Gem::Version.new(::Avo::VERSION) >= Gem::Version.new("4")
+          raise "is this still needed?"
+        end
+        Rails.autoloaders.main.inflector.inflect("url_helpers" => "UrlHelpers")
       end
 
       config.assets.integrity_hash_algorithm = "sha256"
