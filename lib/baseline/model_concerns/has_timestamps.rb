@@ -12,7 +12,7 @@ module Baseline
 
         included do
           attributes.each do |attribute|
-            unless schema_columns.key?(attribute)
+            if !schema_columns.key?(attribute) && db_and_table_exist?
               raise ArgumentError, "#{attribute} is not a valid datetime attribute for #{name}."
             end
           end
