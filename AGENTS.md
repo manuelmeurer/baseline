@@ -204,6 +204,24 @@ Multi-step forms via `Baseline::Wizardify` concern. Define steps, handle progres
 
 See: [lib/baseline/controller_concerns/wizardify.rb](lib/baseline/controller_concerns/wizardify.rb)
 
+### Stimulus Helper (`stimco`)
+
+Always use the `stimco` helper for Stimulus data attributes in views instead of manual strings:
+
+```haml
+-# Just add data-controller attribute
+%div{ data: stimco(:controller_name) }
+
+-# For targets or actions, use to_h: false to get the object
+- stimco = stimco(:controller_name, to_h: false)
+
+%div{ data: stimco.target(:target_name) }
+%button{ data: stimco.action(:action_name) }
+%button{ data: stimco.action(:show, url: some_url) }
+```
+
+See: [lib/baseline/stimulus_controller.rb](lib/baseline/stimulus_controller.rb)
+
 ### Sections System
 
 Flexible content with multiple render formats. Initialize from Markdown, render as HTML/Markdown/MJML/Text.
