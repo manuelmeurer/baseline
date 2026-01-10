@@ -316,7 +316,17 @@ module Baseline
         end
 
         unless choices = @options.delete(:choices)
-          raise ArgumentError, "Missing choices."
+          if @form.object && @form.object.class.defined_enums.key?(@attribute.to_s)
+            model_class = @form.object.class
+            choices = model_class
+              .public_send(@attribute.to_s.pluralize)
+              .keys
+              .index_by {
+                model_class.human_enum_name(@attribute, _1)
+              }
+          else
+            raise ArgumentError, "Missing choices."
+          end
         end
 
         if @options.delete(:enhance)
