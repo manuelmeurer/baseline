@@ -5,14 +5,18 @@ en:
   cancel: cancel
   confirm: Are you sure?
   copy: copy
+  finish: Finish
   generic_error: An error occurred, please try again later.
+  got_it: Got it
   load_more: Load more
   log_out: Log out
   maybe: maybe
+  new: new
   next: next
   or_enter_url: ...or enter URL
   please_select: Please select...
   please_wait: Please wait...
+  preview: preview
   save: save
   search: search
   send: send
@@ -22,9 +26,6 @@ en:
   today: today
   tomorrow: tomorrow
   yesterday: yesterday
-  preview: preview
-  new: new
-  got_it: Got it
 
   navbar:
     login: Login

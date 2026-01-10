@@ -5,14 +5,18 @@ de:
   cancel: abbrechen
   confirm: Bist du sicher?
   copy: kopieren
+  finish: Abschließen
   generic_error: Ein Fehler ist aufgetreten, bitte versuche es später noch einmal.
+  got_it: Alles klar
   load_more: Mehr laden
   log_out: Abmelden
   maybe: vielleicht
+  new: neu
   next: weiter
   or_enter_url: ...oder URL eingeben
   please_select: Bitte auswählen...
   please_wait: Bitte warten...
+  preview: Vorschau
   save: speichern
   search: Suche
   send: absenden
@@ -22,9 +26,6 @@ de:
   today: heute
   tomorrow: morgen
   yesterday: gestern
-  preview: Vorschau
-  new: neu
-  got_it: Alles klar
 
   navbar:
     login: Einloggen
