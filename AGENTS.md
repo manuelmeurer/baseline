@@ -240,11 +240,6 @@ See: [lib/baseline/model_concerns/has_sections.rb](lib/baseline/model_concerns/h
 
 ## Code Conventions
 
-**Ruby Style:**
-- Double quotes for strings
-- Parallel assignment for 2+ instance variables
-- Private methods indented 2 extra spaces
-
 **Namespaces:**
 - Model concerns: `Baseline::HasEmail`, `Baseline::ActsAsUser`
 - Controller concerns: `Baseline::Authentication`, `Baseline::Wizardify`
