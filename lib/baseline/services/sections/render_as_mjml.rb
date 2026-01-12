@@ -135,12 +135,16 @@ module Baseline
             raise Error, "Expected exactly two elements and the last one should be a link, but found #{elements.size}: #{elements.inspect}"
           end
 
-          require "baseline/services/external/html_css_to_image"
+          require "baseline/services/external/browser_screenshot"
 
-          href        = elements.last[:href]
-          embed_image = External::HTMLCSSToImage.generate_embed_image_url(href)
+          url = elements.last[:href]
+          html = ApplicationController.render(
+            partial: "baseline/preview_card_page",
+            locals:  { url: }
+          )
+          image_url = External::BrowserScreenshot.generate(html, locator: "body > a")
 
-          tag.mj_image(src: embed_image, href:)
+          tag.mj_image(src: image_url, href: url)
         end
 
         def generate_button_tags(elements)

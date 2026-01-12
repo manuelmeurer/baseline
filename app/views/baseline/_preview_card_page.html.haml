@@ -1,0 +1,8 @@
+-# frozen_string_literal: true
+-# locals: (url:)
+
+%html
+  %head
+    = stylesheet_link_tag "https://cdn.jsdelivr.net/npm/bootstrap@#{Bootstrap::VERSION}/dist/css/bootstrap.min.css"
+  %body
+    = component :preview_card, url
