@@ -140,7 +140,7 @@ module Baseline
           )
         ]
       when attachment_reflection.is_a?(ActiveStorage::Reflection::HasManyAttachedReflection)
-        options.merge(as: :has_many)
+        options.merge(as: :files)
       when model_class.defined_enums.key?(attribute.to_s)
         choices = model_class
           .public_send(attribute.pluralize)
