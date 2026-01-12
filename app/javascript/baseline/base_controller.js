@@ -246,6 +246,15 @@ export default class extends Controller {
     })
   }
 
+  getIndexDomID(element) {
+    if (this.metaContent("action_name") !== "index")
+      return
+
+    const tableRow = element.closest("turbo-frame.table-row")
+    if (tableRow)
+      return tableRow.id
+  }
+
   async pollUntil(check, timeoutMs = 3000, intervalMs = 50) {
     const deadline = Date.now() + timeoutMs
 
