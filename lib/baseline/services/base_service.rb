@@ -74,7 +74,8 @@ module Baseline
               .if(execution_type) { _1.joins(:"#{_2}_execution") }
               .if(args.any?) {
                 _1.select do |job|
-                  job.arguments
+                  job
+                    .arguments
                     .fetch("arguments")
                     .take(args.size) == args
                 end
