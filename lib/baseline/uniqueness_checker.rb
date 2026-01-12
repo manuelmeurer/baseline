@@ -136,7 +136,7 @@ module Baseline
         [
           KEY_PREFIX,
           self.class.to_s.gsub(":", "_"),
-          (Digest::MD5.hexdigest(args.to_s) unless args.empty?)
+          (ActiveSupport::Digest.hexdigest(args.to_s) unless args.empty?)
         ].compact
           .join(":")
       end
@@ -147,7 +147,7 @@ module Baseline
           "errors",
           self.class.to_s.gsub(":", "_")
         ].tap do |key|
-          key << Digest::MD5.hexdigest(@_service_args.to_s) unless @_service_args.empty?
+          key << ActiveSupport::Digest.hexdigest(@_service_args.to_s) unless @_service_args.empty?
         end.join(":")
       end
 

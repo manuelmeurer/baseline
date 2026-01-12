@@ -10,7 +10,8 @@ module Baseline
 
         cache_key = [
           :microlink,
-          Digest::MD5.hexdigest(url)
+          ActiveSupport::Digest.hexdigest(url)
+
         ]
         params = if cache.is_a?(ActiveSupport::Duration)
           { expires_in: cache }
