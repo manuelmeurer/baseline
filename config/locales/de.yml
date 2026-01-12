@@ -1,6 +1,8 @@
 de:
   "no": nein
   "yes": ja
+  "false": "falsch"
+  "true": "wahr"
   back: zurück
   cancel: abbrechen
   confirm: Bist du sicher?

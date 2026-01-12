@@ -1,6 +1,8 @@
 en:
   "no": "no"
   "yes": "yes"
+  "false": "false"
+  "true": "true"
   back: back
   cancel: cancel
   confirm: Are you sure?
