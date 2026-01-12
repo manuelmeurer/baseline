@@ -67,12 +67,12 @@ module Baseline
         # Assign to ivar so data can be changed.
         @og_data ||= {}
         @og_data.reverse_merge(
-          type:        "website",
-          title:       [page_meta_title, site_name].join(" | "),
-          description: page_meta_description,
-          url:         url_for(only_path: false),
+          locale:,
           site_name:,
-          locale:
+          description: page_meta_description,
+          title:       [page_meta_title, site_name].join(" | "),
+          type:        "website",
+          url:         url_for(only_path: false)
         )
       end
 
