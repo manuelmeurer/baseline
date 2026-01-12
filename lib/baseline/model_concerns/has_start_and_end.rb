@@ -2,11 +2,12 @@
 
 module Baseline
   module HasStartAndEnd
-    def self.[](start_attribute, end_attribute, type: nil)
+    def self.[](start_attribute, end_attribute, type: nil, prefix: nil)
       Module.new do
         extend ActiveSupport::Concern
 
         included do
+          prefixed = -> { [prefix, _1].compact.join("_").if(_1.is_a?(Symbol), &:to_sym) }
           type ||=
             schema_columns
               .fetch_values(start_attribute, end_attribute)
@@ -22,12 +23,12 @@ module Baseline
             }
 
           if self < ActiveRecord::Base
-            scope :upcoming,       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
-            scope :past,           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
-            scope :current,        -> { covering((type == :date ? Date : Time).current) }
-            scope :starting_today, -> { started_between(*Date.today.all_day.minmax) }
+            scope prefixed.call(:upcoming),       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
+            scope prefixed.call(:past),           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
+            scope prefixed.call(:current),        -> { public_send(prefixed.call(:covering), (type == :date ? Date : Time).current) }
+            scope prefixed.call(:starting_today), -> { started_between(*Date.today.all_day.minmax) }
 
-            scope :covering,  ->(_start, _end = _start) {
+            scope prefixed.call(:covering),  ->(_start, _end = _start) {
               {
                 start_attribute => .._start,
                 end_attribute   => _end..
@@ -37,21 +38,32 @@ module Baseline
             }
           end
 
-          define_method :upcoming? do
+          undated_method_name = prefixed.call(:undated?)
+
+          define_method undated_method_name do
+            !public_send(start_attribute) &&
+              !public_send(end_attribute)
+          end
+
+          define_method prefixed.call(:upcoming?) do
             return nil unless start_value = public_send(start_attribute)
+
             type == :date ?
               start_value >= Date.tomorrow :
               start_value >= Time.current
           end
 
-          define_method :past? do
+          define_method prefixed.call(:past?) do
             return nil unless end_value = public_send(end_attribute)
+
             type == :date ?
               end_value <= Date.yesterday :
               end_value <= Time.current
           end
 
-          define_method :current? do
+          define_method prefixed.call(:current?) do
+            return nil if public_send(undated_method_name)
+
             public_send(start_attribute).then { _1.nil? || _1 <= (type == :date ? Date : Time).current } &&
               public_send(end_attribute).then { _1.nil? || _1 >= (type == :date ? Date : Time).current }
           end
