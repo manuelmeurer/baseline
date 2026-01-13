@@ -547,6 +547,15 @@ module Baseline
       url
     end
 
+    def yay_image_tag(count = nil)
+      images = Rails.application.image_assets("baseline/yay").keys
+      image = count ?
+        images[count % images.size] :
+        images.sample
+
+      image_tag image, class: "rounded"
+    end
+
     private
 
       AUTO_LINK_RE = %r(

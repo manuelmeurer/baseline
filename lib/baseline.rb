@@ -99,18 +99,23 @@ if defined?(Rails)
     end
 
     def image_assets(dir)
-      images_path = Rails.root.join("app", "assets", "images")
+      root =
+        dir.split("/").first == "baseline" ?
+          Baseline::Engine.root :
+          Rails.root
+      images_path = root.join("app", "assets", "images")
       cache_key = [
         :image_assets,
         Rails.configuration.revision,
         dir
       ]
+
       Rails.cache.fetch(cache_key, force: Rails.env.development?) do
         Rails
           .application
           .assets
           .reveal
-          .select { _1.to_s.start_with? dir }
+          .select { _1.to_s.start_with?(dir) }
           .sort
           .map(&:to_s)
       end.index_with {
