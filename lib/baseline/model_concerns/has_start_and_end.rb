@@ -23,18 +23,27 @@ module Baseline
             }
 
           if self < ActiveRecord::Base
-            scope prefixed.call(:upcoming),       -> { where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..) }
-            scope prefixed.call(:past),           -> { where(end_attribute => ..(type == :date ? Date.yesterday : Time.current)) }
-            scope prefixed.call(:current),        -> { public_send(prefixed.call(:covering), (type == :date ? Date : Time).current) }
-            scope prefixed.call(:starting_today), -> { started_between(*Date.today.all_day.minmax) }
-
-            scope prefixed.call(:covering),  ->(_start, _end = _start) {
+            scope prefixed.call(:upcoming), -> {
+              where(start_attribute => (type == :date ? Date.tomorrow : Time.current)..)
+            }
+            scope prefixed.call(:past), -> {
+              where(end_attribute => ..(type == :date ? Date.yesterday : Time.current))
+            }
+            scope prefixed.call(:current), -> {
+              public_send(prefixed.call(:covering), (type == :date ? Date : Time).current)
+            }
+            scope prefixed.call(:starting_today), -> {
+              started_between(*Date.today.all_day.minmax)
+            }
+            scope prefixed.call(:covering), ->(_start, _end = _start) {
               {
                 start_attribute => .._start,
                 end_attribute   => _end..
               }.map {
                 where(_1 => nil).or(where(_1 => _2))
-              }.inject(:merge)
+              }.unshift(
+                where.not(start_attribute => nil, end_attribute => nil)
+              ).inject(:merge)
             }
           end
 
