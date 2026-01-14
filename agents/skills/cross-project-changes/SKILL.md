@@ -1,6 +1,6 @@
 ---
 name: cross-project-changes
-description: Instructions how to apply changes across multiple projects. Use when user wants to make changes across multiple projects or apps simultaneously.
+description: Guidance for applying changes across multiple projects. Use when user wants to make changes across multiple projects or apps simultaneously.
 ---
 
 # Cross-Project Changes

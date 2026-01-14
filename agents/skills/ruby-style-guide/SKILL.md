@@ -93,6 +93,25 @@ else
 end
 ```
 
+**Put `if` and `unless` on a separate line.** The only exception is when using `return` or `raise`:
+
+```ruby
+# Good
+if user.active?
+  notify_user
+end
+
+return unless success
+return if user.banned?
+
+raise if error
+raise unless all_good
+
+# Avoid
+notify_user if user.active?
+save unless dry_run?
+```
+
 ## Guard Clauses
 
 **Use guard clauses** for early returns:
