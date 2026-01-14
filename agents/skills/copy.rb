@@ -21,7 +21,7 @@ class Copy < Thor
   def copy
     require "fileutils"
 
-    targets = %w[.claude .codex].map {
+    targets = %w[.claude .codex .copilot].map {
       File.join(ENV.fetch("HOME"), _1, "skills")
     }
 
