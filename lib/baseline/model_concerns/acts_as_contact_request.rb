@@ -10,7 +10,8 @@ module Baseline
           include HasEmail,
                   HasFullName,
                   HasLocale,
-                  HasTimestamps[:ignored_at]
+                  HasTimestamps[:ignored_at],
+                  Searchable[%i[name email company message]]
 
           enum :kind, kinds,
             validate: true
