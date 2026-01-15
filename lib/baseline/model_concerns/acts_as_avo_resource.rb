@@ -70,6 +70,7 @@ module Baseline
 
     def field_options(attribute, options)
       column                 = model_class.schema_columns[attribute]
+      column_type            = column[:type] if column
       attribute_suffix       = attribute.to_s.split("_").last.to_sym
       association_reflection = model_class.reflections[attribute.to_s]
       attachment_reflection  = model_class.reflect_on_all_attachments.detect { _1.name == attribute }
@@ -180,23 +181,23 @@ module Baseline
             value.split("\n")
           }
         )
-      when column && column[:type] == :string
+      when column_type == :string
         options.reverse_merge(as: :text, format_index_using: -> { value&.truncate(50) })
-      when attribute.end_with?("?") || (column && column[:type] == :boolean)
+      when attribute.end_with?("?") || column_type == :boolean
         options.reverse_merge(as: :boolean)
-      when column && column[:type] == :text
+      when column_type == :text
         options.reverse_merge(
           as: :textarea,
           format_index_using: -> { value&.truncate(50) },
           format_show_using:  -> { auto_link(value, sanitize: false, html: external_link_attributes).html_safe }
         )
-      when column && column[:type].in?(%i[json jsonb])
+      when column_type.in?(%i[json jsonb])
         options.reverse_merge(as: :code, pretty_generated: true)
-      when column && column[:type] == :datetime
+      when column_type == :datetime
         options.reverse_merge(as: :date_time)
-      when column && column[:type] == :date
+      when column_type == :date
         options.reverse_merge(as: :date)
-      when column && column[:type].in?(%i[float integer bigint decimal])
+      when column_type.in?(%i[float integer bigint decimal])
         options.reverse_merge(as: :number)
       else
         raise "Unexpected attribute: #{attribute}"
