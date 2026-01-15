@@ -10,9 +10,9 @@ module Baseline
           field :details
           field :done?, only_on: :display
           field :due_on
-          field :identifier
+          field :identifier, only_on: :display
           field :priority
-          field :taskable, only_on: :display
+          field :taskable
           field :responsible
           field :creator, only_on: :display
           timestamp_fields
