@@ -14,6 +14,11 @@ module Baseline
           }
       end
 
+      def create
+        @record.email_delivery.admin_user = ::Current.admin_user
+        super
+      end
+
       def create_success_action
         super
 
