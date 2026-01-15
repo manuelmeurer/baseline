@@ -56,7 +56,7 @@ module Baseline
 
         def filters
           if model_class.respond_to?(:search)
-            filter Baseline::Avo::Filters::Search
+            filter Avo::Filters::Search
           end
         end
 
