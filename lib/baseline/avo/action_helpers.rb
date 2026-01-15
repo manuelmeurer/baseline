@@ -6,6 +6,11 @@ module Baseline
       private
 
         def process(query, condition: nil, success_message:, error_message: nil, &block)
+          if query.blank?
+            warn "No records selected."
+            return
+          end
+
           if condition
             matches, non_matches = query.partition(&condition)
           else
