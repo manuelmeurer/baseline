@@ -6,8 +6,12 @@ module Baseline
       def new
         super
 
-        parts = ::Messages::GeneratePartsFromI18n.call(@record)
-        @record.build_email_delivery(parts)
+        ::Messages::GeneratePartsFromI18n
+          .call(@record)
+          .slice(:subject, :sections)
+          .then {
+            @record.build_email_delivery(_1)
+          }
       end
 
       def create_success_action
