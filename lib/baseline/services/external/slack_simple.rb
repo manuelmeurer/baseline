@@ -4,7 +4,7 @@ module Baseline
   module External
     class SlackSimple < ::External::Base
       add_action :post_message do |channel_id, text|
-        # https://api.slack.com/methods/chat.postMessage
+        # https://docs.slack.dev/reference/methods/chat.postMessage/
         client.chat_postMessage \
           channel: channel_id,
           text:
