@@ -2,7 +2,13 @@
 
 module Baseline
   module HasStartAndEnd
-    def self.[](start_attribute, end_attribute, type: nil, prefix: nil)
+    def self.[](
+      start_attribute = :start_date,
+      end_attribute   = :end_date,
+      type:                nil,
+      prefix:              nil,
+      covering_if_undated: false)
+
       Module.new do
         extend ActiveSupport::Concern
 
@@ -41,9 +47,10 @@ module Baseline
                 end_attribute   => _end..
               }.map {
                 where(_1 => nil).or(where(_1 => _2))
-              }.unshift(
-                where.not(start_attribute => nil, end_attribute => nil)
-              ).inject(:merge)
+              }.unless(covering_if_undated) {
+                _1.unshift \
+                  where.not(start_attribute => nil, end_attribute => nil)
+              }.inject(:merge)
             }
           end
 
@@ -71,7 +78,7 @@ module Baseline
           end
 
           define_method prefixed.call(:current?) do
-            return nil if public_send(undated_method_name)
+            return nil if !covering_if_undated && public_send(undated_method_name)
 
             public_send(start_attribute).then { _1.nil? || _1 <= (type == :date ? Date : Time).current } &&
               public_send(end_attribute).then { _1.nil? || _1 >= (type == :date ? Date : Time).current }
@@ -81,7 +88,7 @@ module Baseline
     end
 
     def self.included(base)
-      base.include self[:start_date, :end_date]
+      base.include self[]
     end
   end
 end
