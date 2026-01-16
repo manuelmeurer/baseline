@@ -24,6 +24,8 @@ module Baseline
           allow_nil: true
       end
 
+      delegate :sent_at, to: :delivery
+
       delegate :language, :locale, :locale_without_region,
         to:        :recipient,
         allow_nil: true

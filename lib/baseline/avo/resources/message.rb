@@ -7,6 +7,7 @@ module Baseline
         def fields
           field :id
           field :kind
+          field :sent_at, as: :date_time, readonly: true
           field :recipient, readonly: true
           field :email_delivery, only_on: :show
           field :email_delivery_subject, as: :text, only_on: :new
@@ -14,6 +15,28 @@ module Baseline
           field :messageable, readonly: true
           timestamp_fields
           field :tasks
+        end
+
+        def filters
+          super
+          filter Sent
+        end
+
+        class Sent < ::Avo::Filters::SelectFilter
+          self.name = "Sent?"
+
+          def apply(request, query, values)
+            ActiveRecord::Type::Boolean.new.cast(values) ?
+              query.sent :
+              query.unsent
+          end
+
+          def options
+            {
+              true  => "Sent",
+              false => "Unsent"
+            }
+          end
         end
       end
     end

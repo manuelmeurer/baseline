@@ -188,6 +188,8 @@ module Baseline
         end
       end
 
+      scope :persisted, -> { where.not(id: nil) }
+
       delegate \
         :service_namespace,
         :service_namespaces,
