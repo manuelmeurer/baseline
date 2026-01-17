@@ -25,6 +25,8 @@ module Baseline
         help_text:          NOT_SET,
         hint:               NOT_SET,
         placeholder:        NOT_SET,
+        choices:            NOT_SET,
+        pattern:            nil,
         autocomplete:       nil,
         margin_bottom:      4,
         **options
@@ -73,6 +75,7 @@ module Baseline
       %i[
         attribute
         autocomplete
+        choices
         data
         disabled
         field
@@ -86,6 +89,7 @@ module Baseline
         identifier
         label
         options
+        pattern
         placeholder
         readonly
         required
@@ -153,9 +157,10 @@ module Baseline
           [@identifier]
 
       %i[
-        label
+        choices
         help_text
         hint
+        label
         placeholder
       ].each do |attr|
         next unless instance_variable_get("@#{attr}") == NOT_SET
@@ -170,6 +175,8 @@ module Baseline
           t _1.join("."),
             default: (human_attribute_name if attr == :label),
             **@i18n_params
+        }.if(attr == :choices) {
+          it&.invert
         }.then {
           instance_variable_set "@#{attr}", _1
         }
@@ -206,14 +213,15 @@ module Baseline
 
       def field_attributes
         {
+          autocomplete: @autocomplete,
           class:        "form-control",
-          id:           @id,
           data:         @data,
-          placeholder:  @placeholder,
-          required:     @required,
           disabled:     @disabled,
+          id:           @id,
+          pattern:      @pattern,
+          placeholder:  @placeholder,
           readonly:     @readonly,
-          autocomplete: @autocomplete
+          required:     @required
         }.if(@value != NOT_SET) {
           _1.merge value: @value
         }
@@ -276,7 +284,7 @@ module Baseline
       end
 
       def country_select_content
-        if @options[:choices]
+        if @choices
           raise ArgumentError, "Don't provide choices for country_select."
         end
 
@@ -294,9 +302,9 @@ module Baseline
             "DACH"   => priority_countries.invert,
             "Global" => countries.invert
           }
-          @options[:choices] = grouped_options_for_select(grouped_options, selected)
+          @choices = grouped_options_for_select(grouped_options, selected)
         else
-          @options[:choices] = options_for_select(countries.invert, selected)
+          @choices = options_for_select(countries.invert, selected)
         end
 
         select_content
@@ -304,7 +312,6 @@ module Baseline
 
       def select_content
         expected_options = %i[
-          choices
           disabled
           include_blank
           multiple
@@ -315,10 +322,10 @@ module Baseline
           raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
         end
 
-        unless choices = @options.delete(:choices)
+        unless @choices
           if @form.object && @form.object.class.defined_enums.key?(@attribute.to_s)
             model_class = @form.object.class
-            choices = model_class
+            @choices = model_class
               .public_send(@attribute.to_s.pluralize)
               .keys
               .index_by {
@@ -337,7 +344,7 @@ module Baseline
         html_options = field_attributes.merge(class: "form-select")
 
         @form.select @attribute,
-          choices,
+          @choices,
           @options,
           html_options
       end
@@ -394,21 +401,12 @@ module Baseline
       end
 
       def switches_content
-        expected_options = %i[
-          choices
-        ]
-        invalid_options = @options.keys - expected_options
-        if invalid_options.any?
-          raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
-        end
-
-        choices = @options.fetch(:choices)
         expected_choice_options = %i[
           checked
           label
         ]
 
-        checkboxes = choices.map do |value, options|
+        checkboxes = @choices.map do |value, options|
           invalid_choice_options = options.keys - expected_choice_options
           if invalid_choice_options.any?
             raise ArgumentError, "Invalid choice options: #{invalid_choice_options.join(", ")}"
@@ -433,7 +431,6 @@ module Baseline
 
       def button_group_content
         expected_options = %i[
-          choices
           color_css_class
           option_i18n_key
           option_i18n_scope
@@ -445,13 +442,12 @@ module Baseline
 
         stimco = helpers.stimco(:button_group, to_h: false)
 
-
         tag.div data: stimco.to_h do
           safe_join [
             @form.hidden_field(@attribute, value: nil),
             tag.div(class: "btn-group") do
               safe_join(
-                @options[:choices].map do |option|
+                @choices.map do |option|
                   label_css_class = [
                     "btn",
                     "btn-outline-#{@options[:color_css_class].call(option)}",
