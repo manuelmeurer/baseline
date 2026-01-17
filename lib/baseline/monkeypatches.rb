@@ -71,6 +71,28 @@ module I18n
   end
 end
 
+module I18nNamespaceFallbacks
+  def translate(key, **options)
+    fallbacks = Baseline.configuration.i18n_namespace_fallbacks[Current.namespace]
+    scope     = Array(options[:scope])
+
+    return super unless
+      fallbacks &&
+      scope.first == Current.namespace
+
+    Array(fallbacks).each do |fallback|
+      scope = scope.drop(1).unshift(fallback)
+      if value = super(key, **options.merge(scope:, default: nil))
+        return value
+      end
+    end
+
+    super
+  end
+  alias_method :t, :translate
+end
+I18n.singleton_class.prepend(I18nNamespaceFallbacks)
+
 if defined?(GlobalID)
   class GlobalID
     find = :find!

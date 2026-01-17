@@ -165,21 +165,26 @@ module Baseline
       ].each do |attr|
         next unless instance_variable_get("@#{attr}") == NOT_SET
 
-        [
+        *real_i18n_scope, real_i18n_key = [
           ::Current.namespace,
           attr.pluralize,
           *@i18n_scopes,
           @i18n_key,
           *Array(@i18n_scope)
-        ].then {
-          t _1.join("."),
-            default: (human_attribute_name if attr == :label),
-            **@i18n_params
+        ]
+
+        value = t(
+          real_i18n_key,
+          **@i18n_params,
+          scope:   real_i18n_scope,
+          default: nil
+        ).if(attr == :label) {
+          _1 || human_attribute_name
         }.if(attr == :choices) {
           it&.invert
-        }.then {
-          instance_variable_set "@#{attr}", _1
         }
+
+        instance_variable_set "@#{attr}", value
       end
 
       # A placeholder is required for floating labels.
