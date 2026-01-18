@@ -13,6 +13,14 @@ description: Guidance for working with the Baseline Ruby gem. Use whenever Basel
 
 Find the source of Baseline in `~/code/own/baseline`. Warn the user if that folder cannot be found.
 
+## Local app testing
+
+When updating an app to use local Baseline changes, find the `baseline` line in the app's `Gemfile` and replace it with a line referencing the local code:
+
+```
+gem "baseline", path: "~/code/own/baseline"
+```
+
 ## Reference
 
 See [the reference guide](references/REFERENCE.md) for details.

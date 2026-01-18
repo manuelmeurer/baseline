@@ -40,3 +40,15 @@ For each namespace:
 - I18n locale files live in `config/locales/NAMESPACE.LOCALE.yml`
 
 Never create a new namespace unless the user explicitly prompts it. If you are unsure which namespace a change belongs to, ask the user.
+
+## Setting datetime/date columns to current time
+
+When setting a datetime or date column to the current time/date, check if the model includes `HasTimestamps[column]`. If so, use the bang method instead of direct assignment:
+
+```ruby
+# Bad - direct assignment when HasTimestamps is available
+message.update!(sent_at: Time.current)
+
+# Good - use the bang method from HasTimestamps
+message.sent!
+```
