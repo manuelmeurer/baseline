@@ -141,5 +141,44 @@ module Baseline
         creds.deep_merge(env_creds || {})
       end
     end
+
+    def db_config
+      @db_config ||= Baseline::ApplicationCore::DbConfig.new
+    end
+
+    class DbConfig
+      KEYS = %i[host user port password name].freeze
+
+      def method_missing(method, *)
+        return super unless KEYS.include?(method)
+
+        ENV.fetch("DB_#{method.upcase}") {
+          db_credentials = Rails.application.env_credentials.db
+          key = [
+            method,
+            ("!" unless method == :password)
+          ].compact.join
+          db_credentials.public_send(key)
+        }
+      end
+
+      def respond_to_missing?(method, *) = KEYS.include?(method) || super
+
+      def database
+        default_db = name
+        branch = `git rev-parse --abbrev-ref HEAD 2>/dev/null`.strip
+
+        return default_db if branch.empty? || %w[main HEAD].include?(branch)
+
+        branch_db = "#{default_db}_#{branch.gsub(/[^a-z0-9]/i, '_')}"
+
+        db_exists = system(
+          { "PGPASSWORD" => password },
+          "psql -h #{host} -U #{user} -p #{port} -lqt 2>/dev/null | cut -d '|' -f 1 | grep -qw '#{branch_db}'"
+        )
+
+        db_exists ? branch_db : default_db
+      end
+    end
   end
 end
