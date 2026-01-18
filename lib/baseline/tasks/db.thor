@@ -209,7 +209,8 @@ module Baseline
 
         remote_path = run("ssh #{options[:host]} 'cd #{options[:app_path]}/current && if [ -d #{DIR} ]; then ls #{DIR}/*.* | xargs realpath; fi'", capture: true)
           .split("\n")
-          .first
+          .sort
+          .last
 
         unless remote_path
           say "Error: no database backups found, aborting..."
