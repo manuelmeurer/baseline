@@ -371,6 +371,19 @@ module Baseline
         }
       end
 
+      def where_array_blank(attribute, check_blank = true)
+        case connection.adapter_name.downcase.to_sym
+        when :postgresql
+          check_blank ?
+            where(attribute => []) :
+            where.not(attribute => [])
+        when :sqlite
+          where("json_array_length(coalesce(#{attribute}, '[]')) #{check_blank ? "=" : ">"} 0")
+        else
+          raise "Unexpected database adapter: #{connection.adapter_name}"
+        end
+      end
+
       def schema_columns
         return @schema_columns if defined?(@schema_columns)
         return {} unless db_and_table_exist?

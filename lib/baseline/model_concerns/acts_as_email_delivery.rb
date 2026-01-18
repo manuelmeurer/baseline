@@ -36,8 +36,8 @@ module Baseline
         end
       end
 
-      scope :rejected,   -> { where.not(rejected_emails: []) }
-      scope :unrejected, -> { where(rejected_emails: []) }
+      scope :rejected,   -> { where_array_blank(:rejected_emails, false) }
+      scope :unrejected, -> { where_array_blank(:rejected_emails) }
       scope :clones_of,  ->(email_delivery) {
         where(
           subject: email_delivery.subject,
