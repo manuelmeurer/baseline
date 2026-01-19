@@ -29,6 +29,9 @@ en:
   tomorrow: tomorrow
   yesterday: yesterday
 
+  attributes:
+    bio: Biography
+
   navbar:
     login: Login
     log_out: Log out

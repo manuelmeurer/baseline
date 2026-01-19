@@ -29,6 +29,16 @@ de:
   tomorrow: morgen
   yesterday: gestern
 
+  attributes:
+    bio: Biografie
+    description: Beschreibung
+    email: E-Mail
+    first_name: Vorname
+    kind: Art
+    last_name: Nachname
+    title: Titel
+    website: Webseite
+
   navbar:
     login: Einloggen
     log_out: Ausloggen
