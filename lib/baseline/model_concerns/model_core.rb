@@ -386,7 +386,6 @@ module Baseline
 
       def schema_columns
         return @schema_columns if defined?(@schema_columns)
-        return {} unless db_and_table_exist?
 
         schema_path = Rails.root.join("db", "schema.rb")
         unless File.exist?(schema_path)
