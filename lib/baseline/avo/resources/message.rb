@@ -12,7 +12,7 @@ module Baseline
           field :email_delivery, only_on: :show
           field :email_delivery_subject, as: :text, only_on: :new
           field :email_delivery_sections_md, as: :textarea, only_on: :new
-          field :messageable, readonly: true
+          field :messageable, readonly: true, can_create: false
           timestamp_fields
           field :tasks
         end
