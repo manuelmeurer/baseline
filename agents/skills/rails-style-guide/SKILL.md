@@ -7,6 +7,10 @@ description: Rails code style conventions. Use when working with Rails projects,
 
 Apply these conventions when working with Rails projects.
 
+## Guidelines
+
+- In HAML, put Ruby expressions on their own line; avoid inline `=`.
+
 ## Binstubs
 
 When running Rails executables, **always check for binstubs first**:
