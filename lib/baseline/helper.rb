@@ -476,7 +476,7 @@ module Baseline
         csp_meta_tag,
         javascript_importmap_tags(
           ::Current.namespace.to_s,
-          importmap: Baseline::GenerateNamespaceImportmap.call
+          importmap: GenerateNamespaceImportmap.call
         ),
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
