@@ -32,6 +32,8 @@ de:
   attributes:
     bio: Biografie
     description: Beschreibung
+    comments: Kommentare
+    company: Unternehmen
     email: E-Mail
     first_name: Vorname
     kind: Art
