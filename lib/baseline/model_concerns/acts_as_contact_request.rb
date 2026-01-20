@@ -21,6 +21,14 @@ module Baseline
             as:         :recipient,
             dependent:  :destroy
 
+          %i[with without].each do |prefix|
+            scope :"#{prefix}_messages_except_created", -> {
+              public_send \
+                :"#{prefix}_messages",
+                ContactRequestMessage.where.not(kind: :created)
+            }
+          end
+
           validates :name, presence: true
           validates :email, presence: true
           validates :message, presence: true
@@ -30,9 +38,9 @@ module Baseline
           # This will generate corresponding scopes and methods.
           def status_scopes
             {
-              ignored:  nil,
-              messaged: %i[with_messages],
-              pending:  %i[unignored without_messages]
+              ignored:                 nil,
+              messaged_except_created: %i[with_messages_except_created],
+              pending:                 %i[unignored without_messages_except_created]
             }
           end
         end
