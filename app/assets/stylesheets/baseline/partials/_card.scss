@@ -48,6 +48,10 @@ label .card {
 
 .card-body > :last-child {
   margin-bottom: 0;
+
+  li:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .card.diagonal-rounded {
