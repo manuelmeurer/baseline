@@ -74,8 +74,9 @@ module Baseline
       %i(has_many has_one belongs_to).each do |association_method|
         define_singleton_method association_method do |*args, **kwargs|
           super(*args, **kwargs).each do |association, reflection|
-            polymorphic_reflection = reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection) &&
-                                     reflection.options[:polymorphic]
+            polymorphic_reflection =
+              reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection) &&
+              reflection.options[:polymorphic]
 
             if polymorphic_reflection
               define_method "#{reflection.name}_gid" do
