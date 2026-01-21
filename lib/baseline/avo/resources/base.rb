@@ -161,7 +161,8 @@ module Baseline
             options.reverse_merge({
               as:         :belongs_to,
               default:    params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) },
-              searchable: true
+              searchable: true,
+              html:       { index: { wrapper: { classes: "max-w-xs truncate block" } } }
             }.if(association_reflection.options[:polymorphic]) {
               _1.merge \
                 polymorphic_as: attribute,
