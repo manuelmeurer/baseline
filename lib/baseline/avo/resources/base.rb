@@ -71,11 +71,12 @@ module Baseline
         end
 
         def field_options(attribute, options)
-          column                 = model_class.schema_columns[attribute]
+          real_model_class       = options[:delegated_model_class]&.constantize || model_class
+          column                 = real_model_class.schema_columns[attribute]
           column_type            = column[:type] if column
           attribute_suffix       = attribute.to_s.split("_").last.to_sym
-          association_reflection = model_class.reflections[attribute.to_s]
-          attachment_reflection  = model_class.reflect_on_all_attachments.detect { _1.name == attribute }
+          association_reflection = real_model_class.reflections[attribute.to_s]
+          attachment_reflection  = real_model_class.reflect_on_all_attachments.detect { _1.name == attribute }
           default                = params[attribute] || try(:"default_#{attribute}")
 
           case
