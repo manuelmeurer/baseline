@@ -185,6 +185,12 @@ module Baseline
                 end
               }
             end
+
+            [with_scope_name, without_scope_name].each do |scope_name|
+              define_method "#{scope_name}?" do
+                self.class.public_send(scope_name).exists?(id)
+              end
+            end
           end
         end
       end
