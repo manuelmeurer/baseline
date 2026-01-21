@@ -4,6 +4,8 @@ module Baseline
   class Engine < ::Rails::Engine
     isolate_namespace Baseline
 
+    config.autoload_paths << root.join("app", "components")
+
     initializer "baseline.after_initialize" do |app|
       begin
         require "sitemap_generator"
