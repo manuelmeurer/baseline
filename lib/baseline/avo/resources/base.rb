@@ -186,12 +186,15 @@ module Baseline
               }
             )
           when column_type == :string
-            options.reverse_merge(as: :text, format_index_using: -> { value&.truncate(50) })
+            options.reverse_merge(
+              as:                 :text,
+              format_index_using: -> { value&.truncate(50) }
+            )
           when attribute.end_with?("?") || column_type == :boolean
             options.reverse_merge(as: :boolean)
           when column_type == :text
             options.reverse_merge(
-              as: :textarea,
+              as:                 :textarea,
               format_index_using: -> { value&.truncate(50) },
               format_show_using:  -> { auto_link(value, sanitize: false, html: external_link_attributes).html_safe }
             )
