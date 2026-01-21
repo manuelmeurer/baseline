@@ -5,6 +5,10 @@ description: Guidance for working with the Avo admin CMS. Use when creating or u
 
 # Avo Admin CMS
 
+## Guidelines
+
+- Full LLM docs for Avo: `#fetch https://docs.avohq.io/3.0/llms-full.txt`.
+
 ## Adding Resources
 
 Use this as the baseline structure for a new Avo resource:
