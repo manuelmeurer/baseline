@@ -74,12 +74,12 @@ module Baseline
         }
       end
 
-      USER_ATTRIBUTES.each do |column|
-        scope_name = :"with_#{column}"
+      USER_ATTRIBUTES.each do |attribute|
+        scope_name = :"with_#{attribute}"
         find_users =
           case
-          when User.schema_columns.keys.include?(column)
-            -> { User.where(column => _1) }
+          when User.schema_columns.keys.include?(attribute)
+            -> { User.where(attribute => _1) }
           when User.respond_to?(scope_name)
             -> { User.public_send(scope_name, _1) }
           end
@@ -89,6 +89,8 @@ module Baseline
             with_user(find_users.call(_1))
           }
         end
+
+        delegate :"#{attribute}=", to: :user
       end
 
       validate if: :user do
