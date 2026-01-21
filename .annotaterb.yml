@@ -1,0 +1,6 @@
+ignore_multi_database_name: true
+position: after
+show_foreign_keys: false
+show_indexes: false
+additional_file_patterns:
+  - app/avo/resources/%MODEL_NAME%.rb
