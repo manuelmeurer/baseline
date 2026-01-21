@@ -37,36 +37,10 @@ module Baseline
 
         def actions
           unless record&.ignored?
-            action Ignore
+            action Avo::Actions::Ignore
           end
           unless record&.unignored?
-            action Unignore
-          end
-        end
-
-        class Ignore < ::Avo::BaseAction
-          def handle(query:, **)
-            process(
-              query,
-              condition:       -> { !_1.ignored? },
-              success_message: "ignored successfully.",
-              error_message:   "already ignored."
-            ) {
-              _1.ignored!
-            }
-          end
-        end
-
-        class Unignore < ::Avo::BaseAction
-          def handle(query:, **)
-            process(
-              query,
-              condition:       -> { _1.ignored? },
-              success_message: "unignored successfully.",
-              error_message:   "already unignored."
-            ) {
-              _1.unignored!
-            }
+            action Avo::Actions::Unignore
           end
         end
       end
