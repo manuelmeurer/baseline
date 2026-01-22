@@ -199,7 +199,7 @@ module Baseline
             options.reverse_merge(
               as:                 :textarea,
               format_index_using: -> { value&.truncate(50) },
-              format_show_using:  -> { auto_link(value, sanitize: false, html: external_link_attributes).html_safe }
+              format_show_using:  -> { helpers.auto_link(value, sanitize: false, html: helpers.external_link_attributes).html_safe }
             )
           when column_type.in?(%i[json jsonb])
             options.reverse_merge(as: :code, pretty_generated: true)
