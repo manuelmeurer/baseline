@@ -58,6 +58,9 @@ module Baseline
           if model_class.respond_to?(:search)
             filter Avo::Filters::Search
           end
+          if model_class.respond_to?(:statuses)
+            filter Avo::Filters::Status
+          end
         end
 
         def field(attribute, **options, &block)
