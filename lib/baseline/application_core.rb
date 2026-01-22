@@ -44,7 +44,6 @@ module Baseline
       if defined?(::Avo)
         config.to_prepare do
           ::Avo::Fields::BaseField.include \
-            ApplicationHelper,
             ActionView::Helpers::TagHelper
         end
 
