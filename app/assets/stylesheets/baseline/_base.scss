@@ -128,7 +128,7 @@ textarea.form-control:not([rows]) {
 label.required::after {
   content: " *";
 
-  :is(.form-floating, .no-required-indicator) & {
+  .no-required-indicator & {
     content: none;
   }
 }
