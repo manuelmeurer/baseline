@@ -1,0 +1,19 @@
+-# frozen_string_literal: true
+-# locals: (id:, cols: nil, offset: {})
+
+- offset_classes = offset.flat_map { ["col-#{_1}-#{12 - _2 * 2}", ("offset-#{_1}-#{_2}" if _2 > 0)] }.compact
+
+= section id do |section_i18n_scope|
+  %h2
+    = t :headline, scope: section_i18n_scope
+
+  = md_to_html t(:intro, scope: section_i18n_scope, default: nil)
+
+  .row.mt-5
+    %div{ class: offset_classes }
+      = component :accordion, :faq, css_class: "max-width-800 mx-auto text-start" do |component|
+        - t(:items, scope: section_i18n_scope).each do |item|
+          = component.with_item title: item[:headline] do
+            = md_to_html item[:text]
+
+  = md_to_html t(:text, scope: section_i18n_scope, default: nil)

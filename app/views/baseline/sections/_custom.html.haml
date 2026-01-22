@@ -1,0 +1,11 @@
+-# frozen_string_literal: true
+-# locals: (id:)
+
+= section id do |section_i18n_scope|
+
+  %h2
+    = t :headline, scope: section_i18n_scope
+
+  = md_to_html t(:intro, scope: section_i18n_scope, default: nil)
+
+  = yield section_i18n_scope
