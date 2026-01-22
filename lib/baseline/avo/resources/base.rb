@@ -201,7 +201,10 @@ module Baseline
           when column_type.in?(%i[json jsonb])
             options.reverse_merge(as: :code, pretty_generated: true)
           when column_type == :datetime
-            options.reverse_merge(as: :date_time)
+            options.reverse_merge(
+              as:     :date_time,
+              format: "ff"
+            )
           when column_type == :date
             options.reverse_merge(as: :date)
           when column_type.in?(%i[float integer bigint decimal])
