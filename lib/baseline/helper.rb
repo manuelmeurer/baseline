@@ -474,10 +474,7 @@ module Baseline
         head_tags.to_a,
         csrf_meta_tags,
         csp_meta_tag,
-        javascript_importmap_tags(
-          ::Current.namespace.to_s,
-          importmap: GenerateNamespaceImportmap.call
-        ),
+        javascript_namespace_importmap_tags,
         javascripts.map { javascript_import_module_tag _1 },
         meta_tags(
           action_name:,
@@ -494,6 +491,12 @@ module Baseline
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
       ], "\n"
+    end
+
+    def javascript_namespace_importmap_tags
+      javascript_importmap_tags \
+        ::Current.namespace.to_s,
+        importmap: Baseline::GenerateNamespaceImportmap.call
     end
 
     def javascript_path(name)
