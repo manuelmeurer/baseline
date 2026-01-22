@@ -165,7 +165,7 @@ module Baseline
               as:         :belongs_to,
               default:    params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) },
               searchable: true,
-              html:       { index: { wrapper: { classes: "max-w-xs truncate block" } } }
+              html:       { index: { wrapper: { classes: "max-w-xs truncate" } } }
             }.if(association_reflection.options[:polymorphic]) {
               _1.merge \
                 polymorphic_as: attribute,
