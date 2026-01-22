@@ -18,7 +18,7 @@ module Baseline
         ">>"  => '\>\>'
       }.freeze
 
-      def call(text, sanitize: false, avoid_paragraphs: false)
+      def call(text, sanitize: false, avoid_paragraphs: false, add_class_to_first_paragraph: nil)
         return "" if text.blank?
 
         require "kramdown"
@@ -28,7 +28,8 @@ module Baseline
           :markdown_to_html,
           ActiveSupport::Digest.hexdigest(text),
           sanitize,
-          avoid_paragraphs
+          avoid_paragraphs,
+          add_class_to_first_paragraph
         ]
 
         Rails.cache.fetch cache_key, force: Rails.env.development? do
@@ -43,6 +44,7 @@ module Baseline
           Kramdown::Document
             .new(text, input: "GFM")
             .to_html
+            .if(add_class_to_first_paragraph) { _1.sub("<p>", %(<p class="#{_2}">)) }
             .if(avoid_paragraphs) { _1.gsub("<p>", "").gsub("</p>", "<br /><br />") }
             .gsub(/(#{LINE_BREAK_REGEX})\s+/, '\1') # Remove whitespace after <br> elements.
             .gsub(/(#{LINE_BREAK_REGEX})+\z/, "")   # Remove line breaks from end of string.
