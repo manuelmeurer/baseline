@@ -218,12 +218,8 @@ module Baseline
         end
 
         def timestamp_fields
-          field :created_at, as: :text, only_on: :display do
-            l record.created_at
-          end
-          field :updated_at, as: :text, only_on: :show do
-            l record.updated_at
-          end
+          field :created_at, only_on: :display
+          field :updated_at, only_on: :show
         end
       end
     end
