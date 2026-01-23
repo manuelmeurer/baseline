@@ -89,7 +89,6 @@ module Baseline
 
       config.active_storage.queues.analysis        = :default
       config.active_storage.queues.purge           = :default
-      config.active_storage.resolve_model_to_route = :rails_storage_proxy
       config.active_storage.routes_prefix          = "/attachments"
       config.active_storage.variant_processor      = :vips
 
