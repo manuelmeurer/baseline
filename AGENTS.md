@@ -4,6 +4,7 @@
 
 - Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - Default language: Ruby. Prefer Ruby when writing scripts.
+- To delete files or folders, always use `trash` instead of `rm`.
 
 ## Project shorthand
 
