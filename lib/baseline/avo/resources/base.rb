@@ -168,18 +168,22 @@ module Baseline
           when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
             options.reverse_merge({
               as:         :belongs_to,
-              default:    params[:"#{attribute}_gid"]&.then { GlobalID.find(_1) },
+              default:    params[:"#{attribute}_id"]&.then { association_reflection.klass.find(_1) },
               searchable: true,
               html:       { index: { wrapper: { classes: "max-w-xs truncate" } } }
             }.if(association_reflection.options[:polymorphic]) {
               _1.merge \
+                default:        params[:"#{attribute}_gid"]&.then { GlobalID.find(it) },
                 polymorphic_as: attribute,
                 types:          polymorphic_types_with_resource(attribute)
             })
           when association_reflection.class.in?([ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::ThroughReflection])
             options.merge(as: :has_many)
           when association_reflection.is_a?(ActiveRecord::Reflection::HasOneReflection)
-            options.merge(as: :has_one)
+            options.merge(
+              as:   :has_one,
+              html: { index: { wrapper: { classes: "max-w-xs truncate" } } }
+            )
           when column && column[:array]
             options.reverse_merge(
               default:,
