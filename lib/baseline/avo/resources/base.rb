@@ -74,7 +74,12 @@ module Baseline
         end
 
         def field_options(attribute, options)
-          real_model_class       = options[:delegated_model_class]&.constantize || model_class
+          if real_model_class = options[:delegated_model_class]&.constantize
+            attribute = attribute.to_s.delete_prefix("#{real_model_class.name.underscore}_").to_sym
+          else
+            real_model_class = model_class
+          end
+
           column                 = real_model_class.schema_columns[attribute]
           column_type            = column[:type] if column
           attribute_suffix       = attribute.to_s.split("_").last.to_sym
