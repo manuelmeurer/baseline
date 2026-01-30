@@ -5,6 +5,10 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
+      if defined?(MemoWise)
+        prepend MemoWise
+      end
+
       { one: 1, many: 2 }.each do |one_or_many, pluralize_count|
         has_attached_method = :"has_#{one_or_many}_attached"
 
