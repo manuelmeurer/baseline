@@ -134,18 +134,27 @@ module Baseline
           when attachment_reflection.is_a?(ActiveStorage::Reflection::HasOneAttachedReflection)
             [
               options.reverse_merge(
-                as:       :file,
-                is_image: true,
-                only_on:  :forms
+                as:      :file,
+                only_on: :forms
               ),
               options.reverse_merge(
                 as:      :text,
                 only_on: :display,
                 format_using: -> {
                   if value.attached?
-                    size = view == "index" ? :xs_thumb : :md_fit
-                    link_to Rails.application.routes.url_helpers.url_for(value), **helpers.external_link_attributes do
-                      render helpers.component(:attachment_image, value, size)
+                    url  = Rails.application.routes.url_helpers.url_for(value)
+                    case value.content_type
+                    when Mime[:pdf]
+                      tag.iframe \
+                        src:   url,
+                        style: "width: 100%; height: 600px;"
+                    when /\Aimage\//
+                      size = view == "index" ? :xs_thumb : :md_fit
+                      link_to url, **helpers.external_link_attributes do
+                        render helpers.component(:attachment_image, value, size)
+                      end
+                    else
+                      raise "Unexpected content type: #{value.content_type}"
                     end
                   end
                 }
