@@ -301,8 +301,7 @@ module Baseline
           new_container_css_class = [
             :container,
             (container unless container == true)
-          ].compact
-            .join("-")
+          ].compact.join("-")
           container_css_class = Array(container_css_class) << new_container_css_class
           tag.div class: container_css_class do
             content.call

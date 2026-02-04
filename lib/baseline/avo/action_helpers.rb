@@ -20,8 +20,7 @@ module Baseline
           message = [
             ("#{pluralized(matches)} #{success_message}"   if matches.present?),
             ("#{pluralized(non_matches)} #{error_message}" if non_matches.present?)
-          ].compact
-            .join("\n")
+          ].compact.join("\n")
 
           case
           when matches.blank?     then warn(message)
