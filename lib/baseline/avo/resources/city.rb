@@ -10,8 +10,8 @@ module Baseline
           field :slug
           field :country
           field :state
-          field :latitude
-          field :longitude
+          field :latitude, only_on: :show
+          field :longitude, only_on: :show
           timestamp_fields
           field :locations
           field :tasks
