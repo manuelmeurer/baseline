@@ -73,7 +73,9 @@ module Baseline
     end
 
     def name_and_city
-      [name, city].compact_blank.join(" ")
+      [name, city]
+        .compact_blank
+        .join(", ")
     end
 
     def zip_and_city_or_state
