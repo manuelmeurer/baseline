@@ -1,10 +1,10 @@
 -# frozen_string_literal: true
--# locals: (id:, headline_tag: :h2)
+-# locals: (id:, css_class: nil, headline_tag: :h2)
 
 - unless headline_tag.match?(/\Ah[1-6]\z/)
   - raise ArgumentError, "headline_tag must be one of h1 - h6"
 
-= section id do |section_i18n_scope|
+= section id, css_class: do |section_i18n_scope|
 
   - if headline = t(:headline, scope: section_i18n_scope, default: nil)
     = tag.public_send(headline_tag, headline)
