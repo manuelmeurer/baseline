@@ -44,7 +44,8 @@ module Baseline
       if defined?(::Avo)
         config.to_prepare do
           ::Avo::Fields::BaseField.include \
-            ActionView::Helpers::TagHelper
+            ActionView::Helpers::TagHelper,
+            Avo::FieldHelpers
         end
 
         # Tell Zeitwerk that url_helpers.rb defines UrlHelpers (not URLHelpers).
