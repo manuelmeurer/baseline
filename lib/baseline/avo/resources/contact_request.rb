@@ -12,17 +12,7 @@ module Baseline
           field :phone
           field :locale
           field :company
-          field :message
-          field :message, only_on: :index do
-            if record.message.present?
-              ActionView::Base
-                .full_sanitizer
-                .sanitize(record.message)
-                .truncate(30)
-            else
-              "-"
-            end
-          end
+          field :message, show_on: :all # By default, Avo hides text fields on index
           field :details
           field :ignored_at, only_on: :display
           timestamp_fields

@@ -37,16 +37,6 @@ module Baseline
           end
         end
 
-        def truncate_on_index
-          -> {
-            value.if(view == "index") {
-              tag.span \
-                truncate(_1, length: 50),
-                title: _1
-            }
-          }
-        end
-
         def polymorphic_types_with_resource(attribute)
           model_class
             .polymorphic_types(attribute)
@@ -86,6 +76,7 @@ module Baseline
           association_reflection = real_model_class.reflections[attribute.to_s]
           attachment_reflection  = real_model_class.reflect_on_all_attachments.detect { _1.name == attribute }
           default                = params[attribute] || try(:"default_#{attribute}")
+          index_truncate         = { html: { index: { wrapper: { classes: "max-w-xs truncate" } } } }
 
           case
           when attribute == :id
@@ -96,19 +87,21 @@ module Baseline
               options.merge(as: :text, only_on: :display, format_using: -> { mail_to value })
             ]
           when attribute_suffix == :url
-            options.reverse_merge(
-              default:,
-              as: :text,
-              format_display_using: -> {
-                if value.present?
-                  link_to \
-                    helpers.pretty_url(value, truncate: view == "index"),
-                    value,
-                    title: value,
-                    **helpers.external_link_attributes
-                end
-              }
-            )
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge(
+                default:,
+                as: :text,
+                format_display_using: -> {
+                  if value.present?
+                    link_to \
+                      helpers.pretty_url(value, truncate: false),
+                      value,
+                      title: value,
+                      **helpers.external_link_attributes
+                  end
+                }
+              )
           when attribute_suffix == :locale
             options.reverse_merge(
               default:,
@@ -175,24 +168,26 @@ module Baseline
               options: choices
             )
           when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
-            options.reverse_merge({
-              as:         :belongs_to,
-              default:    params[:"#{attribute}_id"]&.then { association_reflection.klass.find(_1) },
-              searchable: true,
-              html:       { index: { wrapper: { classes: "max-w-xs truncate" } } }
-            }.if(association_reflection.options[:polymorphic]) {
-              _1.merge \
-                default:        params[:"#{attribute}_gid"]&.then { GlobalID.find(it) },
-                polymorphic_as: attribute,
-                types:          polymorphic_types_with_resource(attribute)
-            })
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge({
+                as:         :belongs_to,
+                default:    params[:"#{attribute}_id"]&.then { association_reflection.klass.find(_1) },
+                searchable: true
+              }.if(association_reflection.options[:polymorphic]) {
+                _1.merge \
+                  default:        params[:"#{attribute}_gid"]&.then { GlobalID.find(it) },
+                  polymorphic_as: attribute,
+                  types:          polymorphic_types_with_resource(attribute)
+              })
           when association_reflection.class.in?([ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::ThroughReflection])
-            options.merge(as: :has_many)
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge(as: :has_many)
           when association_reflection.is_a?(ActiveRecord::Reflection::HasOneReflection)
-            options.merge(
-              as:   :has_one,
-              html: { index: { wrapper: { classes: "max-w-xs truncate" } } }
-            )
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge(as: :has_one)
           when column && column[:array]
             options.reverse_merge(
               default:,
@@ -207,20 +202,23 @@ module Baseline
               }
             )
           when column_type == :string
-            options.reverse_merge(
-              as:                 :text,
-              format_index_using: -> { value&.truncate(50) }
-            )
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge(as: :text)
           when attribute.end_with?("?") || column_type == :boolean
             options.reverse_merge(as: :boolean)
           when column_type == :text
-            options.reverse_merge(
-              as:                 :textarea,
-              format_index_using: -> { value&.truncate(50) }
-              # format_show_using:  -> { helpers.auto_link(value, sanitize: false, html: helpers.external_link_attributes).html_safe }
-            )
+            options
+              .reverse_merge(index_truncate)
+              .reverse_merge(
+                as:                 :textarea,
+                # format_show_using:  -> { helpers.auto_link(value, sanitize: false, html: helpers.external_link_attributes).html_safe }
+              )
           when column_type.in?(%i[json jsonb])
-            options.reverse_merge(as: :code, pretty_generated: true)
+            options.reverse_merge(
+              as:               :code,
+              pretty_generated: true
+            )
           when column_type == :datetime
             options.reverse_merge(
               as:     :date_time,
