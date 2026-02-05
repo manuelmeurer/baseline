@@ -233,6 +233,18 @@ module Baseline
           end
         end
 
+        def actions_field(&block)
+          field :actions, as: :text do
+            if actions = Array(instance_exec(&block)).compact.presence
+              tag.div \
+                safe_join(actions),
+                class: "flex gap-2"
+            else
+              "-"
+            end
+          end
+        end
+
         def timestamp_fields
           field :created_at, only_on: :display
           field :updated_at, only_on: :show
