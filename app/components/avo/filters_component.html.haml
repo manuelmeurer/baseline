@@ -1,0 +1,39 @@
+%div{ data: { component_name: self.class.to_s.underscore }, class: "flex items-end gap-3 flex-wrap" }
+  - @filters.each do |filter|
+
+    - case filter
+    - when Avo::Filters::SelectFilter
+
+      .flex.flex-col{ data: { controller: "select-filter", filter_name: filter.name, select_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
+        %label.text-xs.font-medium.text-gray-500.mb-1
+          = filter.name
+        = select_tag filter.id, options_for_select(filter.options.invert, filter.applied_or_default_value(@applied_filters)), class: input_classes("w-full mb-0 min-w-[140px]"), include_blank: filter.class.empty_message || "—", id: "avo_filters_#{filter.id.parameterize.underscore}", "data-filter-class": filter.class, "data-select-filter-target": "selector", "data-action": "change->select-filter#changeFilter"
+        = link_to "url_redirect", request.url, data: { select_filter_target: "urlRedirect", **params.permit!.slice(:turbo_frame) }, style: "hidden", class: "hidden"
+
+    - when Avo::Filters::BooleanFilter
+
+      .flex.flex-col{ data: { controller: "boolean-filter", filter_name: filter.name, boolean_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
+        %label.text-xs.font-medium.text-gray-500.mb-1
+          = filter.name
+        .flex.items-center.gap-2.py-2
+          - filter.options.each do |value, label|
+            %label.flex.items-center.text-gray-700.text-sm.whitespace-nowrap
+              = check_box_tag filter.id, value, filter.selected_value(value.to_s, @applied_filters), class: "mr-1 h-4 w-4", id: "avo_filters_#{filter.id.parameterize.underscore}_#{value}", "data-filter-class": filter.class, "data-boolean-filter-target": "option", "data-action": "input->boolean-filter#changeFilter"
+              = label
+        = link_to "url_redirect", request.url, data: { boolean_filter_target: "urlRedirect", **params.permit!.slice(:turbo_frame) }, style: "hidden", class: "hidden"
+
+    - when Avo::Filters::TextFilter
+
+      .flex.flex-col{ data: { controller: "text-filter", filter_name: filter.name, text_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
+        %label.text-xs.font-medium.text-gray-500.mb-1
+          = filter.name
+        .flex.items-center.gap-2
+          = text_field_tag filter.id, filter.applied_or_default_value(@applied_filters), class: input_classes("w-full mb-0 min-w-[140px]"), id: "avo_filters_#{filter.id.parameterize.underscore}", placeholder: filter.class.empty_message, "data-filter-class": filter.class.to_s, "data-text-filter-target": "text", "data-action": "keypress->text-filter#tryToSubmit"
+        = link_to "url_redirect", request.url, data: { text_filter_target: "urlRedirect", **params.permit!.slice(:turbo_frame) }, style: "hidden", class: "hidden"
+
+    - else
+      -# Fallback: render filter using original partial
+      = render partial: filter.class.template, locals: { filter: }
+
+  - if @applied_filters.present?
+    = a_link reset_path, icon: "avo/x-circle", data: params.slice(:turbo_frame), color: :gray, size: :sm, title: t(:reset_filters, scope: :avo)
