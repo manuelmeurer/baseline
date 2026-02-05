@@ -13,6 +13,10 @@ module Baseline
           field :email_delivery_subject, as: :text, only_on: :new
           field :email_delivery_sections_md, as: :textarea, only_on: :new
           field :messageable, readonly: true, can_create: false
+
+          # This field will be hidden if the message does not have a `create_follow_up_task` attribute.
+          field :create_follow_up_task, as: :boolean, only_on: :new
+
           timestamp_fields
           field :tasks
         end

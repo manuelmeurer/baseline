@@ -29,8 +29,10 @@ module Baseline
       belongs_to :responsible, polymorphic: true
       belongs_to :taskable, polymorphic: true, optional: true
 
-      scope :identifier_prefix,   -> { where("identifier LIKE ?", "#{_1}%") }
-      scope :too_old_for_todoist, -> { done_before(6.months.ago) }
+      scope :identifier_prefix,    -> { where("identifier LIKE ?", "#{_1}%") }
+      scope :too_old_for_todoist,  -> { done_before(6.months.ago) }
+      scope :overdue,              -> { due_before(Date.today) }
+      scope :due_today,            -> { where(due_on: Date.current) }
 
       cattr_accessor :processing_todoist_event
 
@@ -60,6 +62,16 @@ module Baseline
       after_initialize if: :new_record? do
         self.due_on      ||= Date.current
         self.responsible ||= default_responsible
+      end
+    end
+
+    class_methods do
+      # This will generate corresponding scopes and methods.
+      def status_scopes
+        {
+          done:   nil,
+          undone: nil
+        }
       end
     end
 

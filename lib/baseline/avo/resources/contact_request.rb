@@ -7,6 +7,22 @@ module Baseline
         def fields
           field :id
           field :kind
+          field :status, as: :badge, options: { warning: :pending, danger: :ignored, success: :messaged_except_created }
+          actions_field do
+            [
+              render_avo_button(
+                avo.new_resources_contact_request_message_path(recipient_gid: record.to_gid.to_s),
+                icon:  "heroicons/outline/envelope",
+                title: "Message"
+              ),
+              unless record.ignored?
+                render_avo_button \
+                  Baseline::Avo::Actions::Ignore,
+                  icon:  "heroicons/outline/eye-slash",
+                  title: "Ignore"
+              end
+            ]
+          end
           field :name
           field :email
           field :phone
@@ -18,11 +34,6 @@ module Baseline
           timestamp_fields
           field :messages
           field :tasks
-        end
-
-        def filters
-          super
-          filter Avo::Filters::Status
         end
 
         def actions
