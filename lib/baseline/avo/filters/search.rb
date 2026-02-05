@@ -7,9 +7,9 @@ module Baseline
         self.name = "Search"
 
         def apply(request, query, value)
-          query
-            .klass
-            .search(value)
+          query.if(value.presence) {
+            _1.klass.search(_1)
+          }
         end
       end
     end
