@@ -11,6 +11,7 @@ description: Guidance for working with the Avo admin CMS. Use when creating or u
 
 ## Adding Resources
 
+Avo resources go in `app/avo/resources`.
 Use this as the baseline structure for a new Avo resource:
 
 ```ruby
@@ -28,7 +29,7 @@ class Avo::Resources::NewResource < Avo::BaseResource
 end
 ```
 
-Always add a matching controller file as well:
+Always add a matching controller in `app/controllers/avo` as well:
 
 ```ruby
 # frozen_string_literal: true
