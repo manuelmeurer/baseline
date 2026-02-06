@@ -9,6 +9,14 @@ require "avo"
   config.license_key              = Rails.application.env_credentials.avo.license_key!
   config.root_path                = "cms"
 
+  config.branding = {
+    logo:     "brand/avo_logo.png",
+    logomark: "brand/avo_logomark.png",
+    favicon:  "icons/favicon.ico"
+  }.transform_values {
+    ActionController::Base.helpers.asset_path(_1)
+  }
+
   if @auth
     config.explicit_authorization        = true
     config.authorization_client          = :pundit
