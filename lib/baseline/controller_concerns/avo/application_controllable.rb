@@ -6,7 +6,8 @@ module Baseline
       extend ActiveSupport::Concern
 
       included do
-        include Baseline::Authentication[:with_admin_user]
+        include ApplicationAvoShared,
+                Baseline::Authentication[:with_admin_user]
 
         before_action prepend: true do
           ::Current.namespace = :avo
