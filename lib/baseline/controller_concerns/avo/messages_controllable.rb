@@ -25,6 +25,31 @@ module Baseline
         @record
           .email_delivery
           ._do_send(_async: true)
+
+        if @record.recipient.tasks.undone.find_by(identifier: :handle)&.done!
+          add_flash :notice, "Task to handle #{@record.recipient.class.model_name.human} marked as done."
+        end
+
+        if @record.try(:create_follow_up_task)
+          days =
+            @record.recipient.is_a?(ContactRequest) &&
+              (@record.recipient.agency? || @record.recipient.recruiter?) ?
+            7 :
+            1
+          due_on = days.business_days_from.to_date
+
+          I18n.with_locale :de do
+            Tasks::Create.call \
+              due_on:,
+              taskable:    @record,
+              responsible: ::Current.admin_user,
+              title:       "Follow-up",
+              details:     "Antwort? Nachhaken!",
+              priority:    :high
+          end
+
+          add_flash :notice, "Task to follow up created for #{l due_on}."
+        end
       end
 
       def fill_record
