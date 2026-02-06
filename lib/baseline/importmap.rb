@@ -51,6 +51,7 @@ module Baseline
       end
 
       importmap.pin "baseline/base_controller"
+      importmap.pin "baseline/avo.custom", preload: false
 
       # TODO: This should be possible with `pin_all_from` but it doesn't work for some reason.
       # importmap.pin_all_from \

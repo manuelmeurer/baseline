@@ -6,7 +6,7 @@ module Baseline
       module Message
         def fields
           field :id
-          field :kind
+          field :kind, reload_fields_on_change: %i[email_delivery_subject email_delivery_sections_md]
           field :sent_at, as: :date_time, readonly: true
           field :recipient, readonly: true
           field :email_delivery, only_on: :show

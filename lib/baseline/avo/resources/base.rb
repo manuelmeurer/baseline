@@ -6,6 +6,10 @@ module Baseline
       module Base
         extend ActiveSupport::Concern
 
+        included do
+          self.stimulus_controllers = "form-reload"
+        end
+
         class_methods do
           def _baseline_finalize
             if defined?(@_baseline_finalized)
@@ -56,16 +60,19 @@ module Baseline
         def field(attribute, **options, &block)
           return super if options.key?(:as)
 
-          field_options(attribute, options)
+          field_options(attribute, **options)
             .unless(Array) { [_1] }
             .each {
               super attribute, **_1, &block
             }
         end
 
-        def field_options(attribute, options)
-          if real_model_class = options[:delegated_model_class]&.constantize
-            attribute = attribute.to_s.delete_prefix("#{real_model_class.name.underscore}_").to_sym
+        def field_options(attribute, reload_fields_on_change: [], delegated_model_class: nil, **options)
+          if real_model_class = delegated_model_class&.constantize
+            attribute = attribute
+              .to_s
+              .delete_prefix("#{real_model_class.name.underscore}_")
+              .to_sym
           else
             real_model_class = model_class
           end
@@ -77,6 +84,21 @@ module Baseline
           attachment_reflection  = real_model_class.reflect_on_all_attachments.detect { _1.name == attribute }
           default                = params[attribute] || try(:"default_#{attribute}")
           index_truncate         = { html: { index: { wrapper: { classes: "max-w-xs truncate" } } } }
+
+          reload_form_html = if reload_fields_on_change
+            {
+              html: {
+                edit: {
+                  input: {
+                    data: {
+                      action:                   "form-reload#reload",
+                      form_reload_fields_param: reload_fields_on_change.to_json
+                    }
+                  }
+                }
+              }
+            }
+          end
 
           case
           when attribute == :id
@@ -166,7 +188,9 @@ module Baseline
               default:,
               as:      :select,
               options: choices
-            )
+            ).if(reload_form_html) {
+              _1.merge(_2)
+            }
           when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
             options
               .reverse_merge(index_truncate)
