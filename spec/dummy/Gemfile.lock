@@ -7,6 +7,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    accept_language (2.2.0)
     actioncable (8.0.3)
       actionpack (= 8.0.3)
       activesupport (= 8.0.3)
@@ -431,6 +432,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  accept_language (~> 2.0)
   active_storage_validations (~> 3.0)
   addressable (~> 2.8)
   amazing_print (~> 2.0)
@@ -474,6 +476,7 @@ DEPENDENCIES
   zstd-ruby (~> 1.5)
 
 CHECKSUMS
+  accept_language (2.2.0) sha256=7cc4d9a002b90d091619f82119b3c4b0e7ef753587043f03c52fc823e0d2440f
   actioncable (8.0.3) sha256=f8cad39cebefaa1c9d4904f3e843022f22ee7a9201b59db703bf3ef7f2877493
   actionmailbox (8.0.3) sha256=2a0444f8937c641db100128a1826554c5298ade65c62b623a1fcb34a1dc6bd2f
   actionmailer (8.0.3) sha256=6dc0c3701065a96f845a05a28e9d7a60055222cfc324cc6c3a281cec148cc723

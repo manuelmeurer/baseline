@@ -6,6 +6,7 @@ ruby file: ".ruby-version"
 
 gemspec path: "../../"
 
+gem "accept_language",                          "~> 2.0"
 gem "active_storage_validations",               "~> 3.0"
 gem "addressable",                              "~> 2.8"
 gem "amazing_print",                            "~> 2.0", require: false
