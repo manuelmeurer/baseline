@@ -12,12 +12,12 @@ Note: use these names in conversation (e.g., "copy the file from uplink" or "che
 
 - baseline: ~/code/own/baseline
 - cloudflare-workers: ~/code/own/cloudflare-workers
-- dasauge: ~/code/own/dasauge
+- dasauge: ~/code/own/dasauge/app
 - dotfiles: ~/code/own/dotfiles
-- funlocked: ~/code/own/funlocked
+- funlocked: ~/code/own/funlocked/app
 - manuelmeurer: ~/code/own/manuelmeurer (aka "my website")
 - notetoself: ~/code/own/notetoself
-- rubydocs: ~/code/own/rubydocs
+- rubydocs: ~/code/own/rubydocs/app
 - spendex: ~/code/own/spendex
 - tasks: ~/code/own/tasks
-- uplink: ~/code/own/uplink
+- uplink: ~/code/own/uplink/app
