@@ -10,7 +10,9 @@ module Baseline
           params[:locale] ||
           cookies[:locale] ||
           ::Current.user&.locale ||
-          locale_from_accept_language_header
+          AcceptLanguage
+            .parse(request.headers["Accept-Language"].to_s)
+            .match(*I18n.available_locales)
 
         locale = locale&.to_sym
 
@@ -20,15 +22,6 @@ module Baseline
 
         I18n.with_locale locale, &block
       end
-
-      private
-
-        def locale_from_accept_language_header
-          request.headers["Accept-Language"]
-            &.split(",")
-            &.map { _1.split(";").first }
-            &.detect { I18n.available_locales.include?(_1.to_sym) }
-        end
     end
   end
 end
