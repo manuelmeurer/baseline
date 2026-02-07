@@ -26,8 +26,8 @@ module Baseline
           field :message_id, only_on: :display
           field :admin_user, only_on: :display
           field :deliverable
+          tasks_field
           timestamp_fields
-          field :tasks
           field :sections
         end
       end

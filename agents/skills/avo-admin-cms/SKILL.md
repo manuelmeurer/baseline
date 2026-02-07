@@ -21,8 +21,8 @@ class Avo::Resources::NewResource < Avo::BaseResource
   def fields
     field :id
     [more fields here]
+    tasks_field
     timestamp_fields
-    field :tasks
   end
 
   _baseline_finalize

@@ -269,6 +269,88 @@ module Baseline
           end
         end
 
+        def tasks_field
+          field :tasks, as: :text, only_on: :display do
+            tasks = record.tasks.order(due_on: :desc)
+
+            render_task_list = ->(tasks) {
+              tasks.map do |task|
+                task_resource = ::Avo::Resources::Task.new(record: task, params:)
+
+                done_undone_button =
+                  if task.done?
+                    render_avo_button \
+                      Baseline::Avo::Resources::Task::Actions::Undone,
+                      resource: task_resource,
+                      icon:     "heroicons/outline/minus-circle",
+                      title:    "Undone"
+                  else
+                    render_avo_button \
+                      Baseline::Avo::Resources::Task::Actions::Done,
+                      resource: task_resource,
+                      icon:     "heroicons/outline/check-circle",
+                      title:    "Done"
+                  end
+
+                edit_button = render_avo_button(
+                  avo.edit_resources_task_path(task),
+                  icon:  "heroicons/outline/pencil",
+                  title: "Edit"
+                )
+
+                tag.div(class: "flex items-center justify-between py-2 gap-2 border-b border-gray-100 last:border-b-0") do
+                  tag.div(class: "flex flex-col") do
+                    tag.span(task.title, class: "font-medium") +
+                    tag.div(class: "flex gap-3 text-sm text-gray-500 mt-1") do
+                      [
+                        tag.span("#{I18n.l(task.due_on)}"),
+                        tag.span("#{task.responsible.first_name}"),
+                        unless task.priority_medium?
+                          tag.span(task.priority.to_s.capitalize, class: "text-#{{ high: "red-600", low: "blue-600" }.fetch(task.priority.to_sym)} font-medium")
+                        end
+                      ].then {
+                        safe_join _1
+                      }
+                    end
+                  end +
+                  tag.div(class: "flex gap-2") do
+                    safe_join([done_undone_button, edit_button])
+                  end
+                end
+              end.then {
+                safe_join _1
+              }
+            }
+
+            tab_id           = "#{dom_id record}-tasks"
+            tab_class        = "px-2 py-1 text-sm cursor-pointer"
+            active_tab_class = "#{tab_class} font-bold border-b-2 border-blue-600"
+
+            tag.div do
+              tag.div(class: "flex gap-4 border-b border-gray-200") do
+                tag.button(
+                  "Undone (#{tasks.undone.size})",
+                  id:      "tab-undone-#{tab_id}",
+                  class:   active_tab_class,
+                  onclick: "document.getElementById('panel-undone-#{tab_id}').classList.remove('hidden'); document.getElementById('panel-done-#{tab_id}').classList.add('hidden'); this.className = '#{active_tab_class}'; document.getElementById('tab-done-#{tab_id}').className = '#{tab_class}'"
+                ) +
+                tag.button(
+                  "Done (#{tasks.done.size})",
+                  id:      "tab-done-#{tab_id}",
+                  class:   tab_class,
+                  onclick: "document.getElementById('panel-done-#{tab_id}').classList.remove('hidden'); document.getElementById('panel-undone-#{tab_id}').classList.add('hidden'); this.className = '#{active_tab_class}'; document.getElementById('tab-undone-#{tab_id}').className = '#{tab_class}'"
+                )
+              end +
+              tag.div(id: "panel-undone-#{tab_id}") do
+                render_task_list.call(tasks.undone)
+              end +
+              tag.div(id: "panel-done-#{tab_id}", class: "hidden") do
+                render_task_list.call(tasks.done)
+              end
+            end
+          end
+        end
+
         def timestamp_fields
           field :created_at, only_on: :display
           field :updated_at, only_on: :show

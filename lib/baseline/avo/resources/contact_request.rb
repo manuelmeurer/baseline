@@ -31,9 +31,9 @@ module Baseline
           field :message, show_on: :all # By default, Avo hides text fields on index
           field :details
           field :ignored_at, only_on: :display
+          tasks_field
           timestamp_fields
           field :messages
-          field :tasks
         end
 
         def actions

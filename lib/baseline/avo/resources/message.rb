@@ -17,8 +17,8 @@ module Baseline
           # This field will be hidden if the message does not have a `create_follow_up_task` attribute.
           field :create_follow_up_task, as: :boolean, only_on: :new
 
+          tasks_field
           timestamp_fields
-          field :tasks
         end
 
         def filters

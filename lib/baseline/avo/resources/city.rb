@@ -12,9 +12,9 @@ module Baseline
           field :state
           field :latitude, only_on: :show
           field :longitude, only_on: :show
+          tasks_field
           timestamp_fields
           field :locations
-          field :tasks
         end
       end
     end

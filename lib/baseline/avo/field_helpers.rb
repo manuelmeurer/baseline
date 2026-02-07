@@ -3,7 +3,12 @@
 module Baseline
   module Avo
     module FieldHelpers
-      def render_avo_button(url_or_action, icon:, title:)
+      def render_avo_button(
+        url_or_action,
+        icon:,
+        title:,
+        resource: self.resource)
+
         url, data =
           case url_or_action
           when Class

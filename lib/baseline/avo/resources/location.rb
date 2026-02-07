@@ -16,8 +16,8 @@ module Baseline
           field :locationable, readonly: true, can_create: false
           field :latitude, only_on: :show
           field :longitude, only_on: :show
+          tasks_field
           timestamp_fields
-          field :tasks
         end
       end
     end

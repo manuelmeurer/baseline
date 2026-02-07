@@ -10,8 +10,8 @@ module Baseline
           field :photo, delegated_model_class: "User"
           field :email
           field :alternate_emails
+          tasks_field
           timestamp_fields
-          field :tasks
         end
       end
     end
