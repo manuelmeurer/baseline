@@ -21,25 +21,35 @@ Identify what changes to apply:
 - Check if the user described the changes in their prompt
 - If they mentioned "changes from the last commit" or similar, inspect the last git commit in the current folder
 
-## Step 3: Apply Changes to Each Project
+## Step 3: Confirm Git Commit Preference
 
-Process each project individually:
+Before applying any changes, check if the user specified whether to commit changes to git:
+- If the user explicitly said to commit or not commit, follow their instruction
+- If not specified, ask the user whether they want changes committed to git in each project after applying
+
+## Step 4: Apply Changes Using Parallel Subagents
+
+Spawn one subagent per project using the Task tool to apply changes in parallel:
+- Launch all subagents simultaneously in a single message (do NOT process projects sequentially)
+- Each subagent receives:
+  - The target project path
+  - A clear description of the changes to apply
+  - Whether to commit changes to git
+  - Instructions to run relevant tests after applying changes
+  - Instructions to report back: what changed, what was skipped, test results
 - The implementation may differ between projects based on their structure
-- If changes cannot be applied to a project, skip it and continue with the others
-- Track which projects succeeded and which were skipped
+- If changes cannot be applied to a project, the subagent should skip it and report why
 
-## Step 4: Run Relevant Tests
-
-For each project where changes were applied:
-- Identify tests related to the modified code
-- Run those tests to verify the changes work correctly
-- Note any projects that lack test coverage for the changes
+Each subagent must follow this workflow:
+1. If committing: check for uncommitted changes or untracked files via `git status`. If any exist, run `git stash --include-untracked` before starting work.
+2. Apply the changes and run relevant tests.
+3. If committing: commit the changes, then run `git stash pop` if a stash was created in step 1.
+4. If not committing: skip git stash/commit entirely.
 
 ## Step 5: Report Results
 
-After completing all projects:
+After all subagents complete:
 - Summarize which projects were updated successfully
 - List any projects that were skipped and why
-- Mention any projects missing test coverage for the changes
-- Do NOT commit changes to git unless explicitly requested
-- Remind the user that changes have not been committed yet
+- Mention any test failures or projects missing test coverage
+- If changes were not committed, remind the user
