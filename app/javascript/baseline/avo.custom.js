@@ -65,3 +65,15 @@ class FormReloadController extends Controller {
 
 const application = window.Stimulus
 application.register("form-reload", FormReloadController)
+
+// Close Avo action modal on Escape key
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape")
+    return
+
+  const modal = document.querySelector(".modal-container[data-controller='modal']")
+  if (modal) {
+    const controller = application.getControllerForElementAndIdentifier(modal, "modal")
+    controller?.closeModal()
+  }
+})
