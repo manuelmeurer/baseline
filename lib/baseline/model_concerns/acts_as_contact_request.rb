@@ -38,9 +38,9 @@ module Baseline
           # This will generate corresponding scopes and methods.
           def status_scopes
             {
+              pending:                 %i[unignored without_messages_except_created],
               ignored:                 nil,
-              messaged_except_created: %i[with_messages_except_created],
-              pending:                 %i[unignored without_messages_except_created]
+              messaged_except_created: %i[with_messages_except_created]
             }
           end
         end
