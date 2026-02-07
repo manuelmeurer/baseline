@@ -5,6 +5,7 @@
 - Work style: telegraph; noun-phrases ok; drop grammar; min tokens.
 - Default language: Ruby. Prefer Ruby when writing scripts.
 - To delete files or folders, always use `trash` instead of `rm`.
+- When opening a webpage (whether requested by the user or initiated by the agent), use Chrome DevTools MCP first unless the user explicitly specifies Playwright. Only fall back to Playwright MCP if Chrome DevTools has issues.
 
 ## Project shorthand
 
