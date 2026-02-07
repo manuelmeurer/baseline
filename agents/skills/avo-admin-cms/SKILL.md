@@ -20,9 +20,11 @@ Use this as the baseline structure for a new Avo resource:
 class Avo::Resources::NewResource < Avo::BaseResource
   def fields
     field :id
-    [more fields here]
+    [belongs_to and attribute fields here]
     tasks_field
     timestamp_fields
+    [has_one association fields here]
+    [has_many association fields here]
   end
 
   _baseline_finalize
