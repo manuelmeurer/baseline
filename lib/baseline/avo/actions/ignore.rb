@@ -12,6 +12,9 @@ module Baseline
             error_message:   "already ignored."
           ) {
             _1.ignored!
+            if _1.tasks.undone.find_by(identifier: :handle)&.done!
+              inform "Task to handle #{_1.class.model_name.human} marked as done."
+            end
           }
         end
       end
