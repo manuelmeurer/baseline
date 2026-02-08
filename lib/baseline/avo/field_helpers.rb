@@ -7,7 +7,7 @@ module Baseline
         url_or_action,
         icon:,
         title:,
-        resource: self.resource)
+        resource: nil)
 
         url, data =
           case url_or_action
@@ -15,7 +15,7 @@ module Baseline
             unless url_or_action < ::Avo::BaseAction
               raise "Expected an Avo Action class, got #{url_or_action}"
             end
-            url_or_action.link_arguments(resource:)
+            url_or_action.link_arguments(resource: resource || self.resource)
           when String
             [url_or_action, {}]
           else raise "Unexpected URL or action: #{url_or_action.class}"
