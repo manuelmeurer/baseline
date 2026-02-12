@@ -10,9 +10,13 @@ Follow these steps when applying changes across multiple projects.
 ## Step 1: Identify Target Projects
 
 Determine which projects need the change:
-- "all my projects", "all my apps", "all projects" or "all apps" means all folders in `~/code/own/`
+- "all my projects", "all my apps", "all projects" or "all apps" means the following folders:
+  - dasauge: ~/code/own/dasauge/app
+  - funlocked: ~/code/own/funlocked/app
+  - notetoself: ~/code/own/notetoself
+  - spendex: ~/code/own/spendex
+  - uplink: ~/code/own/uplink/app
 - If unsure, ask the user to specify the target projects
-- Projects might be nested subfolders under `~/code/own/`, not only direct children
 - When searching for files across projects using `ripgrep`, use `**/` globs to handle nested app roots (e.g., `**/find/this/file.rb`)
 
 ## Step 2: Determine the Changes
