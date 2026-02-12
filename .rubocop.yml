@@ -43,3 +43,6 @@ Style/PercentLiteralDelimiters:
 
 Style/SymbolArray:
   Enabled: true
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
