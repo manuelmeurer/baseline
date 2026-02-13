@@ -17,7 +17,7 @@ module Baseline
         .if(Integer, { nil => gutter })
         .map { ["g", _1, _2].compact.join("-") }
         .concat(cols.map { ["row-cols", _1, _2].join("-") })
-        .push("row", "row-cols-1", *@css_class)
+        .push("row", "row-cols-1", *css_class)
     end
 
     def call
