@@ -407,9 +407,7 @@ module Baseline
 
         # Find the create_table block for this model
         create_table_regex = /create_table\s+"#{Regexp.escape(table_name)}".*?do\s+\|t\|(.*?)\n\s+end/m
-        unless table_block = content[create_table_regex, 1]
-          raise "Could not find create_table block for #{table_name} in schema.rb."
-        end
+        return {} unless table_block = content[create_table_regex, 1]
 
         columns = {}
         table_block.each_line do |line|
