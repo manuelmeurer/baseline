@@ -33,6 +33,7 @@ loader.setup
 
 module Baseline
   NOT_SET = Object.new.freeze
+  ALL     = Object.new.freeze
 
   class << self
     def has_many_reflection_classes
