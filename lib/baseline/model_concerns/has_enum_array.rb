@@ -2,7 +2,7 @@
 
 module Baseline
   module HasEnumArray
-    def self.[](attribute)
+    def self.[](attribute, default: nil)
       singular_attribute = attribute.to_s.singularize.to_sym
       valid_method_name  = :"valid_#{attribute}"
 
@@ -14,6 +14,17 @@ module Baseline
         end
 
         included do
+          if default
+            after_initialize do
+              if public_send(attribute).blank?
+                if default == ALL
+                  default = self.class.public_send(valid_method_name)
+                end
+                public_send("#{attribute}=", default)
+              end
+            end
+          end
+
           validates attribute, array_uniqueness: true
 
           validate do
