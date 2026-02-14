@@ -1,9 +1,9 @@
 ---
-name: avo-admin-cms
-description: Guidance for working with the Avo admin CMS. Use when creating or updating Avo resources, dashboards, actions, filters, or any other Avo-related functionality.
+name: avo
+description: Guidance for working with the Ruby on Rails Avo CMS. Use when creating or updating Avo resources, dashboards, actions, filters, or any other Avo-related functionality.
 ---
 
-# Avo Admin CMS
+# Avo
 
 ## Guidelines
 
