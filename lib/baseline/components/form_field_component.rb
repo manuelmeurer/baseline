@@ -62,15 +62,14 @@ module Baseline
       end
 
       id ||= [
-        identifier,
+        identifier.to_s.delete_suffix("]").split(/\]?\[/), # Handle nested attributes like `foo[bar_attributes][0]`.
         form.object.then { _1.try(:slug) || _1.id if _1 }, # Don't use `form.object&.` since `form.object` might be false.
         attribute,
         case type
         when :radio             then value
         when :checkbox, :switch then options[:checked_value]
         end
-      ].compact
-        .join("_")
+      ].compact.join("_")
 
       %i[
         attribute
