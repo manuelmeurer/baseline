@@ -30,15 +30,19 @@ de:
   yesterday: gestern
 
   attributes:
+
     bio: Biografie
-    description: Beschreibung
     comments: Kommentare
     company: Unternehmen
+    description: Beschreibung
     email: E-Mail
     first_name: Vorname
     kind: Art
     last_name: Nachname
+    password_confirmation: Passwortbestätigung
+    password: Passwort
     title: Titel
+    username: Benutzername
     website: Webseite
 
   navbar:
@@ -160,15 +164,3 @@ de:
       text: |-
         Ein Fehler in der Anwendung ist aufgetreten.
         Wir wurden darüber informiert und kümmern uns so bald wie möglich darum!
-
-  activerecord:
-
-    attributes:
-
-      user:
-        email: E-Mail
-        first_name: Vorname
-        last_name: Nachname
-        password_confirmation: Passwortbestätigung
-        password: Passwort
-        username: Benutzername
