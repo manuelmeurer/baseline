@@ -284,7 +284,7 @@ module Baseline
       Converters::MarkdownToHTML.call(...)
     end
 
-    def section(id = nil, css_class: nil, container_css_class: nil, container: false, i18n_scope: action_i18n_scope, &block)
+    def section(id = nil, css_class: nil, container_css_class: nil, container: default_section_container, i18n_scope: action_i18n_scope, &block)
       if block.arity == 1
         unless id
           raise "Cannot determine I18n scope without section ID."
