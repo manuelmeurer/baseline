@@ -11,7 +11,7 @@ Access Figma designs to inspect structure, extract design tokens, generate code,
 
 Always try the Figma MCP server tool first. These provide direct access to design context, metadata, screenshots, variables, and code generation.
 
-Only fall back to the REST API (curl) for use cases the MCP server cannot handle.
+Only fall back to the REST API for use cases the MCP server cannot handle.
 
 ### Use cases requiring REST API fallback
 
