@@ -131,14 +131,6 @@ if defined?(ActionController::Parameters)
 end
 
 class Symbol
-  def method_missing(method, ...)
-    to_s.respond_to?(method) ?
-      to_s.public_send(method, ...).to_sym :
-      super
-  end
-end
-
-class Symbol
   DELEGATE_TO_STRING_METHODS =
     %i[
       sub gsub delete_prefix delete_suffix
