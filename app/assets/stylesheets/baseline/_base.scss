@@ -140,3 +140,10 @@ label.required::after {
 .btn-group:not(:has(input:checked)) + .button-group-clear {
   display: none;
 }
+
+.btn-xl {
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-padding-x: 1.5rem;
+  --bs-btn-font-size: 1.5rem;
+  --bs-btn-border-radius: 0.625rem;
+}
