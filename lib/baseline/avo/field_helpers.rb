@@ -7,7 +7,8 @@ module Baseline
         url_or_action,
         icon:,
         title:,
-        resource: nil)
+        resource: nil,
+        modal:    false)
 
         url, data =
           case url_or_action
@@ -22,6 +23,10 @@ module Baseline
           end
 
         data[:tippy] = :tooltip
+        if modal
+          data[:turbo_frame] = ::Avo::MODAL_FRAME_ID
+          # The target URL's response needs to be wrapped in turbo_frame_tag Avo::MODAL_FRAME_ID containing an Avo::ModalComponent for the modal to render properly.
+        end
         render ::Avo::ButtonComponent.new(
           url,
           icon:,
