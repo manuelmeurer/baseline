@@ -100,5 +100,67 @@ RSpec.describe Baseline::DateRangeComponent do
         expect(component.call).to eq("June 12–13, 2026")
       end
     end
+
+    context "with German locale" do
+      around { |example| I18n.with_locale(:de) { example.run } }
+
+      it "formats same day" do
+        component = described_class.new(
+          start_date: Date.new(2026, 6, 12),
+          end_date:   Date.new(2026, 6, 12)
+        )
+
+        expect(component.call).to eq("12. Juni 2026")
+      end
+
+      it "formats same month with day range" do
+        component = described_class.new(
+          start_date: Date.new(2026, 6, 12),
+          end_date:   Date.new(2026, 6, 13)
+        )
+
+        expect(component.call).to eq("12.–13. Juni 2026")
+      end
+
+      it "formats different months with spaced en dash" do
+        component = described_class.new(
+          start_date: Date.new(2026, 6, 12),
+          end_date:   Date.new(2026, 7, 13)
+        )
+
+        expect(component.call).to eq("12. Juni – 13. Juli 2026")
+      end
+
+      it "formats different years with spaced en dash" do
+        component = described_class.new(
+          start_date: Date.new(2026, 6, 12),
+          end_date:   Date.new(2027, 7, 13)
+        )
+
+        expect(component.call).to eq("12. Juni 2026 – 13. Juli 2027")
+      end
+
+      context "with short format" do
+        it "uses abbreviated month names" do
+          component = described_class.new(
+            start_date: Date.new(2026, 6, 12),
+            end_date:   Date.new(2026, 6, 13),
+            format:     :short
+          )
+
+          expect(component.call).to eq("12.–13. Jun 2026")
+        end
+
+        it "works with different months" do
+          component = described_class.new(
+            start_date: Date.new(2026, 6, 12),
+            end_date:   Date.new(2026, 7, 13),
+            format:     :short
+          )
+
+          expect(component.call).to eq("12. Jun – 13. Jul 2026")
+        end
+      end
+    end
   end
 end
