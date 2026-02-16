@@ -46,6 +46,9 @@ module Baseline
           ::Avo::Fields::BaseField.include \
             ActionView::Helpers::TagHelper,
             Avo::FieldHelpers
+
+          ::Avo::ResourcesController.include \
+            Avo::ResourcesControllable
         end
 
         # Tell Zeitwerk that url_helpers.rb defines UrlHelpers (not URLHelpers).
