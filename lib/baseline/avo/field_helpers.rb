@@ -39,12 +39,12 @@ module Baseline
         )
       end
 
-      def activate_deactivate_button
+      def deactivate_reactivate_button
         if record.deactivated?
           render_avo_button \
-            Baseline::Avo::Actions::Activate,
+            Baseline::Avo::Actions::Reactivate,
             icon:  "heroicons/outline/check-circle",
-            title: "Activate"
+            title: "Reactivate"
         else
           render_avo_button \
             Baseline::Avo::Actions::Deactivate,
