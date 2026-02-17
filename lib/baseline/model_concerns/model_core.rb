@@ -314,6 +314,10 @@ module Baseline
       end
 
       def human_enum_name(enum, value, modifier = nil)
+        unless defined_enums.key?(enum.to_s)
+          raise ArgumentError, "#{enum} is not an enum defined on #{name}."
+        end
+
         return if value.blank?
 
         key = [
