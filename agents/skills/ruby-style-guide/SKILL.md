@@ -22,3 +22,4 @@ Apply these conventions when writing or modifying Ruby code.
 - Prefer chaining over temporary variables when it stays readable; `then` and `tap` are often helpful.
 - Prefer numbered parameters (`_1`, `_2`) for small blocks; use `it` only when numbered params don't work.
 - Prefer endless method definitions for simple, single-expression methods.
+- Prefer percent notation for arrays of symbols, array of strings, and regexes (`%i[foo bar]` over `[:foo, :bar]`, `%w[foo bar]` over `["foo", "bar"]` and `%r(foo)` over `/foo/`).
