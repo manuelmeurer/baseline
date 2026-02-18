@@ -20,7 +20,6 @@ module Baseline
 
         messages = email_confirmation
           .confirmable
-          .userable
           .messages
           .email_confirmation
 

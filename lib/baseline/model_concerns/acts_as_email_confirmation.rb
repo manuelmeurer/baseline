@@ -27,23 +27,5 @@ module Baseline
     def active?
       confirmed? && unrevoked?
     end
-
-    def url
-      case confirmable
-      when User
-        namespace  = confirmable.userable.class.to_s.underscore.pluralize.to_sym
-        url_params = { t: confirmable.userable.login_token }
-      when FreelancerRequest
-        raise "implement"
-      else raise "Unexpected confirmable: #{confirmable.class}"
-      end
-
-      Rails.application.routes.url_helpers.url_for [
-        namespace,
-        :email_confirmation,
-        id: signed_id,
-        **url_params
-      ]
-    end
   end
 end

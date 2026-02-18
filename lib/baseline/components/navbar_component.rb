@@ -58,12 +58,15 @@ module Baseline
       end
     end
 
+    private def signed_in? = !!::Current.user
+    private def user_name  = ::Current.user.first_name
+
     def auth_group
       with_group do |group|
-        if ::Current.userable&.then { _1.class.to_s == ::Current.userable_class }
+        if signed_in?
           avatar_and_name = safe_join([
-            component(:attachment_image, ::Current.userable.photo_or_dummy, :sm_thumb),
-            ::Current.userable.then { _1.try(:formal?) ? _1.name : _1.first_name },
+            component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb),
+            user_name,
             nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
           ], " ")
 
