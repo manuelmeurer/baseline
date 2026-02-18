@@ -183,7 +183,7 @@ module Baseline
               .keys
               .index_by {
                 model_class.human_enum_name attribute, _1
-              }
+              }.reverse_merge("-" => nil)
             options.reverse_merge(
               default:,
               as:      :select,
