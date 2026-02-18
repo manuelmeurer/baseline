@@ -85,7 +85,7 @@ module Baseline
           default                = params[attribute] || try(:"default_#{attribute}")
           index_truncate         = { html: { index: { wrapper: { classes: "max-w-xs truncate" } } } }
 
-          reload_form_html = if reload_fields_on_change
+          reload_form_html = if reload_fields_on_change.present?
             {
               html: {
                 edit: {
