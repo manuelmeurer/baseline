@@ -36,10 +36,9 @@ module Baseline
           messages
             .build(messageable: email_confirmation)
             .tap { _1.recipient.email = email_confirmation.email }
-            ._do_create_and_send(
+            ._do_create_and_send \
               delivery_method: :email,
               send_async:      false
-            )
         end
 
         email_confirmation
