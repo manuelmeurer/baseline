@@ -45,6 +45,44 @@ For each namespace:
 
 Never create a new namespace unless the user explicitly prompts it. If you are unsure which namespace a change belongs to, ask the user.
 
+## Callbacks
+
+Prefer block-style callbacks over defining a separate method:
+
+```ruby
+# Good - block style
+before_validation do
+  self.slug = name&.parameterize
+end
+
+after_create do
+  notify_admins
+  schedule_welcome_email
+end
+
+# Bad - separate method for simple logic
+before_validation :set_slug
+
+private
+
+def set_slug
+  self.slug = name&.parameterize
+end
+```
+
+Exceptions where a separate method makes sense:
+- The callback logic is very complex (20+ lines)
+- Several callbacks execute the same logic
+
+```ruby
+# OK - complex logic in a separate method
+after_create :sync_to_external_services
+
+# OK - same logic reused by multiple callbacks
+after_create :recalculate_totals
+after_destroy :recalculate_totals
+```
+
 ## Setting datetime/date columns to current time
 
 When setting a datetime or date column to the current time/date, check if the model includes `HasTimestamps[column]`. If so, use the bang method instead of direct assignment:
