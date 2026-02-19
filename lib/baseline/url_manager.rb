@@ -15,6 +15,17 @@ module Baseline
           }
         end
       end
+
+      def url_options(namespace)
+        route_constraints = route_constraints(namespace)
+        if subdomain = route_constraints.delete(:subdomain)
+          unless domain = route_constraints.delete(:domain)
+            raise "Expected domain if subdomain exists."
+          end
+          route_constraints[:host] = [subdomain, domain].join(".")
+        end
+        route_constraints
+      end
     end
   end
 end

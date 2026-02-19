@@ -27,10 +27,9 @@ require "avo"
   end
 end
 
-::Avo::Engine.routes.default_url_options = {
-  subdomain: "admin",
-  host:      Rails.application.routes.default_url_options.fetch(:host)
-}
+require "url_manager"
+
+::Avo::Engine.routes.default_url_options = ::URLManager.url_options(:admin)
 
 class ::Avo::BaseAction
   include Baseline::Avo::ActionHelpers
