@@ -14,20 +14,20 @@ module Baseline
             _1.expired_at  ||= 15.minutes.from_now
           }
 
-        if send_message && !email_confirmation.confirmable.is_a?(User)
-          raise Error, "Can only send email confirmation messages to users."
-        end
+        if send_message
+          unless email_confirmation.confirmable.is_a?(User)
+            raise Error, "Can only send email confirmation messages to users."
+          end
 
-        messages = email_confirmation
-          .confirmable
-          .messages
-          .email_confirmation
+          messages = email_confirmation
+            .confirmable
+            .messages
+            .email_confirmation
 
-        raise ThrottledError if
-          send_message && (
+          raise ThrottledError if
             messages.created_after(1.minute.ago).exists? ||
             messages.created_after(1.day.ago).size >= 10
-          )
+        end
 
         email_confirmation.save!
 
