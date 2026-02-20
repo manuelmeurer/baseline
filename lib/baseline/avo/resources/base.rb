@@ -279,7 +279,12 @@ module Baseline
           when column_type.in?(%i[float integer bigint decimal])
             options.reverse_merge \
               as:       :number,
-              sortable: true
+              sortable: true,
+              format_using: -> {
+                if value
+                  number_with_delimiter(value)
+                end
+              }
           else
             raise "Unexpected attribute: #{attribute}"
           end

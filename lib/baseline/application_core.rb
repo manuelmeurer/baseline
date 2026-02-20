@@ -45,6 +45,7 @@ module Baseline
         config.to_prepare do
           ::Avo::Fields::BaseField.include \
             ActionView::Helpers::TagHelper,
+            ActionView::Helpers::NumberHelper,
             Avo::FieldHelpers
 
           ::Avo::ResourcesController.include \
