@@ -3,9 +3,9 @@
 require "sentry-rails"
 
 Sentry.init do |config|
-  config.breadcrumbs_logger      = %i[active_support_logger http_logger]
-  config.dsn                     = Rails.application.env_credentials.sentry&.dsn || "dummy"
-  config.enable_logs             = true
+  config.breadcrumbs_logger = %i[active_support_logger http_logger]
+  config.dsn                = Rails.application.env_credentials.sentry&.dsn || "dummy"
+  config.enable_logs        = true
   config.enabled_patches << :logger
   config.excluded_exceptions -= ["ActiveRecord::RecordNotFound"]
   config.include_local_variables = true
