@@ -111,14 +111,20 @@ module Baseline
           when attribute_suffix == :email
             [
               options.merge(as: :text, only_on: :forms, default:),
-              options.merge(as: :text, only_on: :display, format_using: -> { mail_to value })
+              options.merge(
+                as:           :text,
+                only_on:      :display,
+                format_using: -> { mail_to value },
+                sortable:     true
+              )
             ]
           when attribute_suffix == :url
             options
               .reverse_merge(index_truncate)
               .reverse_merge(
                 default:,
-                as: :text,
+                as:       :text,
+                sortable: true,
                 format_display_using: -> {
                   if value.present?
                     link_to \
@@ -132,13 +138,15 @@ module Baseline
           when attribute_suffix == :locale
             options.reverse_merge(
               default:,
-              as:      :select,
-              options: Baseline::Avo::Filters::Language.new.options.invert
+              as:       :select,
+              options:  Baseline::Avo::Filters::Language.new.options.invert,
+              sortable: true
             )
           when attribute_suffix == :amount
             options.reverse_merge(
               default:,
-              as: :text,
+              as:       :text,
+              sortable: true,
               format_display_using: -> {
                 value.format
               }
@@ -146,7 +154,8 @@ module Baseline
           when attribute_suffix == :country
             options.reverse_merge(
               default:,
-              as: :country,
+              as:       :country,
+              sortable: true,
               format_using: -> {
                 value&.alpha2
               }
@@ -191,8 +200,9 @@ module Baseline
               }.reverse_merge("-" => nil)
             options.reverse_merge(
               default:,
-              as:      :select,
-              options: choices
+              as:       :select,
+              options:  choices,
+              sortable: true
             ).if(reload_form_html) {
               _1.merge(_2)
             }
@@ -233,14 +243,19 @@ module Baseline
           when column_type == :string
             options
               .reverse_merge(index_truncate)
-              .reverse_merge(as: :text)
+              .reverse_merge \
+                as:       :text,
+                sortable: true
           when attribute.end_with?("?") || column_type == :boolean
-            options.reverse_merge(as: :boolean)
+            options.reverse_merge \
+              as:       :boolean,
+              sortable: true
           when column_type == :text
             options
               .reverse_merge(index_truncate)
               .reverse_merge(
-                as:                 :textarea,
+                as:       :textarea,
+                sortable: true
                 # format_show_using:  -> { helpers.auto_link(value, sanitize: false, html: helpers.external_link_attributes).html_safe }
               )
           when column_type.in?(%i[json jsonb])
@@ -249,14 +264,22 @@ module Baseline
               pretty_generated: true
             )
           when column_type == :datetime
-            options.reverse_merge(
-              as:     :date_time,
-              format: "ff"
-            )
+            options.reverse_merge \
+              as:       :date_time,
+              format:   "ff",
+              sortable: true
           when column_type == :date
-            options.reverse_merge(as: :date)
+            options.reverse_merge \
+              as:       :date,
+              sortable: true
+          when column_type == :integer && attribute_suffix == :rating
+            options.reverse_merge \
+              as:       :stars,
+              sortable: true
           when column_type.in?(%i[float integer bigint decimal])
-            options.reverse_merge(as: :number)
+            options.reverse_merge \
+              as:       :number,
+              sortable: true
           else
             raise "Unexpected attribute: #{attribute}"
           end
