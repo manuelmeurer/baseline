@@ -12,6 +12,7 @@ loader.ignore("#{__dir__}/baseline/services/external")
 loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
 loader.ignore("#{__dir__}/baseline/spec/rails_helper.rb")
 loader.ignore("#{__dir__}/baseline/spec/spec_helper.rb")
+loader.ignore("#{__dir__}/active_storage")
 
 unless defined?(::Avo)
   loader.ignore("#{__dir__}/baseline/avo")
