@@ -623,7 +623,9 @@ module Baseline
 
         schema_columns.each do |attribute, options|
           column_type = options.fetch(:type)
-          array       = options[:array] # Postgres only
+          array =
+            options[:array] || # Postgres
+            (options[:type] == :json && options[:default].is_a?(Array)) # SQLite
 
           if column_type.in?(%i[string text]) && !array
             normalizes attribute,
@@ -662,9 +664,11 @@ module Baseline
                 .then { super _1 }
             end
 
-            scope :"with_#{attribute}", ->(*values) {
-              where.overlap(attribute => values)
-            }
+            if User.where.respond_to?(:overlap) # active_record_extended gem
+              scope :"with_#{attribute}", ->(*values) {
+                where.overlap(attribute => values)
+              }
+            end
           when column_type.in?(%i[json jsonb])
             scope :"with_#{attribute}", ->(*values) {
               if values.empty?

@@ -77,8 +77,13 @@ module Baseline
             real_model_class = model_class
           end
 
-          column                 = real_model_class.schema_columns[attribute]
-          column_type            = column[:type] if column
+          column      = real_model_class.schema_columns[attribute]
+          column_type = column[:type] if column
+          array = if column
+            column[:array] || # Postgres
+            (column[:type] == :json && column[:default].is_a?(Array)) # SQLite
+          end
+
           attribute_suffix       = attribute.to_s.split("_").last.to_sym
           association_reflection = real_model_class.reflections[attribute.to_s]
           attachment_reflection  = real_model_class.reflect_on_all_attachments.detect { _1.name == attribute }
@@ -212,7 +217,7 @@ module Baseline
             options
               .reverse_merge(index_truncate)
               .reverse_merge(as: :has_one)
-          when column && column[:array]
+          when array
             options.reverse_merge(
               default:,
               as: :textarea,
