@@ -658,7 +658,7 @@ module Baseline
                 value = value.split(/(\r?\n)+/)
               end
               value
-                .map { _1.is_a?(String) ? _1.strip : _1 }
+                .map { _1.if(String, &:strip) }
                 .uniq
                 .compact_blank
                 .then { super _1 }
