@@ -191,7 +191,7 @@ module Baseline
             ).if(reload_form_html) {
               _1.merge(_2)
             }
-          when association_reflection.is_a?(ActiveRecord::Reflection::BelongsToReflection)
+          when association_reflection&.macro == :belongs_to
             options
               .reverse_merge(index_truncate)
               .reverse_merge({
@@ -204,11 +204,11 @@ module Baseline
                   polymorphic_as: attribute,
                   types:          polymorphic_types_with_resource(attribute)
               })
-          when association_reflection.class.in?([ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::ThroughReflection])
+          when association_reflection&.macro == :has_many
             options
               .reverse_merge(index_truncate)
               .reverse_merge(as: :has_many)
-          when association_reflection.is_a?(ActiveRecord::Reflection::HasOneReflection)
+          when association_reflection&.macro == :has_one
             options
               .reverse_merge(index_truncate)
               .reverse_merge(as: :has_one)
