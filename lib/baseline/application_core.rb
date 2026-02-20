@@ -135,6 +135,10 @@ module Baseline
       end
 
       config.action_view.image_loading = :lazy
+
+      config.filter_parameters += %i[
+        passw secret token _key crypt salt certificate otp ssn cvv cvc
+      ]
     end
 
     def env_credentials(env = Rails.env)
