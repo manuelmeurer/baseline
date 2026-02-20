@@ -11,6 +11,8 @@ module Baseline
               GlobalID::Identification
 
       attr_accessor :id
+
+      def persisted? = true
     end
 
     class_methods do
@@ -33,8 +35,7 @@ module Baseline
       end
     end
 
-    def to_s       = "Email from #{from}"
-    def persisted? = true
+    def to_s = "Email from #{from}"
 
     def message
       unless Rails.env.production?
