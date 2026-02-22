@@ -27,3 +27,5 @@ and the reference documents it mentions for specific tasks.
 
 For detailed instructions, read the tool reference:
 https://raw.githubusercontent.com/ChromeDevTools/chrome-devtools-mcp/refs/heads/main/docs/tool-reference.md
+
+If the agent opens a new browser page via Chrome DevTools MCP, it must close that page when done (using `close_page`).
