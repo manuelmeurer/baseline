@@ -435,9 +435,11 @@ module Baseline
 
       def button_group_content
         expected_options = %i[
-          color_css_class
+          option_color
+          option_label
           option_i18n_key
           option_i18n_scope
+          show_clear
         ]
         invalid_options = @options.keys - expected_options
         if invalid_options.any?
@@ -454,21 +456,24 @@ module Baseline
                 @choices.map do |option|
                   label_css_class = [
                     "btn",
-                    "btn-outline-#{@options[:color_css_class].call(option)}",
+                    "btn-outline-#{@options[:option_color]&.call(option) || Current.default_button_color}",
                     "border-dark-subtle"
                   ]
-                  label = @options[:option_i18n_key]&.call(option) || option
+                  label = @options[:option_label]&.call(option) || begin
+                    label_key = @options[:option_i18n_key]&.call(option) || option
+                    t label_key, scope: @options.fetch(:option_i18n_scope)
+                  end
 
                   safe_join [
                     @form.radio_button(@attribute, option, class: "btn-check"),
-                    @form.label([@attribute, option].join("_"), class: label_css_class) do
-                      t label, scope: @options.fetch(:option_i18n_scope)
-                    end
+                    @form.label([@attribute, option].join("_"), label, class: label_css_class)
                   ], "\n"
                 end, "\n"
               )
             end,
-            link_to(t(:clear), "#", class: "ms-3 small button-group-clear", data: stimco.action(:clear))
+            if !@options.key?(:show_clear) || @options[:show_clear]
+              link_to(t(:clear), "#", class: "ms-3 small button-group-clear", data: stimco.action(:clear))
+            end
           ], "\n"
         end
       end
