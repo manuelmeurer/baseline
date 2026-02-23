@@ -24,9 +24,19 @@ Only fall back to the REST API for use cases the MCP server cannot handle.
 ### Prerequisites
 
 **Personal Access Token:**
-1. Go to Figma Settings > Account > Personal access tokens
-2. Generate a new token
-3. Store it securely (never commit to git)
+
+Retrieve the token from 1Password using the CLI. Use `--reveal` to get the actual value:
+
+```bash
+FIGMA_TOKEN=$(op item get jyitxg337vc2paqcunx3xthq4m --fields "label=Personal Access Token" --reveal)
+```
+
+Use this inline in curl commands:
+
+```bash
+FIGMA_TOKEN=$(op item get jyitxg337vc2paqcunx3xthq4m --fields "label=Personal Access Token" --reveal) && \
+  curl -s -H "X-FIGMA-TOKEN: $FIGMA_TOKEN" "https://api.figma.com/v1/..."
+```
 
 **Extract File Key and Node ID from URL:**
 
