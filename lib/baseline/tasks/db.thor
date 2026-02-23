@@ -207,7 +207,7 @@ module Baseline
       else
         say "Locating latest database backup on #{options[:host]}..."
 
-        remote_path = run("ssh #{options[:host]} 'cd #{options[:app_path]}/current && if [ -d #{DIR} ]; then ls #{DIR}/*.* | xargs realpath; fi'", capture: true)
+        remote_path = run("ssh #{options[:host]} 'cd #{options[:app_path]}/current && [ -d #{DIR} ] && find #{DIR} -maxdepth 1 -name \"*.*\" -exec readlink -f {} \\;'", capture: true)
           .split("\n")
           .sort
           .last
