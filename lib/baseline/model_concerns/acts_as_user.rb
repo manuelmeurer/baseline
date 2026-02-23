@@ -27,6 +27,13 @@ module Baseline
     end
 
     class_methods do
+      def status_scopes
+        {
+          active:      nil,
+          deactivated: nil
+        }
+      end
+
       def test_user
         find_by(email: Rails.application.env_credentials.mail_from!)
       end

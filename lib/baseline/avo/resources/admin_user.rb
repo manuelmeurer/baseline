@@ -6,6 +6,10 @@ module Baseline
       module AdminUser
         def fields
           field :id
+          field :status, as: :badge, options: { danger: :deactivated, success: :active }
+          actions_field do
+            deactivate_reactivate_button
+          end
           field :name, as: :text
           field :photo, delegated_model_class: "User"
           field :email

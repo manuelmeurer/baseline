@@ -105,6 +105,8 @@ module Baseline
     end
 
     class_methods do
+      delegate :status_scopes, to: :User
+
       def method_missing(method, ...)
         unless respond_to?(:with_first_name)
           ReportError.call "Expected #{self} to have method with_first_name."
