@@ -55,7 +55,7 @@ module Baseline
             Avo::ApplicationControllable
 
           ::Avo::BaseResource.include \
-            Avo::Resources::Base
+            Avo::ResourceHelpers
         end
 
         # Tell Zeitwerk that url_helpers.rb defines UrlHelpers (not URLHelpers).
