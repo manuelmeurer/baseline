@@ -47,7 +47,7 @@ module Baseline
       end
     end
 
-    def valid_reasons = {}
+    def valid_reasons = %w[other]
 
     def to_s
       [
