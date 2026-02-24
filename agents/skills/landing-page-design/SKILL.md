@@ -5,10 +5,6 @@ description: Implement landing pages from existing designs. Use when building a 
 
 This skill is only applicable when creating or editing a landing page in a Rails app that uses Baseline.
 
-## Guidelines
-
-Reusing existing components, partials, helpers, and styles from the app or Baseline is more important than implementing the landing page 100% pixel-perfect to the source design. Before planning, study what the app and Baseline have to offer — check other landing pages in the app for reusable patterns and conventions.
-
 ## Process
 
 When implementing a new landing page or adding new sections, always start with a planning phase — do not immediately start implementing. Only begin implementation once the plan has been confirmed by the user. For smaller changes to existing sections (copy updates, style tweaks, etc.), this process is not necessary.
@@ -31,6 +27,16 @@ Present the section-by-section plan to the user, showing which partial (or custo
 ### 4. Implement
 
 Once the plan is confirmed, build the landing page section by section.
+
+## Reuse over pixel-perfection
+
+Reusing existing components, partials, helpers, and styles from the app or Baseline is more important than implementing the landing page 100% pixel-perfect to the source design. Before planning, study what the app and Baseline have to offer — check other landing pages in the app for reusable patterns and conventions.
+
+## Image naming
+
+Name images after their section. For background images, append `_bg`. If a section has multiple images, append `_01`, `_02`, etc.
+
+Examples: `hero_bg`, `features_01`, `features_02`.
 
 ## Styling with Bootstrap
 
