@@ -2,10 +2,10 @@
 -# locals: (id:, css_class: nil, image_path: nil, image_first: false, text_offset: 0, image_offset: 0, row_css_class: nil)
 
 - image_path ||= File.join(Current.namespace.to_s, controller_name, params[:id], "#{id}.jpg")
+- gap = text_offset + image_offset
 
 = section id, css_class: do |section_i18n_scope|
-  - gap = text_offset + image_offset
-  .row{ class: row_css_class }
+  .row.row-gap-4{ class: row_css_class }
 
     %div{ class: class_names("col-lg-#{6 - text_offset}", "order-lg-2" => image_first, "offset-lg-#{gap}" => image_first && gap > 0) }
       %h2
