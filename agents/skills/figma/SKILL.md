@@ -25,18 +25,19 @@ Only fall back to the REST API for use cases the MCP server cannot handle.
 
 **Personal Access Token:**
 
-Retrieve the token from 1Password using the CLI. Use `--reveal` to get the actual value:
+Retrieve the token from 1Password once at the start and cache it in a temp file. This avoids repeated `op` confirmation prompts:
 
 ```bash
-FIGMA_TOKEN=$(op item get jyitxg337vc2paqcunx3xthq4m --fields "label=Personal Access Token" --reveal)
+op item get jyitxg337vc2paqcunx3xthq4m --fields "label=Personal Access Token" --reveal > /tmp/.figma_token
 ```
 
-Use this inline in curl commands:
+Then read from the temp file in all subsequent curl commands:
 
 ```bash
-FIGMA_TOKEN=$(op item get jyitxg337vc2paqcunx3xthq4m --fields "label=Personal Access Token" --reveal) && \
-  curl -s -H "X-FIGMA-TOKEN: $FIGMA_TOKEN" "https://api.figma.com/v1/..."
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" "https://api.figma.com/v1/..."
 ```
+
+**Important:** Only call `op item get` once per session. All subsequent API calls should read from `/tmp/.figma_token`. Clean up when done: `rm /tmp/.figma_token`.
 
 **Extract File Key and Node ID from URL:**
 
@@ -54,7 +55,7 @@ Extract:
 #### Get Node Structure
 
 ```bash
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/files/$FILE_KEY/nodes?ids=$NODE_ID"
 ```
 
@@ -63,7 +64,7 @@ Response includes: node hierarchy, fills (colors, images), imageRef references, 
 #### Get Embedded Image URLs
 
 ```bash
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/files/$FILE_KEY/images"
 ```
 
@@ -72,7 +73,7 @@ Returns map of `imageRef` to signed S3 URL (expire after ~7 days).
 #### Export Node as Image
 
 ```bash
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/images/$FILE_KEY?ids=$NODE_ID&format=png&scale=2"
 ```
 
@@ -86,12 +87,12 @@ Returns JSON with `images` object mapping node IDs to temporary S3 URLs.
 
 ```bash
 # 1. Get node structure to find imageRef
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/files/$FILE_KEY/nodes?ids=$NODE_ID" | \
   jq '.nodes | .. | .imageRef? | select(. != null)'
 
 # 2. Get image URLs
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/files/$FILE_KEY/images" | \
   jq '.meta.images["IMAGE_REF"]'
 
@@ -103,7 +104,7 @@ curl -s -o background.jpg "IMAGE_URL"
 
 ```bash
 # 1. Export node as PNG at 2x
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/images/$FILE_KEY?ids=$NODE_ID&format=png&scale=2" | \
   jq -r '.images["'"$NODE_ID"'"]'
 
@@ -114,7 +115,7 @@ curl -s -o export.png "RETURNED_URL"
 #### Export Multiple Frames
 
 ```bash
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/images/$FILE_KEY?ids=1:2,3:4,5:6&format=png&scale=2"
 ```
 
@@ -122,7 +123,7 @@ curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
 
 ```bash
 # 1. Export Figma design
-curl -s -H "X-FIGMA-TOKEN: $TOKEN" \
+curl -s -H "X-FIGMA-TOKEN: $(cat /tmp/.figma_token)" \
   "https://api.figma.com/v1/images/$FILE_KEY?ids=$NODE_ID&format=png&scale=2"
 
 # 2. Screenshot implementation (use browser MCP)
