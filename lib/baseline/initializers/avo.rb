@@ -13,8 +13,6 @@ require "avo"
     logo:     "brand/avo_logo.png",
     logomark: "brand/avo_logomark.png",
     favicon:  "icons/favicon.ico"
-  }.transform_values {
-    ActionController::Base.helpers.asset_path(_1)
   }
 
   if @auth
