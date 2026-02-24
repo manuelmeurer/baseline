@@ -98,15 +98,13 @@ module Baseline
             tag.div(class: "flex flex-col") do
               tag.span(task.title, class: "font-medium") +
               tag.div(class: "flex gap-3 text-sm text-gray-500 mt-1") do
-                [
+                safe_join [
                   tag.span(I18n.l(task.due_on).to_s),
                   tag.span(task.responsible.first_name.to_s),
                   unless task.priority_medium?
                     tag.span(task.priority.to_s.capitalize, class: "text-#{{ high: "red-600", low: "blue-600" }.fetch(task.priority.to_sym)} font-medium")
                   end
-                ].then {
-                  safe_join _1
-                }
+                ]
               end
             end +
             tag.div(class: "flex gap-2") do
