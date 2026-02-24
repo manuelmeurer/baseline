@@ -55,9 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_25_152551) do
     t.json "tokens", default: {}, null: false
     t.string "position"
     t.integer "user_id", null: false
-    t.json "alternate_emails", default: [], null: false
     t.index ["user_id"], name: "index_admin_users_on_user_id"
-    t.check_constraint "JSON_TYPE(alternate_emails) = 'array'", name: "user_alternate_emails_is_array"
   end
 
   create_table "attendee_profiles", force: :cascade do |t|

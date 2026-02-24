@@ -14,7 +14,6 @@ end
 # Table name: admin_users
 #
 #  id               :integer          not null, primary key
-#  alternate_emails :json             not null
 #  position         :string
 #  tokens           :json             not null
 #  created_at       :datetime         not null

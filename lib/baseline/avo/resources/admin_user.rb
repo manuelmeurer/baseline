@@ -13,7 +13,7 @@ module Baseline
           field :name, as: :text
           field :photo, delegated_model_class: "User"
           field :email
-          field :alternate_emails
+          field :alternate_emails, delegated_model_class: "User"
           tasks_field
           timestamp_fields
         end

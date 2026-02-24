@@ -11,10 +11,6 @@ module Baseline
           :google_access_token,
           :google_refresh_token
       end
-
-      if schema_columns.key?(:alternate_emails)
-        include HasAlternateEmails
-      end
     end
 
     class_methods do

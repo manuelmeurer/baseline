@@ -63,6 +63,7 @@ module Baseline
       deactivated_between
       email_confirmed
       subscribed
+      with_alternate_emails
     ].freeze
 
     included do
