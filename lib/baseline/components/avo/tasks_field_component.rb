@@ -68,6 +68,13 @@ module Baseline
                 title:    "Done"
             end
 
+          show_button = render_avo_button(
+            helpers.avo.resources_task_path(task),
+            icon:  "heroicons/outline/eye",
+            title: "Show",
+            modal: true
+          )
+
           edit_button = render_avo_button(
             helpers.avo.edit_resources_task_path(task),
             icon:  "heroicons/outline/pencil",
@@ -90,7 +97,7 @@ module Baseline
               end
             end +
             tag.div(class: "flex gap-2") do
-              safe_join([done_undone_button, edit_button])
+              safe_join([done_undone_button, show_button, edit_button])
             end
           end
         end
