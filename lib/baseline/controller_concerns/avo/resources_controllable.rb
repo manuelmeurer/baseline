@@ -8,6 +8,10 @@ module Baseline
       def show
         super
 
+        # Avo's default view includes TurboFrameWrapperComponent, but it only wraps content in a <turbo-frame> tag — it doesn't add the modal UI.
+        # Our custom template does both:
+        # - turbo_frame_tag Avo::MODAL_FRAME_ID — so Turbo can match the response to the frame (same as what TurboFrameWrapperComponent does)
+        # - Avo::ModalComponent — provides the fixed overlay, backdrop, and Stimulus modal controller that makes it visually appear as a modal
         if request.headers["Turbo-Frame"] == ::Avo::MODAL_FRAME_ID.to_s
           render "baseline/avo/modal_show"
         end
