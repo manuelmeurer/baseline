@@ -683,12 +683,12 @@ module Baseline
           when column_type.in?(%i[json jsonb])
             scope :"with_#{attribute}", ->(*values) {
               if values.empty?
-                case connection.adapter_name
-                when "PostgreSQL"
+                case connection.adapter_name.downcase.to_sym
+                when :postgresql
                   [[], {}].inject(self) {
                     _1.where("#{attribute} != '#{_2}'::#{column_type}")
                   }
-                when "SQLite"
+                when :sqlite
                   [[], {}].inject(self) {
                     _1.where("#{attribute} != '#{_2}'")
                   }
@@ -696,12 +696,12 @@ module Baseline
                 end
               else
                 values.inject(self) do |scope, value|
-                  case connection.adapter_name
-                  when "PostgreSQL"
+                  case connection.adapter_name.downcase.to_sym
+                  when :postgresql
                     value.is_a?(Hash) ?
                       scope.where.contains(attribute => value) :
                       scope.where("#{attribute} ? :value", value: value.to_s)
-                  when "SQLite"
+                  when :sqlite
                     scope.where("EXISTS (
                       SELECT 1 FROM json_each(#{attribute})
                       WHERE value = ?
