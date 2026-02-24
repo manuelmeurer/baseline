@@ -58,11 +58,33 @@ module Baseline
         end
       end
 
+      def edit
+        super
+
+        if modal_request?
+          render "baseline/avo/modal_edit"
+        end
+      end
+
+      def update_success_action
+        if modal_request?
+          render turbo_stream: [
+            turbo_stream.avo_close_modal,
+            turbo_stream.avo_flash_alerts,
+            turbo_stream.avo_turbo_reload
+          ]
+        else
+          super
+        end
+      end
+
       def create_success_action
         if modal_request?
-          render turbo_stream: turbo_stream.replace(::Avo::MODAL_FRAME_ID) {
-            helpers.tag.script("Turbo.visit(window.location.href)")
-          }
+          render turbo_stream: [
+            turbo_stream.avo_close_modal,
+            turbo_stream.avo_flash_alerts,
+            turbo_stream.avo_turbo_reload
+          ]
         else
           super
         end

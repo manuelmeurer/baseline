@@ -91,7 +91,8 @@ module Baseline
           edit_button = render_avo_button(
             helpers.avo.edit_resources_task_path(task),
             icon:  "heroicons/outline/pencil",
-            title: "Edit"
+            title: "Edit",
+            modal: true
           )
 
           tag.div(class: "flex items-center justify-between py-2 gap-3 border-b border-gray-100 last:border-b-0") do

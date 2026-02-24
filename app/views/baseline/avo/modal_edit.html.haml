@@ -1,0 +1,9 @@
+-# frozen_string_literal: true
+
+= turbo_frame_tag Avo::MODAL_FRAME_ID do
+  = render Avo::ModalComponent.new(width: :xl) do |c|
+    = render @component.new( |
+      resource: @resource, |
+      view:     @view, |
+      actions:  @actions |
+    ) |
