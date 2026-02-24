@@ -5,6 +5,14 @@ module Baseline
     module ResourcesControllable
       extend ActiveSupport::Concern
 
+      def show
+        super
+
+        if request.headers["Turbo-Frame"] == ::Avo::MODAL_FRAME_ID.to_s
+          render "baseline/avo/modal_show"
+        end
+      end
+
       included do
         # Avo's default-value hydration reads via_relation_class, but the modal flow sends via_belongs_to_resource_class.
         # Normalize here so "new via belongs_to" preselects the parent consistently across resources.

@@ -25,7 +25,6 @@ module Baseline
         data[:tippy] = :tooltip
         if modal
           data[:turbo_frame] = ::Avo::MODAL_FRAME_ID
-          # The target URL's response needs to be wrapped in turbo_frame_tag Avo::MODAL_FRAME_ID containing an Avo::ModalComponent for the modal to render properly.
         end
         render ::Avo::ButtonComponent.new(
           url,
