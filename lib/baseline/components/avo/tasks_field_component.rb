@@ -28,7 +28,20 @@ module Baseline
               id:      "tab-done-#{tab_id}",
               class:   tab_class,
               onclick: "document.getElementById('panel-done-#{tab_id}').classList.remove('hidden'); document.getElementById('panel-undone-#{tab_id}').classList.add('hidden'); this.className = '#{active_tab_class}'; document.getElementById('tab-undone-#{tab_id}').className = '#{tab_class}'"
-            )
+            ) +
+            tag.div(class: "ml-auto") do
+              render_avo_button(
+                helpers.avo.new_resources_task_path(
+                  via_relation:       :taskable,
+                  via_relation_class: @record.class.name,
+                  via_record_id:      @record.to_param,
+                  via_resource_class: "Avo::Resources::#{@record.class.name}"
+                ),
+                icon:  "heroicons/outline/plus",
+                title: "New task",
+                modal: true
+              )
+            end
           end +
           tag.div(id: "panel-undone-#{tab_id}") do
             render_task_list(@tasks.undone)

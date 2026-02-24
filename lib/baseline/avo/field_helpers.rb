@@ -24,7 +24,8 @@ module Baseline
 
         data[:tippy] = :tooltip
         if modal
-          data[:turbo_frame] = ::Avo::MODAL_FRAME_ID
+          data[:turbo_frame]    = ::Avo::MODAL_FRAME_ID
+          data[:turbo_prefetch] = false
         end
         render ::Avo::ButtonComponent.new(
           url,
