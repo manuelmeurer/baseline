@@ -7,7 +7,7 @@
 = section id, css_class: do |section_i18n_scope|
 
   - if headline = t(:headline, scope: section_i18n_scope, default: nil)
-    = tag.public_send(headline_tag, headline)
+    = tag.public_send(headline_tag, headline.html_safe)
 
   = md_to_html t(:intro, scope: section_i18n_scope, default: nil)
 
