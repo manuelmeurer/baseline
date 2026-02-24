@@ -2,6 +2,5 @@
 
 class ApplicationRecord < ActiveRecord::Base
   include Baseline::ModelCore
-
   primary_abstract_class
 end
