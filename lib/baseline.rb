@@ -16,6 +16,7 @@ loader.ignore("#{__dir__}/active_storage")
 
 unless defined?(::Avo)
   loader.ignore("#{__dir__}/baseline/avo")
+  loader.ignore("#{__dir__}/baseline/components/avo")
 end
 
 loader.collapse("#{__dir__}/baseline/components")
