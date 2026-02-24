@@ -664,11 +664,22 @@ module Baseline
                 .then { super _1 }
             end
 
-            if User.where.respond_to?(:overlap) # active_record_extended gem
-              scope :"with_#{attribute}", ->(*values) {
+            scope :"with_#{attribute}", ->(*values) {
+              case connection.adapter_name.downcase.to_sym
+              when :postgresql
+                unless where.respond_to?(:overlap)
+                  raise "active_record_extended must be installed"
+                end
                 where.overlap(attribute => values)
-              }
-            end
+              when :sqlite
+                where(
+                  "EXISTS (SELECT 1 FROM json_each(coalesce(#{attribute}, '[]')) WHERE value IN (#{values.map { "?" }.join(", ")}))",
+                  *values
+                )
+              else
+                raise "Unexpected database adapter: #{connection.adapter_name}"
+              end
+            }
           when column_type.in?(%i[json jsonb])
             scope :"with_#{attribute}", ->(*values) {
               if values.empty?
