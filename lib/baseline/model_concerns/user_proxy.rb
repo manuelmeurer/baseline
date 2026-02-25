@@ -5,14 +5,15 @@ module Baseline
     extend ActiveSupport::Concern
 
     USER_ATTRIBUTES = %i[
+      alternate_emails
       email
       first_name
-      last_name
-      name
       gender
-      locale
       language
+      last_name
+      locale
       login_token
+      name
       photo
       remote_photo_url
     ]
@@ -63,7 +64,6 @@ module Baseline
       deactivated_between
       email_confirmed
       subscribed
-      with_alternate_emails
     ].freeze
 
     included do
@@ -79,10 +79,10 @@ module Baseline
         scope_name = :"with_#{attribute}"
         find_users =
           case
-          when User.schema_columns.keys.include?(attribute)
-            -> { User.where(attribute => _1) }
           when User.respond_to?(scope_name)
             -> { User.public_send(scope_name, _1) }
+          when User.schema_columns.keys.include?(attribute)
+            -> { User.where(attribute => _1) }
           end
 
         if find_users
