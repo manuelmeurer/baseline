@@ -7,8 +7,8 @@
 # Verify original implementation hasn't changed from version 3.28.0, when this override was created.
 Baseline::VerifyGemFileSource.call(
   "avo",
-  "app/components/avo/filters_component.rb",
-  "2e3fdf31b20da83cddc193dba658f3b55caf7df69094a0768b7dccc647ebe924"
+  "app/components/avo/filters_component.rb" => "2e3fdf31b20da83cddc193dba658f3b55caf7df69094a0768b7dccc647ebe924",
+  "app/components/avo/filters_component.html.erb" => "b024280c5bf1ff1dc27a5111478cd87c48bd66cd0086c16bfc7efd0a232b4eda"
 )
 
 class Avo::FiltersComponent < Avo::BaseComponent

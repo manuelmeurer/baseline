@@ -7,8 +7,8 @@
 # Verify original implementation hasn't changed from version 3.28.0, when this override was created.
 Baseline::VerifyGemFileSource.call(
   "avo",
-  "app/components/avo/alert_component.rb",
-  "d0ced23ff53e9619d85319e1d61ffc59a9560992461aa3dae5f2f1205d357d78"
+  "app/components/avo/alert_component.rb" => "d0ced23ff53e9619d85319e1d61ffc59a9560992461aa3dae5f2f1205d357d78",
+  "app/components/avo/alert_component.html.erb" => "34291eba73196bf87c48664ffdc493263f706bb463f2339e0eceb202e0d21ee7"
 )
 
 class Avo::AlertComponent < Avo::BaseComponent
