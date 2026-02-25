@@ -8,7 +8,7 @@ module Baseline
 
         def apply(request, query, value)
           query.if(value.presence) {
-            _1.klass.search(_1)
+            _1.klass.search(_2)
           }
         end
       end
