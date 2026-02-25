@@ -231,9 +231,7 @@ module Baseline
             default:,
             as: :textarea,
             format_using: -> {
-              view.form? ?
-                value.join("\n") :
-                value.join(", ")
+              value.join("\n")
             },
             update_using: -> {
               value.split("\n")
