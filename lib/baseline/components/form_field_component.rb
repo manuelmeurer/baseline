@@ -326,19 +326,7 @@ module Baseline
           raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
         end
 
-        unless @choices
-          if @form.object && @form.object.class.defined_enums.key?(@attribute.to_s)
-            model_class = @form.object.class
-            @choices = model_class
-              .public_send(@attribute.to_s.pluralize)
-              .keys
-              .index_by {
-                model_class.human_enum_name(@attribute, _1)
-              }
-          else
-            raise ArgumentError, "Missing choices."
-          end
-        end
+        ensure_choices!(enum_format: :select)
 
         if @options.delete(:enhance)
           placeholder = @options[:include_blank].if(true, t(:please_select))
@@ -446,6 +434,8 @@ module Baseline
           raise ArgumentError, "Invalid options: #{invalid_options.join(", ")}"
         end
 
+        ensure_choices!(enum_format: :button_group)
+
         stimco = helpers.stimco(:button_group, to_h: false)
 
         tag.div data: stimco.to_h do
@@ -552,6 +542,34 @@ module Baseline
             class: "mt-2",
             data:  stimco.to_h
         }
+      end
+
+      def ensure_choices!(enum_format:)
+        return if @choices
+        unless @form.object
+          raise ArgumentError, "Missing choices."
+        end
+
+        model_class = @form.object.class
+        unless model_class.defined_enums.key?(@attribute.to_s)
+          raise ArgumentError, "Missing choices."
+        end
+
+        enum_keys = model_class
+          .public_send(@attribute.to_s.pluralize)
+          .keys
+
+        @choices =
+          case enum_format
+          when :select
+            enum_keys.index_by {
+              model_class.human_enum_name(@attribute, _1)
+            }
+          when :button_group
+            enum_keys
+          else
+            raise ArgumentError, "Unexpected enum_format: #{enum_format}"
+          end
       end
   end
 end
