@@ -137,6 +137,14 @@ de:
       fluent: Fließend
       primary: Erstsprache
 
+  activerecord:
+    errors:
+      models:
+        location:
+          attributes:
+            address:
+              geocoding_failed: konnte nicht geocodiert werden
+
   errors:
     cta: "[Klick hier](%{url}), um zur Homepage zurückzukommen."
 

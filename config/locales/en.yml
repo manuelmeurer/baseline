@@ -124,6 +124,14 @@ en:
       fluent: Fluent
       primary: Primary
 
+  activerecord:
+    errors:
+      models:
+        location:
+          attributes:
+            address:
+              geocoding_failed: could not be geocoded
+
   errors:
     cta: "[Click here](%{url}) to return to the homepage."
 
