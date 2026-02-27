@@ -18,7 +18,7 @@ module Baseline
 
       scope :candidate_resources, ->(filter) {
         if filter
-          where_ilike(:name, filter)
+          where_matches(:name, filter)
         end
       }
     end

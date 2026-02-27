@@ -338,6 +338,41 @@ module Baseline
           default: value.humanize
       end
 
+      def where_matches(attributes, value, type: nil)
+        value = {
+          suffix: "%#{value}",
+          prefix: "#{value}%",
+          nil  => "%#{value}%"
+        }.fetch(type) {
+          raise "Unexpected type: #{type}"
+        }
+
+        adapter = connection.adapter_name.downcase.to_sym
+
+        attributes = Array(attributes).map do |attribute|
+          [table_name, attribute]
+            .join(".")
+            .if(array_column?(attribute)) {
+              case adapter
+              when :postgresql then "array_to_string(#{_1}, ' ')"
+              when :sqlite     then "(SELECT group_concat(value, ' ') FROM json_each(#{_1}))"
+              else raise "Unexpected database adapter: #{adapter}"
+              end
+            }
+        end
+
+        like_operator = {
+          postgresql: "ILIKE",
+          sqlite:     "LIKE"
+        }.fetch(adapter) {
+          raise "Unexpected database adapter: #{adapter}"
+        }
+
+        where \
+          "#{attributes.join(" || ' ' || ")} #{like_operator} ?",
+          value
+      end
+
       def array_column?(attribute)
         return false unless column = schema_columns[attribute]
 
