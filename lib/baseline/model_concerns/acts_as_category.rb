@@ -17,6 +17,12 @@ module Baseline
       validates :identifier,
         presence:   true,
         uniqueness: { scope: :group }
+
+      private def custom_slug
+        [group, identifier]
+          .map { _1.tr("_", "-") }
+          .join(" ")
+      end
     end
 
     class_methods do
@@ -39,13 +45,5 @@ module Baseline
       ].compact
         .join(" » ")
     end
-
-    private
-
-      def custom_slug
-        [group, identifier]
-          .map { _1.tr("_", "-") }
-          .join(" ")
-      end
   end
 end

@@ -14,6 +14,20 @@ module Baseline
       belongs_to :sectionable,
         polymorphic: true,
         inverse_of:  :sections
+
+      private
+
+        def should_generate_new_friendly_id?
+          headline_changed? ||
+            super
+        end
+
+        def custom_slug
+          [
+            new_slug_identifier,
+            headline
+          ].join(" ")
+        end
     end
 
     class_methods do
@@ -25,19 +39,5 @@ module Baseline
     end
 
     def to_s = headline
-
-    private
-
-      def should_generate_new_friendly_id?
-        headline_changed? ||
-          super
-      end
-
-      def custom_slug
-        [
-          new_slug_identifier,
-          headline
-        ].join(" ")
-      end
   end
 end

@@ -38,16 +38,16 @@ module Baseline
       validates :file, attached: true, content_type: { in: :pdf, message: "must be PDF" }
 
       delegate :to_s, to: :title
+
+      private
+
+        def should_generate_new_friendly_id?
+          title_changed? || super
+        end
+
+        def custom_slug
+          [new_slug_identifier, title].join(" ")
+        end
     end
-
-    private
-
-      def should_generate_new_friendly_id?
-        title_changed? || super
-      end
-
-      def custom_slug
-        [new_slug_identifier, title].join(" ")
-      end
   end
 end
