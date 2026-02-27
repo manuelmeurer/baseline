@@ -34,6 +34,11 @@ module Baseline
       def clone_fields = %i[headline content]
     end
 
+    def anchor_id
+      set_slug if slug.blank?
+      slug
+    end
+
     def content_html
       Nokogiri::HTML.fragment(content.to_s)
     end
