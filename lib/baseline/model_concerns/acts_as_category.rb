@@ -5,7 +5,7 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      include Baseline::HasFriendlyID
+      include HasFriendlyID
 
       enum :group, groups,
         validate: true
