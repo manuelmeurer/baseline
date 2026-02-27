@@ -338,6 +338,13 @@ module Baseline
           default: value.humanize
       end
 
+      def array_column?(attribute)
+        return false unless column = schema_columns[attribute]
+
+        column[:array] || # Postgres
+          (column[:type] == :json && column[:default].is_a?(Array)) # SQLite
+      end
+
       def common_image_file_types = %i[jpeg png svg webp gif]
 
       if defined?(::Ransack)
@@ -623,9 +630,7 @@ module Baseline
 
         schema_columns.each do |attribute, options|
           column_type = options.fetch(:type)
-          array =
-            options[:array] || # Postgres
-            (options[:type] == :json && options[:default].is_a?(Array)) # SQLite
+          array = array_column?(attribute)
 
           if column_type.in?(%i[string text]) && !array
             normalizes attribute,
