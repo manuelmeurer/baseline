@@ -3,4 +3,5 @@
 class Baseline::Current < ActiveSupport::CurrentAttributes
   attribute :default_label_style,  default: :vertical
   attribute :default_button_color, default: :primary
+  attribute :tailwind, default: false
 end

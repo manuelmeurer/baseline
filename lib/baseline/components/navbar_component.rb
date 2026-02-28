@@ -16,53 +16,66 @@ module Baseline
       sticky:        nil,
       fixed:         nil)
 
-      @id = "navbar-collapsable"
-
       @brand, @brand_url, @css_class, @data =
         brand, brand_url, Array(css_class), data
 
-      if bg
-        @css_class << "bg-#{bg.dasherize}"
-      end
+      if tailwind?
+        bg = :"base-100" if bg == :body_tertiary
+        @css_class << "bg-#{bg.dasherize}" if bg
+        @css_class.push("border-b", "border-base-300") if border_bottom
 
-      if border_bottom
-        @css_class << "border-bottom"
-      end
-
-      %i[sticky fixed].each do |position|
-        next unless value = binding.local_variable_get(position)
-        unless value.try(:to_sym).in?(%i[top bottom])
-          raise "#{position} must be 'top' or 'bottom', got: #{value}"
+        %i[sticky fixed].each do |position|
+          next unless value = binding.local_variable_get(position)
+          unless value.try(:to_sym).in?(%i[top bottom])
+            raise "#{position} must be 'top' or 'bottom', got: #{value}"
+          end
+          @css_class.push(position.to_s, "#{value}-0", "z-50")
+          break
         end
-        @css_class << "#{position}-#{value}"
-        break
-      end
 
-      if expand
-        [
-          "navbar-expand",
-          (expand unless expand == true)
-        ].compact
-          .join("-")
-          .then {
-            @css_class << _1
-          }
-      end
+        @container_css_class = nil
+      else
+        @id = "navbar-collapsable"
+        @css_class << "bg-#{bg.dasherize}" if bg
+        @css_class << "border-bottom" if border_bottom
 
-      @container_css_class = if container
-        [
-          "container",
-          (container unless container == true)
-        ].compact
-          .join("-")
+        %i[sticky fixed].each do |position|
+          next unless value = binding.local_variable_get(position)
+          unless value.try(:to_sym).in?(%i[top bottom])
+            raise "#{position} must be 'top' or 'bottom', got: #{value}"
+          end
+          @css_class << "#{position}-#{value}"
+          break
+        end
+
+        if expand
+          [
+            "navbar-expand",
+            (expand unless expand == true)
+          ].compact
+            .join("-")
+            .then {
+              @css_class << _1
+            }
+        end
+
+        @container_css_class = if container
+          [
+            "container",
+            (container unless container == true)
+          ].compact
+            .join("-")
+        end
       end
     end
 
+    private def tailwind?  = Baseline::Current.tailwind
     private def signed_in? = !!::Current.user
     private def user_name  = ::Current.user.first_name
 
     def auth_group
       with_group do |group|
+        group.instance_variable_set(:@end_group, true)
         if signed_in?
           avatar_and_name = safe_join([
             component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb),
@@ -102,6 +115,10 @@ module Baseline
         @css_class = css_class
       end
 
+      def end_group?
+        @end_group || Array(@css_class).any? { _1.to_s.include?("ms-auto") }
+      end
+
       def call; end
     end
 
@@ -118,12 +135,10 @@ module Baseline
       private
 
         def wrapper
-          tag.li class: "nav-item" do
-            yield
-          end
+          tag.li(class: (Baseline::Current.tailwind ? nil : "nav-item")) { yield }
         end
 
-        def css_class    = "nav-link"
+        def css_class    = Baseline::Current.tailwind ? nil : "nav-link"
         def aria_current = "page"
     end
 
@@ -136,13 +151,33 @@ module Baseline
       def initialize(label, align_end: false, align_start: false, css_class: nil)
         @label, @align_end, @align_start =
           label, align_end, align_start
-        @css_class = Array(css_class).append("nav-item", "dropdown")
+
+        @css_class = if Baseline::Current.tailwind
+          Array(css_class)
+        else
+          Array(css_class).append("nav-item", "dropdown")
+        end
       end
 
       def call
+        raise "No items found." if items.none?
+
+        Baseline::Current.tailwind ? call_tailwind : call_bootstrap
+      end
+
+      private
+
+      def call_tailwind
+        tag.li do
+          tag.details do
+            tag.summary(@label) +
+            tag.ul(class: "p-2") { safe_join items }
+          end
+        end
+      end
+
+      def call_bootstrap
         case
-        when items.none?
-          raise "No items found."
         when items.any? { _1.instance_variable_get(:@__vc_component_instance).is_a?(ContentComponent) }
           if items.many?
             raise "If a content component is defined for a dropdown, it must be the only component."
@@ -185,6 +220,8 @@ module Baseline
         end
       end
 
+      public
+
       class ContentComponent < ApplicationComponent
         def call = content
       end
@@ -198,19 +235,19 @@ module Baseline
         private
 
           def wrapper
-            tag.li class: "nav-item" do
-              yield
-            end
+            tag.li(class: (Baseline::Current.tailwind ? nil : "nav-item")) { yield }
           end
 
-          def css_class    = "dropdown-item"
+          def css_class    = Baseline::Current.tailwind ? nil : "dropdown-item"
           def aria_current = "true"
       end
 
       class DividerComponent < ApplicationComponent
         def call
-          tag.li do
-            tag.hr(class: "dropdown-divider")
+          if Baseline::Current.tailwind
+            tag.li(class: "divider")
+          else
+            tag.li { tag.hr(class: "dropdown-divider") }
           end
         end
       end

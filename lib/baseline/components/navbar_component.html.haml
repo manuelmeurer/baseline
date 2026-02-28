@@ -1,22 +1,49 @@
 -# frozen_string_literal: true
 
-- navbar_content = helpers.capture_haml do
-  - if @brand_url
-    = link_to @brand, @brand_url, class: "navbar-brand"
-  - else
-    %span.navbar-brand
-      = @brand
-  %button.navbar-toggler{ type: "button", data: { bs_toggle: "collapse", bs_target: "##{@id}", aria: { controls: @id, expanded: "false", label: "Toggle navigation" } } }
-    %span.navbar-toggler-icon
-  .collapse.navbar-collapse{ id: @id }
-    - groups.select { _1.items.any? }.each do |group|
-      %ul.navbar-nav{ class: group.css_class }
-        = safe_join group.items
-    = content
+- if Baseline::Current.tailwind
+  - center_groups = groups.select { _1.items.any? && !_1.end_group? }
+  - end_groups    = groups.select { _1.items.any? && _1.end_group? }
+  .navbar{ class: @css_class, data: @data }
+    .navbar-start
+      .dropdown
+        %div.btn.btn-ghost{ class: "lg:hidden", tabindex: "0", role: "button" }
+          %svg.h-5.w-5{ xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor" }
+            %path{ stroke_linecap: "round", stroke_linejoin: "round", stroke_width: "2", d: "M4 6h16M4 12h8m-8 6h16" }
+        %ul.menu.menu-sm.dropdown-content.bg-base-100.rounded-box.z-1.mt-3.w-52.p-2.shadow{ tabindex: "0" }
+          - groups.select { _1.items.any? }.each do |group|
+            = safe_join group.items
+      - if @brand
+        - if @brand_url
+          = link_to @brand, @brand_url, class: "btn btn-ghost text-xl"
+        - else
+          %span.btn.btn-ghost.text-xl= @brand
+    .navbar-center.hidden{ class: "lg:flex" }
+      - center_groups.each do |group|
+        %ul.menu.menu-horizontal.px-1
+          = safe_join group.items
+    .navbar-end
+      - end_groups.each do |group|
+        %ul.menu.menu-horizontal.px-1{ class: group.css_class }
+          = safe_join group.items
+      = content
+- else
+  - navbar_content = helpers.capture_haml do
+    - if @brand_url
+      = link_to @brand, @brand_url, class: "navbar-brand"
+    - else
+      %span.navbar-brand
+        = @brand
+    %button.navbar-toggler{ type: "button", data: { bs_toggle: "collapse", bs_target: "##{@id}", aria: { controls: @id, expanded: "false", label: "Toggle navigation" } } }
+      %span.navbar-toggler-icon
+    .collapse.navbar-collapse{ id: @id }
+      - groups.select { _1.items.any? }.each do |group|
+        %ul.navbar-nav{ class: group.css_class }
+          = safe_join group.items
+      = content
 
-%nav.navbar{ class: @css_class, data: @data }
-  - if @container_css_class
-    %div{ class: @container_css_class }
+  %nav.navbar{ class: @css_class, data: @data }
+    - if @container_css_class
+      %div{ class: @container_css_class }
+        = navbar_content
+    - else
       = navbar_content
-  - else
-    = navbar_content

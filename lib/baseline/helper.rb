@@ -249,11 +249,18 @@ module Baseline
       end
       html_options ||= {}
       html_options[:data] ||= {}
-      html_options[:data].merge!(
-        bs_toggle: "modal",
-        bs_target: "#modal-container",
-        url:       url_for(options)
-      )
+
+      url = url_for(options)
+
+      html_options[:data].merge! \
+        Current.tailwind ?
+          stimco(:modal, to_h: false).action(:open, url:) :
+          {
+            bs_toggle: "modal",
+            bs_target: "#modal-container",
+            url:       url
+          }
+
       link_to name, "#", html_options
     end
 
