@@ -1,6 +1,6 @@
 ---
 name: rails-style-guide
-description: Rails code style conventions. Use when working with Rails projects, running commands, or writing Rails code.
+description: Rails code style conventions. Use when working with Rails projects, running commands, or writing Rails code. Use when user says "run rails", "run migrations", "add a callback", "create a route", or "add a controller".
 ---
 
 # Rails Style Guide

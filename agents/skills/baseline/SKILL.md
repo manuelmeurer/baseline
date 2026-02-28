@@ -1,6 +1,6 @@
 ---
 name: baseline
-description: Guidance for working with the Baseline Ruby gem. Use whenever Baseline is mentioned by the user or in another skill, or when writing code in Baseline itself or in a Ruby app that uses Baseline.
+description: Guidance for working with the Baseline Ruby gem. Use whenever Baseline is mentioned by the user or in another skill, or when writing code in Baseline itself or in a Ruby app that uses Baseline. Use when user says "check Baseline", "update the gem", "add a Baseline module", or references Baseline helpers, concerns, or engine features.
 ---
 
 # Baseline

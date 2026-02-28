@@ -1,6 +1,6 @@
 ---
 name: rails-i18n
-description: Rails I18n conventions. Use when creating or editing I18n strings in Rails.
+description: Rails I18n conventions. Use when creating or editing I18n strings, locale files, or translations in Rails. Use when user says "add translations", "internationalize this", "move text to I18n", or "translate this page".
 ---
 
 # Rails I18n

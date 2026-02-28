@@ -1,6 +1,6 @@
 ---
 name: ruby-style-guide
-description: Ruby code style conventions. Use when writing, reviewing, or refactoring Ruby code.
+description: Ruby code style conventions. Use when writing, reviewing, or refactoring Ruby code. Use when user says "write a Ruby script", "refactor this Ruby", "review this code", or works in .rb files.
 ---
 
 # Ruby Style Guide

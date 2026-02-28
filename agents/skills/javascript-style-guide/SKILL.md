@@ -1,6 +1,6 @@
 ---
 name: javascript-style-guide
-description: JavaScript code style conventions. Use when writing, reviewing, or refactoring JavaScript code.
+description: JavaScript code style conventions. Use when writing, reviewing, or refactoring JavaScript code. Use when user works in .js or .mjs files, or says "write JavaScript", "refactor this JS", or "review this script".
 ---
 
 # JavaScript Style Guide

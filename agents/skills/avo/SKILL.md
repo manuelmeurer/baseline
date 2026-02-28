@@ -7,7 +7,7 @@ description: Guidance for working with the Ruby on Rails Avo CMS. Use when creat
 
 ## Guidelines
 
-- Full LLM docs for Avo: `#fetch https://docs.avohq.io/3.0/llms-full.txt`.
+- Full LLM docs for Avo are available at `https://docs.avohq.io/3.0/llms-full.txt`. Only fetch this if the instructions in this skill and existing Avo code in the codebase are not sufficient to complete the task.
 
 ## Adding Resources
 

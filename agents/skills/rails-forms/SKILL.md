@@ -1,6 +1,6 @@
 ---
 name: rails-forms
-description: Rails form conventions. Use when creating or editing forms in Rails.
+description: Rails form conventions. Use when creating or editing forms in Rails. Use when user says "add a form", "create a form field", "edit the form", or "add validation to the form".
 ---
 
 # Rails Forms

@@ -1,6 +1,6 @@
 ---
 name: landing-page-design
-description: Implement landing pages from existing designs. Use when building a landing page from a Figma design, screenshot, mockup, or reference URL.
+description: Implement landing pages from existing designs. Use when building a landing page from a Figma design, screenshot, mockup, or reference URL. Use when user says "build this landing page", "implement this design", "add a new section", or "create the hero section".
 ---
 
 This skill is only applicable when creating or editing a landing page in a Rails app that uses Baseline.
