@@ -1,6 +1,6 @@
 -# frozen_string_literal: true
 
-- card = helpers.capture_haml do
+- image_content = helpers.capture_haml do
   - case @image
   - when Array
     - if @image.first.attached?
@@ -15,6 +15,7 @@
   - else
     - raise "Unexpected @image: #{@image.class}"
 
+- body_content = helpers.capture_haml do
   - if @header
     %h5.card-header{ class: @header_css_class, data: @header_data }
       = @header.html_safe
@@ -43,6 +44,17 @@
   - if @footer
     .card-footer{ class: @footer_css_class }
       = @footer.html_safe
+
+- card = helpers.capture_haml do
+  - if @horizontal
+    .row.g-0
+      %div{ class: @horizontal_image_css_class }
+        = image_content
+      %div{ class: @horizontal_body_css_class }
+        = body_content
+  - else
+    = image_content
+    = body_content
 
 - if @url
   = link_to card, @url, class: [*@css_class, "text-body", "text-decoration-none"], data: @data, style: @style
