@@ -1,5 +1,5 @@
 .card {
-  transition: background-color 0.1s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 a.card:hover,
@@ -10,6 +10,8 @@ label .card:has(input:checked) {
 a.card:hover,
 label .card:hover {
   background-color: $gray-100;
+  box-shadow: $box-shadow-sm;
+  transform: translateY(-2px);
 }
 
 label .card {
