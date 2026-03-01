@@ -210,7 +210,8 @@ module Baseline
     def body_css_class
       [
         *controller_and_normalized_action_name,
-        params[:id]
+        params[:id],
+        ("tw" if Current.tailwind)
       ].compact
     end
 

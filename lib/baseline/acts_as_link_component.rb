@@ -2,23 +2,28 @@
 
 module Baseline
   module ActsAsLinkComponent
-    def initialize(label_or_url, url = nil, css_class: nil, data: nil, modal: false, active: nil)
+    def initialize(label_or_url, url = nil, css_class: nil, data: nil, modal: false, active: nil, collapsable: true)
       @label, @url =
         url ?
         [label_or_url, url] :
         [nil, label_or_url]
-      @css_class, @data, @modal, @active =
-        css_class, data, modal, active
+      @css_class, @data, @modal, @active, @collapsable =
+        css_class, data, modal, active, collapsable
     end
 
+    def collapsable? = @collapsable
+
     def call
-      @url = url_for(@url)
+      @url     = url_for(@url)
       @label ||= content
-      method = @modal ? :link_to_modal : :link_to
-      @active = current? if @active.nil?
+      @active  = current? if @active.nil?
+      receiver, method =
+        @modal ?
+        [helpers, :link_to_modal] :
+        [self,    :link_to]
 
       wrapper do
-        public_send \
+        receiver.public_send \
           method,
           @label,
           @url,

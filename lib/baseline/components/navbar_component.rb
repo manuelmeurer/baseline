@@ -9,7 +9,7 @@ module Baseline
       expand:        :lg,
       brand:         nil,
       brand_url:     "/",
-      bg:            :body_tertiary,
+      bg:            true,
       border_bottom: true,
       css_class:     nil,
       data:          nil,
@@ -19,9 +19,9 @@ module Baseline
       @brand, @brand_url, @css_class, @data =
         brand, brand_url, Array(css_class), data
 
-      if tailwind?
-        bg = :"base-100" if bg == :body_tertiary
-        @css_class << "bg-#{bg.dasherize}" if bg
+      if Current.tailwind
+        bg = "bg-base-100" if bg == true
+        @css_class << bg if bg
         @css_class.push("border-b", "border-base-300") if border_bottom
 
         %i[sticky fixed].each do |position|
@@ -33,10 +33,13 @@ module Baseline
           break
         end
 
-        @container_css_class = nil
+        @container_css_class = if container
+          ["container", "mx-auto", "flex", "items-center"]
+        end
       else
         @id = "navbar-collapsable"
-        @css_class << "bg-#{bg.dasherize}" if bg
+        bg = "bg-body-tertiary" if bg == true
+        @css_class << bg if bg
         @css_class << "border-bottom" if border_bottom
 
         %i[sticky fixed].each do |position|
@@ -69,39 +72,61 @@ module Baseline
       end
     end
 
-    private def tailwind?  = Baseline::Current.tailwind
-    private def signed_in? = !!::Current.user
-    private def user_name  = ::Current.user.first_name
-
-    def auth_group
+    def auth_group(&block)
       with_group do |group|
-        group.instance_variable_set(:@end_group, true)
-        if signed_in?
-          avatar_and_name = safe_join([
-            component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb),
-            user_name,
-            nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
-          ], " ")
+        group.auth_item(&block)
+      end
+    end
 
-          group.with_item_dropdown(avatar_and_name, css_class: "avatar", align_end: true) do |dropdown|
-            yield dropdown if block_given?
-            dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
-              safe_join [
-                component(:icon, "sign-out", fixed_width: true, class: "me-1"),
-                t(:log_out, scope: :navbar)
-              ], " "
-            end
-          end
+    private
+
+      def tw_active_groups
+        groups.select { _1.items.any? }
+      end
+
+      def render_tw_brand
+        return unless @brand
+
+        if @brand_url
+          link_to @brand, @brand_url, class: "btn btn-ghost text-xl"
         else
-          group.with_item_link([::Current.namespace, :login]) do
-            safe_join [
-              component(:icon, "sign-in", fixed_width: true, class: "me-1"),
-              t(:login, scope: :navbar)
-            ], " "
+          tag.span(@brand, class: "btn btn-ghost text-xl")
+        end
+      end
+
+      def render_tw_hamburger
+        collapsable = tw_active_groups.flat_map(&:collapsable_items)
+        return if collapsable.empty?
+
+        tag.div(class: "dropdown") do
+          tag.div(tabindex: "0", role: "button", class: "btn btn-ghost lg:hidden") do
+            tag.svg(xmlns: "http://www.w3.org/2000/svg", fill: "none", viewbox: "0 0 24 24", stroke: "currentColor", class: "h-5 w-5") do
+              tag.path("", stroke_linecap: "round", stroke_linejoin: "round", stroke_width: "2", d: "M4 6h16M4 12h8m-8 6h16")
+            end
+          end +
+          tag.ul(tabindex: "0", class: "menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow") do
+            safe_join collapsable
           end
         end
       end
-    end
+
+      def render_tw_group_items(group)
+        parts = []
+
+        if group.collapsable_items.any?
+          parts << tag.ul(class: "menu menu-horizontal px-1 hidden lg:flex") {
+            safe_join group.collapsable_items
+          }
+        end
+
+        if group.non_collapsable_items.any?
+          parts << tag.ul(class: "menu menu-horizontal px-1") {
+            safe_join group.non_collapsable_items
+          }
+        end
+
+        safe_join parts
+      end
 
     class GroupComponent < ApplicationComponent
       renders_many :items,
@@ -115,14 +140,62 @@ module Baseline
         @css_class = css_class
       end
 
-      def end_group?
-        @end_group || Array(@css_class).any? { _1.to_s.include?("ms-auto") }
+      def auth_item
+        if ::Current.user
+          photo = component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb)
+
+          if Baseline::Current.tailwind
+            avatar = tag.div(class: "avatar") do
+              tag.div(class: "w-10 rounded-full") { photo }
+            end
+          else
+            avatar = photo
+          end
+
+          avatar_and_name = safe_join([
+            avatar,
+            ::Current.user.first_name,
+            nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
+          ], " ")
+
+          css_class = "avatar" unless Baseline::Current.tailwind
+
+          with_item_dropdown(avatar_and_name, css_class: css_class, align_end: true, collapsable: false) do |dropdown|
+            yield dropdown if block_given?
+            dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
+              safe_join [
+                component(:icon, "sign-out", fixed_width: true, class: "me-1"),
+                t(:log_out, scope: :navbar)
+              ], " "
+            end
+          end
+        else
+          with_item_link([::Current.namespace, :login], collapsable: false) do
+            safe_join [
+              component(:icon, "sign-in", fixed_width: true, class: "me-1"),
+              t(:login, scope: :navbar)
+            ], " "
+          end
+        end
+      end
+
+      def collapsable_items
+        items.select { _1.instance_variable_get(:@__vc_component_instance).collapsable? }
+      end
+
+      def non_collapsable_items
+        items.reject { _1.instance_variable_get(:@__vc_component_instance).collapsable? }
       end
 
       def call; end
     end
 
     class ContentComponent < ApplicationComponent
+      def initialize(collapsable: true)
+        @collapsable = collapsable
+      end
+
+      def collapsable? = @collapsable
       def call = content
     end
 
@@ -148,9 +221,9 @@ module Baseline
           "#{_1.camelize}Component"
         }
 
-      def initialize(label, align_end: false, align_start: false, css_class: nil)
-        @label, @align_end, @align_start =
-          label, align_end, align_start
+      def initialize(label, align_end: false, align_start: false, css_class: nil, collapsable: true)
+        @label, @align_end, @align_start, @collapsable =
+          label, align_end, align_start, collapsable
 
         @css_class = if Baseline::Current.tailwind
           Array(css_class)
@@ -158,6 +231,8 @@ module Baseline
           Array(css_class).append("nav-item", "dropdown")
         end
       end
+
+      def collapsable? = @collapsable
 
       def call
         raise "No items found." if items.none?
@@ -168,10 +243,12 @@ module Baseline
       private
 
       def call_tailwind
-        tag.li do
+        tag.li class: @css_class do
           tag.details do
             tag.summary(@label) +
-            tag.ul(class: "p-2") { safe_join items }
+            tag.ul(class: "p-2") {
+              safe_join items
+            }
           end
         end
       end
