@@ -20,9 +20,17 @@ module Baseline
         brand, brand_url, Array(css_class), data
 
       if Current.tailwind
-        bg = "bg-base-100" if bg == true
-        @css_class << bg if bg
-        @css_class.push("border-b", "border-base-300") if border_bottom
+        if bg == true
+          bg = "bg-base-100"
+        end
+
+        if bg
+          @css_class << bg
+        end
+
+        if border_bottom
+          @css_class.push("border-b", "border-base-300")
+        end
 
         %i[sticky fixed].each do |position|
           next unless value = binding.local_variable_get(position)
@@ -33,8 +41,10 @@ module Baseline
           break
         end
 
-        @container_css_class = if container
-          ["container", "mx-auto", "flex", "items-center"]
+        if container
+          @css_class.push(
+            "max-w-7xl", "mx-auto", "flex", "items-center"
+          )
         end
       else
         @id = "navbar-collapsable"

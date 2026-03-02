@@ -33,11 +33,7 @@
         = render_tw_group_items(active[2])
         = content
   .navbar{ class: @css_class, data: @data }
-    - if @container_css_class
-      %div{ class: @container_css_class }
-        = tw_navbar_content
-    - else
-      = tw_navbar_content
+    = tw_navbar_content
 - else
   - navbar_content = helpers.capture_haml do
     - if @brand_url
