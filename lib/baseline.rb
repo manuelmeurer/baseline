@@ -102,6 +102,7 @@ if defined?(Rails)
     end
 
     def image_assets(dir)
+      dir += "/" unless dir.end_with?("/")
       root =
         dir.split("/").first == "baseline" ?
           Baseline::Engine.root :
