@@ -4,7 +4,7 @@
     - case filter
     - when Avo::Filters::SelectFilter
 
-      .flex.flex-col{ data: { controller: "select-filter", filter_name: filter.name, select_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
+      %div{ class: "flex flex-col", style: "max-width: 200px", data: { controller: "select-filter", filter_name: filter.name, select_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
         %label.text-xs.font-medium.text-gray-500.mb-1
           = filter.name
         = select_tag filter.id, options_for_select(filter.options.invert, filter.applied_or_default_value(@applied_filters)), class: input_classes("w-full mb-0 min-w-[140px]"), include_blank: filter.class.empty_message || "—", id: "avo_filters_#{filter.id.parameterize.underscore}", "data-filter-class": filter.class, "data-select-filter-target": "selector", "data-action": "change->select-filter#changeFilter"
@@ -24,7 +24,7 @@
 
     - when Avo::Filters::TextFilter
 
-      .flex.flex-col{ data: { controller: "text-filter", filter_name: filter.name, text_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
+      %div{ class: "flex flex-col", style: "max-width: 200px", data: { controller: "text-filter", filter_name: filter.name, text_filter_keep_filters_panel_open_value: @resource.keep_filters_panel_open } }
         %label.text-xs.font-medium.text-gray-500.mb-1
           = filter.name
         .flex.items-center.gap-2

@@ -20,7 +20,7 @@
           %div{ class: "flex flex-col xs:flex-row xs:justify-between space-y-2 xs:space-y-0 py-4 #{"hidden" unless header_visible?}" }
             .flex.items-center.gap-4.px-4
               - if show_search_input
-                .w-64
+                .w-64{ style: "max-width: 200px" }
                   = render partial: "avo/partials/resource_search", locals: { resource: @resource.route_key, via_reflection: via_reflection }
 
               -# Added by Baseline: show record count above the table
