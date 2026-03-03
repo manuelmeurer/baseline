@@ -36,16 +36,15 @@ end
 #
 # Table name: users
 #
-#  id              :integer          not null, primary key
-#  email           :string
-#  first_name      :string           not null
-#  gender          :integer
-#  last_name       :string           not null
-#  locale          :string           not null
-#  password_digest :string
-#  remember_token  :string
-#  slug            :string           not null
-#  title           :string
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id               :integer          not null, primary key
+#  alternate_emails :json             not null
+#  email            :string
+#  first_name       :string           not null
+#  gender           :integer
+#  last_name        :string           not null
+#  locale           :string           not null
+#  password_digest  :string           not null
+#  remember_token   :string           not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
