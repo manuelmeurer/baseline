@@ -158,3 +158,17 @@ class Symbol
       )
   end
 end
+
+if defined?(ActiveStorage::Attached::Many)
+  class ActiveStorage::Attached::Many
+    def closest_to_aspect_ratio(ratio)
+      return unless attached?
+
+      blobs.min_by do |blob|
+        width, height = blob.metadata.values_at(:width, :height)
+        next Float::INFINITY unless width&.positive? && height&.positive?
+        ((width.to_f / height) - ratio).abs
+      end
+    end
+  end
+end
