@@ -14,6 +14,8 @@ module Baseline
 
       validates :pdf_file, presence: true
       validates :ignored_at, absence: { if: :expense_invoice }
+
+      scope :with_email, -> { where(email_gid: _1.to_gid.to_s) }
     end
 
     def email

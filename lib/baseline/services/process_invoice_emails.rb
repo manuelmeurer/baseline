@@ -77,7 +77,9 @@ module Baseline
         attachment_data.each do |attachment_id, filename|
           next unless
             PDF_SUFFIX_REGEX.match?(filename) &&
-            IncomingInvoice.with_source(email).none? { _1.pdf_file.file.filename.to_s == clean_filename(filename) }
+            IncomingInvoice.with_email(email).none? {
+              _1.pdf_file.file.filename.to_s == clean_filename(filename)
+            }
 
           attachment = gmail.get_user_message_attachment(
             "me",
