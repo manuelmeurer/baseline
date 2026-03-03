@@ -38,10 +38,6 @@ Name images after their section. For background images, append `_bg`. If a secti
 
 Examples: `hero_bg`, `features_01`, `features_02`.
 
-## Styling with Bootstrap
-
-If the app uses Bootstrap, always style the landing page with existing Bootstrap styles and components.
-
 ### Buttons
 
 Use Bootstrap button classes (e.g. `class="btn btn-primary"` or `class="btn btn-secondary"`) instead of generating custom buttons, even if they look slightly different from the buttons in the source design. After implementation, if the buttons differ from the source design, mention this to the user and suggest options to customize the buttons (while keeping the base Bootstrap button classes) in specific sections.
