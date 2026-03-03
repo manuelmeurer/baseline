@@ -122,7 +122,7 @@ module Baseline
           end
 
           incoming_invoice = IncomingInvoice.create!(
-            source: email,
+            email:,
             pdf_file:,
             **incoming_email_params
           )

@@ -23,5 +23,9 @@ module Baseline
         GlobalID.find!(_1)
       }
     end
+
+    def email=(email)
+      self.email_gid = email.if(Email) { _1.to_gid.to_s }
+    end
   end
 end
