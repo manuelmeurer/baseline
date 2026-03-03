@@ -21,5 +21,17 @@ Apply these conventions when writing or modifying Ruby code.
 - Use multi-line, leading-dot chaining when calling more than one method in a row.
 - Prefer chaining over temporary variables when it stays readable; `then` and `tap` are often helpful.
 - Prefer numbered parameters (`_1`, `_2`) for small blocks; use `it` only when numbered params don't work.
-- Prefer endless method definitions for simple, single-expression methods.
+- Prefer endless method definitions for simple, single-expression methods that fit within 80 chars.
 - Prefer percent notation for arrays of symbols, array of strings, and regexes (`%i[foo bar]` over `[:foo, :bar]`, `%w[foo bar]` over `["foo", "bar"]` and `%r(foo)` over `/foo/`).
+- Prefer hash value omission (`{ foo:, bar: }` over `{ foo: foo, bar: bar }`).
+- When a method call with keyword arguments or a hash literal exceeds ~80 chars, break after the first argument using a trailing backslash and align remaining args:
+  ```ruby
+  # bad
+  render partial: "webinars/header_image_page", locals: { webinar: requested_resource }, layout: false
+
+  # good
+  render \
+    partial: "webinars/header_image_page",
+    locals:  { webinar: requested_resource },
+    layout:  false
+  ```
