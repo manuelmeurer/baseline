@@ -68,7 +68,7 @@ module Baseline
         Tasks::Create.call \
           taskable:   contact_request,
           priority:   :high,
-          title:      "Contact Request bearbeiten",
+          title:      "#{contact_request.kind.humanize} Contact Request bearbeiten",
           details:    "#{contact_request.name} (#{contact_request.email}) hat gerade einen #{contact_request.kind.humanize} Contact Request erstellt.",
           identifier: "handle"
       end
