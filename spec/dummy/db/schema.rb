@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_25_152551) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_04_145753) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -133,6 +133,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_25_152551) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.check_constraint "JSON_TYPE(alternate_emails) = 'array'", name: "user_alternate_emails_is_array"
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.json "object"
+    t.json "object_changes"
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
