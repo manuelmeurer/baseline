@@ -47,8 +47,8 @@ de:
     website: Webseite
 
   navbar:
-    login: Einloggen
-    log_out: Ausloggen
+    login: Login
+    log_out: Abmelden
 
   authentication:
     already_logged_in: Du bist bereits eingeloggt.

@@ -82,9 +82,9 @@ module Baseline
       end
     end
 
-    def auth_group(&block)
+    def auth_group(namespace: ::Current.namespace, &block)
       with_group do |group|
-        group.auth_item(&block)
+        group.auth_item(namespace:, &block)
       end
     end
 
@@ -150,7 +150,7 @@ module Baseline
         @css_class = css_class
       end
 
-      def auth_item
+      def auth_item(namespace: ::Current.namespace)
         if ::Current.user
           photo = component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb)
 
@@ -172,7 +172,7 @@ module Baseline
 
           with_item_dropdown(avatar_and_name, css_class: css_class, align_end: true, collapsable: false) do |dropdown|
             yield dropdown if block_given?
-            dropdown.with_item_link([::Current.namespace, :logout], data: { turbo_method: :delete }) do
+            dropdown.with_item_link([namespace, :logout], data: { turbo_method: :delete }) do
               safe_join [
                 component(:icon, "sign-out", fixed_width: true, class: "me-1"),
                 t(:log_out, scope: :navbar)
@@ -180,11 +180,10 @@ module Baseline
             end
           end
         else
-          with_item_link([::Current.namespace, :login], collapsable: false) do
-            safe_join [
-              component(:icon, "sign-in", fixed_width: true, class: "me-1"),
-              t(:login, scope: :navbar)
-            ], " "
+          with_item_content collapsable: false do
+            link_to [namespace, :login, only_path: false], class: "btn btn-outline-light login" do
+              t :login, scope: :navbar
+            end
           end
         end
       end
