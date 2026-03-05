@@ -7,7 +7,6 @@ RSpec.describe AdminUser do
     it "returns the correct hash of column metadata" do
       expect(AdminUser.schema_columns).to eq(
         created_at: { type: :datetime, null: false },
-        position:   { type: :string },
         tokens:     { type: :json, default: {}, null: false },
         updated_at: { type: :datetime, null: false },
         user_id:    { type: :integer, null: false }
