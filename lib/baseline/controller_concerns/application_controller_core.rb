@@ -135,7 +135,7 @@ module Baseline
           only:   :create,
           with: -> {
             add_flash :alert, t(:generic_error)
-            html_redirect_to(new_session_path)
+            html_redirect_to([::Current.namespace, :login])
           }
       end
 
