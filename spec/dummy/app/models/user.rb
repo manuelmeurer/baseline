@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  include Baseline::ActsAsUser,
-          Baseline::HasFriendlyID
+  include Baseline::ActsAsUser
 
   has_one :admin_user, dependent: :destroy
 
@@ -17,19 +16,7 @@ class User < ApplicationRecord
   def default_password = "password"
   def default_locale   = :de
 
-  private
-
-    def should_generate_new_friendly_id?
-      first_name_changed? ||
-        last_name_changed? ||
-        super
-    end
-
-    def custom_slug
-      [new_slug_identifier, name].join(" ")
-    end
-
-    _baseline_finalize
+  _baseline_finalize
 end
 
 # == Schema Information

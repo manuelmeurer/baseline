@@ -21,17 +21,16 @@ RSpec.describe User do
   describe ".schema_columns" do
     it "returns the correct hash of column metadata" do
       expect(User.schema_columns).to eq(
-        created_at:      { type: :datetime, null: false },
-        email:           { type: :string },
-        first_name:      { type: :string, null: false },
-        gender:          { type: :integer },
-        last_name:       { type: :string, null: false },
-        locale:          { type: :string, null: false },
-        password_digest: { type: :string },
-        remember_token:  { type: :string },
-        slug:            { type: :string, null: false },
-        title:           { type: :string },
-        updated_at:      { type: :datetime, null: false }
+        alternate_emails: { default: [], null: false, type: :json },
+        created_at:       { type: :datetime, null: false },
+        email:            { type: :string },
+        first_name:       { type: :string, null: false },
+        gender:           { type: :integer },
+        last_name:        { type: :string, null: false },
+        locale:           { type: :string, null: false },
+        password_digest:  { type: :string, null: false },
+        remember_token:   { type: :string, null: false },
+        updated_at:       { type: :datetime, null: false }
       )
     end
   end
