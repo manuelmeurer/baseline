@@ -207,8 +207,13 @@ module Baseline
               default:    params[:"#{attribute}_id"]&.then { association_reflection.klass.find(_1) },
               searchable: true
             }.if(association_reflection.options[:polymorphic]) {
+              default = params[:"#{attribute}_gid"]&.then do |gid|
+                suppress ActiveRecord::RecordNotFound do
+                  GlobalID.find(gid)
+                end
+              end
               _1.merge \
-                default:        params[:"#{attribute}_gid"]&.then { GlobalID.find(it) },
+                default:,
                 polymorphic_as: attribute,
                 types:          polymorphic_types_with_resource(attribute)
             })
