@@ -36,7 +36,14 @@ module Baseline
       return unless gids.present?
 
       gids.each do |gid|
-        next unless resource = GlobalID.find(gid)
+        begin
+          unless resource = GlobalID.find(gid)
+            ReportError.call "Global ID seems to be invalid: #{gid}"
+            next
+          end
+        rescue ActiveRecord::RecordNotFound
+          next
+        end
 
         resource
           .class
