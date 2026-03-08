@@ -1,2 +1,3 @@
+# Required for bin/weekly
 .bundle
 vendor/bundle
