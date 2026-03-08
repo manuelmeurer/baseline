@@ -27,8 +27,7 @@ For detailed instructions, read [references/playwright-cli.md](references/playwr
 
 ## Chrome DevTools MCP
 
-For detailed instructions, read the tool reference:
-https://raw.githubusercontent.com/ChromeDevTools/chrome-devtools-mcp/refs/heads/main/docs/tool-reference.md
+For detailed instructions, read [references/chrome-devtools.md](references/chrome-devtools.md).
 
 If the agent opens a new browser page via Chrome DevTools MCP, it must close that page when done (using `close_page`).
 

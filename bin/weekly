@@ -16,6 +16,9 @@ PLAYWRIGHT_CLI_REF = "agents/skills/browser-automation/references/playwright-cli
 PLAYWRIGHT_CLI_REFERENCES_API = "https://api.github.com/repos/microsoft/playwright-cli/contents/skills/playwright-cli/references"
 PLAYWRIGHT_CLI_REFERENCES_DIR = "agents/skills/browser-automation/references/playwright-cli"
 
+CHROME_DEVTOOLS_REF_URL = "https://raw.githubusercontent.com/ChromeDevTools/chrome-devtools-mcp/refs/heads/main/docs/tool-reference.md"
+CHROME_DEVTOOLS_REF = "agents/skills/browser-automation/references/chrome-devtools.md"
+
 ANTHROPICS_SKILL_CREATOR_REPO = "anthropics/skills"
 ANTHROPICS_SKILL_CREATOR_PATH = "skills/skill-creator"
 ANTHROPICS_SKILL_CREATOR_DIR = "agents/skills/skill-creator"
@@ -32,6 +35,7 @@ class Weekly < Thor
     say "Weekly task ran at #{Time.now.utc.iso8601}"
     update_playwright_cli_reference
     download_playwright_cli_references
+    download_chrome_devtools_reference
     download_anthropics_skill_creator
   end
 
@@ -65,6 +69,12 @@ class Weekly < Thor
         File.write(path, fetch(url, context: entry["name"]))
         say "Updated #{path}"
       end
+    end
+
+    def download_chrome_devtools_reference
+      FileUtils.mkdir_p(File.dirname(CHROME_DEVTOOLS_REF))
+      File.write(CHROME_DEVTOOLS_REF, fetch(CHROME_DEVTOOLS_REF_URL, context: "chrome-devtools tool-reference"))
+      say "Updated #{CHROME_DEVTOOLS_REF}"
     end
 
     def download_anthropics_skill_creator
