@@ -4,10 +4,18 @@ on:
   schedule:
     - cron: "0 10 * * 5"
   workflow_dispatch:
+    inputs:
+      debug:
+        description: Enable debugging with tmate
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   weekly:
     runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     permissions:
       contents: write
       pull-requests: write
@@ -20,6 +28,10 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Debug with tmate
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug }}
+
       - name: Run weekly script
         run: bin/weekly
 
@@ -30,3 +42,11 @@ jobs:
           commit-message: "Weekly script updates"
           title: "Weekly script updates"
           body: "Automated updates from the weekly scheduled run."
+
+      - name: Notify Slack on failure
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: Weekly
+          fields: repo,message,workflow,action
+        if: failure()
