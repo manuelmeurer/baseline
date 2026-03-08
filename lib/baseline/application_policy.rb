@@ -41,7 +41,7 @@ module Baseline
 
     def index?   = true
     def show?    = true
-    def create?  = true
+    def create?  = false
     def new?     = create?
     def update?  = true
     def edit?    = update?
@@ -49,7 +49,7 @@ module Baseline
     def search?  = true
     def reorder? = true
     def act_on?  = true
-    def attach?  = true
+    def attach?  = false
     def detach?  = true
 
     def method_missing(method, ...)
