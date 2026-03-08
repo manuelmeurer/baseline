@@ -2,7 +2,6 @@ name: Weekly
 
 on:
   schedule:
-    # Friday 10:00 UTC
     - cron: "0 10 * * 5"
   workflow_dispatch:
 
