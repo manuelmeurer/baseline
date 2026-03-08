@@ -41,16 +41,16 @@ module Baseline
 
     def index?   = true
     def show?    = true
-    def create?  = false
+    def create?  = superadmin?
     def new?     = create?
     def update?  = true
     def edit?    = update?
-    def destroy? = true
+    def destroy? = superadmin?
     def search?  = true
     def reorder? = true
     def act_on?  = true
-    def attach?  = false
-    def detach?  = true
+    def attach?  = superadmin?
+    def detach?  = superadmin?
 
     def method_missing(method, ...)
       return true if attachment_policy_method?(method)
@@ -86,5 +86,7 @@ module Baseline
 
         false
       end
+
+      def superadmin? = ::Current.admin_user.role?(:superadmin)
   end
 end

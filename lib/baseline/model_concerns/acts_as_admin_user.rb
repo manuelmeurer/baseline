@@ -18,5 +18,10 @@ module Baseline
     end
 
     def email_signature = _do_generate_email_signature
+
+    def role?(role)
+      role == :superadmin &&
+        self == self.class.manuel
+    end
   end
 end
