@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+require "fileutils"
+require "json"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+  gem "http"
+end
+
+PLAYWRIGHT_CLI_SKILL_URL = "https://raw.githubusercontent.com/microsoft/playwright-cli/refs/heads/main/skills/playwright-cli/SKILL.md"
+PLAYWRIGHT_CLI_REF = "agents/skills/browser-automation/references/playwright-cli.md"
+PLAYWRIGHT_CLI_REFERENCES_API = "https://api.github.com/repos/microsoft/playwright-cli/contents/skills/playwright-cli/references"
+PLAYWRIGHT_CLI_REFERENCES_DIR = "agents/skills/browser-automation/references/playwright-cli"
+
+class Weekly < Thor
+  include Thor::Actions
+
+  default_command :run
+
+  def self.exit_on_failure? = true
+
+  desc "run", "weekly task (runs Fridays via GitHub Actions)"
+  def run
+    say "Weekly task ran at #{Time.now.utc.iso8601}"
+    update_playwright_cli_reference
+    download_playwright_cli_references
+  end
+
+  private
+
+    def fetch(url, context: nil)
+      response = HTTP.get(url)
+      unless response.status.success?
+        msg = context ? "HTTP failed fetching #{context}: #{response.status}" : "HTTP failed: #{response.status}"
+        raise msg
+      end
+      response.body.to_s
+    end
+
+    def update_playwright_cli_reference
+      content = fetch(PLAYWRIGHT_CLI_SKILL_URL).gsub("references/", "references/playwright-cli/")
+      FileUtils.mkdir_p(File.dirname(PLAYWRIGHT_CLI_REF))
+      File.write(PLAYWRIGHT_CLI_REF, content)
+      say "Updated #{PLAYWRIGHT_CLI_REF}"
+    end
+
+    def download_playwright_cli_references
+      files = JSON.parse(fetch(PLAYWRIGHT_CLI_REFERENCES_API))
+      FileUtils.mkdir_p(PLAYWRIGHT_CLI_REFERENCES_DIR)
+
+      files.each do |entry|
+        next unless entry["type"] == "file"
+
+        url = entry["download_url"]
+        path = File.join(PLAYWRIGHT_CLI_REFERENCES_DIR, entry["name"])
+        File.write(path, fetch(url, context: entry["name"]))
+        say "Updated #{path}"
+      end
+    end
+end
+
+Weekly.start(ARGV)

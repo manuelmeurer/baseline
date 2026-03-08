@@ -23,9 +23,7 @@ Only use Chrome DevTools MCP if:
 
 ## playwright-cli
 
-For detailed instructions, read the upstream skill file:
-https://raw.githubusercontent.com/microsoft/playwright-cli/refs/heads/main/skills/playwright-cli/SKILL.md
-and the reference documents it mentions for specific tasks.
+For detailed instructions, read [references/playwright-cli.md](references/playwright-cli.md) and the reference documents in [references/playwright-cli/](references/playwright-cli/).
 
 ## Chrome DevTools MCP
 
