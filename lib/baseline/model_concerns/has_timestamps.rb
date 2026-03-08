@@ -45,7 +45,7 @@ module Baseline
                   # we need to cast it to a timestamp, so that comparisons with Time objects work as expected.
                   before_after_attribute_with_table_name =
                     attribute_with_table_name.if(
-                      connection.adapter_name == "PostgreSQL" &&
+                      db_adapter == :postgresql &&
                       schema_columns.deep_fetch(attribute, :type) == :date
                     ) {
                       "#{_1}::timestamp"

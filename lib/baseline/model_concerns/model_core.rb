@@ -228,6 +228,8 @@ module Baseline
         end
       end
 
+      def db_adapter = connection.adapter_name.downcase.to_sym
+
       def custom_human_attribute_name(attribute)
         I18n.t attribute,
           scope:   [::Current.namespace, :human_attribute_names, to_s.underscore],
@@ -347,7 +349,7 @@ module Baseline
           raise "Unexpected type: #{type}"
         }
 
-        adapter = connection.adapter_name.downcase.to_sym
+        adapter = db_adapter
 
         attributes = Array(attributes).map do |attribute|
           [table_name, attribute]
@@ -378,6 +380,25 @@ module Baseline
 
         column[:array] || # Postgres
           (column[:type] == :json && column[:default].is_a?(Array)) # SQLite
+      end
+
+      def searchable_params
+        columns = schema_columns
+          .select { _2[:type].in?(%i[string text]) && !array_column?(_1) }
+          .keys
+
+        case db_adapter
+        when :postgresql
+          {
+            against:  columns,
+            using:    { tsearch: { prefix: true } },
+            ignoring: :accents
+          }
+        when :sqlite
+          { columns: }
+        else
+          raise "Unexpected database adapter: #{db_adapter}"
+        end
       end
 
       def common_image_file_types = %i[jpeg png svg webp gif]
@@ -423,13 +444,13 @@ module Baseline
         {
           postgresql: ["object_changes ? :key", key:],
           sqlite:     ["json_extract(object_changes, ?) IS NOT NULL", "$.#{key}"]
-        }.fetch(connection.adapter_name.downcase.to_sym) {
-          raise "Unexpected database adapter: #{connection.adapter_name}"
+        }.fetch(db_adapter) {
+          raise "Unexpected database adapter: #{db_adapter}"
         }
       end
 
       def where_array_blank(attribute, check_blank = true)
-        case connection.adapter_name.downcase.to_sym
+        case db_adapter
         when :postgresql
           check_blank ?
             where(attribute => []) :
@@ -437,7 +458,7 @@ module Baseline
         when :sqlite
           where("json_array_length(coalesce(#{attribute}, '[]')) #{check_blank ? "=" : ">"} 0")
         else
-          raise "Unexpected database adapter: #{connection.adapter_name}"
+          raise "Unexpected database adapter: #{db_adapter}"
         end
       end
 
@@ -705,7 +726,7 @@ module Baseline
             end
 
             scope :"with_#{attribute}", ->(*values) {
-              case connection.adapter_name.downcase.to_sym
+              case db_adapter
               when :postgresql
                 unless where.respond_to?(:overlap)
                   raise "active_record_extended must be installed"
@@ -717,13 +738,13 @@ module Baseline
                   *values
                 )
               else
-                raise "Unexpected database adapter: #{connection.adapter_name}"
+                raise "Unexpected database adapter: #{db_adapter}"
               end
             }
           when column_type.in?(%i[json jsonb])
             scope :"with_#{attribute}", ->(*values) {
               if values.empty?
-                case connection.adapter_name.downcase.to_sym
+                case db_adapter
                 when :postgresql
                   [[], {}].inject(self) {
                     _1.where("#{attribute} != '#{_2}'::#{column_type}")
@@ -732,11 +753,12 @@ module Baseline
                   [[], {}].inject(self) {
                     _1.where("#{attribute} != '#{_2}'")
                   }
-                else raise "Unexpected database adapter: #{connection.adapter_name}"
+                else
+                  raise "Unexpected database adapter: #{db_adapter}"
                 end
               else
                 values.inject(self) do |scope, value|
-                  case connection.adapter_name.downcase.to_sym
+                  case db_adapter
                   when :postgresql
                     value.is_a?(Hash) ?
                       scope.where.contains(attribute => value) :
@@ -746,11 +768,34 @@ module Baseline
                       SELECT 1 FROM json_each(#{attribute})
                       WHERE value = ?
                     )", value)
-                  else raise "Unexpected database adapter: #{connection.adapter_name}"
+                  else
+                    raise "Unexpected database adapter: #{db_adapter}"
                   end
                 end
               end
             }
+          end
+        end
+
+        unless respond_to?(:search)
+          case db_adapter
+          when :postgresql
+            if defined?(PgSearch)
+              include PgSearch::Model
+              pg_search_scope :search, searchable_params
+            end
+          when :sqlite
+            scope :search, ->(query) {
+              next all if query.blank?
+
+              searchable_params
+                .fetch(:columns)
+                .map { arel_table[_1].matches("%#{sanitize_sql_like(query)}%", "\\") }
+                .inject { _1.or(_2) }
+                .then { where _1 }
+            }
+          else
+            raise "Unexpected database adapter: #{db_adapter}"
           end
         end
 
