@@ -16,18 +16,23 @@ PLAYWRIGHT_CLI_REF = "agents/skills/browser-automation/references/playwright-cli
 PLAYWRIGHT_CLI_REFERENCES_API = "https://api.github.com/repos/microsoft/playwright-cli/contents/skills/playwright-cli/references"
 PLAYWRIGHT_CLI_REFERENCES_DIR = "agents/skills/browser-automation/references/playwright-cli"
 
+ANTHROPICS_SKILL_CREATOR_REPO = "anthropics/skills"
+ANTHROPICS_SKILL_CREATOR_PATH = "skills/skill-creator"
+ANTHROPICS_SKILL_CREATOR_DIR = "agents/skills/skill-creator"
+
 class Weekly < Thor
   include Thor::Actions
 
-  default_command :run
+  default_command :weekly
 
   def self.exit_on_failure? = true
 
-  desc "run", "weekly task (runs Fridays via GitHub Actions)"
-  def run
+  desc "weekly", "weekly task (runs Fridays via GitHub Actions)"
+  def weekly
     say "Weekly task ran at #{Time.now.utc.iso8601}"
     update_playwright_cli_reference
     download_playwright_cli_references
+    download_anthropics_skill_creator
   end
 
   private
@@ -59,6 +64,28 @@ class Weekly < Thor
         path = File.join(PLAYWRIGHT_CLI_REFERENCES_DIR, entry["name"])
         File.write(path, fetch(url, context: entry["name"]))
         say "Updated #{path}"
+      end
+    end
+
+    def download_anthropics_skill_creator
+      download_github_dir(ANTHROPICS_SKILL_CREATOR_REPO, ANTHROPICS_SKILL_CREATOR_PATH, ANTHROPICS_SKILL_CREATOR_DIR)
+    end
+
+    def download_github_dir(repo, path, local_dir)
+      api_url = "https://api.github.com/repos/#{repo}/contents/#{path}"
+      entries = JSON.parse(fetch(api_url))
+      FileUtils.mkdir_p(local_dir)
+
+      entries.each do |entry|
+        if entry["type"] == "file"
+          file_path = File.join(local_dir, entry["name"])
+          File.write(file_path, fetch(entry["download_url"], context: entry["name"]))
+          say "Updated #{file_path}"
+        elsif entry["type"] == "dir"
+          sub_path = "#{path}/#{entry["name"]}"
+          sub_local = File.join(local_dir, entry["name"])
+          download_github_dir(repo, sub_path, sub_local)
+        end
       end
     end
 end
