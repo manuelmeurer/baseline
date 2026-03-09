@@ -66,14 +66,18 @@ module Baseline
             raise "Unexpected locale: #{I18n.locale}"
           end
         }
+        title = [
+          page_meta_title,
+          (site_name if add_site_name_to_page_title?)
+        ].compact.join(" | ")
 
         # Assign to ivar so data can be changed.
         @og_data ||= {}
         @og_data.reverse_merge(
           locale:,
           site_name:,
+          title:,
           description: page_meta_description,
-          title:       [page_meta_title, site_name].join(" | "),
           type:        "website",
           url:         url_for(only_path: false)
         )
@@ -233,6 +237,8 @@ module Baseline
     end
 
     private
+
+      def add_site_name_to_page_title? = true
 
       def expires_soon
         expires_in 1.hour,
