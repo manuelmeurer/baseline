@@ -17,17 +17,17 @@
 - case
 - when content
   - if @vertical
-    .d-flex.flex-column.align-items-center{ data: @data }
+    .d-flex.flex-column.align-items-center{ class: @css_class, data: @data }
       = render_image.call "mb-#{@margin}"
       = content
   - else
-    .d-flex{ data: @data }
+    .d-flex{ class: @css_class, data: @data }
       = render_image.call "me-#{@margin}"
       .d-flex.overflow-auto
         .align-self-center.overflow-auto
           = content
-- when @data
-  %div{ data: @data }
+- when @data || @css_class
+  %div{ class: @css_class, data: @data }
     = render_image.call
 - else
   = render_image.call
