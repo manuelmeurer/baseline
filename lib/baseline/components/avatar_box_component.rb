@@ -2,9 +2,18 @@
 
 module Baseline
   class AvatarBoxComponent < ApplicationComponent
-    def initialize(imageable, size:, vertical: false, circle: true, image_wrapper: nil, data: nil, css_class: nil)
-      @imageable, @size, @vertical, @circle, @image_wrapper, @data, @css_class =
-        imageable, size, vertical, circle, image_wrapper, data, css_class
+    def initialize(
+      imageable,
+      size:,
+      align_items:   :center,
+      circle:        true,
+      css_class:     nil,
+      data:          nil,
+      image_wrapper: nil,
+      vertical:      false)
+
+      @imageable, @size, @vertical, @circle, @image_wrapper, @data, @css_class, @align_items =
+        imageable, size, vertical, circle, image_wrapper, data, css_class, align_items
 
       @margin = {
         xs: 2,

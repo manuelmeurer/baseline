@@ -2,7 +2,7 @@
 
 - render_image = ->(css_class = nil) do
   - image = helpers.capture_haml do
-    - css_class = [css_class, class_names("border", "align-self-center", "square-#{@size}", "rounded-circle": @circle)].compact
+    - css_class = [css_class, class_names("border", "square-#{@size}", "rounded-circle": @circle)].compact
     - case @imageable
     - when String
       = image_tag @imageable, class: css_class
@@ -17,11 +17,11 @@
 - case
 - when content
   - if @vertical
-    .d-flex.flex-column.align-items-center{ class: @css_class, data: @data }
+    .d-flex.flex-column{ class: ["align-items-#{@align_items}", @css_class], data: @data }
       = render_image.call "mb-#{@margin}"
       = content
   - else
-    .d-flex{ class: @css_class, data: @data }
+    .d-flex{ class: ["align-items-#{@align_items}", @css_class], data: @data }
       = render_image.call "me-#{@margin}"
       .d-flex.overflow-auto
         .align-self-center.overflow-auto
