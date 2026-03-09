@@ -83,6 +83,13 @@ module Baseline
             public_send(start_attribute).then { _1.nil? || _1 <= (type == :date ? Date : Time).current } &&
               public_send(end_attribute).then { _1.nil? || _1 >= (type == :date ? Date : Time).current }
           end
+
+          define_method prefixed.call(:start_end_range) do
+            DateRangeComponent.new(
+              start_date: public_send(start_attribute),
+              end_date:   public_send(end_attribute)
+            ).call
+          end
         end
       end
     end
