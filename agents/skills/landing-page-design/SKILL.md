@@ -15,10 +15,21 @@ Read the source design the user has supplied (Figma, screenshot, mockup, or URL)
 
 ### 2. Map sections to Baseline partials
 
-Read the section partials in Baseline (`baseline/app/views/baseline/sections/`) and decide for each section of the source design whether one of these partials can be used, or whether the section is so unique that no existing partial fits.
+For each section in the source design, find the best matching partial from the catalog below. You MUST use an existing partial unless the section is fundamentally incompatible with ALL of them. **Do not write custom HTML for sections that an existing partial can handle** — even if the fit isn't pixel-perfect, partial reuse always wins.
 
-- **Always prefer using an existing partial.** This reduces the amount of custom HTML and ensures a consistent design.
-- If no partial can be used, use the Baseline `section` helper (`baseline/lib/baseline/helper.rb`) to define a custom section.
+If no partial fits, use the Baseline `section` helper (`baseline/lib/baseline/helper.rb`) to define a custom section.
+
+**Important:** All partials that use the `section` helper automatically render a `headline` and `intro` from i18n when present. **Never add headline or intro markup manually** — just set the i18n keys and the partial handles it.
+
+#### Partial catalog
+
+- **`custom`** — Generic wrapper section. Renders headline + intro from i18n, then yields for custom content.
+- **`cols`** — Column grid layout. Yields columns via `row_cols` component. Used as a base by `cards`.
+- **`cards`** — Grid of Bootstrap cards from i18n items. Built on `cols`. Use for: feature grids, benefit lists, pricing tiers, team members.
+- **`text_image_columns`** — Two-column text + image. Use for: feature highlights, about sections, any text-with-image layout.
+- **`accordion`** — FAQ / collapsible items. Built on `custom`. Use for: FAQs, expandable content lists.
+
+Read each partial's source file for locals and i18n keys during implementation.
 
 ### 3. Present the plan
 
