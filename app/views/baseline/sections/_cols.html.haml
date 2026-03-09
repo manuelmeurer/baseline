@@ -1,9 +1,9 @@
 -# frozen_string_literal: true
--# locals: (id:, css_class: nil, cols: nil, offset: {}, margin: 4)
+-# locals: (id:, css_class: nil, cols: nil, offset: {}, margin: 4, show_headline: true)
 
 - offset_classes = offset.flat_map { ["col-#{_1}-#{12 - _2 * 2}", ("offset-#{_1}-#{_2}" if _2 > 0)] }.compact
 
-= render "baseline/sections/custom", id:, css_class: do |section_i18n_scope|
+= render "baseline/sections/custom", id:, css_class:, show_headline: do |section_i18n_scope|
 
   .row{ class: "mt-#{margin}" }
     %div{ class: offset_classes }
