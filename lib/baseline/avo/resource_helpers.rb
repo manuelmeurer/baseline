@@ -221,10 +221,16 @@ module Baseline
           options
             .reverse_merge(index_truncate)
             .reverse_merge(as: :has_many)
+            .if(association_reflection.options[:class_name]) {
+              _1.reverse_merge(use_resource: _2)
+            }
         when association_reflection&.macro == :has_one
           options
             .reverse_merge(index_truncate)
             .reverse_merge(as: :has_one)
+            .if(association_reflection.options[:class_name]) {
+              _1.reverse_merge(use_resource: _2)
+            }
         when real_model_class.array_column?(attribute)
           options.reverse_merge(
             default:,
