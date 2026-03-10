@@ -1,5 +1,5 @@
 -# frozen_string_literal: true
--# locals: (id:, css_class: nil, cols: nil, offset: {}, margin: 4, show_headline: true)
+-# locals: (id:, css_class: nil, row_cols_css_class: nil, cols: nil, offset: {}, gutter: nil, margin: 4, show_headline: true)
 
 - offset_classes = offset.flat_map { ["col-#{_1}-#{12 - _2 * 2}", ("offset-#{_1}-#{_2}" if _2 > 0)] }.compact
 
@@ -7,7 +7,7 @@
 
   .row{ class: "mt-#{margin}" }
     %div{ class: offset_classes }
-      = component :row_cols, cols:, css_class: "mb-5" do |row_cols|
+      = component :row_cols, cols:, gutter:, css_class: row_cols_css_class do |row_cols|
         = yield section_i18n_scope, row_cols
 
   = md_to_html t(:text, scope: section_i18n_scope, default: nil), add_class_to_first_paragraph: "mt-#{margin}"
