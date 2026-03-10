@@ -16,7 +16,12 @@ module Baseline
           else
             matches = query
           end
-          matches.each(&block)
+          matches.each do |record|
+            block.call(record)
+          rescue => e
+            error "#{record}: #{e.message}"
+            return
+          end
           message = [
             ("#{pluralized(matches)} #{success_message}"   if matches.present?),
             ("#{pluralized(non_matches)} #{error_message}" if non_matches.present?)
