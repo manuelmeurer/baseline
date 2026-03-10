@@ -57,7 +57,7 @@ module Baseline
           tags = []
 
           if text_elements = elements.take_while {
-              _1.name.in?(%w[text span a strong em]) ||
+              _1.name.in?(%w[text span a strong em code]) ||
                 (_1.name == "br" && !(elements[elements.index(_1) + 1]&.name == "br"))
             }.presence
 
@@ -80,7 +80,7 @@ module Baseline
               when text_content = text_elements
                 .map { _1.name == "text" ? _1.content : _1.to_s }
                 .compact_blank
-                .join(" ")
+                .join
                 .presence
 
                 tags << tag.mj_text(text_content.html_safe)
