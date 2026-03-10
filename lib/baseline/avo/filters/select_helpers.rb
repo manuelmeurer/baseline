@@ -18,14 +18,14 @@ module Baseline
         end
 
         def model_class
-          # Hacky way to get the current model class.
-          # Normally, the params look like this:
-          # { "controller" => "avo/tasks", ... }
-          # If the resource is accessed via a association though, they look like this:
-          # { "controller" => "avo/associations", "related_name" => "tasks", ... }
-          params.fetch("related_name") {
-            params.fetch("controller").delete_prefix("avo/")
-          }.classify.constantize
+          if related_name = params["related_name"]
+            # When accessed via an association (e.g. Event -> applications), look up the
+            # association to get the actual class (EventApplication, not Application).
+            parent_resource = params["resource_name"].classify.constantize
+            parent_resource.reflect_on_association(related_name).klass
+          else
+            params.fetch("controller").delete_prefix("avo/").classify.constantize
+          end
         end
       end
     end
