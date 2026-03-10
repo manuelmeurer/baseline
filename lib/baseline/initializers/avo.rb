@@ -15,9 +15,9 @@ require "avo"
     favicon:  "icons/favicon.ico"
   }
 
-  if !defined?(@auth) || @auth
-    config.explicit_authorization        = true
+  if defined?(@auth) && @auth
     config.authorization_client          = Baseline::Avo::PunditClientWithFallback
+    config.explicit_authorization        = true
     config.raise_error_on_missing_policy = false
     config.current_user_method do
       ::Current.admin_user
