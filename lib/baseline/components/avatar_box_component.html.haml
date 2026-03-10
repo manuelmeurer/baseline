@@ -16,16 +16,9 @@
 
 - case
 - when content
-  - if @vertical
-    .d-flex.flex-column{ class: ["align-items-#{@align_items}", @css_class], data: @data }
-      = render_image.call "mb-#{@margin}"
-      = content
-  - else
-    .d-flex{ class: ["align-items-#{@align_items}", @css_class], data: @data }
-      = render_image.call "me-#{@margin}"
-      .d-flex.overflow-auto
-        .align-self-center.overflow-auto
-          = content
+  .d-flex{ class: class_names("flex-column": @vertical, "align-items-#{@align_items}": true, @css_class => @css_class), data: @data }
+    = render_image.call "#{@vertical ? 'mb' : 'me'}-#{@margin}"
+    = content
 - when @data || @css_class
   %div{ class: @css_class, data: @data }
     = render_image.call
