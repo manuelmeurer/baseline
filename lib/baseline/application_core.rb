@@ -120,6 +120,7 @@ module Baseline
       config.dartsass.builds = {
         "." => "."
       }
+      config.dartsass.build_options << "--quiet"
 
       config.time_zone = "Europe/Berlin"
 
