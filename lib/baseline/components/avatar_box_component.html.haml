@@ -2,7 +2,7 @@
 
 - render_image = ->(css_class = nil) do
   - image = helpers.capture_haml do
-    - css_class = [css_class, class_names("border", "square-#{@size}", "rounded-circle": @circle)].compact
+    - css_class = [css_class, class_names("border", "object-fit-cover", "square-#{@size}", "rounded-circle": @circle)].compact
     - case @imageable
     - when String
       = image_tag @imageable, class: css_class
@@ -16,9 +16,11 @@
 
 - case
 - when content
-  .d-flex{ class: class_names("flex-column": @vertical, "align-items-#{@align_items}": true, @css_class => @css_class), data: @data }
+  .d-flex{ class: class_names(@css_class, "flex-column": @vertical, "align-items-#{@align_items}": true), data: @data }
     = render_image.call "#{@vertical ? 'mb' : 'me'}-#{@margin}"
-    = content
+    -# Wrap content in a div to prevent it from being affected by the flex properties of the parent container.
+    %div
+      = content
 - when @data || @css_class
   %div{ class: @css_class, data: @data }
     = render_image.call
