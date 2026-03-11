@@ -61,12 +61,7 @@ module Baseline
       save! if persisted?
     end
 
-    def to_s
-      [
-        name || "Anonymous",
-        email&.then { "(#{_1})" }
-      ].compact.join(" ")
-    end
+    def to_s = name || "Anonymous"
 
     private def after_deactivate = reset_remember_token!
   end
