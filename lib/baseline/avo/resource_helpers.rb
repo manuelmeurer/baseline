@@ -40,6 +40,14 @@ module Baseline
         end
       end
 
+      def filter_value(filter_class, key)
+        params[:encoded_filters]&.then {
+          ::Avo::Filters::BaseFilter
+            .decode_filters(_1)
+            .dig(filter_class.to_s, key)
+        }
+      end
+
       def polymorphic_types_with_resource(attribute)
         model_class
           .polymorphic_types(attribute)
