@@ -71,9 +71,22 @@ module Baseline
           (site_name if add_site_name_to_page_title?)
         ].compact.join(" | ")
 
+        image = if id = params[:id]
+          Rails
+            .application
+            .image_assets(page_image_path)
+            .keys
+            .detect {
+              File.basename(_1, ".*") == "og"
+            }&.then {
+              helpers.image_url(_1)
+            }
+        end
+
         # Assign to ivar so data can be changed.
         @og_data ||= {}
         @og_data.reverse_merge(
+          image:,
           locale:,
           site_name:,
           title:,
@@ -114,6 +127,17 @@ module Baseline
             .define(:url, :path)
             .new(**_1)
         }
+      end
+
+      helper_method def page_image_path(path = nil)
+        return nil unless id = params[:id]
+
+        File.join([
+          ::Current.namespace.to_s,
+          controller_name,
+          id,
+          path
+        ].compact)
       end
     end
 
