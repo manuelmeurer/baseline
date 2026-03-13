@@ -117,10 +117,12 @@ module Baseline
 
       config.autoload_lib ignore: %w[tasks]
 
-      config.dartsass.builds = {
-        "." => "."
-      }
-      config.dartsass.build_options << "--quiet"
+      if config.respond_to?(:dartsass)
+        config.dartsass.builds = {
+          "." => "."
+        }
+        config.dartsass.build_options << "--quiet"
+      end
 
       config.time_zone = "Europe/Berlin"
 
