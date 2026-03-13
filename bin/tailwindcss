@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Processes .css.erb templates in app/assets/tailwind/ and runs tailwindcss
+# for each resulting .css input file.
+#
+# Usage:
+#   bin/tailwindcss            # one-time build
+#   bin/tailwindcss -w         # watch mode
+#   bin/tailwindcss --minify   # minified build (production)
+
+require "bundler/setup"
+require "erb"
+require "tailwindcss/ruby"
+
+TAILWIND_DIR = "app/assets/tailwind"
+BUILDS_DIR   = "app/assets/builds"
+
+# 1. Process .css.erb templates
+
+# baseline_path is used in the ERB templates to reference files in the gem.
+baseline_path = Gem.loaded_specs["baseline"].full_gem_path
+
+Dir.glob("#{TAILWIND_DIR}/*.css.erb").each do |template_path|
+  output_path = template_path.delete_suffix(".erb")
+  result = ERB.new(File.read(template_path)).result(binding)
+  File.write(output_path, result)
+end
+
+# 2. Collect all CSS input files
+input_files = Dir.glob("#{TAILWIND_DIR}/*.css").sort
+
+if input_files.empty?
+  abort "No CSS input files found in #{TAILWIND_DIR}/"
+end
+
+# 3. Run tailwindcss for each input file
+exe    = Tailwindcss::Ruby.executable
+watch  = ARGV.include?("-w")
+minify = ARGV.include?("--minify")
+
+pids = input_files.map do |input|
+  name   = File.basename(input, ".css")
+  output = "#{BUILDS_DIR}/#{name}.css"
+
+  cmd = [exe, "-i", input, "-o", output]
+  cmd << "--minify" if minify
+  cmd << "-w" if watch
+
+  puts "tailwindcss: #{name}.css"
+  spawn(*cmd)
+end
+
+# Forward signals to child processes
+%w[INT TERM].each do |signal|
+  Signal.trap(signal) do
+    pids.each { |pid| Process.kill(signal, pid) rescue nil }
+  end
+end
+
+pids.each { |pid| Process.wait(pid) }
