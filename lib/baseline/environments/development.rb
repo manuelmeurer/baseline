@@ -12,9 +12,11 @@ Rails.application.configure do
     config.solid_queue.logger = ActiveSupport::Logger.new(STDOUT)
   end
 
-  config.hosts.push(
-    *Rails.application.env_credentials.host!.then { [_1, ".#{_1}"] }
-  )
+  # Make sure this file can be loaded even if `host`
+  # is not set yet, i.e. to regenerate the credentials file.
+  if host = Rails.application.env_credentials.host
+    config.hosts.push(host, ".#{host}")
+  end
 
   config.assets.quiet = true
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
