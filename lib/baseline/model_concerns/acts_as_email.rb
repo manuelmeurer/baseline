@@ -4,8 +4,6 @@ module Baseline
   module ActsAsEmail
     extend ActiveSupport::Concern
 
-    BASE_URL = "https://mail.google.com/mail/u/#{Rails.application.env_credentials.mail_from!}".freeze
-
     included do
       include ActiveModel::Model,
               GlobalID::Identification
@@ -16,6 +14,10 @@ module Baseline
     end
 
     class_methods do
+      def base_url
+        "https://mail.google.com/mail/u/#{Rails.application.env_credentials.mail_from!}"
+      end
+
       def find(id)
         new id:
       end
@@ -31,7 +33,7 @@ module Baseline
           end.join(" ")
         end
 
-        File.join(BASE_URL, "#search/#{CGI.escape query}")
+        File.join(base_url, "#search/#{CGI.escape query}")
       end
     end
 
@@ -103,7 +105,7 @@ module Baseline
     end
 
     def url
-      File.join(BASE_URL, "#all/#{id}")
+      File.join(self.class.base_url, "#all/#{id}")
     end
   end
 end
