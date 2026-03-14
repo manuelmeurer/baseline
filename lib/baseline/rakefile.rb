@@ -20,7 +20,7 @@ module Baseline
       if Rake::Task.task_defined?(tailwindcss_build)
         Rake::Task[tailwindcss_build].clear
         Rake::Task.define_task(tailwindcss_build) do
-          system("ruby", "bin/tailwindcss", "--minify", exception: true)
+          system("bin/tailwindcss", "--minify", exception: true)
         end
       end
     end
