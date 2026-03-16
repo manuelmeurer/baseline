@@ -11,10 +11,10 @@ module Baseline
         format:  :url_encoded_form,
         include: Subscription.identifiers
 
-      before_action only: %i[show update] do
+      around_action only: %i[show update] do |_, block|
         if @user = User.find_signed(params[:id])
-          I18n.locale = @user.locale
           @subscription_identifiers = Subscription.valid_identifiers_for(@user)
+          I18n.with_locale(@user.locale, &block)
         else
           html_redirect_to(web_home_path)
         end
