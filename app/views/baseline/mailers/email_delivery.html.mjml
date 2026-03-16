@@ -9,7 +9,7 @@
     - if header_url = @email_delivery.header_url
       = header_image header_url, href: @email_delivery.web_url, padding: 0
     - else
-      = header_image asset_url("logo.png"), width: logo_width, align: "left"
+      = header_image asset_url("brand/logo.png"), width: logo_width, align: "left"
       %mj-section{ padding: 0 }
         %mj-column
           %mj-divider{ "padding-top": 0, "padding-bottom": 0 }
