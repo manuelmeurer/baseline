@@ -25,7 +25,7 @@ module Baseline
     def attach?  = superadmin?
     def detach?  = superadmin?
 
-class Scope
+    class Scope
       def initialize(user, scope)
         @user, @scope =
           user, scope
