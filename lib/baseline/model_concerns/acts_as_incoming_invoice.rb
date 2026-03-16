@@ -10,8 +10,6 @@ module Baseline
 
       has_one :expense_invoice
 
-      has_many :freelancer_invoices, through: :engagement_invoice
-
       validates :pdf_file, presence: true
       validates :ignored_at, absence: { if: :expense_invoice }
 
