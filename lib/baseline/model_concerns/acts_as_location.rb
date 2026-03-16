@@ -50,15 +50,6 @@ module Baseline
           city: :copy
         }]
       end
-
-      def search(query)
-        ransack(
-          name_cont:    query,
-          address_cont: query,
-          m:            "or"
-        ).result \
-          distinct: false
-      end
     end
 
     def to_s
