@@ -13,4 +13,38 @@ RSpec.describe AdminUser do
       )
     end
   end
+
+  describe ".searchable_params" do
+    it "includes associated user columns" do
+      params = AdminUser.searchable_params
+
+      expect(params).to have_key(:associated_columns)
+      expect(params[:associated_columns]).to have_key(:user)
+      expect(params[:associated_columns][:user]).to eq(User.searchable_params.fetch(:columns))
+    end
+  end
+
+  describe ".search" do
+    it "generates SQL that searches associated user columns" do
+      sql = AdminUser.search("test").to_sql
+
+      User.searchable_params.fetch(:columns).each do |column|
+        expect(sql).to match(/users.*#{column}.*LIKE/i)
+      end
+    end
+
+    it "returns records matching user attributes" do
+      admin = create(:admin_user, user: create(:user, first_name: "Findme"))
+      create(:admin_user, user: create(:user, first_name: "Other"))
+
+      expect(AdminUser.search("Findme")).to eq([admin])
+    end
+
+    it "returns all records for blank query" do
+      create_list(:admin_user, 2)
+
+      expect(AdminUser.search("")).to eq(AdminUser.all.to_a)
+      expect(AdminUser.search(nil)).to eq(AdminUser.all.to_a)
+    end
+  end
 end

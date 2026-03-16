@@ -395,9 +395,19 @@ module Baseline
             against:  columns,
             using:    { tsearch: { prefix: true } },
             ignoring: :accents
+          }.if(reflect_on_association(:user)) {
+            _1.merge \
+              associated_against: {
+                user: User.searchable_params.fetch(:against)
+              }
           }
         when :sqlite
-          { columns: }
+          { columns: }.if(reflect_on_association(:user)) {
+            _1.merge \
+              associated_columns: {
+                user: User.searchable_params.fetch(:columns)
+              }
+          }
         else
           raise "Unexpected database adapter: #{db_adapter}"
         end
@@ -406,9 +416,8 @@ module Baseline
       def common_image_file_types = %i[jpeg png svg webp gif]
 
       if defined?(::Ransack)
-        def ransackable_attributes(auth_object = nil)
-          authorizable_ransackable_attributes
-        end
+        def ransackable_attributes(auth_object = nil)   = authorizable_ransackable_attributes
+        def ransackable_associations(auth_object = nil) = authorizable_ransackable_associations
       end
 
       def polymorphic_types(association)
@@ -787,15 +796,20 @@ module Baseline
               pg_search_scope :search, searchable_params
             end
           when :sqlite
-            scope :search, ->(query) {
-              next all if query.blank?
+            if defined?(::Ransack)
+              scope :search, ->(query) {
+                next all if query.blank?
 
-              searchable_params
-                .fetch(:columns)
-                .map { arel_table[_1].matches("%#{sanitize_sql_like(query)}%", "\\") }
-                .inject { _1.or(_2) }
-                .then { where _1 }
-            }
+                params = searchable_params
+                predicates = params.fetch(:columns).map { [:"#{_1}_cont", query] }.to_h
+
+                params[:associated_columns]&.each do |association, columns|
+                  columns.each { predicates[:"#{association}_#{_1}_cont"] = query }
+                end
+
+                predicates.merge(m: "or").then { ransack(_1).result(distinct: false) }
+              }
+            end
           else
             raise "Unexpected database adapter: #{db_adapter}"
           end
