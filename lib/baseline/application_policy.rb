@@ -80,6 +80,10 @@ class Scope
             ASSOCIATION_POLICY_ACTIONS.each do |action, base_method|
               method_name = :"#{action}_#{association.name}?"
 
+              # Skip if the subclass explicitly defines this method — let the
+              # hand-written override win over the auto-generated delegation.
+              next if self.class.method_defined?(method_name, false)
+
               if policy_class
                 define_singleton_method(method_name) do
                   policy_class.new(user, record).public_send(base_method)
