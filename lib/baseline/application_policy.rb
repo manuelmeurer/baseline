@@ -113,5 +113,32 @@ module Baseline
       end
 
       def superadmin? = user.role?(:superadmin)
+
+      # Avo's `authorize_association_for` checks `has_method?` using the parent record's policy
+      # (e.g. EventPolicy with an Event) but then calls `authorize_action` passing the child
+      # record (e.g. a User). Pundit re-creates the policy with the child record, so
+      # `define_association_policy_methods!` generates methods for User's associations — not
+      # Event's. The parent-specific method (e.g. `show_speakers?`) is missing, causing a
+      # NoMethodError that Avo interprets as unauthorized.
+      #
+      # This fallback catches any `{action}_{name}?` call that matches a known association
+      # policy action prefix and delegates to the corresponding base method.
+      ASSOCIATION_POLICY_ACTION_PATTERNS = ASSOCIATION_POLICY_ACTIONS
+        .to_h {
+          [/\A#{_1}_\w+\?\z/, _2]
+        }.freeze
+
+      def method_missing(method, *, &)
+        ASSOCIATION_POLICY_ACTION_PATTERNS.each do |pattern, base_method|
+          return public_send(base_method) if method.match?(pattern)
+        end
+
+        super
+      end
+
+      def respond_to_missing?(method, include_private = false)
+        ASSOCIATION_POLICY_ACTION_PATTERNS.any? { |pattern, _| method.match?(pattern) } ||
+          super
+      end
   end
 end
