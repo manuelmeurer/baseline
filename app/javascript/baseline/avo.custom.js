@@ -66,6 +66,45 @@ class FormReloadController extends Controller {
 const application = window.Stimulus
 application.register("form-reload", FormReloadController)
 
+// Collapse tall fields on show pages
+const FIELD_MAX_HEIGHT = 200
+
+function collapseFields() {
+  document.querySelectorAll(".field-wrapper [data-slot='value']").forEach(valueEl => {
+    const wrapper = valueEl.closest(".field-wrapper")
+    if (wrapper.classList.contains("field-value-processed")) return
+    wrapper.classList.add("field-value-processed")
+
+    if (valueEl.scrollHeight <= FIELD_MAX_HEIGHT) return
+
+    wrapper.classList.add("field-value-collapsed")
+
+    // Override self-center to prevent vertical centering of clipped content
+    const innerDiv = valueEl.querySelector(":scope > div")
+    if (innerDiv) innerDiv.classList.replace("self-center", "self-start")
+
+    const btn = document.createElement("button")
+    btn.type = "button"
+    btn.className = "field-value-toggle"
+    btn.textContent = "Show all"
+    btn.addEventListener("click", () => {
+      const collapsed = wrapper.classList.toggle("field-value-collapsed")
+      btn.textContent = collapsed ? "Show all" : "Show less"
+    })
+
+    // Wrap value and button in a column container so the button appears below the text
+    const col = document.createElement("div")
+    col.className = "field-value-container"
+    valueEl.parentNode.insertBefore(col, valueEl)
+    col.appendChild(valueEl)
+    col.appendChild(btn)
+  })
+}
+
+collapseFields()
+document.addEventListener("turbo:load", collapseFields)
+document.addEventListener("turbo:frame-load", collapseFields)
+
 // Close Avo action modal on Escape key
 document.addEventListener("keydown", event => {
   if (event.key !== "Escape")
