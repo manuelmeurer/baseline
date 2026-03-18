@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z "$CONDUCTOR_PORT" ] && [ -z "$1" ]; then
+  echo "Usage: bin/env <default_port>" >&2
+  exit 1
+fi
+export PORT=${CONDUCTOR_PORT:-${PORT:-$1}}
+
+if [ -n "$CONDUCTOR_WORKSPACE_NAME" ]; then
+  export DB_NAME_SUFFIX="conductor_${CONDUCTOR_WORKSPACE_NAME}"
+fi

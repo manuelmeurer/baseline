@@ -30,6 +30,7 @@ class Setup < Thor
     def setup_conductor
       symlink_from_conductor(".bundle")
       symlink_from_conductor("config/master.key")
+      system("bin/rails", "db:setup") || abort("db:setup failed")
     end
 
     def symlink_from_conductor(path)
