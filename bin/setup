@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+require "fileutils"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "thor"
+end
+
+class Setup < Thor
+  include Thor::Actions
+
+  default_command :setup
+
+  def self.exit_on_failure? = true
+
+  desc "setup", "Set up the project"
+  def setup
+    if @app_root = ENV["CONDUCTOR_ROOT_PATH"]
+      setup_conductor
+    else
+      abort "TODO: add setup instructions for non-conductor environments"
+    end
+  end
+
+  private
+
+    def setup_conductor
+      symlink_from_conductor(".bundle")
+      symlink_from_conductor("config/master.key")
+    end
+
+    def symlink_from_conductor(path)
+      source = File.join(@app_root, path)
+
+      unless File.exist?(source)
+        abort "Error: #{source} not found in app root."
+      end
+      if File.exist?(path)
+        return if File.symlink?(path)
+        abort "Error: #{path} exists and is not a symlink. Remove it manually first."
+      end
+
+      say "Symlinking #{path} from #{source}..."
+      FileUtils.mkdir_p(File.dirname(path))
+      FileUtils.ln_s(source, path)
+    end
+end
+
+Setup.start(ARGV)
