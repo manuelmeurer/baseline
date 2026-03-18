@@ -79,8 +79,9 @@ module Baseline
       end.presence or
         raise "Could not load revision."
 
-      %i[host protocol port]
+      %i[host protocol]
         .index_with { env_credentials[_1] }
+        .merge(port: ENV.fetch("PORT"))
         .compact
         .then do |url_options|
           Rails.application.routes.default_url_options =
