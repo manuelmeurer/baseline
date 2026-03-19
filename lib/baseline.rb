@@ -9,6 +9,7 @@ loader.ignore("#{__dir__}/baseline/environments")
 loader.ignore("#{__dir__}/baseline/initializers")
 loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
 loader.ignore("#{__dir__}/baseline/services/external")
+loader.ignore("#{__dir__}/baseline/dummies")
 loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
 loader.ignore("#{__dir__}/baseline/spec/rails_helper.rb")
 loader.ignore("#{__dir__}/baseline/spec/spec_helper.rb")
@@ -60,6 +61,19 @@ module Baseline
       File.write pathname, content
     end
 
+    def load_conductor_env
+      return unless ENV["CONDUCTOR_ROOT_PATH"]
+
+      env_file = ".env.conductor"
+
+      File.write env_file, <<~CONTENT
+        PORT=$CONDUCTOR_PORT
+        DB_NAME_SUFFIX=conductor_$CONDUCTOR_WORKSPACE_NAME
+      CONTENT
+
+      Dotenv::Rails.files.unshift(env_file)
+    end
+
     def load_thor_tasks
       path = File.expand_path(__dir__)
       Dir
@@ -67,6 +81,12 @@ module Baseline
         .each {
           load _1
         }
+    end
+
+    def dummy(ext)
+      File
+        .join(__dir__, "baseline", "dummies", "dummy.#{ext}")
+        .tap { raise "Dummy file not found: #{_1}" unless File.exist?(_1) }
     end
 
     def load_initializer(identifier, **kwargs)
