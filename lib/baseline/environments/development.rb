@@ -18,6 +18,8 @@ Rails.application.configure do
     config.hosts.push(host, ".#{host}")
   end
 
+  config.active_record.protected_environments = []
+
   config.assets.quiet = true
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
