@@ -4,14 +4,10 @@ DEFAULT_PORT=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --default-port=*)
-      DEFAULT_PORT="${1#*=}"
-      shift
-      ;;
-    *)
-      shift
-      ;;
+    --default-port=*) DEFAULT_PORT="${1#*=}" ;;
+    --default-port)   DEFAULT_PORT="$2"; shift ;;
   esac
+  shift
 done
 
 if [ -z "$CONDUCTOR_PORT" ] && [ -z "$DEFAULT_PORT" ]; then
