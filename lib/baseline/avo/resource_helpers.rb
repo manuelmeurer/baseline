@@ -116,7 +116,7 @@ module Baseline
               as:           :text,
               only_on:      :display,
               format_using: -> { mail_to value },
-              sortable:     true
+              sortable:     !!column_type
             )
           ]
         when attribute_suffix == :url
@@ -125,7 +125,7 @@ module Baseline
             .reverse_merge(
               default:,
               as:       :text,
-              sortable: true,
+              sortable: !!column_type,
               format_display_using: -> {
                 if value.present?
                   link_to \
@@ -141,13 +141,13 @@ module Baseline
             default:,
             as:       :select,
             options:  Baseline::Avo::Filters::Language.new.options.invert,
-            sortable: true
+            sortable: !!column_type
           )
         when attribute_suffix == :amount
           options.reverse_merge(
             default:,
             as:       :text,
-            sortable: true,
+            sortable: !!column_type,
             format_display_using: -> {
               value.format
             }
@@ -156,7 +156,7 @@ module Baseline
           options.reverse_merge(
             default:,
             as:       :country,
-            sortable: true,
+            sortable: !!column_type,
             format_using: -> {
               value&.alpha2
             }
