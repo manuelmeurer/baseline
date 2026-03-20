@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Load env files explicitly and pass /dev/null as env file to foreman
+# to circumvent foreman's automatic .env loading, which does not support
+# variable substitution (e.g. FOO=${BAR}).
+set -a
+[ -f .env ] && source .env
+[ -f .env.conductor ] && source .env.conductor
+set +a
+
+exec foreman start -f Procfile.dev -e /dev/null "$@"
