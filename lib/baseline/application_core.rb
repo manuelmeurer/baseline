@@ -81,8 +81,9 @@ module Baseline
 
       %i[host protocol]
         .index_with { env_credentials[_1] }
-        .merge(port: ENV.fetch("PORT"))
-        .compact
+        .unless(Rails.env.production?) { # Hatchbox sets a PORT env var in production, which we don't want to use.
+          _1.merge(port: ENV.fetch("PORT"))
+        }.compact
         .then do |url_options|
           Rails.application.routes.default_url_options =
             config.action_mailer.default_url_options =
