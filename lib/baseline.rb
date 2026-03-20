@@ -66,10 +66,16 @@ module Baseline
 
       env_file = ".env.conductor"
 
-      File.write env_file, <<~CONTENT
-        PORT=$CONDUCTOR_PORT
-        DB_NAME_SUFFIX=conductor_$CONDUCTOR_WORKSPACE_NAME
-      CONTENT
+      unless File.exist?(env_file)
+        # Resolve statically: the workspace name can change during a Conductor
+        # session, but the DB name must stay what it was when the DB was created.
+        workspace_name = ENV.fetch("CONDUCTOR_WORKSPACE_NAME")
+
+        File.write env_file, <<~CONTENT
+          PORT=$CONDUCTOR_PORT
+          DB_NAME_SUFFIX=conductor_#{workspace_name}
+        CONTENT
+      end
 
       Dotenv::Rails.files.unshift(env_file)
     end
