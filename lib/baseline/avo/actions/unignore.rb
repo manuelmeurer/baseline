@@ -7,12 +7,15 @@ module Baseline
         def handle(query:, **)
           process(
             query,
-            condition:       -> { _1.ignored? },
+            condition:       ->(record) { record.ignored? },
             success_message: "unignored successfully.",
             error_message:   "already unignored."
-          ) {
-            _1.unignored!
-          }
+          ) do |record|
+            record.unignored!
+            suppress record.class::ServiceNotFound do
+              record._do_process_unignored(_async: true)
+            end
+          end
         end
       end
     end

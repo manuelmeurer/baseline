@@ -7,7 +7,7 @@ module Baseline
         def handle(query:, **)
           process(
             query,
-            condition:       -> { _1.unpublished? },
+            condition:       ->(record) { record.unpublished? },
             success_message: "published successfully.",
             error_message:   "already published."
           ) do |record|

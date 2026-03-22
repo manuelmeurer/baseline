@@ -7,11 +7,14 @@ module Baseline
         def handle(query:, **)
           process(
             query,
-            condition:       -> { _1.published? },
+            condition:       ->(record) { record.published? },
             success_message: "unpublished successfully.",
             error_message:   "not published."
           ) do |record|
             record.unpublished!
+            suppress record.class::ServiceNotFound do
+              record._do_process_unpublished(_async: true)
+            end
           end
         end
       end

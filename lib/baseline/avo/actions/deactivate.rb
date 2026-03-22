@@ -20,12 +20,15 @@ module Baseline
         def handle(query:, fields:, **)
           process(
             query,
-            condition:       -> { _1.active? },
+            condition:       ->(record) { record.active? },
             success_message: "deactivated successfully.",
             error_message:   "already deactivated."
-          ) {
-            _1.deactivate!(**fields)
-          }
+          ) do |record|
+            record.deactivate!(**fields)
+            suppress record.class::ServiceNotFound do
+              record._do_process_deactivated(_async: true)
+            end
+          end
         end
       end
     end
