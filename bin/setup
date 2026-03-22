@@ -31,6 +31,7 @@ class Setup < Thor
       symlink_from_app_root(".bundle")
       symlink_from_app_root("config/master.key")
       system("bin/rails", "db:setup") || abort("db:setup failed")
+      system("bin/rails", "db:test:prepare") || abort("db:test:prepare failed")
     end
 
     def symlink_from_app_root(path)
