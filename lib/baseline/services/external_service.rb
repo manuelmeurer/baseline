@@ -3,6 +3,7 @@
 module Baseline
   class ExternalService < ApplicationService
     RETRY_ERRORS = [
+      Errno::ECONNREFUSED,
       Errno::ECONNRESET,
       Net::ProtocolError,
       OpenSSL::SSL::SSLError,
