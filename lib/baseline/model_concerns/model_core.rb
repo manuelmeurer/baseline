@@ -306,7 +306,7 @@ module Baseline
             end
             .compact
             .first or
-              raise ServiceNotFound, "Could not find service #{service_name} for #{self.class}."
+              raise self.class::ServiceNotFound, "Could not find service #{service_name} for #{self.class}."
         end
       end
 
