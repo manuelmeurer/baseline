@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+%h1.text-white.text-4xl.font-bold.mt-4
+  Header Images:
+  = @record.title
+
+- Baseline::GenerateHeaderImages::DIMENSIONS.each do |name, (width, height)|
+  %div
+    %p.text-gray-400.text-sm.mb-2
+      = "#{name} — #{width}x#{height}px"
+    %div{ class: "border border-gray-700 rounded" }
+      %div{ id: Baseline::GenerateHeaderImages::ELEMENT_IDS[name], style: "width: #{width}px; height: #{height}px;", class: "relative overflow-hidden bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col justify-between p-12" }
+        = render "admin/header_images/#{@record.class.to_s.underscore}", height:
