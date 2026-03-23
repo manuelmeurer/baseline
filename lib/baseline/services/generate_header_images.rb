@@ -9,10 +9,8 @@ module Baseline
       "1:1"   => [1200, 1200],
       "1.9:1" => [1200, 630]
     }.freeze
-
     ELEMENT_IDS = DIMENSIONS
-      .keys
-      .to_h { [_1, "header-#{_1.tr(".", "_")}"] }
+      .to_h { [_1, "header-#{_2.join("-")}"] }
       .freeze
 
     def call(record)
@@ -27,7 +25,7 @@ module Baseline
       DIMENSIONS.each do |name, (width, height)|
         path = External::BrowserScreenshot.generate(
           html,
-          locator:  "##{ELEMENT_IDS[name]}",
+          locator:  "##{ELEMENT_IDS.fetch(name)}",
           viewport: [width, height],
           save_to:  :file
         )

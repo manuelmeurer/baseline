@@ -3,21 +3,7 @@
 module Baseline
   module External
     class BrowserScreenshot < ::External::Base
-      DUMMY_URL = "https://weirdspace.info/RuneAndreasson/Graphics/Pellefant.gif".freeze
-      SAVE_TO_DEFAULT = :web
-      RETURN_UNLESS_PROD = ->(*_args, save_to: SAVE_TO_DEFAULT, **_kwargs) {
-        case save_to
-        when :web  then DUMMY_URL
-        when :file then Baseline.dummy(:png).to_s
-        else raise "Unexpected save_to: #{save_to}"
-        end
-      }.freeze
-
-      add_action :generate, return_unless_prod: RETURN_UNLESS_PROD do |html, locator: nil, viewport: nil, save_to: SAVE_TO_DEFAULT, cache: false|
-        unless save_to.in?(%i[web file])
-          raise "Unexpected save_to: #{save_to}"
-        end
-
+      add_action :generate, run_unless_prod: true do |html, locator: nil, viewport: nil, save_to: :web, cache: false|
         if cache
           cache_key = [
             :browser_screenshot,

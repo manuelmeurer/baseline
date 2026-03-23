@@ -5,7 +5,9 @@ module Baseline
     module Actions
       class GenerateHeaderImages < ::Avo::BaseAction
         def handle(query:, **)
-          query.each(&:_do_generate_header_images)
+          query.each do |record|
+            Baseline::GenerateHeaderImages.call(record)
+          end
           succeed "Header images generated."
         end
       end
