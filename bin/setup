@@ -30,8 +30,9 @@ class Setup < Thor
     def setup_conductor
       symlink_from_app_root(".bundle")
       symlink_from_app_root("config/master.key")
-      system("bin/rails", "db:setup") || abort("db:setup failed")
-      system("bin/rails", "db:test:prepare") || abort("db:test:prepare failed")
+      %w[development test].each do |env|
+        run("RAILS_ENV=#{env} bin/rails db:prepare", abort_on_failure: true)
+      end
     end
 
     def symlink_from_app_root(path)
