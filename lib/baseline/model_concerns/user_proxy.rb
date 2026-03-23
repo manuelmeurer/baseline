@@ -31,7 +31,6 @@ module Baseline
 
         # Email confirmations
         :current_email_confirmation,
-        :email_confirmations,
         :email_confirmed?,
 
         # Deactivatable
@@ -43,15 +42,11 @@ module Baseline
         :deactivated_between?,
         :deactivated?,
         :deactivation,
-        :deactivations,
-        :deactivations=,
         :reactivate!,
 
         # Subscriptions
-        :subscribed,
+        :subscribe,
         :subscribed?,
-        :subscription_ids,
-        :subscriptions,
         :unsubscribe,
         :update_subscriptions
       ).freeze
@@ -68,6 +63,10 @@ module Baseline
 
     included do
       delegate *METHODS, :to_s, to: :user
+
+      has_many :deactivations, through: :user
+      has_many :email_confirmations, through: :user
+      has_many :subscriptions, through: :user
 
       SCOPES.each do |scope_name|
         scope scope_name, ->(*args) {
