@@ -54,6 +54,20 @@ if defined?(Lexxy)
   ::Avo.asset_manager.add_stylesheet "lexxy"
 end
 
+# Prevent has_one fields from trying to load unpersisted records (e.g. auto-built
+# by `super || build_*`), which would generate a URL without a related_id and hit
+# the has_many index route, causing a NoMethodError on `scope`.
+class ::Avo::Fields::HasOneField
+  module PersistedValue
+    def value(...)
+      # super&.unless(&:persisted?)
+      result = super
+      result&.persisted? ? result : nil
+    end
+  end
+  prepend PersistedValue
+end
+
 class ::Avo::Fields::BooleanField
   def as_toggle? = @args.key?(:as_toggle) ? !!@args[:as_toggle] : true
 end
