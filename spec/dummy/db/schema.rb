@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_04_145753) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_23_143100) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -69,6 +69,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_145753) do
     t.datetime "updated_at", null: false
     t.index ["deactivatable_type", "deactivatable_id"], name: "index_deactivations_on_deactivatable"
     t.index ["initiator_type", "initiator_id"], name: "index_deactivations_on_initiator"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.datetime "started_at", null: false
+    t.integer "duration", null: false
+    t.virtual "ended_at", type: :datetime, as: "datetime(started_at, '+' || duration || ' minutes')", stored: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
