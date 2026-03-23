@@ -17,12 +17,7 @@ module Baseline
 
       before_validation on: :create, if: :original do
         io = if Rails.env.development? && original.file.service_name != Rails.application.config.active_storage.service.to_s
-          Rails
-            .root
-            .join("spec", "support", "dummy.pdf")
-            .then {
-              File.open _1
-            }
+          File.open(Baseline.dummy(:png))
         else
           StringIO.new(original.file.download)
         end
