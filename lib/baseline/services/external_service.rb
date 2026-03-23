@@ -66,6 +66,54 @@ module Baseline
 
     private
 
+      def with_browser_page(page_params: {}, **params)
+        unless params.key?(:headless)
+          params[:headless] = true
+        end
+
+        if params[:proxy] == true
+          params[:proxy] = Rails.application.config_for(:proxies).sample
+        end
+
+        with_playwright_chromium(**params) do |browser|
+          page = browser.new_page(**page_params)
+
+          begin
+            yield page
+          rescue => error
+            begin
+              cloudinary_upload = page
+                .screenshot(fullPage: true)
+                .then { StringIO.new _1 }
+                .then do |screenshot_io|
+                  tags = Rails
+                    .application
+                    .class
+                    .module_parent_name
+                    .parameterize
+                    .then {
+                      [_1, "#{_1}-screenshot" ]
+                    } << "tmp"
+                  Cloudinary::Uploader.upload \
+                    screenshot_io,
+                    tags:
+                end
+            rescue => screenshot_error
+              ReportError.call Error, "Error saving screenshot and uploading to Cloudinary: #{screenshot_error.message} (#{screenshot_error.class})"
+              raise error
+            else
+              Sentry.with_scope do |scope|
+                scope.set_context :screenshot, {
+                  browser_url:    page.url,
+                  screenshot_url: cloudinary_upload.fetch("secure_url")
+                }
+                raise error
+              end
+            end
+          end
+        end
+      end
+
       def request(
         method,
         path_or_url,
