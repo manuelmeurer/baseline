@@ -675,6 +675,10 @@ module Baseline
             end
           end
 
+          define_method :unsubscribe_all do
+            subscriptions.destroy_all
+          end
+
           define_method :subscribed? do |identifier|
             unless Subscription.valid_identifiers_for(self).include?(identifier.to_s)
               raise "Identifier is not valid for user: #{identifier}"
