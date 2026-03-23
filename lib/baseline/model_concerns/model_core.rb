@@ -505,20 +505,30 @@ module Baseline
 
           column_data = { type: column_type }
 
-          options&.scan(/(\w+):\s*([^,]+)/) do |key, value|
+          # Match key: value pairs, respecting quoted strings that may contain commas
+          options&.scan(/(\w+):\s*("(?:[^"\\]|\\.)*"|[^,]+)/) do |key, value|
             parsed_value =
               case value.strip
-              when "nil"      then nil
-              when "true"     then true
-              when "false"    then false
-              when /^\d+$/    then value.to_i
-              when /^"(.+)"$/ then $1
-              when /^\[\]$/   then []
-              when /^\{\}$/   then {}
+              when "nil"       then nil
+              when "true"      then true
+              when "false"     then false
+              when /^\d+$/     then value.to_i
+              when /^:(\w+)$/  then $1.to_sym
+              when /^"(.+)"$/  then $1
+              when /^\[\]$/    then []
+              when /^\{\}$/    then {}
               else value.strip
               end
 
             column_data[key.to_sym] = parsed_value
+          end
+
+          # Virtual columns: promote type option, group as/stored into virtual hash
+          if column_type == :virtual
+            virtual_opts = {}
+            virtual_opts[:as]     = column_data.delete(:as) if column_data.key?(:as)
+            virtual_opts[:stored] = column_data.delete(:stored) if column_data.key?(:stored)
+            column_data[:virtual] = virtual_opts
           end
 
           columns[column_name.to_sym] = column_data
