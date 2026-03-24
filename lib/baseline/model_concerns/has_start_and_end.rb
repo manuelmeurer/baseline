@@ -14,19 +14,20 @@ module Baseline
 
         included do
           prefixed = -> { [prefix, _1].compact.join("_").if(_1.is_a?(Symbol), &:to_sym) }
-          type ||=
-            schema_columns
-              .fetch_values(start_attribute, end_attribute)
-              .map { _1.fetch :type }
-              .uniq
-              .sole
+          start_column, end_column = schema_columns.fetch_values(start_attribute, end_attribute)
+          type ||= [start_column, end_column]
+            .map { _1.fetch :type }
+            .uniq
+            .sole
 
-          validates end_attribute,
-            comparison: {
-              greater_than_or_equal_to: start_attribute,
-              if:                       start_attribute,
-              allow_nil:                true
-            }
+          unless end_column[:virtual]
+            validates end_attribute,
+              comparison: {
+                greater_than_or_equal_to: start_attribute,
+                if:                       start_attribute,
+                allow_nil:                true
+              }
+          end
 
           if self < ActiveRecord::Base
             scope prefixed.call(:upcoming), -> {
