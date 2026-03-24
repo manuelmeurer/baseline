@@ -36,6 +36,13 @@ module Baseline
             }
           end
 
+          remote_url_params = model_class
+            .reflect_on_all_attachments
+            .select { _1.is_a?(ActiveStorage::Reflection::HasOneAttachedReflection) }
+            .map { :"remote_#{_1.name}_url" }
+
+          self.extra_params = remote_url_params if remote_url_params.present?
+
           @_baseline_finalized = true
         end
       end

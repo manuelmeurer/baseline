@@ -6,6 +6,9 @@ require "rails/all"
 
 Bundler.require(*Rails.groups)
 
+Dotenv::Rails.overwrite = true
+Baseline.load_conductor_env
+
 module Dummy
   class Application < Rails::Application
     include Baseline::ApplicationCore
