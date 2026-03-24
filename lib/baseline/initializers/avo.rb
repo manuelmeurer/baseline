@@ -67,6 +67,47 @@ class ::Avo::Fields::HasOneField
   prepend PersistedValue
 end
 
+# Extend global search (Cmd+K) to include matching sidebar navigation items
+# above the regular search results.
+Rails.application.config.after_initialize do
+  ::Avo::SearchController.prepend(Module.new do
+    def index
+      super
+
+      q = params[:q].to_s.strip
+      return if q.blank?
+
+      root = ::Avo.configuration.root_path
+      navigation_results = ::Avo
+        .resource_manager
+        .resources_for_navigation
+        .select { _1.navigation_label.downcase.include?(q.downcase) }
+        .sort_by(&:navigation_label)
+        .map do |resource|
+          {
+            _id:    resource.route_key,
+            _label: resource.navigation_label,
+            _url:   "/#{root}/resources/#{resource.route_key}"
+          }
+        end
+
+      if navigation_results.present?
+        body = JSON
+          .parse(response.body)
+          .reverse_merge(
+            _navigation: {
+              header: "Pages (#{navigation_results.size})",
+              help: "",
+              results: navigation_results,
+              count: navigation_results.size
+            }
+          )
+        response.body = body.to_json
+      end
+    end
+  end)
+end
+
 class ::Avo::Fields::BooleanField
   def as_toggle? = @args.key?(:as_toggle) ? !!@args[:as_toggle] : true
 end
