@@ -60,7 +60,6 @@ end
 class ::Avo::Fields::HasOneField
   module PersistedValue
     def value(...)
-      # super&.unless(&:persisted?)
       result = super
       result&.persisted? ? result : nil
     end
