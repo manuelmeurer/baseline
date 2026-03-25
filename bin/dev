@@ -4,6 +4,7 @@
 # to circumvent foreman's automatic .env loading, which does not support
 # variable substitution (e.g. FOO=${BAR}).
 set -a
+[ -f .env.development ] && source .env.development
 [ -f .env ] && source .env
 [ -f .env.conductor ] && source .env.conductor
 set +a
