@@ -28,27 +28,29 @@ class Setup < Thor
   private
 
     def setup_conductor
-      symlink_from_app_root(".bundle")
-      symlink_from_app_root("config/master.key")
+      symlink_from_app_root \
+        ".bundle",
+        "config/master.key"
+
       %w[development test].each do |env|
         run("RAILS_ENV=#{env} bin/rails db:prepare", abort_on_failure: true)
       end
     end
 
-    def symlink_from_app_root(path)
-      source = File.join(@app_root, path)
+    def symlink_from_app_root(*paths)
+      paths.each do |path|
+        source = File.join(@app_root, path)
+        return unless File.exist?(source)
 
-      unless File.exist?(source)
-        abort "Error: #{source} not found in app root."
-      end
-      if File.exist?(path)
-        return if File.symlink?(path)
-        abort "Error: #{path} exists and is not a symlink. Remove it manually first."
-      end
+        if File.exist?(path)
+          return if File.symlink?(path)
+          abort "Error: #{path} exists and is not a symlink. Remove it manually first."
+        end
 
-      say "Symlinking #{path} from #{source}..."
-      FileUtils.mkdir_p(File.dirname(path))
-      FileUtils.ln_s(source, path)
+        say "Symlinking #{path} from #{source}..."
+        FileUtils.mkdir_p(File.dirname(path))
+        FileUtils.ln_s(source, path)
+      end
     end
 end
 
