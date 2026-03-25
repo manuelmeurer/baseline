@@ -40,7 +40,7 @@ class Setup < Thor
     def symlink_from_app_root(*paths)
       paths.each do |path|
         source = File.join(@app_root, path)
-        return unless File.exist?(source)
+        next unless File.exist?(source)
 
         if File.exist?(path)
           return if File.symlink?(path)
