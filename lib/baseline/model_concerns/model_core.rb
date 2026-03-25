@@ -5,8 +5,6 @@ module Baseline
     extend ActiveSupport::Concern
 
     included do
-      const_set :ServiceNotFound, Class.new(StandardError)
-
       if defined?(MemoWise)
         prepend MemoWise
       end
@@ -216,6 +214,8 @@ module Baseline
           return super
         end
 
+        subclass.const_set :ServiceNotFound, Class.new(StandardError)
+
         super
 
         if defined?(PaperTrail) &&
@@ -306,7 +306,7 @@ module Baseline
             end
             .compact
             .first or
-              raise self.class::ServiceNotFound, "Could not find service #{service_name} for #{self.class}."
+              raise const_get(:ServiceNotFound), "Could not find service #{service_name} for #{self.class}."
         end
       end
 
