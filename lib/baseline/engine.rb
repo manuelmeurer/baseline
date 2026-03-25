@@ -23,6 +23,11 @@ module Baseline
       ActiveSupport.on_load(:action_controller) do
         append_view_path components_path
       end
+
+      ActionController::Renderers.add :ics do |object, _|
+        ical = object.try(:to_ical) || object
+        send_data ical, type: Mime::Type.new("text/calendar")
+      end
     end
 
     initializer "baseline.assets.precompile" do |app|

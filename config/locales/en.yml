@@ -3,6 +3,7 @@ en:
   "yes": "yes"
   "false": "false"
   "true": "true"
+  add_to_calendar: "Add to calendar:"
   back: back
   cancel: cancel
   clear: Clear

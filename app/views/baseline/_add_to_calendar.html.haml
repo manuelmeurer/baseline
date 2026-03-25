@@ -1,0 +1,18 @@
+-# frozen_string_literal: true
+-# locals: (record:)
+
+%p
+  = t :add_to_calendar
+
+.d-flex.gap-3
+  - record.add_to_calendar_data.each do |calendar_type, data|
+    = link_to data.fetch(:url), class: "btn btn-sm btn-outline-dark", **external_link_attributes do
+      - case calendar_type
+      - when :google, :yahoo
+        = component :icon, calendar_type.to_s, version: :brands
+      - when :outlook
+        = component :icon, "microsoft", version: :brands
+      - when :ics
+        = component :icon, "calendar-plus"
+      - else raise "Unexpected calendar type: #{calendar_type}"
+      = data.fetch(:label)
