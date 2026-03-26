@@ -77,6 +77,7 @@ module Baseline
         CONTENT
       end
 
+      Dotenv::Rails.overwrite = true
       Dotenv::Rails.files.unshift(env_file)
     end
 
