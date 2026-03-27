@@ -13,7 +13,7 @@ module Baseline
 
     private
 
-      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/master/services/google.md
+      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/main/services/google.md
       def generate_google
         query_values = {
           action:  "TEMPLATE",
@@ -34,7 +34,7 @@ module Baseline
         ).to_s
       end
 
-      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/master/services/outlook-web.md
+      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/main/services/outlook-web.md
       def generate_outlook
         time_query_values = {
           startdt: @started_at,
@@ -57,7 +57,7 @@ module Baseline
         ).to_s
       end
 
-      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/master/services/yahoo.md
+      # https://github.com/InteractionDesignFoundation/add-event-to-calendar-docs/blob/main/services/yahoo.md
       def generate_yahoo
         time_query_values = {
           st: @started_at,
