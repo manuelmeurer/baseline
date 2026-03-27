@@ -10,7 +10,9 @@ module Baseline
           actions_field do
             deactivate_reactivate_button
           end
-          field :name, as: :text
+          field :name, as: :text, only_on: :display
+          field :first_name, as: :text, only_on: :forms
+          field :last_name, as: :text, only_on: :forms
           field :photo, delegated_model_class: "User"
           field :email
           field :alternate_emails, delegated_model_class: "User"
