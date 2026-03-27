@@ -40,5 +40,9 @@ module Baseline
     def valid_recipients
       [recipient].compact
     end
+
+    def add_to_calendar_data
+      messageable.try(:add_to_calendar_data)
+    end
   end
 end
