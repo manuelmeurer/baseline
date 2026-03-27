@@ -3,6 +3,7 @@
 module Baseline
   class AttachmentImageComponent < ApplicationComponent
     CLOUDINARY_VERSIONS = {
+      xxs:   25,
       xs:    50,
       sm:   100,
       md:   250,
@@ -98,7 +99,7 @@ module Baseline
         )
         helpers.public_send \
           :"image_#{suffix}",
-          polymorphic_url(variant, host: Rails.application.env_credentials.host!),
+          helpers.main_app.polymorphic_url(variant, host: Rails.application.env_credentials.host!),
           **@options
       when "CloudinaryService"
         helpers.public_send \
