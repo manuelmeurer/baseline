@@ -111,3 +111,16 @@ end
 class ::Avo::Fields::BooleanField
   def as_toggle? = @args.key?(:as_toggle) ? !!@args[:as_toggle] : true
 end
+
+# Default to the Rails app timezone (config.time_zone) instead of the browser's
+# timezone for all datetime and time fields.
+class ::Avo::Fields::DateTimeField
+  module AppTimezone
+    def timezone
+      super ||
+        Rails.application.config.time_zone.presence or
+          raise "Rails app timezone not set."
+    end
+  end
+  prepend AppTimezone
+end
