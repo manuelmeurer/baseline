@@ -69,6 +69,20 @@ RSpec.configure do |config|
   config.before :suite do
     Rails.application.load_seed
     Baseline.ensure_playwright_chromium_installed!
+
+    # Verify that the configured host resolves to localhost so system tests can connect.
+    host = Rails.application.routes.default_url_options[:host]
+    if host.present? && !host.in?(["localhost", "127.0.0.1"])
+      require "resolv"
+      begin
+        resolved = Resolv.getaddress(host)
+        unless resolved.in?(["127.0.0.1", "::1"])
+          warn "⚠️ DNS for #{host} resolves to #{resolved} instead of 127.0.0.1 or ::1. System tests will likely fail."
+        end
+      rescue Resolv::ResolvError
+        abort "❌ DNS for #{host} does not resolve. System tests cannot run."
+      end
+    end
   end
 
   config.before :each, type: :system do
