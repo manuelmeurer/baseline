@@ -90,6 +90,10 @@ module Baseline
         }
     end
 
+    def ensure_playwright_chromium_installed!
+      system("npx playwright@#{::Playwright::COMPATIBLE_PLAYWRIGHT_VERSION} install chromium")
+    end
+
     def dummy(ext)
       File
         .join(__dir__, "baseline", "dummies", "dummy.#{ext}")

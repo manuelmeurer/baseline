@@ -251,6 +251,8 @@ module Baseline
       def with_playwright_chromium(**browser_params)
         require "playwright"
 
+        Baseline.ensure_playwright_chromium_installed!
+
         playwright_params = {
           playwright_cli_executable_path: "npx playwright@#{Playwright::COMPATIBLE_PLAYWRIGHT_VERSION}"
         }

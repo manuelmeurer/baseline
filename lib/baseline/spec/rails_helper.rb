@@ -68,6 +68,7 @@ RSpec.configure do |config|
 
   config.before :suite do
     Rails.application.load_seed
+    Baseline.ensure_playwright_chromium_installed!
   end
 
   config.before :each, type: :system do
