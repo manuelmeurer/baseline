@@ -211,6 +211,35 @@ module Baseline
       end
     end
 
+    def find_local_record(scope, param = params[:id])
+      if params[:draft]
+        if draft = scope.detect { _1.slug == param }
+          return draft
+        else
+          raise ActiveRecord::RecordNotFound
+        end
+      end
+
+      local_record =
+        if published_on = param[/\A(\d{4}-\d{2}-\d{2})/, 1]&.then { Date.parse(_1) }
+          scope.find_by(published_on:)
+        else
+          scope.find_by(slug: param)
+        end
+
+      unless local_record
+        raise ActiveRecord::RecordNotFound
+      end
+
+      unless param == local_record.to_param
+        html_redirect_to \
+          [:web, local_record],
+          status: :moved_permanently
+      end
+
+      local_record
+    end
+
     def current_language = Language.new(locale: I18n.locale)
 
     def validate_turnstile
