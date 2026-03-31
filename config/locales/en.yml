@@ -31,6 +31,22 @@ en:
   tomorrow: tomorrow
   yesterday: yesterday
 
+  date:
+    formats:
+      default: "%b %-e, %Y"
+      default_with_weekday: "%A, %b %-e, %Y"
+      short: "%b %-e"
+      long: "%B %-e, %Y"
+      long_without_year: "%B %-e"
+      german: "%-d.%-m.%Y"
+      month_and_year: "%B %Y"
+
+  time:
+    formats:
+      default: "%b %-e, %Y at %-H:%M"
+      time: "%-H:%M"
+      long: "%B %-e, %Y %-H:%M"
+
   attributes:
     bio: Biography
 

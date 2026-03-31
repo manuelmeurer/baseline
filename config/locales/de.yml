@@ -31,6 +31,21 @@ de:
   tomorrow: morgen
   yesterday: gestern
 
+  date:
+    formats:
+      default: "%-e. %b %Y"
+      default_with_weekday: "%A, %-e. %b %Y"
+      short: "%-e.%-m."
+      long: "%-e. %B %Y"
+      long_without_year: "%-e. %B"
+      month_and_year: "%B %Y"
+
+  time:
+    formats:
+      default: "%-e. %b %Y um %-H:%M Uhr"
+      time: "%-H:%M Uhr"
+      long: "%A, %-e. %B %Y, %-H:%M Uhr"
+
   attributes:
 
     bio: Biografie
