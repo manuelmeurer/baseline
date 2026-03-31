@@ -142,7 +142,12 @@ module Baseline
             partial: "baseline/preview_card_page",
             locals:  { url: }
           )
-          image_url = External::BrowserScreenshot.generate(html, locator: "body > a", cache: 1.hour)
+          image_url = External::BrowserScreenshot.generate(
+            html,
+            locator: "body > a",
+            cache:   1.hour,
+            save_to: Rails.env.production? ? :web : :file
+          )
 
           tag.mj_image(src: image_url, href: url)
         end

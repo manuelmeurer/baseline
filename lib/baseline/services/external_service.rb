@@ -81,6 +81,8 @@ module Baseline
           begin
             yield page
           rescue => error
+            raise error unless Rails.env.production?
+
             begin
               cloudinary_upload = page
                 .screenshot(fullPage: true)
