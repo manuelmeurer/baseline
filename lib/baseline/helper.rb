@@ -392,6 +392,50 @@ module Baseline
       end
     end
 
+    def company_details
+      I18n.with_locale :de do
+        [
+          t(:legal_name, scope: :meta),
+          "#{t :street, scope: %i[meta address]}, #{t :zip, scope: %i[meta address]} #{t :city, scope: %i[meta address]}",
+          "Geschäftsführer: #{t :ceo, scope: :meta}"
+        ].join("\n")
+      end
+    end
+
+    def organization_schema_data(include_context: true)
+      {
+        "@context":    ("https://schema.org" if include_context),
+        "@type":       "Organization",
+        name:          t(:name, scope: :meta),
+        alternateName: t(:alternate_name, scope: :meta, default: nil),
+        description:   t(:tagline, scope: :meta),
+        email:         Rails.application.env_credentials.mail_from!,
+        sameAs:        t(:social_urls, default: nil),
+        url:           web_home_url,
+        logo: {
+          "@type": "ImageObject",
+          url:     image_url("brand/logo.png")
+        },
+        address: {
+          "@type":         "PostalAddress",
+          postalCode:      t(:zip, scope: %i[meta address]),
+          streetAddress:   t(:street, scope: %i[meta address]),
+          addressLocality: t(:city, scope: %i[meta address]),
+          addressCountry:  t(:country_short, scope: %i[meta address])
+        }
+      }.compact
+    end
+
+    def website_schema_data
+      {
+        "@context":    "https://schema.org",
+        "@type":       "WebSite",
+        name:          t(:name, scope: :meta),
+        alternateName: t(:alternate_name, scope: :meta, default: nil),
+        url:           web_home_url
+      }.compact
+    end
+
     def og_data_tags(prefix = "og", data = og_data)
       data.map do |key, value|
         if value.is_a?(Hash)
@@ -564,6 +608,22 @@ module Baseline
         images.sample
 
       image_tag image, class: "rounded"
+    end
+
+    def pretty_json(hash)
+      JSON
+        .pretty_generate(hash)
+        .html_safe
+    end
+
+    def schema_data_script(data)
+      if data.blank?
+        raise "Schema data must not be blank."
+      end
+
+      tag.script type: "application/ld+json" do
+        pretty_json data
+      end
     end
 
     private

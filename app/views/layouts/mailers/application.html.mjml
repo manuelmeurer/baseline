@@ -22,6 +22,10 @@
 
     = content_for :mj_head
 
+    - if defined?(@messageable) && event_schema_data = @messageable.try(:event_schema_data)
+      %mj-raw
+        = schema_data_script(event_schema_data)
+
     %mj-style{ inline: "inline" }
       :plain
         ol, ul {
