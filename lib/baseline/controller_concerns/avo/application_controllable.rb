@@ -14,7 +14,7 @@ module Baseline
         end
       end
 
-      def avo_login_url = Rails.application.routes.url_helpers.admin_login_url
+      def avo_login_url = main_app.admin_login_url
     end
   end
 end

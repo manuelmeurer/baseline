@@ -10,6 +10,6 @@ Rails.application.config.to_prepare do
       ::Current.namespace = :pghero
     end
 
-    def pghero_login_url = Rails.application.routes.url_helpers.admin_login_url
+    def pghero_login_url = main_app.admin_login_url
   end
 end

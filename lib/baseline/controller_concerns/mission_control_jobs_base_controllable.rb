@@ -12,6 +12,6 @@ module Baseline
       end
     end
 
-    def mission_control_jobs_login_url = Rails.application.routes.url_helpers.admin_login_url
+    def mission_control_jobs_login_url = main_app.admin_login_url
   end
 end

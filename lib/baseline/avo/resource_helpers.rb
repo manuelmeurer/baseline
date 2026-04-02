@@ -179,7 +179,7 @@ module Baseline
               only_on: :display,
               format_using: -> {
                 if value.attached?
-                  url  = Rails.application.routes.url_helpers.url_for(value)
+                  url = main_app.url_for(value)
                   case value.content_type
                   when Mime[:pdf]
                     tag.iframe \
