@@ -50,7 +50,9 @@ module Baseline
       end
 
       helper_method def site_name
-        t ::Current.namespace, scope: :site_names
+        t ::Current.namespace,
+          scope:   :site_names,
+          default: t(:name, scope: :meta)
       end
 
       helper_method def og_data
