@@ -389,6 +389,8 @@ module Baseline
           .select { _2[:type].in?(%i[string text]) && !array_column?(_1) }
           .keys
 
+        return if columns.empty?
+
         case db_adapter
         when :postgresql
           {
@@ -802,7 +804,7 @@ module Baseline
           end
         end
 
-        unless respond_to?(:search)
+        if !respond_to?(:search) && searchable_params
           case db_adapter
           when :postgresql
             if defined?(PgSearch)
