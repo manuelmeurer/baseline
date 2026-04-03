@@ -6,6 +6,18 @@ module Baseline
 
     config.autoload_paths << root.join("app", "components")
 
+    # hotwire-spark assumes all controllers have view helpers, which is not
+    # the case for ActionController::API controllers. Guard accordingly.
+    initializer "baseline.hotwire_spark_api_fix" do
+      if defined?(Hotwire::Spark::Middleware)
+        Hotwire::Spark::Middleware.prepend(Module.new do
+          private def interceptable_request?
+            super && @request.controller_instance.respond_to?(:helpers)
+          end
+        end)
+      end
+    end
+
     initializer "baseline.after_initialize" do |app|
       begin
         require "sitemap_generator"
