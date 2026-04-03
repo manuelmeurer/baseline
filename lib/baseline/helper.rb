@@ -464,9 +464,9 @@ module Baseline
         "@type":             "Event",
         name:                record.title,
         description:         record.description,
-        startDate:           record.started_at.iso8601,
-        endDate:             record.ended_at.iso8601,
-        eventAttendanceMode: "https://schema.org/#{defined?(Meetup) && record.is_a?(Meetup) ? "Offline" : "Online"}EventAttendanceMode",
+        startDate:           (record.try(:started_at) || record.started_on).iso8601,
+        endDate:             (record.try(:ended_at)   || record.ended_on).iso8601,
+        eventAttendanceMode: "https://schema.org/#{record.try(:location) ? "Offline" : "Online"}EventAttendanceMode",
         eventStatus:         "https://schema.org/Event#{record.cancelled? ? "Cancelled" : "Scheduled"}",
         location:            location_data,
         organizer:           organization_schema_data(include_context: false)
