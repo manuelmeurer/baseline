@@ -436,6 +436,43 @@ module Baseline
       }.compact
     end
 
+    def event_schema_data(record)
+      return unless record.class.to_s.in?(%w[Event Webinar Meetup])
+
+      location_data = record.try(:location) ?
+        {
+          "@type": "Place",
+          name:    record.location.name,
+          address: {
+            "@type":         "PostalAddress",
+            streetAddress:   record.location.address,
+            addressLocality: record.location.city,
+            postalCode:      record.location.zip,
+            addressCountry:  record.location.country
+          }
+        } : {
+          "@type": "VirtualLocation",
+          url:     url_for([:web, record, only_path: false])
+        }
+
+      image = if record.header_images.attached?
+        rails_blob_url(record.header_images.closest_to_aspect_ratio(16.0/9))
+      end
+      {
+        image:,
+        "@context":          "http://schema.org",
+        "@type":             "Event",
+        name:                record.title,
+        description:         record.description,
+        startDate:           record.started_at.iso8601,
+        endDate:             record.ended_at.iso8601,
+        eventAttendanceMode: "https://schema.org/#{defined?(Meetup) && record.is_a?(Meetup) ? "Offline" : "Online"}EventAttendanceMode",
+        eventStatus:         "https://schema.org/Event#{record.cancelled? ? "Cancelled" : "Scheduled"}",
+        location:            location_data,
+        organizer:           organization_schema_data(include_context: false)
+      }.compact
+    end
+
     def og_data_tags(prefix = "og", data = og_data)
       data.map do |key, value|
         if value.is_a?(Hash)
