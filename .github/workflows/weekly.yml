@@ -50,9 +50,9 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "*Baseline weekly workflow failed*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            text: ":collision: *Baseline weekly workflow failed*"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "Baseline weekly workflow failed: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  text: ":collision: *Baseline weekly workflow failed*\n:point_right: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Show run>"
