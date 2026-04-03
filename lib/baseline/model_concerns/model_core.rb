@@ -386,8 +386,11 @@ module Baseline
 
       def searchable_params
         columns = schema_columns
-          .select { _2[:type].in?(%i[string text]) && !array_column?(_1) }
-          .keys
+          .select {
+            _2[:type].in?(%i[string text]) &&
+              !array_column?(_1)  &&
+              !_1.match?(/locale|password|token|_type\z/)
+          }.keys
 
         return if columns.empty?
 
