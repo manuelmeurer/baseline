@@ -44,9 +44,15 @@ jobs:
           body: "Automated updates from the weekly scheduled run."
 
       - name: Notify Slack on failure
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: Weekly
-          fields: repo,message,workflow,action
         if: failure()
+        uses: slackapi/slack-github-action@v3
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: "*Baseline weekly workflow failed*: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "Baseline weekly workflow failed: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
