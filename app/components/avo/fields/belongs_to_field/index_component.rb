@@ -28,7 +28,7 @@ class Avo::Fields::BelongsToField::IndexComponent < Avo::Fields::IndexComponent
     if @field.value.respond_to?(:photo_or_dummy)
       photo = @field.value.photo_or_dummy
       src = helpers.main_app.url_for(photo.variant(resize_to_fill: [20, 20]))
-      tag.span(class: "flex items-center gap-1") do
+      tag.span(class: "flex items-center gap-2") do
         tag.img(src:, class: "rounded-full object-cover", style: "width: 1.8rem; height: 1.8rem") +
           @field.label
       end
