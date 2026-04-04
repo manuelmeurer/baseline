@@ -439,15 +439,32 @@ module Baseline
           .then { ActiveSupport::Digest.hexdigest(_1) }
 
         @polymorphic_types_cache ||= {}
-        @polymorphic_types_cache[cache_key] ||= begin
-          ApplicationRecord.descendants.select {
-            it.reflections.values.any? {
-              (_1.try(:collection?) || _1.try(:has_one?)) &&
-                _1.klass == self &&
-                _1.options[:as] == association
-            }
-          }.map(&:name)
+        if @polymorphic_types_cache.key?(cache_key)
+          return @polymorphic_types_cache[cache_key]
         end
+
+        klass_resolved = true
+
+        result = ApplicationRecord.descendants.select do |klass|
+          klass.reflections.values.any? do |reflection|
+            next unless reflection.try(:collection?) || reflection.try(:has_one?)
+            next unless reflection.options[:as] == association
+
+            # klass can raise NoMethodError for ThroughReflections
+            # with unloaded source reflections during boot.
+            begin
+              reflection.klass == self
+            rescue NoMethodError
+              klass_resolved = false
+            end
+          end
+        end.map(&:name)
+
+        if klass_resolved
+          @polymorphic_types_cache[cache_key] = result
+        end
+
+        result
       end
 
       def db_and_table_exist?
