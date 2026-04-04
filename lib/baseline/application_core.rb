@@ -79,23 +79,31 @@ module Baseline
       end.presence or
         raise "Could not load revision."
 
-      %i[host protocol]
+      url_options_keys = %i[host protocol]
+      url_options = url_options_keys
         .index_with { env_credentials[_1] }
-        .unless(Rails.env.production?) { # Hatchbox sets a PORT env var in production, which we don't want to use.
-          _1.merge(port: ENV.fetch("PORT"))
-        }.compact
-        .then do |url_options|
-          Rails.application.routes.default_url_options =
-            config.action_mailer.default_url_options =
-            url_options
+        .compact
 
-          url_options
-            .transform_keys {
-              { protocol: :scheme }.fetch(_1, _1)
-            }.then {
-              config.asset_host = Addressable::URI.new(_1).to_s
-            }
+      if url_options.keys == url_options_keys
+        # Hatchbox sets a PORT env var in production, which we don't want to use.
+        unless Rails.env.production?
+          url_options[:port] = ENV.fetch("PORT")
         end
+
+        Rails.application.routes.default_url_options =
+          config.action_mailer.default_url_options =
+          url_options
+
+        config.asset_host = url_options
+          .transform_keys {
+            { protocol: :scheme }.fetch(_1, _1)
+          }.then {
+            Addressable::URI.new(_1)
+          }.to_s
+      else
+        missing = url_options_keys - url_options.keys
+        warn "WARNING: #{missing.join(", ")} not found in credentials, skipping asset_host configuration"
+      end
 
       config.active_storage.queues.analysis        = :default
       config.active_storage.queues.purge           = :default
