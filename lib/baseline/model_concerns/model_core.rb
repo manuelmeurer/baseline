@@ -293,20 +293,20 @@ module Baseline
       end
 
       def resolve_service(service_name)
-        service_name = service_name.to_s.gsub("__", "/")
-
         @resolved_services ||= {}
         @resolved_services[service_name] ||= begin
+          service_class = service_name.to_s.gsub("__", "/").camelize
+
           service_namespaces
             .lazy
             .map do |namespace|
               Kernel.suppress NameError do
-                namespace.const_get(service_name.camelize)
+                namespace.const_get(service_class)
               end
             end
             .compact
             .first or
-              raise const_get(:ServiceNotFound), "Could not find service #{service_name} for #{self.class}."
+              raise const_get(:ServiceNotFound), "Could not find service #{service_class} for #{self}."
         end
       end
 
