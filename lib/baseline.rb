@@ -91,6 +91,7 @@ module Baseline
     end
 
     def ensure_playwright_chromium_installed!
+      require "playwright"
       system("npx playwright@#{::Playwright::COMPATIBLE_PLAYWRIGHT_VERSION} install chromium")
     end
 
