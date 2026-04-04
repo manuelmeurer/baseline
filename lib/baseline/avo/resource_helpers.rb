@@ -199,12 +199,12 @@ module Baseline
           ]
         when attachment_reflection.is_a?(ActiveStorage::Reflection::HasManyAttachedReflection)
           options.merge(as: :files)
-        when model_class.defined_enums.key?(attribute.to_s)
-          choices = model_class
+        when real_model_class.defined_enums.key?(attribute.to_s)
+          choices = real_model_class
             .public_send(attribute.pluralize)
             .keys
             .index_by {
-              model_class.human_enum_name attribute, _1
+              real_model_class.human_enum_name attribute, _1
             }.reverse_merge("-" => nil)
           options.reverse_merge(
             default:,
