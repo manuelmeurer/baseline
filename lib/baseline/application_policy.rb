@@ -77,6 +77,10 @@ module Baseline
           .each do |association|
             policy_class = "#{association.class_name}Policy".safe_constantize
 
+            # Through associations don't support direct create/edit/destroy — Avo's
+            # create_path helper calls inverse_of.name which is nil for :through.
+            through = association.options[:through].present?
+
             ASSOCIATION_POLICY_ACTIONS.each do |action, base_method|
               method_name = :"#{action}_#{association.name}?"
 
@@ -84,7 +88,9 @@ module Baseline
               # hand-written override win over the auto-generated delegation.
               next if self.class.method_defined?(method_name, false)
 
-              if policy_class
+              if through && %i[create edit update destroy attach detach].include?(action)
+                define_singleton_method(method_name) { false }
+              elsif policy_class
                 define_singleton_method(method_name) do
                   policy_class.new(user, record).public_send(base_method)
                 end
