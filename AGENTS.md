@@ -35,6 +35,7 @@ When the user says "git commit" without further instructions:
 
 Apply these conventions when writing or modifying Ruby code.
 
+- Always include `# frozen_string_literal: true` at the top of every Ruby file.
 - When writing a Ruby script or CLI, always use [Thor](https://github.com/rails/thor).
 - Prefer double quotes for strings; use single quotes only when the string contains double quotes, in shell commands with interpolation, or when following existing code patterns.
 - Use parallel assignment for instance variables when initializing from local variables with matching names; split across two lines when assigning 3 or more.
@@ -62,11 +63,30 @@ Apply these conventions when writing or modifying Ruby code.
     layout:  false
   ```
 
-## Rails Style Guide
+## HAML Style Guide
 
-Apply these conventions when working with Rails projects.
+Apply these conventions when working with HAML.
 
-- In HAML, put Ruby expressions on their own line; avoid inline `=`.
+- Always include `-# frozen_string_literal: true` at the top of every HAML file.
+- Put as many classes as possible at the beginning of the tag. Only use the `class` option for classes with characters HAML can't handle (e.g. `/`):
+  ```haml
+  -# bad
+  %div{ class: "class1 class2 class3", id: "myid" }
+  .class1.class2{ class: "class3", id: "myid" }
+
+  -# good
+  .class1.class2.class3{ id: "myid" }
+  .class1.class2.class3{ class: "w-5/12", id: "myid" }
+  ```
+- Put Ruby expressions on their own line; avoid inline `=`:
+  ```haml
+  -# bad
+  %h1= page_title
+
+  -# good
+  %h1
+    = page_title
+  ```
 
 ### Binstubs
 
