@@ -22,10 +22,14 @@ class Build < Thor
   def build
     bundle "install -j $(nproc)"
 
-    if File.read("Gemfile.lock").include?("dartsass-rails")
-      # This shouldn't actually be necessary, dartsass-rails should
-      # do this automatically before assets:precompile.
-      bundle "exec rails dartsass:build"
+    # It shouldn't actually to call dartsass:build and tailwindcss:build explicitly,
+    # since they should be run automatically before assets:precompile,
+    # but on Hatchbox this does not work for some reason.
+    %w[dartsass tailwindcss].each do |css_tool|
+      if File.read("Gemfile.lock").include?("#{css_tool}-rails")
+        puts "Running #{css_tool} build task..."
+        bundle "exec rails #{css_tool}:build"
+      end
     end
 
     bundle "exec rails assets:precompile"
