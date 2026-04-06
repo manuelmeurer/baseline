@@ -22,8 +22,11 @@ class Build < Thor
   def build
     bundle "install -j $(nproc)"
 
-    # TODO: this shouldn't be necessary, dartsass-rails should do this automatically before assets:precompile.
-    bundle "exec rails dartsass:build"
+    if File.read("Gemfile.lock").include?("dartsass-rails")
+      # This shouldn't actually be necessary, dartsass-rails should
+      # do this automatically before assets:precompile.
+      bundle "exec rails dartsass:build"
+    end
 
     bundle "exec rails assets:precompile"
 
