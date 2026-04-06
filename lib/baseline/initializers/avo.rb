@@ -3,26 +3,22 @@
 require "avo"
 
 ::Avo.configure do |config|
-  config.app_name                 = "Admin Dashboard"
-  config.click_row_to_view_record = true
-  config.currency                 = "EUR"
-  config.license_key              = Rails.application.env_credentials.avo.license_key!
-  config.root_path                = "cms"
-
+  config.app_name                      = "Admin Dashboard"
+  config.click_row_to_view_record      = true
+  config.currency                      = "EUR"
+  config.license_key                   = Rails.application.env_credentials.avo.license_key!
+  config.root_path                     = "cms"
+  config.authorization_client          = Baseline::Avo::PunditClientWithFallback
+  config.explicit_authorization        = true
+  config.raise_error_on_missing_policy = false
+  config.current_user_method do
+    ::Current.admin_user
+  end
   config.branding = {
     logo:     "brand/avo_logo.png",
     logomark: "brand/avo_logomark.png",
     favicon:  "icons/favicon.ico"
   }
-
-  if defined?(@auth) && @auth
-    config.authorization_client          = Baseline::Avo::PunditClientWithFallback
-    config.explicit_authorization        = true
-    config.raise_error_on_missing_policy = false
-    config.current_user_method do
-      ::Current.admin_user
-    end
-  end
 end
 
 require "url_manager"
@@ -106,6 +102,107 @@ Rails.application.config.after_initialize do
       end
     end
   end)
+end
+
+# When Rails stores a polymorphic _type for an STI model, it uses the base class
+# name (e.g. "OutgoingInvoice" instead of "FreelancerInvoice"). If no Avo resource
+# exists for the base class, fall back to a resource for one of its STI descendants.
+class ::Avo::Resources::ResourceManager
+  module STIFallback
+    def get_resource_by_model_class(klass)
+      result = super
+      return result if result
+
+      model_class = klass.to_s.safe_constantize
+      return unless model_class.try(:descendants)&.any?
+
+      model_class.descendants.each do |descendant|
+        resource = super(descendant.name)
+        return resource if resource
+      end
+
+      nil
+    end
+  end
+  prepend STIFallback
+end
+
+class ::Avo::Fields::BelongsToField::EditComponent
+  module STIPolymorphicSupport
+    def initialize(...)
+      super
+      normalize_sti_polymorphic_association!
+    end
+
+    def polymorphic_class
+      normalized_polymorphic_class || super
+    end
+
+    def polymorphic_id
+      @resource.record["#{@field.foreign_key}_id"] || super
+    end
+
+    def polymorphic_record
+      record = @field.value
+      if record.present? &&
+         polymorphic_class.present? &&
+         record.is_a?(polymorphic_class.safe_constantize)
+        return record
+      end
+
+      super
+    end
+
+    private
+
+      def normalize_sti_polymorphic_association!
+        return unless is_polymorphic?
+
+        normalized_class = normalized_polymorphic_class
+        return unless normalized_class.present?
+
+        record = @resource.record
+        type_attribute = "#{@field.foreign_key}_type"
+        id_attribute = "#{@field.foreign_key}_id"
+
+        record[type_attribute] = normalized_class
+        record[id_attribute] ||= @field.value&.id
+      end
+
+      def normalized_polymorphic_class
+        return @normalized_polymorphic_class if defined?(@normalized_polymorphic_class)
+
+        stored_class_name = @resource.record["#{@field.foreign_key}_type"]
+        @normalized_polymorphic_class =
+          if stored_class_name.blank?
+            nil
+          elsif @field.types.map(&:to_s).include?(stored_class_name)
+            stored_class_name
+          else
+            normalize_sti_polymorphic_class(stored_class_name)
+          end
+      end
+
+      def normalize_sti_polymorphic_class(stored_class_name)
+        stored_class = stored_class_name.safe_constantize
+        return stored_class_name unless stored_class
+
+        candidate_types = @field.types.select do |type|
+          candidate_class = type.to_s.safe_constantize
+          candidate_class && candidate_class < stored_class
+        end
+        return stored_class_name if candidate_types.empty?
+
+        matching_types = candidate_types.select do |type|
+          @field.value.is_a?(type)
+        end
+        return matching_types.first.to_s if matching_types.one?
+        return stored_class_name unless matching_types.empty?
+
+        candidate_types.one? ? candidate_types.first.to_s : stored_class_name
+      end
+  end
+  prepend STIPolymorphicSupport
 end
 
 class ::Avo::Fields::BooleanField

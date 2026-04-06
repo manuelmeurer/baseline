@@ -12,6 +12,10 @@ module Baseline
           params[:via_relation_class] ||= params[:via_belongs_to_resource_class]
         end
 
+        before_action only: %i[new create] do
+          assign_via_polymorphic_association_to_record
+        end
+
         # Convert ?search=foo into encoded_filters for the Search filter.
         before_action only: :index, if: -> { params[:search].present? } do
           search_value = params.delete(:search)
@@ -35,6 +39,11 @@ module Baseline
           )
           redirect_to url_for(params.permit!.merge(encoded_filters: encoded))
         end
+      end
+
+      def save_record_action
+        raise ActiveRecord::RecordInvalid, @record if @record.errors.any?
+        super
       end
 
       # Avo's default view includes TurboFrameWrapperComponent, but it only wraps content in a <turbo-frame> tag — it doesn't add the modal UI.
@@ -91,6 +100,28 @@ module Baseline
       end
 
       private
+
+        def assign_via_polymorphic_association_to_record
+          return unless
+            params[:via_relation].present? &&
+            params[:via_relation_class].present? &&
+            params[:via_record_id].present?
+
+          record = @record || @resource&.record
+          return unless record
+
+          reflection = record.class.reflect_on_association(params[:via_relation])
+          return unless reflection&.belongs_to? && reflection.polymorphic?
+
+          resource = ::Avo.resource_manager.get_resource_by_model_class(params[:via_relation_class])
+          related_record = resource.find_record(params[:via_record_id], params:)
+          record.public_send(:"#{params[:via_relation]}=", related_record)
+        end
+
+        def render_error(message)
+          @error_message = message
+          render "baseline/avo/error"
+        end
 
         def modal_request?
           request.headers["Turbo-Frame"] == ::Avo::MODAL_FRAME_ID.to_s
