@@ -13,7 +13,7 @@ module Baseline
 
       validates :subject, presence: true
       validates :recipients, presence: true
-      validates :sections, presence: true
+      validates :sections, presence: true, on: :create
       validates :bounced_emails,
         absence: { if: :unsent? },
         array_uniqueness: true
