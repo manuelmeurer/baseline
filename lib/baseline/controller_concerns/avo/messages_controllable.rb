@@ -15,7 +15,7 @@ module Baseline
       end
 
       def create
-        @record.email_delivery.admin_user = ::Current.admin_user
+        @record.delivery.admin_user = ::Current.admin_user
         super
       end
 
@@ -23,7 +23,7 @@ module Baseline
         super
 
         @record
-          .email_delivery
+          .delivery
           ._do_send(_async: true)
 
         if @record.recipient.tasks.undone.find_by(identifier: :handle)&.done!

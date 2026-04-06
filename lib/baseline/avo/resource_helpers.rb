@@ -95,7 +95,7 @@ module Baseline
         attribute_suffix       = attribute.to_s.split("_").last.to_sym
         association_reflection = real_model_class.reflections[attribute.to_s]
         attachment_reflection  = real_model_class.reflect_on_all_attachments.detect { _1.name == attribute }
-        default                = params[attribute] || try(:"default_#{attribute}")
+        default                = params[attribute]
         index_truncate         = { html: { index: { wrapper: { classes: "max-w-xs truncate" } } } }
 
         reload_form_html = if reload_fields_on_change.present?
