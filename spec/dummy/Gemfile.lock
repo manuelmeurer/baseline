@@ -436,7 +436,7 @@ GEM
     zstd-ruby (1.5.7.0)
 
 PLATFORMS
-  arm64-darwin-25
+  arm64-darwin
   x86_64-linux
 
 DEPENDENCIES
