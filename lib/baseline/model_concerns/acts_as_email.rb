@@ -2,6 +2,11 @@
 
 module Baseline
   module ActsAsEmail
+    FORWARDED_FOR_REGEXES = "[^@\s]+@[^@\s]+?".then { [
+      /(from|von):\s+([a-zA-Z@\.\s]{0,50})?\s*<(?<email>#{_1})>/i,
+      /<(?<email>#{_1})>\s+wrote:/i
+    ] }.freeze
+
     extend ActiveSupport::Concern
 
     included do
@@ -90,14 +95,29 @@ module Baseline
       text.force_encoding("UTF-8")
     end
 
-    def from
-      find_header("From").presence&.then { _1[/\s+<([^>]+)>\z/, 1] || _1 } \
-        or raise Error, %(Could not find "From" header.)
-    end
-
     def subject
       find_header("Subject") \
         or raise Error, %(Could not find "Subject" header.)
+    end
+
+    def from
+      find_header("From").presence&.then { _1[/\s+<([^>]+)>\z/, 1] || _1 }&.downcase&.strip \
+        or raise Error, %(Could not find "From" header.)
+    end
+
+    def from_admin?
+      from.split("@").last == Rails.application.env_credentials.mail_from!.split("@").last ||
+        from == "manuel@meurer.io"
+    end
+
+    def real_from
+      return unless from_admin?
+      FORWARDED_FOR_REGEXES.each do |regex|
+        if result = email.text[regex, :email]&.downcase&.strip
+          return result
+        end
+      end
+      nil
     end
 
     def sent_at
