@@ -11,7 +11,7 @@ module Baseline
           raise Error, "#{delivery_method} is not a valid delivery method for this message group."
         end
 
-        parts = Messages::GeneratePartsFromI18n.call(message_group, recipient)
+        parts = Messages::GeneratePartsFromI18n.call(message_group, recipient:)
         delivery_method ||= set_delivery_method(message_group, recipient)
         delivery = generate_delivery(delivery_method, recipient, parts)
 

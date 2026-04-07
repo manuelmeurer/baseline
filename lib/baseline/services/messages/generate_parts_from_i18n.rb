@@ -3,24 +3,26 @@
 module Baseline
   module Messages
     class GeneratePartsFromI18n < ApplicationService
-      def call(message_or_group, recipient = nil, admin_user: ::Current.admin_user)
+      def call(
+        message_or_group,
+        recipient:  @message.recipient,
+        admin_user: ::Current.admin_user)
+
+        @recipient = recipient
+
         case
         when message_or_group.is_a?(MessageGroup)
           @message_group = message_or_group
           @message_class = @message_group.message_class
           @kind          = @message_group.kind.to_sym
           @messageable   = @message_group.messageable
-          @recipient     = recipient
           locale         = @message_group.locale
-        when recipient
-          raise Error, "Cannot pass a message and a recipient. Assign the recipient to the message instead."
         else
           @message       = message_or_group
           @message_class = @message.class
           @kind          = @message.kind.to_sym
           @messageable   = @message.messageable
-          @recipient     = @message.recipient
-          locale         = @message.recipient&.locale || I18n.locale
+          locale         = @recipient&.locale || I18n.locale
         end
 
         @admin_user             = admin_user
