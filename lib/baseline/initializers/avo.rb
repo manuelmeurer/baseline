@@ -70,7 +70,7 @@ Rails.application.config.after_initialize do
   # Add a "Show" button next to the "Edit" button on has_one/belongs_to
   # association panels in show views, linking to the associated resource's
   # own show page.
-  Avo::Views::ResourceShowComponent.prepend(Module.new do
+  ::Avo::Views::ResourceShowComponent.prepend(Module.new do
     def controls
       result = super
       return result unless @reflection.present?
@@ -81,7 +81,7 @@ Rails.application.config.after_initialize do
     end
   end)
 
-  Avo::ResourceComponent.class_eval do
+  ::Avo::ResourceComponent.class_eval do
     private def render_show_button(control)
       return unless @resource.record.present?
 
