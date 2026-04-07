@@ -67,6 +67,38 @@ end
 # reopen them — at initializer time the constants don't exist yet and `class`
 # would create a hollow Object subclass instead of reopening the real class.
 Rails.application.config.after_initialize do
+  # Add a "Show" button next to the "Edit" button on has_one/belongs_to
+  # association panels in show views, linking to the associated resource's
+  # own show page.
+  Avo::Views::ResourceShowComponent.prepend(Module.new do
+    def controls
+      result = super
+      return result unless @reflection.present?
+
+      edit_index = result.index { _1.is_a?(Avo::Resources::Controls::EditButton) }
+      result.insert(edit_index, Avo::Resources::Controls::ShowButton.new) if edit_index
+      result
+    end
+  end)
+
+  Avo::ResourceComponent.class_eval do
+    private def render_show_button(control)
+      return unless @resource.record.present?
+
+      a_link helpers.resource_path(record: @resource.record, resource: @resource),
+        style: :text,
+        color: :primary,
+        title: control.title,
+        data: {
+          turbo_frame: "_top",
+          tippy: control.title ? :tooltip : nil
+        },
+        icon: "avo/eye" do
+        control.label || I18n.t("avo.view").capitalize
+      end
+    end
+  end
+
   # Extend global search (Cmd+K) to include matching sidebar navigation items
   # above the regular search results.
   ::Avo::SearchController.prepend(Module.new do
