@@ -205,17 +205,15 @@ module Baseline
 
       def redirect_to_finish_wizard(...)
         if wizard_resource.unfinished?
-          wizard_resource.transaction do
-            if respond_to?(:before_finish_wizard, true)
-              before_finish_wizard
-            end
+          if respond_to?(:before_finish_wizard, true)
+            before_finish_wizard
+          end
 
-            wizard_resource.form_step = nil
-            wizard_resource.finished!
+          wizard_resource.form_step = nil
+          wizard_resource.finished!
 
-            if respond_to?(:after_finish_wizard, true)
-              after_finish_wizard
-            end
+          if respond_to?(:after_finish_wizard, true)
+            after_finish_wizard
           end
         end
 
