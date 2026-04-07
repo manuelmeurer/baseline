@@ -5,23 +5,26 @@ module Baseline
     class GeneratePartsFromI18n < ApplicationService
       def call(
         message_or_group,
-        recipient:  @message.recipient,
+        recipient:  nil,
         admin_user: ::Current.admin_user)
-
-        @recipient = recipient
 
         case
         when message_or_group.is_a?(MessageGroup)
+          unless recipient
+            raise Error, "A recipient is required to generate message parts from i18n for a message group."
+          end
           @message_group = message_or_group
           @message_class = @message_group.message_class
           @kind          = @message_group.kind.to_sym
           @messageable   = @message_group.messageable
+          @recipient     = recipient
           locale         = @message_group.locale
         else
           @message       = message_or_group
           @message_class = @message.class
           @kind          = @message.kind.to_sym
           @messageable   = @message.messageable
+          @recipient     = recipient || @message.recipient
           locale         = @recipient&.locale || I18n.locale
         end
 
