@@ -101,21 +101,22 @@ module Baseline
 
       private
 
-        def assign_via_polymorphic_association_to_record
-          return unless
-            params[:via_relation].present? &&
-            params[:via_relation_class].present? &&
-            params[:via_record_id].present?
+        def via_record
+          return unless params[:via_relation_class]
 
-          record = @record || @resource&.record
-          return unless record
+          @via_record ||= ::Avo
+            .resource_manager
+            .get_resource_by_model_class(params[:via_relation_class])
+            .find_record(params[:via_record_id], params:)
+        end
+
+        def assign_via_polymorphic_association_to_record
+          return unless via_record && record = @record || @resource&.record
 
           reflection = record.class.reflect_on_association(params[:via_relation])
           return unless reflection&.belongs_to? && reflection.polymorphic?
 
-          resource = ::Avo.resource_manager.get_resource_by_model_class(params[:via_relation_class])
-          related_record = resource.find_record(params[:via_record_id], params:)
-          record.public_send(:"#{params[:via_relation]}=", related_record)
+          record.public_send(:"#{params[:via_relation]}=", via_record)
         end
 
         def render_error(message)
