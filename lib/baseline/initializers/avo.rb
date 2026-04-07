@@ -75,8 +75,9 @@ Rails.application.config.after_initialize do
       result = super
       return result unless @reflection.present?
 
-      edit_index = result.index { _1.is_a?(Avo::Resources::Controls::EditButton) }
-      result.insert(edit_index, Avo::Resources::Controls::ShowButton.new) if edit_index
+      if edit_index = result.index { _1.is_a?(::Avo::Resources::Controls::EditButton) }
+        result.insert(edit_index, ::Avo::Resources::Controls::ShowButton.new)
+      end
       result
     end
   end)
