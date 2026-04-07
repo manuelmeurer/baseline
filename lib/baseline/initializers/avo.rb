@@ -63,9 +63,12 @@ class ::Avo::Fields::HasOneField
   prepend PersistedValue
 end
 
-# Extend global search (Cmd+K) to include matching sidebar navigation items
-# above the regular search results.
+# Wrap some patches in after_initialize so the classes are autoloaded before we
+# reopen them — at initializer time the constants don't exist yet and `class`
+# would create a hollow Object subclass instead of reopening the real class.
 Rails.application.config.after_initialize do
+  # Extend global search (Cmd+K) to include matching sidebar navigation items
+  # above the regular search results.
   ::Avo::SearchController.prepend(Module.new do
     def index
       super
@@ -102,33 +105,12 @@ Rails.application.config.after_initialize do
       end
     end
   end)
-end
 
-# When Rails stores a polymorphic _type for an STI model, it uses the base class
-# name (e.g. "OutgoingInvoice" instead of "FreelancerInvoice"). If no Avo resource
-# exists for the base class, fall back to a resource for one of its STI descendants.
-class ::Avo::Resources::ResourceManager
-  module STIFallback
-    def get_resource_by_model_class(klass)
-      result = super
-      return result if result
-
-      model_class = klass.to_s.safe_constantize
-      return unless model_class.try(:descendants)&.any?
-
-      model_class.descendants.each do |descendant|
-        resource = super(descendant.name)
-        return resource if resource
-      end
-
-      nil
-    end
-  end
-  prepend STIFallback
-end
-
-class ::Avo::Fields::BelongsToField::EditComponent
-  module STIPolymorphicSupport
+  # When Rails stores a polymorphic _type for an STI model, it uses the base
+  # class name (e.g. "OutgoingInvoice" instead of "FreelancerInvoice"). Avo's
+  # BelongsToField edit component doesn't handle this, so we normalize the
+  # polymorphic type/id to match one of the field's declared types.
+  ::Avo::Fields::BelongsToField::EditComponent.prepend(Module.new do
     def initialize(...)
       super
       normalize_sti_polymorphic_association!
@@ -201,8 +183,30 @@ class ::Avo::Fields::BelongsToField::EditComponent
 
         candidate_types.one? ? candidate_types.first.to_s : stored_class_name
       end
+  end)
+end
+
+# When Rails stores a polymorphic _type for an STI model, it uses the base class
+# name (e.g. "OutgoingInvoice" instead of "FreelancerInvoice"). If no Avo resource
+# exists for the base class, fall back to a resource for one of its STI descendants.
+class ::Avo::Resources::ResourceManager
+  module STIFallback
+    def get_resource_by_model_class(klass)
+      result = super
+      return result if result
+
+      model_class = klass.to_s.safe_constantize
+      return unless model_class.try(:descendants)&.any?
+
+      model_class.descendants.each do |descendant|
+        resource = super(descendant.name)
+        return resource if resource
+      end
+
+      nil
+    end
   end
-  prepend STIPolymorphicSupport
+  prepend STIFallback
 end
 
 class ::Avo::Fields::BooleanField
