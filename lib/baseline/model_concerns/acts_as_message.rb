@@ -13,7 +13,6 @@ module Baseline
 
       validates :kind, presence: true, inclusion: { in: -> { [_1.group.kind] }, if: :group }
       validates :messageable, inclusion: { in: -> { [_1.group.messageable] }, if: :group }
-      validates :recipient_type, inclusion: { in: -> { [_1.class.to_s.delete_suffix("Message")] } }
 
       %i[subject sections_md].each do |attribute|
         delegate \
