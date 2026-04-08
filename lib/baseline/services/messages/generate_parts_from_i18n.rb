@@ -10,9 +10,6 @@ module Baseline
 
         case
         when message_or_group.is_a?(MessageGroup)
-          unless recipient
-            raise Error, "A recipient is required to generate message parts from i18n for a message group."
-          end
           @message_group = message_or_group
           @message_class = @message_group.message_class
           @kind          = @message_group.kind.to_sym
