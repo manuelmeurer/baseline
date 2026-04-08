@@ -18,23 +18,26 @@ class Setup < Thor
 
   desc "setup", "Set up the project"
   def setup
+    run("bundle check") || run("bundle install")
+
     if @app_root = ENV["CONDUCTOR_ROOT_PATH"]
       setup_conductor
-    else
-      abort "TODO: add setup instructions for non-conductor environments"
     end
+
+    %w[development test].each do |env|
+      run "RAILS_ENV=#{env} #{rails} db:prepare", abort_on_failure: true
+    end
+    run "#{rails} log:clear tmp:clear", abort_on_failure: true
   end
 
   private
+
+    def rails = File.join(Dir.pwd, "bin/rails")
 
     def setup_conductor
       symlink_from_app_root \
         ".bundle",
         "config/master.key"
-
-      %w[development test].each do |env|
-        run("RAILS_ENV=#{env} bin/rails db:prepare", abort_on_failure: true)
-      end
     end
 
     def symlink_from_app_root(*paths)
