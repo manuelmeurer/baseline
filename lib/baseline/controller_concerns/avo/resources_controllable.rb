@@ -6,12 +6,6 @@ module Baseline
       extend ActiveSupport::Concern
 
       included do
-        # Avo's default-value hydration reads via_relation_class, but the modal flow sends via_belongs_to_resource_class.
-        # Normalize here so "new via belongs_to" preselects the parent consistently across resources.
-        before_action do
-          params[:via_relation_class] ||= params[:via_belongs_to_resource_class]
-        end
-
         before_action only: %i[new create] do
           assign_via_polymorphic_association_to_record
         end
