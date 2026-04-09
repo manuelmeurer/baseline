@@ -24,7 +24,7 @@ module Baseline
 
       private
 
-        def set_delivery_method = :email
+        def set_delivery_method(*) = :email
 
         def generate_delivery(delivery_method, recipient, parts)
           unless delivery_method == :email
