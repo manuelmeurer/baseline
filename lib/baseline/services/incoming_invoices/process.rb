@@ -27,7 +27,7 @@ module Baseline
             "Expense invoice created automatically."
           ].compact_blank.join("\n")
           incoming_invoice.create_expense_invoice!(
-            pdf_file: PDFFile.new(original: pdf_file)
+            pdf_file: PDFFile.new(original: incoming_invoice.pdf_file)
           )._do_lexoffice__create_file(_async: true)
         when respond_to?(:do_process, true)
           @incoming_invoice = incoming_invoice
