@@ -155,7 +155,7 @@ module Baseline
       if url_options.keys == url_options_keys
         # Hatchbox sets a PORT env var in production, which we don't want to use.
         unless Rails.env.production?
-          url_options[:port] = ENV.fetch("PORT")
+          url_options[:port] = ENV.fetch("PORT").to_i + ENV["TEST_ENV_NUMBER"].to_i
         end
 
         Rails.application.routes.default_url_options =
