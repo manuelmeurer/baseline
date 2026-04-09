@@ -7,6 +7,74 @@ module Baseline
     included do
       config.load_defaults Rails.version.to_f
 
+      def config.add_database_configuration(primary_adapter)
+        define_singleton_method(:database_configuration) do
+          base = {
+            pool: 100 # https://island94.org/2024/09/secret-to-rails-database-connection-pool-size
+          }
+          sqlite_base = base.merge(
+            adapter: "sqlite3",
+            timeout: 5000
+          )
+
+          # Parallel Tests sets the env var TEST_ENV_NUMBER.
+          add_parallel_suffix = ->(base, env) {
+            [
+              base,
+              (ENV["TEST_ENV_NUMBER"]&.rjust(2, "0") if env == :test)
+            ].compact_blank.join("_")
+          }
+
+          db_config = {
+            postgresql: ->(key, env) {
+              valid_keys = %i[host database port username password]
+              config = Rails.application.env_credentials(env).db
+              invalid_keys = config.keys - valid_keys
+              if invalid_keys.any?
+                raise "Invalid database credential keys for #{env}: #{invalid_keys}"
+              end
+              valid_keys.each do |k|
+                if env_value = ENV["DB_#{k.upcase}"]
+                  config[k] = env_value
+                end
+              end
+              config
+                .reverse_merge(base)
+                .merge(
+                  adapter:  "postgresql",
+                  encoding: "unicode"
+                ).tap {
+                  _1[:database] = add_parallel_suffix.call(_1[:database], env)
+                }.to_h
+            },
+            sqlite: ->(key, env) {
+              basename = [
+                env,
+                (key unless key == :primary)
+              ].compact.join("_")
+              basename = add_parallel_suffix.call(basename, env)
+              sqlite_base
+                .unless(key == :primary) {
+                  _1.merge migrations_paths: "db/#{key}_migrate"
+                }.merge \
+                  database: "storage/#{basename}.sqlite3"
+            }
+          }
+
+          %i[development test production].index_with do |env|
+            %i[cable cache queue].index_with {
+              db_config[:sqlite].call(_1, env)
+            }.reverse_merge(
+              primary: db_config[primary_adapter].call(:primary, env)
+            ).tap {
+              unless _1.keys.first == :primary
+                raise "The first key must be :primary, but it is #{_1.keys.first}"
+              end
+            }
+          end
+        end
+      end
+
       baseline_spec = Gem.loaded_specs["baseline"]
       # Don't use `is_a?` here, since Bundler::Source::Git inherits from Bundler::Source::Path.
       if baseline_spec.source.class == Bundler::Source::Path
