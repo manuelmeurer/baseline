@@ -38,7 +38,7 @@ jobs:
         run: |
           set -o pipefail
           echo '```' >> $GITHUB_STEP_SUMMARY
-          bin/rspec | tee -a $GITHUB_STEP_SUMMARY
+          bin/rails parallel:spec | tee -a $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Notify Slack on failure
