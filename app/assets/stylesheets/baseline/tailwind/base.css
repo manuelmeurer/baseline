@@ -1,0 +1,34 @@
+@layer base {
+  lexxy-editor {
+    background-color: var(--lexxy-color-canvas);
+  }
+
+  h1, h2, h3, h4, h5, h6, blockquote {
+    text-wrap: balance;
+  }
+
+  body.loading {
+    cursor: wait;
+  }
+
+  turbo-frame {
+    display: block;
+  }
+
+  i[class^="fa-"] {
+    min-width: 1em;
+    display: inline-block;
+  }
+
+  label.required::after {
+    content: " *";
+
+    .no-required-indicator & {
+      content: none;
+    }
+  }
+
+  .optional-indicator label:not(.required)::after {
+    content: " (optional)";
+  }
+}

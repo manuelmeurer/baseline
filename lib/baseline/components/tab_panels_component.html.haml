@@ -1,11 +1,28 @@
 -# frozen_string_literal: true
 
-%ul.nav{ role: "tablist", class: class_names(@nav_css_class, "nav-#{@style}" => @style) }
-  - panels.each_with_index do |panel, index|
-    %li.nav-item{ role: "presentation", class: panel.nav_css_class }
-      = link_to panel.title, "#", class: class_names("nav-link", active: index == 0), data: { bs_toggle: @style.to_s.singularize, bs_target: "##{panel.id}" }, "aria-current": ("page" if index == 0)
+- if Baseline::Current.tailwind
 
-.tab-content{ class: @content_css_class }
-  - panels.each_with_index do |panel, index|
-    .tab-pane.fade{ id: panel.id, class: class_names(panel.css_class, "show active" => index == 0), role: "tabpanel" }
-      = panel.content
+  .tabs{ class: [@nav_css_class, style_css_class] }
+    - panels.each_with_index do |panel, index|
+      - if panel.icon
+        %label.tab
+          = radio_button_tag @id, index + 1, index == 0
+          .me-2
+            = panel.icon
+          = panel.title
+      - else
+        = radio_button_tag @id, index + 1, index == 0, aria: { label: panel.title }, class: [panel.nav_css_class, "tab"]
+      .tab-content.bg-base-100.border-base-300{ class: panel.css_class }
+        = panel.content
+
+- else
+
+  %ul.nav{ role: "tablist", class: class_names(@nav_css_class, "nav-#{@style}" => @style) }
+    - panels.each_with_index do |panel, index|
+      %li.nav-item{ role: "presentation", class: panel.nav_css_class }
+        = link_to panel.title, "#", class: class_names("nav-link", active: index == 0), data: { bs_toggle: @style.to_s.singularize, bs_target: "##{panel.id}" }, "aria-current": ("page" if index == 0)
+
+  .tab-content{ class: @content_css_class }
+    - panels.each_with_index do |panel, index|
+      .tab-pane.fade{ id: panel.id, class: class_names(panel.css_class, "show active" => index == 0), role: "tabpanel" }
+        = panel.content

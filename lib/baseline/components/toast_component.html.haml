@@ -1,13 +1,42 @@
 -# frozen_string_literal: true
 
-%div{ data: @stimco.to_h }
+- if Baseline::Current.tailwind
 
-  #toast-container{ data: data_merge(@stimco.target(:container), turbo_permanent: true) }
+  %div{
+    class: "pointer-events-auto w-full max-w-sm translate-y-0 transform rounded-lg bg-white opacity-100 shadow-lg outline-1 outline-black/5 transition duration-300 ease-out sm:translate-x-0 dark:bg-gray-800 dark:-outline-offset-1 dark:outline-white/10 starting:translate-y-2 starting:opacity-0 starting:sm:translate-x-2 starting:sm:translate-y-0",
+    data: @stimco.to_h(dismiss_after: @dismiss_after),
+    role: "status" }
 
-  .toast{ data: @stimco.target(:template) }
-    .toast-body
-      .icons
-        = component :icon, :accept, version: :solid, class: "icon-success d-none"
-        = component :icon, :warning, version: :solid, class: "icon-error d-none"
-      .text
-      %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }
+    .p-4
+      .flex.items-start
+        .shrink-0
+          = component :icon, @icon, version: :solid, class: "text-xl #{@icon_color}", aria: { hidden: "true" }
+        .ml-3.w-0.flex-1.pt-0.5
+          %p.text-sm.font-medium.text-gray-900.dark:text-white
+            = @title
+          - if @body
+            %p.mt-1.text-sm.text-gray-500.dark:text-gray-400
+              = @body
+        .ml-4.flex.shrink-0
+          %button{
+            type: "button",
+            class: "inline-flex cursor-pointer rounded-md text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-indigo-500",
+            data: @stimco.action(:dismiss) }
+
+            %span.sr-only
+              Close
+            = component :icon, "xmark", version: :solid, class: "text-xl", aria: { hidden: "true" }
+
+- else
+
+  %div{ data: @stimco.to_h }
+
+    #toast-container{ data: data_merge(@stimco.target(:container), turbo_permanent: true) }
+
+    .toast{ data: @stimco.target(:template) }
+      .toast-body
+        .icons
+          = component :icon, :accept, version: :solid, class: "icon-success d-none"
+          = component :icon, :warning, version: :solid, class: "icon-error d-none"
+        .text
+        %button.btn-close{ type: "button", data: { bs_dismiss: "toast" } }

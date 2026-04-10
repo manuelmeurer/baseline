@@ -44,10 +44,10 @@ module Baseline
         }
     end
 
-    def alert(level, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
+    def alert(type, text = nil, heading: nil, icon: nil, closeable: true, hide_id: nil, css_class: nil, data: {}, &block)
       css_class = [
         "alert",
-        "alert-#{level}",
+        "alert-#{type}",
         ("alert-dismissible" if closeable),
         "fade",
         "show",
@@ -94,13 +94,22 @@ module Baseline
     end
 
     def flashes
-      flash
-        .map do |level, message|
-          level = { notice: "success", alert: "danger" }.fetch(level.to_sym, level)
-          alert level, message
+      if Current.tailwind
+        component :toast_stack do |stack|
+          flash.each do |type, message|
+            type = { notice: :success, alert: :error }.fetch(type.to_sym, type.to_sym)
+            stack.with_toast(type:, title: message)
+          end
         end
-        .compact
-        .then { safe_join _1, "\n" }
+      else
+        flash
+          .map do |type, message|
+            type = { notice: "success", alert: "danger" }.fetch(type.to_sym, type)
+            alert type, message
+          end
+          .compact
+          .then { safe_join _1, "\n" }
+      end
     end
 
     def async_turbo_frame(name, loading_message: NOT_SET, loading_content: nil, **attributes, &block)

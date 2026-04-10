@@ -1,8 +1,6 @@
 -# frozen_string_literal: true
 
-%h1.text-white.text-4xl.font-bold.mt-4
-  Header Images:
-  = @record.title
+= component "admin/page_header", title: "Header Images", subtitle: @record.title
 
 - Baseline::GenerateHeaderImages::DIMENSIONS.each do |name, (width, height)|
   %div

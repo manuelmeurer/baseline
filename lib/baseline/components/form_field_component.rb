@@ -333,7 +333,7 @@ module Baseline
           @data       = data_merge(@data, helpers.stimco(:select2, placeholder:))
         end
 
-        html_options = field_attributes.merge(class: "form-select")
+        html_options = field_attributes.merge(class: Current.tailwind ? "select" : "form-select")
 
         @form.select @attribute,
           @choices,

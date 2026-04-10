@@ -1,0 +1,5 @@
+@layer components {
+  [data-controller="toast-stack"] {
+    z-index: 60;
+  }
+}

@@ -2,35 +2,30 @@
 
 - if Baseline::Current.tailwind
   - active = tw_active_groups
-  - raise "Tailwind navbar supports at most 3 groups, got #{active.size}" if active.size > 3
+  - all_start = active.all? { _1.align == :start }
+  - start_groups = active.select { _1.align == :start }
+  - center_groups = active.select { _1.align == :center }
+  - end_groups = active.select { _1.align == :end }
   - tw_navbar_content = helpers.capture_haml do
-    - case active.size
-    - when 0
+    - if all_start
       = render_tw_hamburger
       = render_tw_brand
+      - start_groups.each do |group|
+        = render_tw_group_items(group)
       = content
-    - when 1
-      = render_tw_hamburger
-      = render_tw_brand
-      = render_tw_group_items(active[0])
-      = content
-    - when 2
+    - else
       .navbar-start
         = render_tw_hamburger
         = render_tw_brand
-        = render_tw_group_items(active[0])
+        - start_groups.each do |group|
+          = render_tw_group_items(group)
+      - if center_groups.any?
+        .navbar-center
+          - center_groups.each do |group|
+            = render_tw_group_items(group)
       .navbar-end
-        = render_tw_group_items(active[1])
-        = content
-    - when 3
-      .navbar-start
-        = render_tw_hamburger
-        = render_tw_brand
-        = render_tw_group_items(active[0])
-      .navbar-center
-        = render_tw_group_items(active[1])
-      .navbar-end
-        = render_tw_group_items(active[2])
+        - end_groups.each do |group|
+          = render_tw_group_items(group)
         = content
   .navbar{ class: @css_class, data: @data }
     = tw_navbar_content

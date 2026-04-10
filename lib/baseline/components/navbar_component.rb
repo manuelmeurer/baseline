@@ -99,7 +99,7 @@ module Baseline
         if @brand_url
           link_to @brand, @brand_url, class: "btn btn-ghost text-xl"
         else
-          tag.span(@brand, class: "btn btn-ghost text-xl")
+          tag.span @brand, class: "btn btn-ghost text-xl"
         end
       end
 
@@ -143,10 +143,14 @@ module Baseline
           "#{name.deconstantize}::#{_1.camelize}Component"
         }
 
-      attr_reader :css_class
+      attr_reader :align, :css_class
 
-      def initialize(css_class: nil)
+      def initialize(css_class: nil, align: nil)
         @css_class = css_class
+        @align = align || :start
+        unless @align.in?(%i[start center end])
+          raise "align must be 'start', 'center' or 'end', got: #{@align}"
+        end
       end
 
       def auth_item(namespace: ::Current.namespace)
