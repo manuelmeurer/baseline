@@ -16,16 +16,20 @@ require "tailwindcss/ruby"
 TAILWIND_DIR = "app/assets/tailwind"
 BUILDS_DIR   = "app/assets/builds"
 
-# 1. Process .css.erb templates
-
 # baseline_path is used in the ERB templates to reference files in the gem.
 baseline_path = Gem.loaded_specs["baseline"].full_gem_path
 
-Dir.glob("#{TAILWIND_DIR}/*.css.erb").each do |template_path|
-  output_path = template_path.delete_suffix(".erb")
-  result = ERB.new(File.read(template_path)).result(binding)
-  File.write(output_path, result)
+# Process .css.erb templates into .css files.
+render_erb_templates = -> do
+  Dir.glob("#{TAILWIND_DIR}/*.css.erb").each do |template_path|
+    output_path = template_path.delete_suffix(".erb")
+    result = ERB.new(File.read(template_path)).result(binding)
+    File.write(output_path, result)
+  end
 end
+
+# 1. Initial ERB rendering
+render_erb_templates.call
 
 # 2. Collect all CSS input files
 input_files = Dir.glob("#{TAILWIND_DIR}/*.css").sort
@@ -49,6 +53,17 @@ pids = input_files.map do |input|
 
   puts "tailwindcss: #{name}.css"
   spawn(*cmd)
+end
+
+# 4. In watch mode, re-render .css.erb templates on change
+if watch
+  require "listen"
+
+  Listen.to(TAILWIND_DIR, only: %r{\.css\.erb$}) do |modified, added, removed|
+    changed = [*modified, *added].map { File.basename(_1) }.join(", ")
+    puts "re-rendering .css.erb templates (#{changed})"
+    render_erb_templates.call
+  end.start
 end
 
 # Forward signals to child processes
