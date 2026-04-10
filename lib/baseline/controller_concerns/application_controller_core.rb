@@ -25,8 +25,6 @@ module Baseline
         }
       end
 
-      helper_method def default_section_container = true
-
       helper_method def specific_turbo_frame_request?(name_or_resource)
         name_or_resource
           .if(ActiveRecord::Base) { helpers.dom_id(_1) }

@@ -292,7 +292,25 @@ module Baseline
       Converters::MarkdownToHTML.call(...)
     end
 
-    def section(id = nil, css_class: nil, container_css_class: nil, container: default_section_container, i18n_scope: action_i18n_scope, &block)
+    def container_size = Current.tailwind ? "7xl" : "lg"
+
+    def container_css_class(size = container_size)
+      Current.tailwind ?
+        "mx-auto max-w-#{size} px-4" :
+        [
+          "container",
+          (size unless size == true)
+        ].compact.join("-")
+    end
+
+    def section(
+      id = nil,
+      css_class:           nil,
+      container_css_class: nil,
+      container_size:      method(:container_size).call,
+      i18n_scope:          action_i18n_scope,
+      &block)
+
       if block.arity == 1
         unless id
           raise "Cannot determine I18n scope without section ID."
@@ -305,12 +323,8 @@ module Baseline
       }
 
       tag.section id: id&.to_s&.tr("_", "-"), class: css_class do
-        if container
-          new_container_css_class = [
-            :container,
-            (container unless container == true)
-          ].compact.join("-")
-          container_css_class = Array(container_css_class) << new_container_css_class
+        if container_size
+          container_css_class = Array(container_css_class) << method(:container_css_class).call(container_size)
           tag.div class: container_css_class do
             content.call
           end

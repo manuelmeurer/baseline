@@ -76,8 +76,7 @@ module Baseline
           [
             "container",
             (container unless container == true)
-          ].compact
-            .join("-")
+          ].compact.join("-")
         end
       end
     end
@@ -154,7 +153,7 @@ module Baseline
         if ::Current.user
           photo = component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb)
 
-          if Baseline::Current.tailwind
+          if Current.tailwind
             avatar = tag.div(class: "avatar") do
               tag.div(class: "w-10 rounded-full") { photo }
             end
@@ -168,7 +167,7 @@ module Baseline
             nil # Make sure there's whitespace after the name, so that there is some margin to the dropdown toggle icon.
           ], " ")
 
-          css_class = "avatar" unless Baseline::Current.tailwind
+          css_class = "avatar" unless Current.tailwind
 
           with_item_dropdown(avatar_and_name, css_class: css_class, align_end: true, collapsable: false) do |dropdown|
             yield dropdown if block_given?
@@ -217,10 +216,10 @@ module Baseline
       private
 
         def wrapper
-          tag.li(class: (Baseline::Current.tailwind ? nil : "nav-item")) { yield }
+          tag.li(class: (Current.tailwind ? nil : "nav-item")) { yield }
         end
 
-        def css_class    = Baseline::Current.tailwind ? nil : "nav-link"
+        def css_class    = Current.tailwind ? nil : "nav-link"
         def aria_current = "page"
     end
 
@@ -234,7 +233,7 @@ module Baseline
         @label, @align_end, @align_start, @collapsable =
           label, align_end, align_start, collapsable
 
-        @css_class = if Baseline::Current.tailwind
+        @css_class = if Current.tailwind
           Array(css_class)
         else
           Array(css_class).append("nav-item", "dropdown")
@@ -246,7 +245,7 @@ module Baseline
       def call
         raise "No items found." if items.none?
 
-        Baseline::Current.tailwind ? call_tailwind : call_bootstrap
+        Current.tailwind ? call_tailwind : call_bootstrap
       end
 
       private
@@ -321,16 +320,16 @@ module Baseline
         private
 
           def wrapper
-            tag.li(class: (Baseline::Current.tailwind ? nil : "nav-item")) { yield }
+            tag.li(class: (Current.tailwind ? nil : "nav-item")) { yield }
           end
 
-          def css_class    = Baseline::Current.tailwind ? nil : "dropdown-item"
+          def css_class    = Current.tailwind ? nil : "dropdown-item"
           def aria_current = "true"
       end
 
       class DividerComponent < ApplicationComponent
         def call
-          if Baseline::Current.tailwind
+          if Current.tailwind
             tag.li(class: "divider")
           else
             tag.li { tag.hr(class: "dropdown-divider") }
