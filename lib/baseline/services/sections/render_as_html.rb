@@ -3,11 +3,6 @@
 module Baseline
   module Sections
     class RenderAsHTML < ApplicationService
-      INTERNAL_HOST_REGEX = %r{
-        #{URLFormatValidator.regex}
-        (\w+\.)?
-        #{Rails.application.env_credentials.host!}
-      }ix.freeze
       SLACK_CHANNEL_REGEX = /#([a-zäöü0-9-]+)/
 
       def call(section, debug: false)
@@ -45,7 +40,7 @@ module Baseline
             }
 
           html.css("a").each do |link|
-            unless link[:href].match?(INTERNAL_HOST_REGEX)
+            unless link[:href].match?(URLManager.internal_host_regex)
               ApplicationController.helpers.external_link_attributes.each do |key, value|
                 link[key] = value
               end

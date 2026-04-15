@@ -9,6 +9,7 @@ module Baseline
         return "" if text.blank?
 
         require "commonmarker"
+        require "nokogiri"
 
         cache_key = [
           :markdown_to_html,
@@ -30,6 +31,7 @@ module Baseline
             render:    { unsafe: true, hardbreaks: true, github_pre_lang: false },
             extension: { header_ids: "", block_directive: true }
           }, plugins: { syntax_highlighter: nil })
+            .then { add_external_link_attributes _1 }
             .if(add_class_to_first_paragraph) { _1.sub("<p>", %(<p class="#{_2}">)) }
             .if(avoid_paragraphs) { _1.gsub("<p>", "").gsub("</p>", "<br /><br />") }
             .gsub(/(#{LINE_BREAK_REGEX})\s+/, '\1') # Remove whitespace after <br> elements.
@@ -39,6 +41,24 @@ module Baseline
             .if(sanitize) { Rails::Html::FullSanitizer.new.sanitize _1 }
         end
       end
+
+      private
+
+        def add_external_link_attributes(html)
+          fragment = Nokogiri::HTML5.fragment(html)
+          external_links = fragment.css("a").select {
+            _1[:href].to_s.match?(URLFormatValidator.regex) &&
+              !_1[:href].match?(URLManager.internal_host_regex)
+          }
+          return html if external_links.empty?
+
+          external_links.each do |link|
+            ApplicationController.helpers.external_link_attributes.each do |key, value|
+              link[key.to_s] = value
+            end
+          end
+          fragment.to_html
+        end
     end
   end
 end

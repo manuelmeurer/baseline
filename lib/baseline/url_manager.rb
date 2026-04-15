@@ -7,6 +7,14 @@ module Baseline
     class << self
       def domains = const_get(:NAMESPACE_DOMAINS).values.flatten
 
+      def internal_host_regex
+        %r{
+          #{URLFormatValidator.regex}
+          (\w+\.)?
+          #{Rails.application.env_credentials.host!}
+        }ix.freeze
+      end
+
       def route_constraints(namespace)
         if Rails.env.production? && domain = const_get(:NAMESPACE_DOMAINS)[namespace]
           { host: domain }

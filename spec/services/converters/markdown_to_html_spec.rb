@@ -24,8 +24,42 @@ RSpec.describe Baseline::Converters::MarkdownToHTML do
 
     it "converts links" do
       expect(described_class.call("[click here](https://example.com)")).to eq(
-        '<p><a href="https://example.com">click here</a></p>'
+        '<p><a href="https://example.com" target="_blank" rel="nofollow noopener">click here</a></p>'
       )
+    end
+
+    describe "external link attributes" do
+      it "adds target and rel to external links" do
+        expect(described_class.call("[ext](https://example.com)")).to eq(
+          '<p><a href="https://example.com" target="_blank" rel="nofollow noopener">ext</a></p>'
+        )
+      end
+
+      it "does not add attributes to internal links" do
+        host = Rails.application.env_credentials.host!
+        expect(described_class.call("[internal](https://#{host}/path)")).to eq(
+          %(<p><a href="https://#{host}/path">internal</a></p>)
+        )
+      end
+
+      it "does not add attributes to subdomain links of the internal host" do
+        host = Rails.application.env_credentials.host!
+        expect(described_class.call("[sub](https://www.#{host}/path)")).to eq(
+          %(<p><a href="https://www.#{host}/path">sub</a></p>)
+        )
+      end
+
+      it "does not add attributes to relative links" do
+        expect(described_class.call("[rel](/foo/bar)")).to eq(
+          '<p><a href="/foo/bar">rel</a></p>'
+        )
+      end
+
+      it "does not add attributes to heading anchors" do
+        expect(described_class.call("# Heading 1")).to eq(
+          '<h1><a href="#heading-1" aria-hidden="true" class="anchor" id="heading-1"></a>Heading 1</h1>'
+        )
+      end
     end
 
     it "converts inline code" do

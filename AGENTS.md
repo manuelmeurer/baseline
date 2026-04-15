@@ -199,7 +199,7 @@ Always use [strict locals](https://guides.rubyonrails.org/action_view_overview.h
 - For translated text in views that consists of one or more paragraphs, use the `md_to_html` helper, e.g. `md_to_html t(:text, scope: action_i18n_key)`.
 - When moving text from a view to I18n, first determine the language of the text in the view, move each text fragment to the corresponding namespaced I18n file, and then translate each fragment into the other locales used in the namespace and add them to the correct I18n files.
 - Don't use automatic safe HTML rendering with the `_html` postfix. Use the explicit `md_to_html` helper instead if the text fragment includes HTML.
-- Prefer Markdown links to passing HTML anchor elements to I18n with the `link_to` helper. Add `{:target="_blank"}` to the Markdown link if it open in a new tab/window.
+- Prefer Markdown links to passing HTML anchor elements to I18n with the `link_to` helper. External links (pointing to a different host than the app) automatically receive `target="_blank"` and the other attributes from the `external_link_attributes` helper.
 - Prefer these I18n keys: `headline` for headlines, `text` for the main text of the page or section, `cta` for the text of a call to action (often a button or link). If text needs to be broken up into several I18n keys, use `text_1`, `text_2`, etc. If none of these are a good match, check the locale files for keys that have been previously used for similar text fragments.
 - Prefer simple names for interpolation attributes: `name`, `url`, `cta`, etc. When in doubt, check the locale files for interpolation attributes that have been previously used.
 - Don't use quotes for I18n values, unless they contain a colon.
