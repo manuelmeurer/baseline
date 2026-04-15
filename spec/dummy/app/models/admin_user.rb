@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class AdminUser < ApplicationRecord
-  include Baseline::ActsAsAdminUser,
-          Baseline::UserProxy
+  include Baseline::ActsAsAdminUser
 
   belongs_to :user
+
+  # Must be included after the user association is defined.
+  include Baseline::UserProxy
 
   _baseline_finalize
 end
