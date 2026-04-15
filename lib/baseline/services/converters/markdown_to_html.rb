@@ -19,13 +19,12 @@ module Baseline
         ]
 
         Rails.cache.fetch cache_key, force: Rails.env.development? do
-          # If we ever want to process the text without adding any block level elements (<p> etc.),
-          # use this approach: https://island94.org/2025/07/customize-rails-i18n-key-suffixes-like-md-for-markdown
-          # unsafe:           allow raw HTML passthrough in markdown
-          # hardbreaks:       convert soft line breaks (single newlines) to <br>
-          # github_pre_lang:  use <code class="language-x"> instead of <pre lang="x">
-          # header_ids:       generate id attributes for headings (empty string = no prefix)
-          # block_directive:   enable generic block directive syntax (:::)
+          # Options used:
+          # unsafe:             allow raw HTML passthrough in markdown
+          # hardbreaks:         convert soft line breaks (single newlines) to <br>
+          # github_pre_lang:    use <code class="language-x"> instead of <pre lang="x">
+          # header_ids:         generate id attributes for headings (empty string = no prefix)
+          # block_directive:    enable generic block directive syntax (:::)
           # syntax_highlighter: nil disables built-in syntax highlighting
           Commonmarker.to_html(text, options: {
             render:    { unsafe: true, hardbreaks: true, github_pre_lang: false },
