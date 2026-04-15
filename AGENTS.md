@@ -172,6 +172,15 @@ message.update!(sent_at: Time.current)
 message.sent!
 ```
 
+### Partials
+
+Always use [strict locals](https://guides.rubyonrails.org/action_view_overview.html#strict-locals) when creating or modifying Rails partials. Declare the expected locals via a magic comment at the top of the partial:
+
+```haml
+-# frozen_string_literal: true
+-# locals: (user:, size: :medium)
+```
+
 ### Forms
 
 - Inspect existing form patterns in the codebase first.
