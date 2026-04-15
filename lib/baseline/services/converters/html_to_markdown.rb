@@ -19,8 +19,7 @@ module Baseline
       private
 
         def generate(html)
-          require "kramdown"
-          require "kramdown-parser-gfm"
+          require "reverse_markdown"
 
           html = Nokogiri::HTML
             .fragment(html)
@@ -29,9 +28,8 @@ module Baseline
                 .remove
             }.to_html
 
-          Kramdown::Document
-            .new(html, input: "html")
-            .to_kramdown
+          ReverseMarkdown
+            .convert(html, github_flavored: true, tag_border: "")
             .chomp
         end
     end

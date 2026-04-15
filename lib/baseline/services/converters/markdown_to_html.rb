@@ -4,25 +4,11 @@ module Baseline
   module Converters
     class MarkdownToHTML < ApplicationService
       LINE_BREAK_REGEX = %r{<br(\s*/)?>}.freeze
-      URL_REGEX = %r{
-        (?<!\]\() # avoid matching markdown links
-        \b
-        https?://
-        \S+
-      }ix.freeze
-      TYPOGRAPHIC_CHARS = {
-        "..." => '\.\.\.',
-        "--"  => '\-\-',
-        "---" => '\-\-\-',
-        "<<"  => '\<\<',
-        ">>"  => '\>\>'
-      }.freeze
 
       def call(text, sanitize: false, avoid_paragraphs: false, add_class_to_first_paragraph: nil)
         return "" if text.blank?
 
-        require "kramdown"
-        require "kramdown-parser-gfm"
+        require "commonmarker"
 
         cache_key = [
           :markdown_to_html,
@@ -33,17 +19,18 @@ module Baseline
         ]
 
         Rails.cache.fetch cache_key, force: Rails.env.development? do
-          text = text.gsub(URL_REGEX) do |url|
-            TYPOGRAPHIC_CHARS.inject(url) do |escaped_url, (chars, escaped_chars)|
-              escaped_url.gsub(chars, escaped_chars)
-            end
-          end
-
           # If we ever want to process the text without adding any block level elements (<p> etc.),
           # use this approach: https://island94.org/2025/07/customize-rails-i18n-key-suffixes-like-md-for-markdown
-          Kramdown::Document
-            .new(text, input: "GFM")
-            .to_html
+          # unsafe:           allow raw HTML passthrough in markdown
+          # hardbreaks:       convert soft line breaks (single newlines) to <br>
+          # github_pre_lang:  use <code class="language-x"> instead of <pre lang="x">
+          # header_ids:       generate id attributes for headings (empty string = no prefix)
+          # block_directive:   enable generic block directive syntax (:::)
+          # syntax_highlighter: nil disables built-in syntax highlighting
+          Commonmarker.to_html(text, options: {
+            render:    { unsafe: true, hardbreaks: true, github_pre_lang: false },
+            extension: { header_ids: "", block_directive: true }
+          }, plugins: { syntax_highlighter: nil })
             .if(add_class_to_first_paragraph) { _1.sub("<p>", %(<p class="#{_2}">)) }
             .if(avoid_paragraphs) { _1.gsub("<p>", "").gsub("</p>", "<br /><br />") }
             .gsub(/(#{LINE_BREAK_REGEX})\s+/, '\1') # Remove whitespace after <br> elements.
