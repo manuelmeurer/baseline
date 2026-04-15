@@ -8,7 +8,7 @@ module Baseline
       Module.new do
         extend ActiveSupport::Concern
 
-        attributes_and_verbs = attributes.index_with { _1.to_s.sub(/_(at|on|until)\z/, "") }
+        attributes_and_verbs = attributes.index_with { _1.to_s.sub(/_(at|on|until|date)\z/, "") }
 
         included do
           attributes.each do |attribute|
