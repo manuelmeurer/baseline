@@ -243,20 +243,13 @@ module Baseline
     def current_language = Language.new(locale: I18n.locale)
 
     def validate_turnstile
-      unless Rails.env.production?
-        return true
-      end
-
-      if params["cf-turnstile-response"].blank?
-        return false
-      end
+      return true unless Rails.env.production?
+      return false if params["cf-turnstile-response"].blank?
 
       success = params["cf-turnstile-success"]
 
       [true, false].each do |value|
-        if success == value.to_s
-          return value
-        end
+        return value if success == value.to_s
       end
 
       ReportError.call %(Cloudflare Turnstile Success param neither "true" nor "false", got: #{success.inspect})
