@@ -8,6 +8,9 @@ module Baseline
 
         included do
           self.visible_on_sidebar = false
+          self.find_record_method = -> {
+            query.find_by!(identifier: id)
+          }
         end
 
         def fields
