@@ -23,15 +23,17 @@ export default class extends ApplicationController {
       if (this.waitingForInteractionValue)
         document.toastController.show("error", errorMessage)
       else if (!intervalId) {
+        let attempts = 0
+
         intervalId = setInterval(() => {
           field = this.element.querySelector(`input[name='${fieldName}']`)
 
           if (!field) {
-            clearInterval(intervalId)
-            document.toastController.show("error", "An error occurred, please reload the page and try again.")
-          }
-
-          if (field.value) {
+            if (++attempts > 40) {
+              clearInterval(intervalId)
+              document.toastController.show("error", "An error occurred, please reload the page and try again.")
+            }
+          } else if (field.value) {
             clearInterval(intervalId)
             this.element.requestSubmit()
           }
