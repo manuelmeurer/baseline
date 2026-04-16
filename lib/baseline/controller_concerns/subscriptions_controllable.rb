@@ -72,7 +72,9 @@ module Baseline
             .tap { before_create_user(_1) }
             .tap(&:save!)
 
-        message_kind = @user.subscribed?(@subscription.identifier) ?
+        subscribed = @user.subscribed?(@subscription.identifier)
+
+        message_kind = subscribed ?
           :subscription_existing :
           :subscription_new
 
@@ -81,6 +83,8 @@ module Baseline
           .where(kind: message_kind, messageable: @subscription)
           .build
           ._do_create_and_send
+
+        send(:after_create) if subscribed && respond_to?(:after_create, true)
       end
 
       def create_params
