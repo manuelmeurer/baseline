@@ -383,7 +383,7 @@ module Baseline
     def meta_javascript_tag
       return unless
         ::Current.namespace == :web &&
-        pixel_id = Rails.application.env_credentials.meta.pixel_id
+        pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
       javascript_tag <<~JS
         !function(f,b,e,v,n,t,s)
