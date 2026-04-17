@@ -13,6 +13,8 @@ module Baseline
       private
 
         memo_wise def client
+          require "slack-ruby-client"
+
           Rails
             .application
             .env_credentials
