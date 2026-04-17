@@ -374,18 +374,31 @@ module Baseline
       end
     end
 
+    # Whether analytics scripts should be gated behind cookie consent.
+    # Defaults to true in the web namespace, where `showCookieConsent` is loaded.
+    # Override in app helpers if the consent UI loads in additional namespaces.
+    def cookie_consent_enabled? = ::Current.namespace == :web
+
     def plausible_javascript_tag
       return unless
         Rails.env.production? &&
         ::Current.namespace != :admin
 
-      javascript_include_tag "/qwerty/js/script.js",
+      options = {
         host:  request.base_url, # Use the request host instead of the asset host, if one is configured.
         defer: true,
         data: {
           domain: request.host,
           api:    "/qwerty/api/event"
         }
+      }
+
+      if cookie_consent_enabled?
+        options[:type]            = "text/plain"
+        options[:data][:category] = "analytics"
+      end
+
+      javascript_include_tag "/qwerty/js/script.js", **options
     end
 
     def meta_javascript_tag
@@ -393,17 +406,23 @@ module Baseline
         ::Current.namespace == :web &&
         pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
-      javascript_tag <<~JS
+      options = {}
+      if cookie_consent_enabled?
+        options[:type] = "text/plain"
+        options[:data] = { category: "analytics" }
+      end
+
+      javascript_tag <<~JS, options
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
         n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";
         n.queue=[];t=b.createElement(e);t.async=!0;
         t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '#{pixel_id}');
-        document.addEventListener('turbo:load', () => fbq('track', 'PageView'));
+        s.parentNode.insertBefore(t,s)}(window,document,"script",
+        "https://connect.facebook.net/en_US/fbevents.js");
+        fbq("init", "#{pixel_id}");
+        document.addEventListener("turbo:load", () => fbq("track", "PageView"));
       JS
     end
 
