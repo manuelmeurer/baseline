@@ -164,7 +164,7 @@ module Baseline
       }
     end
 
-    def inline_svg(filename, **options)
+    def inline_svg(filename, **attributes)
       unless File.extname(filename) == ".svg"
         raise "Must be a SVG file: #{filename}"
       end
@@ -173,7 +173,7 @@ module Baseline
         :inline_svg,
         Rails.configuration.revision,
         filename,
-        options.sort.to_json.then { ActiveSupport::Digest.hexdigest _1 }
+        attributes.sort.to_json.then { ActiveSupport::Digest.hexdigest _1 }
       ].join(":")
 
       Rails.cache.fetch(cache_key, force: Rails.env.development?) do
@@ -183,21 +183,29 @@ module Baseline
 
         content = path.content
 
-        unless css_class = options[:class].presence
-          break content
-        end
+        break content if attributes.empty?
+
+        flatten_attributes = ->(attrs, prefix = nil) {
+          attrs.flat_map do |name, value|
+            name = [prefix, name.to_s.tr("_", "-")].compact.join("-")
+            value.is_a?(Hash) ?
+              flatten_attributes.call(value, name) :
+              [[name, value]]
+          end
+        }
 
         Nokogiri::XML::Document
           .parse(content)
           .at_css("svg")
-          .tap {
-            _1["class"] = [
-              *_1["class"]&.split(" "),
-              css_class
-            ].compact
-             .uniq
-             .join(" ")
-          }.to_s
+          .tap do |svg|
+            flatten_attributes.call(attributes).each do |name, value|
+              svg[name] = if name == "class"
+                [*svg["class"]&.split(" "), value].compact.uniq.join(" ")
+              else
+                value
+              end
+            end
+          end.to_s
       end.html_safe
     end
 
