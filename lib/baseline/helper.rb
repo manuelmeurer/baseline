@@ -385,11 +385,13 @@ module Baseline
         ::Current.namespace != :admin
 
       options = {
+        id:    "plausible-script",
         host:  request.base_url, # Use the request host instead of the asset host, if one is configured.
         defer: true,
         data: {
-          domain: request.host,
-          api:    "/qwerty/api/event"
+          domain:      request.host,
+          api:         "/qwerty/api/event",
+          turbo_track: "reload"
         }
       }
 
@@ -406,10 +408,13 @@ module Baseline
         ::Current.namespace == :web &&
         pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
-      options = {}
+      options = {
+        id:   "meta-pixel-script",
+        data: { turbo_track: "reload" }
+      }
       if cookie_consent_enabled?
-        options[:type] = "text/plain"
-        options[:data] = { category: "analytics" }
+        options[:type]            = "text/plain"
+        options[:data][:category] = "analytics"
       end
 
       javascript_tag <<~JS, options
@@ -431,10 +436,13 @@ module Baseline
         ::Current.namespace == :web &&
         partner_id = Rails.application.env_credentials.linkedin&.partner_id
 
-      options = {}
+      options = {
+        id:   "linkedin-insight-script",
+        data: { turbo_track: "reload" }
+      }
       if cookie_consent_enabled?
-        options[:type] = "text/plain"
-        options[:data] = { category: "analytics" }
+        options[:type]            = "text/plain"
+        options[:data][:category] = "analytics"
       end
 
       javascript_tag <<~JS, options
