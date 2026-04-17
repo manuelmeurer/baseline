@@ -389,9 +389,8 @@ module Baseline
         host:  request.base_url, # Use the request host instead of the asset host, if one is configured.
         defer: true,
         data: {
-          domain:      request.host,
-          api:         "/qwerty/api/event",
-          turbo_track: "reload"
+          domain: request.host,
+          api:    "/qwerty/api/event"
         }
       }
 
@@ -408,26 +407,26 @@ module Baseline
         ::Current.namespace == :web &&
         pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
-      options = {
-        id:   "meta-pixel-script",
-        data: { turbo_track: "reload" }
-      }
+      options = { id: "meta-pixel-script" }
       if cookie_consent_enabled?
-        options[:type]            = "text/plain"
-        options[:data][:category] = "analytics"
+        options[:type] = "text/plain"
+        options[:data] = { category: "analytics" }
       end
 
       javascript_tag <<~JS, options
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,"script",
-        "https://connect.facebook.net/en_US/fbevents.js");
-        fbq("init", "#{pixel_id}");
-        document.addEventListener("turbo:load", () => fbq("track", "PageView"));
+        if (!window.__metaPixelInited) {
+          window.__metaPixelInited = true;
+          !function(f,b,e,v,n,t,s)
+          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s)}(window,document,"script",
+          "https://connect.facebook.net/en_US/fbevents.js");
+          fbq("init", "#{pixel_id}");
+          document.addEventListener("turbo:load", () => fbq("track", "PageView"));
+        }
       JS
     end
 
@@ -436,27 +435,27 @@ module Baseline
         ::Current.namespace == :web &&
         partner_id = Rails.application.env_credentials.linkedin&.partner_id
 
-      options = {
-        id:   "linkedin-insight-script",
-        data: { turbo_track: "reload" }
-      }
+      options = { id: "linkedin-insight-script" }
       if cookie_consent_enabled?
-        options[:type]            = "text/plain"
-        options[:data][:category] = "analytics"
+        options[:type] = "text/plain"
+        options[:data] = { category: "analytics" }
       end
 
       javascript_tag <<~JS, options
-        _linkedin_partner_id = "#{partner_id}";
-        window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-        window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-        (function(l) {
-        if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-        window.lintrk.q=[]}
-        var s = document.getElementsByTagName("script")[0];
-        var b = document.createElement("script");
-        b.type = "text/javascript";b.async = true;
-        b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-        s.parentNode.insertBefore(b, s);})(window.lintrk);
+        if (!window.__linkedinInsightInited) {
+          window.__linkedinInsightInited = true;
+          _linkedin_partner_id = "#{partner_id}";
+          window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+          window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+          (function(l) {
+          if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+          window.lintrk.q=[]}
+          var s = document.getElementsByTagName("script")[0];
+          var b = document.createElement("script");
+          b.type = "text/javascript";b.async = true;
+          b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+          s.parentNode.insertBefore(b, s);})(window.lintrk);
+        }
       JS
     end
 
