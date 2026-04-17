@@ -389,8 +389,9 @@ module Baseline
         host:  request.base_url, # Use the request host instead of the asset host, if one is configured.
         defer: true,
         data: {
-          domain: request.host,
-          api:    "/qwerty/api/event"
+          domain:          request.host,
+          api:             "/qwerty/api/event",
+          turbo_permanent: true
         }
       }
 
@@ -407,10 +408,13 @@ module Baseline
         ::Current.namespace == :web &&
         pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
-      options = { id: "meta-pixel-script" }
+      options = {
+        id:   "meta-pixel-script",
+        data: { turbo_permanent: true }
+      }
       if cookie_consent_enabled?
-        options[:type] = "text/plain"
-        options[:data] = { category: "analytics" }
+        options[:type]            = "text/plain"
+        options[:data][:category] = "analytics"
       end
 
       javascript_tag <<~JS, options
@@ -435,10 +439,13 @@ module Baseline
         ::Current.namespace == :web &&
         partner_id = Rails.application.env_credentials.linkedin&.partner_id
 
-      options = { id: "linkedin-insight-script" }
+      options = {
+        id:   "linkedin-insight-script",
+        data: { turbo_permanent: true }
+      }
       if cookie_consent_enabled?
-        options[:type] = "text/plain"
-        options[:data] = { category: "analytics" }
+        options[:type]            = "text/plain"
+        options[:data][:category] = "analytics"
       end
 
       javascript_tag <<~JS, options
