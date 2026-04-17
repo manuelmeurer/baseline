@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require "cloudinary"
-
 if cloudinary_config = Rails.application.env_credentials.cloudinary
+  require "cloudinary"
   Cloudinary.config \
     cloud_name: cloudinary_config.cloud_name!,
     api_key:    cloudinary_config.api_key!,
