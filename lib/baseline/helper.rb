@@ -380,6 +380,25 @@ module Baseline
         }
     end
 
+    def meta_javascript_tag
+      return unless
+        ::Current.namespace == :web &&
+        pixel_id = Rails.application.env_credentials.meta.pixel_id
+
+      javascript_tag <<~JS
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '#{pixel_id}');
+        document.addEventListener('turbo:load', () => fbq('track', 'PageView'));
+      JS
+    end
+
     def icon_links
       [
         tag.link(
@@ -598,6 +617,7 @@ module Baseline
         icon_links,
         manifest_link_if_allowed,
         plausible_javascript_tag,
+        meta_javascript_tag,
         stylesheet_link_tag(::Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
