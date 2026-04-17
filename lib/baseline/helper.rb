@@ -426,6 +426,32 @@ module Baseline
       JS
     end
 
+    def linkedin_javascript_tag
+      return unless
+        ::Current.namespace == :web &&
+        partner_id = Rails.application.env_credentials.linkedin&.partner_id
+
+      options = {}
+      if cookie_consent_enabled?
+        options[:type] = "text/plain"
+        options[:data] = { category: "analytics" }
+      end
+
+      javascript_tag <<~JS, options
+        _linkedin_partner_id = "#{partner_id}";
+        window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+        window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+        (function(l) {
+        if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+        window.lintrk.q=[]}
+        var s = document.getElementsByTagName("script")[0];
+        var b = document.createElement("script");
+        b.type = "text/javascript";b.async = true;
+        b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+        s.parentNode.insertBefore(b, s);})(window.lintrk);
+      JS
+    end
+
     def icon_links
       [
         tag.link(
@@ -645,6 +671,7 @@ module Baseline
         manifest_link_if_allowed,
         plausible_javascript_tag,
         meta_javascript_tag,
+        linkedin_javascript_tag,
         stylesheet_link_tag(::Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
