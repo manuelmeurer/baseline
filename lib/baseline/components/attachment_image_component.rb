@@ -75,7 +75,7 @@ module Baseline
       when "cloudflare"
         render_cf_image(blob)
       when "cloudinary"
-        MigrateBlobToCloudflare.call_async(blob.id)
+        MigrateBlobToCloudflare.call_async(blob)
         render_cloudinary(blob)
       else
         if blob.service.class.to_s.demodulize == "DiskService"

@@ -2,8 +2,7 @@
 
 module Baseline
   class MigrateBlobToCloudflare < ApplicationService
-    def call(blob_id)
-      return unless blob = ActiveStorage::Blob.find_by(id: blob_id)
+    def call(blob)
       return unless blob.service_name == "cloudinary"
 
       check_uniqueness on_error: :return
