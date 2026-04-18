@@ -6,7 +6,7 @@ module Baseline
       return unless blob = ActiveStorage::Blob.find_by(id: blob_id)
       return unless blob.service_name == "cloudinary"
 
-      check_uniqueness
+      check_uniqueness on_error: :return
 
       service = ActiveStorage::Blob.services.fetch(:cloudflare)
 
