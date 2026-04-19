@@ -2,10 +2,11 @@
 
 = component "admin/page_header", title: "Header Images", subtitle: @record.title
 
-- Baseline::GenerateHeaderImages::DIMENSIONS.each do |name, (width, height)|
-  %div
-    %p.text-gray-400.text-sm.mb-2
-      = "#{name} — #{width}x#{height}px"
-    %div{ class: "border border-gray-700 rounded" }
-      .relative.overflow-hidden.bg-linear-to-br.from-gray-900.via-gray-800.to-gray-900.flex.flex-col.justify-between.p-12{ id: Baseline::GenerateHeaderImages::ELEMENT_IDS.fetch(name), style: "width: #{width}px; height: #{height}px;" }
-        = render "admin/previews/header_images/#{@record.class.to_s.underscore}", width:, height:
+- Baseline::GenerateHeaderImages::DIMENSIONS.each do |name, sizes|
+  - sizes.each do |width, height|
+    %div
+      %p.text-gray-400.text-sm.mb-2
+        = "#{name} — #{width}x#{height}px"
+      %div{ class: "border border-gray-700 rounded" }
+        .relative.overflow-hidden.bg-linear-to-br.from-gray-900.via-gray-800.to-gray-900.flex.flex-col.justify-between.p-12{ id: Baseline::GenerateHeaderImages::ELEMENT_IDS.fetch([name, width]), style: "width: #{width}px; height: #{height}px;" }
+          = render "admin/previews/header_images/#{@record.class.to_s.underscore}", width:, height:

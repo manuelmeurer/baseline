@@ -3,14 +3,15 @@
 module Baseline
   class GenerateHeaderImages < BaseService
     DIMENSIONS = {
-      "3:1"   => [1200, 400],
-      "16:9"  => [1200, 675],
-      "4:3"   => [1200, 900],
-      "1:1"   => [1200, 1200],
-      "1.9:1" => [1200, 630]
+      "3:1"   => { 1200 => 400 },
+      "16:9"  => { 1200 => 675, 3840 => 2160 },
+      "4:3"   => { 1200 => 900 },
+      "1:1"   => { 1200 => 1200 },
+      "1.9:1" => { 1200 => 630 }
     }.freeze
     ELEMENT_IDS = DIMENSIONS
-      .to_h { [_1, "header-#{_2.join("-")}"] }
+      .flat_map { |name, sizes| sizes.keys.map { [[name, _1], "header-#{name}-w#{_1}"] } }
+      .to_h
       .freeze
 
     def call(record)
@@ -22,20 +23,22 @@ module Baseline
 
       record.header_images.purge
 
-      DIMENSIONS.each do |name, (width, height)|
-        path = External::BrowserScreenshot.generate(
-          html,
-          locator:  "##{ELEMENT_IDS.fetch(name)}",
-          viewport: [width, height],
-          save_to:  :file
-        )
+      DIMENSIONS.each do |name, sizes|
+        sizes.each do |width, height|
+          path = External::BrowserScreenshot.generate(
+            html,
+            locator:  "##{ELEMENT_IDS.fetch([name, width])}",
+            viewport: [width, height],
+            save_to:  :file
+          )
 
-        record.header_images.attach(
-          io:       File.open(path),
-          filename: "header-#{name}.png"
-        )
+          record.header_images.attach(
+            io:       File.open(path),
+            filename: "header-#{name}-w#{width}.png"
+          )
 
-        File.delete(path)
+          File.delete(path)
+        end
       end
     end
   end
