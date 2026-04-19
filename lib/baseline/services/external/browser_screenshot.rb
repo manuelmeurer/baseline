@@ -3,19 +3,23 @@
 module Baseline
   module External
     class BrowserScreenshot < ::External::Base
-      add_action :generate, run_unless_prod: true do |html, locator: nil, viewport: nil, save_to: :web, cache: false|
+      add_action :generate, run_unless_prod: true do |html, locator: nil, viewport: nil, scale: nil, save_to: :web, cache: false|
         if cache
           cache_key = [
             :browser_screenshot,
             ActiveSupport::Digest.hexdigest(html),
-            *[locator, viewport, save_to].map(&:to_s)
+            *[locator, viewport, scale, save_to].map(&:to_s)
           ]
           if cached = Rails.cache.read(cache_key)
             return cached
           end
         end
 
-        data = with_browser_page do |page|
+        page_params = if scale
+          { deviceScaleFactor: scale }
+        end
+
+        data = with_browser_page(page_params:) do |page|
           if viewport
             page.set_viewport_size \
               width:  viewport.first,

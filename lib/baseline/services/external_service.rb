@@ -66,7 +66,7 @@ module Baseline
 
     private
 
-      def with_browser_page(page_params: {}, **params)
+      def with_browser_page(page_params: nil, **params)
         unless params.key?(:headless)
           params[:headless] = true
         end
