@@ -1,0 +1,16 @@
+-# frozen_string_literal: true
+-# locals: (blob:, in_gallery: false)
+
+%figure.attachment{ class: "attachment--#{blob.representable? ? "preview" : "file"} attachment--#{blob.filename.extension}" }
+
+  - if blob.image?
+    = component :attachment_image, blob, in_gallery ? :xl_fit : :xxl_fit
+  - else
+    = link_to blob.filename, url_for(blob)
+
+  %figcaption.attachment__caption
+    - if blob.caption.present?
+      = blob.caption
+    - else
+      %span.attachment__name= blob.filename
+      %span.attachment__size= number_to_human_size blob.byte_size
