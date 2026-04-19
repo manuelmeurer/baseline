@@ -26,23 +26,6 @@ module Baseline
       variants.each { versions[_1.to_sym]     = _2 }
       variants.each { versions[:"wide_#{_1}"] = _2.merge(width: size * 2) }
     end.freeze
-    CLOUDINARY_VERSIONS = SIZES.each_with_object({}) do |(key, size), versions|
-      base = {
-        quality:      :auto,
-        fetch_format: :auto,
-        width:        size,
-        height:       size
-      }
-
-      variants = {
-        "#{key}_fit":           base.merge(crop: :fit),
-        "#{key}_fit_grayscale": base.merge(crop: :fit, effect: :grayscale),
-        "#{key}_thumb":         base.merge(crop: :thumb, gravity: :face)
-      }
-
-      variants.each { versions[_1.to_sym]     = _2 }
-      variants.each { versions[:"wide_#{_1}"] = _2.merge(width: size * 2) }
-    end.freeze
 
     def initialize(attached_or_blob, version, only_path: false, **options)
       @attached_or_blob, @version, @only_path, @options =
@@ -68,63 +51,40 @@ module Baseline
         end
       end
 
-      blob = @attached_or_blob.unless(is_blob, &:blob)
+      @blob = @attached_or_blob.unless(is_blob, &:blob)
 
-      case blob.service_name
-      when "cloudflare"
-        render_cf_image(blob)
-      when "cloudinary"
-        MigrateBlobToCloudflare.call_async(blob)
-        render_cloudinary(blob)
+      case
+      when @blob.service_name == "cloudflare"
+        render_cloudflare
+      when @blob.service.class.to_s.demodulize == "DiskService"
+        render_local
       else
-        if blob.service.class.to_s.demodulize == "DiskService"
-          render_local(blob)
-        else
-          raise "Unexpected service_name: #{blob.service_name.inspect}"
-        end
+        raise "Unexpected service_name: #{@blob.service_name}"
       end
     end
 
     private
 
-      def render_cf_image(blob)
-        options = CLOUDFLARE_VERSIONS.fetch(@version)
-        url = cf_url(blob.key, **options)
-        @only_path ? url : helpers.image_tag(url, **@options)
-      end
-
-      def cf_url(key, **options)
-        opts = options.sort.map { _1.join("=") }.join(",")
-        path = "/#{opts}/#{key}"
-        "https://img.#{Rails.application.env_credentials.host!}/#{cf_sign(path)}#{path}"
-      end
-
-      def cf_sign(path)
+      def render_cloudflare
+        options = CLOUDFLARE_VERSIONS.fetch(@version).sort.map { _1.join("=") }.join(",")
+        path = "/#{options}/#{@blob.key}"
         signing_key = Rails.application.env_credentials.cloudflare.image_signing_key!
-
-        OpenSSL::HMAC
+        signature = OpenSSL::HMAC
           .digest("SHA256", signing_key, path)
           .byteslice(0, 16)
           .then { Base64.urlsafe_encode64(_1, padding: false) }
+        url = "https://img.#{Rails.application.env_credentials.host!}/#{signature}#{path}"
+        @only_path ? url : helpers.image_tag(url, **@options)
       end
 
-      def render_cloudinary(blob)
-        suffix = @only_path ? :path : :tag
-        helpers.public_send \
-          :"cl_image_#{suffix}",
-          blob.key,
-          transformation: CLOUDINARY_VERSIONS.fetch(@version),
-          **@options
-      end
-
-      def render_local(blob)
+      def render_local
         transformation =
           case @version
           when /_fit/   then :resize_to_fit
           when /_thumb/ then :resize_to_fill
           else raise "Unexpected version: #{@version}"
           end
-        variant = blob.variant(
+        variant = @blob.variant(
           transformation => CLOUDFLARE_VERSIONS.fetch(@version).fetch_values(:width, :height)
         )
         suffix = @only_path ? :path : :tag
