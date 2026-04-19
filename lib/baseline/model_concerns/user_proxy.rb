@@ -67,6 +67,7 @@ module Baseline
       has_many :deactivations, through: :user
       has_many :email_confirmations, through: :user
       has_many :subscriptions, through: :user
+      has_many :user_subscriptions, through: :user
 
       SCOPES.each do |scope_name|
         scope scope_name, ->(*args) {
