@@ -10,7 +10,9 @@ module Baseline
       "1.9:1" => { 1200 => 630 }
     }.freeze
     ELEMENT_IDS = DIMENSIONS
-      .flat_map { |name, sizes| sizes.keys.map { [[name, _1], "header-#{name}-w#{_1}"] } }
+      .flat_map do |name, sizes|
+        sizes.keys.map { [[name, _1], "header-#{name.tr(":", "-")}-w#{_1}"] }
+      end
       .to_h
       .freeze
 
