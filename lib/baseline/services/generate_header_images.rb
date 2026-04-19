@@ -2,19 +2,13 @@
 
 module Baseline
   class GenerateHeaderImages < BaseService
-    DIMENSIONS = {
-      "3:1"   => { 1200 => 400 },
-      "16:9"  => { 1200 => 675, 3840 => 2160 },
-      "4:3"   => { 1200 => 900 },
-      "1:1"   => { 1200 => 1200 },
-      "1.9:1" => { 1200 => 630 }
-    }.freeze
-    ELEMENT_IDS = DIMENSIONS
-      .flat_map do |name, sizes|
-        sizes.keys.map { [[name, _1], "header-#{name.tr(":", "-")}-w#{_1}"] }
-      end
-      .to_h
-      .freeze
+    WIDTH = 1200
+    VARIANTS = %w[3:1 16:9 4:3 1:1 40:21].to_h do |ratio|
+      w, h = ratio.split(":").map(&:to_f)
+      [ratio, [WIDTH, (WIDTH * h / w).round]]
+    end.freeze
+
+    def self.element_id(ratio) = "header-#{ratio.parameterize}"
 
     def call(record)
       html = ApplicationController.render(
@@ -25,18 +19,19 @@ module Baseline
 
       record.header_images.purge
 
-      DIMENSIONS.each do |name, sizes|
-        sizes.each do |width, height|
+      VARIANTS.each do |ratio, (width, height)|
+        [1, 2].each do |scale|
           path = External::BrowserScreenshot.generate(
             html,
-            locator:  "##{ELEMENT_IDS.fetch([name, width])}",
+            scale:,
+            locator:  "##{self.class.element_id(ratio)}",
             viewport: [width, height],
             save_to:  :file
           )
 
           record.header_images.attach(
             io:       File.open(path),
-            filename: "header-#{name}-w#{width}.png"
+            filename: "header-#{ratio}-w#{width * scale}.png"
           )
 
           File.delete(path)
