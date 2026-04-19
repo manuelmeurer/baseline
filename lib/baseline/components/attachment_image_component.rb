@@ -5,7 +5,6 @@ require "base64"
 
 module Baseline
   class AttachmentImageComponent < ApplicationComponent
-    CF_SIG_BYTES = 16
     SIZES = {
       xxs:   25,
       xs:    50,
@@ -105,7 +104,7 @@ module Baseline
 
         OpenSSL::HMAC
           .digest("SHA256", signing_key, path)
-          .byteslice(0, CF_SIG_BYTES)
+          .byteslice(0, 16)
           .then { Base64.urlsafe_encode64(_1, padding: false) }
       end
 
