@@ -12,5 +12,7 @@
     - if blob.caption.present?
       = blob.caption
     - else
-      %span.attachment__name= blob.filename
-      %span.attachment__size= number_to_human_size blob.byte_size
+      %span.attachment__name
+        = blob.filename
+      %span.attachment__size
+        = number_to_human_size blob.byte_size
