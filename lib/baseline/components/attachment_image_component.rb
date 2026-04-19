@@ -73,7 +73,7 @@ module Baseline
           .digest("SHA256", signing_key, path)
           .byteslice(0, 16)
           .then { Base64.urlsafe_encode64(_1, padding: false) }
-        url = "https://img.#{Rails.application.env_credentials.host!}/#{signature}#{path}"
+        url = "https://img.#{Rails.application.env_credentials(:production).host!}/#{signature}#{path}"
         @only_path ? url : helpers.image_tag(url, **@options)
       end
 
