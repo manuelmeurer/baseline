@@ -17,11 +17,24 @@ module Baseline
             timeout: 5000
           )
 
-          # Parallel Tests sets the env var TEST_ENV_NUMBER.
-          add_parallel_suffix = ->(base, env) {
+          # In a git worktree, `.git` is a file containing `gitdir: .../worktrees/<name>`.
+          # The registered name is guaranteed unique by git, unlike the directory basename.
+          git_worktree_name = if (git_file = Rails.root.join(".git")).file?
+            git_file.read[%r{gitdir: .*/worktrees/(\S+)}, 1].presence or
+              raise "Could not determine git worktree name from #{git_file}"
+          end
+
+          generate_database_name = ->(base, env) {
+            # Parallel Tests sets the env var TEST_ENV_NUMBER.
+            test_env_number = if env == :test
+              ENV["TEST_ENV_NUMBER"]&.rjust(2, "0")
+            end
+
+            # Add test env number and git worktree name to the base database name to make it unique.
             [
               base,
-              (ENV["TEST_ENV_NUMBER"]&.rjust(2, "0") if env == :test)
+              git_worktree_name,
+              test_env_number
             ].compact_blank.join("_")
           }
 
@@ -44,7 +57,7 @@ module Baseline
                   adapter:  "postgresql",
                   encoding: "unicode"
                 ).tap {
-                  _1[:database] = add_parallel_suffix.call(_1[:database], env)
+                  _1[:database] = generate_database_name.call(_1[:database], env)
                 }.to_h
             },
             sqlite: ->(key, env) {
@@ -52,7 +65,7 @@ module Baseline
                 env,
                 (key unless key == :primary)
               ].compact.join("_")
-              basename = add_parallel_suffix.call(basename, env)
+              basename = generate_database_name.call(basename, env)
               sqlite_base
                 .unless(key == :primary) {
                   _1.merge migrations_paths: "db/#{key}_migrate"
