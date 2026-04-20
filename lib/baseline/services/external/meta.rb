@@ -25,12 +25,22 @@ module Baseline
         request :get, "me"
       end
 
-      add_action :get_leadgen do |leadgen_id|
+      add_action :get_node do |id, fields:|
+        case fields
+        when :ad
+          fields = "id,name,adset{id,name,campaign{id,name,objective}},creative{id,name,title,body,thumbnail_url}"
+        when :leadgen
+          fields = "id,created_time,ad_id,form_id,field_data"
+        when String
+        else
+          raise "Expected fields to be a Symbol or a String, got #{fields.class}"
+        end
+
         request :get,
-          leadgen_id,
+          id,
           params: {
-            access_token: credentials.page_access_token!,
-            fields:       "id,created_time,ad_id,form_id,field_data"
+            fields:,
+            access_token: credentials.page_access_token!
           }
       end
 
