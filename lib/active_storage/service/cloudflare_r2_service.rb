@@ -11,9 +11,9 @@ module ActiveStorage
 
     private
 
-    def public_url(key, **)
-      return super unless @public_host.present?
-      "#{@public_host}/#{key}"
-    end
+      def public_url(key, **)
+        return super unless @public_host.present?
+        "#{@public_host}/#{key}"
+      end
   end
 end
