@@ -184,7 +184,7 @@ module Baseline
           end
         else
           with_item_content collapsable: false do
-            link_to [namespace, :login, only_path: false], class: "btn btn-outline-light login" do
+            link_to [namespace, :login, only_path: false], class: "btn btn-outline-light ms-3 login" do
               t :login, scope: :navbar
             end
           end
