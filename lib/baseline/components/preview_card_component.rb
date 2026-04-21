@@ -15,9 +15,10 @@ module Baseline
       ([A-Za-z0-9_-]{11})
     }x.freeze
 
-    def initialize(url)
+    def initialize(url, show_website: true)
       @url = url
-      @id  = "preview-card-#{SecureRandom.hex(3)}"
+      @id = "preview-card-#{SecureRandom.hex(3)}"
+      @show_website = show_website
     end
 
     def before_render

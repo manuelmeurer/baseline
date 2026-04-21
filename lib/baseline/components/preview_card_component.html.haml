@@ -54,6 +54,10 @@
           }
         }
 
+        &:not(:has(.preview-card-website)) .preview-card-description {
+          -webkit-line-clamp: 3;
+        }
+
         .preview-card-title {
           font-size: max(1rem, 3cqi);
           font-weight: bold;
@@ -88,9 +92,10 @@
         = @title
       .preview-card-description
         = @description
-      .preview-card-website
-        = image_tag @website_image
-        = @website
+      - if @show_website
+        .preview-card-website
+          = image_tag @website_image
+          = @website
 
 - when :youtube
 
