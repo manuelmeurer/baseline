@@ -64,7 +64,8 @@ module Baseline
     def assign_parts_from_i18n
       return unless messageable && kind && locale
 
-      Messages::GeneratePartsFromI18n
+      # Call the class defined in the host app, not in Baseline.
+      ::Messages::GeneratePartsFromI18n
         .call(self)
         .then {
           assign_attributes _1
