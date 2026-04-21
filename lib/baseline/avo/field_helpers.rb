@@ -52,6 +52,20 @@ module Baseline
             title: "Deactivate"
         end
       end
+
+      def unpublish_publish_button
+        if record.unpublished?
+          render_avo_button \
+            Baseline::Avo::Actions::Publish,
+            icon:  "heroicons/outline/check-circle",
+            title: "Publish"
+        else
+          render_avo_button \
+            Baseline::Avo::Actions::Unpublish,
+            icon:  "heroicons/outline/x-circle",
+            title: "Unpublish"
+        end
+      end
     end
   end
 end
