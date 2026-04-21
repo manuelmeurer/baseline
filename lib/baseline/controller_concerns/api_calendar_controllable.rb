@@ -8,7 +8,7 @@ module Baseline
       before_action do
         @record = SignedGlobalID.find!(params[:record_id])
       rescue ActiveRecord::RecordNotFound
-        raise Error.new(
+        raise const_get(:Error).new(
           "Calendar not found.",
           status: :not_found
         )
