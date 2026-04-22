@@ -6,9 +6,8 @@ module Baseline
 
     included do
       layout -> {
-        if ::Current.try(:modal_request)
-          break "modal"
-        end
+        break "drawer" if Current.drawer_request
+        break "modal"  if Current.modal_request
 
         break false if
           request.xhr? ||
@@ -18,11 +17,11 @@ module Baseline
           turbo_frame_request? ||
           response.content_type&.downcase&.include?("turbo-stream")
 
-        if ::Current.namespace.blank?
+        if Current.namespace.blank?
           raise "Current namespace not set."
         end
 
-        ::Current.namespace.to_s
+        Current.namespace.to_s
       }
     end
   end

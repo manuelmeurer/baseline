@@ -44,7 +44,7 @@ module Baseline
         current_url = helpers.request.original_url
         root_paths =
           helpers.try(:navbar_root_paths)&.map { url_for _1 } ||
-          [url_for([::Current.namespace, :root])]
+          [url_for([Current.namespace, :root])]
 
         cache_key = [
           @url,

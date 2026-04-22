@@ -7,7 +7,7 @@
       = link_to helpers.wizard_path(helpers.previous_step), class: @back_css_class do
         = component :icon, :back, style: :solid
         = t(:back).capitalize
-    - when ::Current.modal_request
+    - when Baseline::Current.modal_request
       = component :modal_close_button, wrapper: false
     - when @cancel_url
       = link_to @cancel_url, class: @back_css_class do
@@ -31,7 +31,7 @@
     = submit_button(css_class: "order-3 order-sm-2")
 
 - case
-- when ::Current.modal_request
+- when Baseline::Current.modal_request
   .d-none{ data: helpers.stimco(:modal, to_h: false).target(:footer_content) }
     .w-100
       = actions

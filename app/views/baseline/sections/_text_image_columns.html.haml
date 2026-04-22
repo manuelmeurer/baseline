@@ -1,7 +1,7 @@
 -# frozen_string_literal: true
 -# locals: (id:, css_class: nil, image_path: nil, image_first: false, text_offset: 0, image_offset: 0, row_css_class: nil)
 
-- image_path ||= File.join(Current.namespace.to_s, controller_name, params[:id], "#{id}.jpg")
+- image_path ||= File.join(Baseline::Current.namespace.to_s, controller_name, params[:id], "#{id}.jpg")
 - gap = text_offset + image_offset
 
 = section id, css_class: do |section_i18n_scope|

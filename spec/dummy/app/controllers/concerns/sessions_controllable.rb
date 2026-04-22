@@ -16,7 +16,7 @@ module SessionsControllable
 
     unless user
       add_flash :alert, "Wrong credentials."
-      html_redirect_to [Current.namespace, :login]
+      html_redirect_to [Baseline::Current.namespace, :login]
       return
     end
 
@@ -26,6 +26,6 @@ module SessionsControllable
   def destroy
     unauthenticate
     render_turbo_response \
-      redirect: [Current.namespace, :root]
+      redirect: [Baseline::Current.namespace, :root]
   end
 end

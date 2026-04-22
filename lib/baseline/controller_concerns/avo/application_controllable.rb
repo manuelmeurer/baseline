@@ -10,7 +10,7 @@ module Baseline
                 Baseline::Authentication[:with_admin_user]
 
         before_action prepend: true do
-          ::Current.namespace = :avo
+          Current.namespace = :avo
         end
       end
 

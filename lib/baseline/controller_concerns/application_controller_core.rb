@@ -31,7 +31,7 @@ module Baseline
           .then { turbo_frame_request_id == _1.to_s }
       end
 
-      helper_method def normalized_action_name(action = ::Current.action_name, reverse: false)
+      helper_method def normalized_action_name(action = Current.action_name, reverse: false)
         {
           "create" => "new",
           "update" => "edit"
@@ -48,7 +48,7 @@ module Baseline
       end
 
       helper_method def site_name
-        t ::Current.namespace,
+        t Current.namespace,
           scope:   :site_names,
           default: t(:name, scope: :meta)
       end
@@ -103,13 +103,13 @@ module Baseline
 
       helper_method def namespaced_or_default_asset(source)
         cache_key = [
-          ::Current.namespace,
+          Current.namespace,
           Rails.configuration.revision,
           ActiveSupport::Digest.hexdigest(source)
         ]
 
         Rails.cache.fetch cache_key, force: Rails.env.development? do
-          namespaced_source = File.join(::Current.namespace.to_s, source)
+          namespaced_source = File.join(Current.namespace.to_s, source)
           [
             namespaced_source,
             source
@@ -133,7 +133,7 @@ module Baseline
         return nil unless id = params[:id]
 
         File.join([
-          ::Current.namespace.to_s,
+          Current.namespace.to_s,
           controller_name,
           id,
           path
@@ -148,9 +148,10 @@ module Baseline
         end
 
         before_action prepend: true do
-          ::Current.modal_request = specific_turbo_frame_request?(:modal)
-          ::Current.namespace     = controller_path.split("/").first.to_sym
-          ::Current.action_name   = action_name
+          Current.modal_request  = specific_turbo_frame_request?(:modal)
+          Current.drawer_request = specific_turbo_frame_request?(:drawer)
+          Current.namespace      = controller_path.split("/").first.to_sym
+          Current.action_name    = action_name
         end
 
         @_baseline_finalized = true
@@ -163,7 +164,7 @@ module Baseline
           only:   :create,
           with: -> {
             add_flash :alert, t(:generic_error)
-            html_redirect_to([::Current.namespace, :login])
+            html_redirect_to([Current.namespace, :login])
           }
       end
 

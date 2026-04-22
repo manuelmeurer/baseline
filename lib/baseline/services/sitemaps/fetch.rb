@@ -5,7 +5,7 @@ module Baseline
     class Fetch < ApplicationService
       def call
         Helpers
-          .cache_key(::Current.namespace)
+          .cache_key(Current.namespace)
           .then {
             Rails.cache.read _1
           }

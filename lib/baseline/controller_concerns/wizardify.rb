@@ -217,7 +217,7 @@ module Baseline
           end
         end
 
-        if ::Current.modal_request
+        if Current.modal_request
           render_turbo_response \
             redirect:    finish_wizard_path,
             reload_main: true

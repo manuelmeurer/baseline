@@ -24,7 +24,7 @@ module Baseline
       set_noindex_header
       expires_now
 
-      render "#{::Current.namespace}/errors/show",
+      render "#{Current.namespace}/errors/show",
         status:  @id.to_i,
         formats: :html
     end
@@ -33,6 +33,6 @@ module Baseline
 
       def page_title        = "Error #{@id}"
       def action_i18n_scope = super(@id)
-      def cta_path          = [::Current.namespace, :root]
+      def cta_path          = [Current.namespace, :root]
   end
 end

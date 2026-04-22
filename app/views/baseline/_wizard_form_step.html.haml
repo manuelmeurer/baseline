@@ -3,8 +3,8 @@
 
 - content = capture_haml do
   - if current_step
-    = form_with model: wizard_resource, url: wizard_path, method: :patch, class: "step-#{current_step.dasherize}", data: data_merge(action_stimco.to_h, turbo_frame: ("modal" if ::Current.modal_request)) do |form|
-      - unless ::Current.modal_request
+    = form_with model: wizard_resource, url: wizard_path, method: :patch, class: "step-#{current_step.dasherize}", data: data_merge(action_stimco.to_h, turbo_frame: ("modal" if Baseline::Current.modal_request)) do |form|
+      - unless Baseline::Current.modal_request
         %h2
           = page_title
       = yield form
@@ -22,7 +22,7 @@
 - if Turbo::VERSION > "2.0.20"
   - ReportError.call "Check if this bug is fixed in Turbo #{Turbo::VERSION}."
 
-- if ::Current.modal_request
+- if Baseline::Current.modal_request
   = content
 - else
   = turbo_frame_tag frame_id do

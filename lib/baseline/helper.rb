@@ -30,7 +30,7 @@ module Baseline
       stimcos = Rails
         .configuration
         .app_stimulus_namespaces
-        .fetch(::Current.namespace)
+        .fetch(Current.namespace)
         .map { stimco _1 }
 
       [
@@ -147,7 +147,7 @@ module Baseline
     def turbo_data(method:       :patch,
                    confirm:      true,
                    submits_with: true,
-                   frame:        ("modal" if ::Current.try(:modal_request)))
+                   frame:        ("modal" if Current.modal_request))
 
       {
         turbo_method:       method,
@@ -377,12 +377,12 @@ module Baseline
     # Whether analytics scripts should be gated behind cookie consent.
     # Defaults to true in the web namespace, where `showCookieConsent` is loaded.
     # Override in app helpers if the consent UI loads in additional namespaces.
-    def cookie_consent_enabled? = ::Current.namespace == :web
+    def cookie_consent_enabled? = Current.namespace == :web
 
     def plausible_javascript_tag
       return unless
         Rails.env.production? &&
-        ::Current.namespace != :admin
+        Current.namespace != :admin
 
       options = {
         id:    "plausible-script",
@@ -405,7 +405,7 @@ module Baseline
 
     def meta_javascript_tag
       return unless
-        ::Current.namespace == :web &&
+        Current.namespace == :web &&
         pixel_id = Rails.application.env_credentials.meta&.pixel_id
 
       options = {
@@ -436,7 +436,7 @@ module Baseline
 
     def linkedin_javascript_tag
       return unless
-        ::Current.namespace == :web &&
+        Current.namespace == :web &&
         partner_id = Rails.application.env_credentials.linkedin&.partner_id
 
       options = {
@@ -497,7 +497,7 @@ module Baseline
 
         tag.link \
           rel:  "manifest",
-          href: url_for([::Current.namespace, :manifest, format: :json])
+          href: url_for([Current.namespace, :manifest, format: :json])
       end
     end
 
@@ -686,7 +686,7 @@ module Baseline
         plausible_javascript_tag,
         meta_javascript_tag,
         linkedin_javascript_tag,
-        stylesheet_link_tag(::Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
+        stylesheet_link_tag(Current.namespace.to_s, integrity: true, crossorigin: "anonymous", data: { turbo_track: "reload" }),
         stylesheet_tags,
         turbo_refresh_method_tag(:morph)
       ], "\n"
@@ -694,7 +694,7 @@ module Baseline
 
     def javascript_namespace_importmap_tags
       javascript_importmap_tags \
-        ::Current.namespace.to_s,
+        Current.namespace.to_s,
         importmap: Baseline::GenerateNamespaceImportmap.call
     end
 

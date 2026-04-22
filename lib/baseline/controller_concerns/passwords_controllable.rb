@@ -37,7 +37,7 @@ module Baseline
       end
 
       add_flash :notice, t(:email_sent, scope: :reset_password)
-      html_redirect_to [::Current.namespace, :login]
+      html_redirect_to [Current.namespace, :login]
     end
 
     def edit
@@ -47,7 +47,7 @@ module Baseline
       if @user.update(params.permit(:password, :password_confirmation))
         authenticate @user
         add_flash :notice, t(:success, scope: :reset_password)
-        html_redirect_to [::Current.namespace, :root]
+        html_redirect_to [Current.namespace, :root]
       else
         error_details = @user.errors.details
         expected_error =

@@ -11,7 +11,7 @@ module Baseline
         Rails.configuration.importmaps = generate_importmaps
       end
 
-      Rails.configuration.importmaps.fetch(::Current.namespace)
+      Rails.configuration.importmaps.fetch(Current.namespace)
     end
 
     private

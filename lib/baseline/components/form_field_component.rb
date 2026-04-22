@@ -165,7 +165,7 @@ module Baseline
         next unless instance_variable_get("@#{attr}") == NOT_SET
 
         *real_i18n_scope, real_i18n_key = [
-          ::Current.namespace,
+          Current.namespace,
           attr.pluralize,
           *@i18n_scopes,
           @i18n_key,

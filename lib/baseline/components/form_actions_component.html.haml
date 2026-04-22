@@ -9,7 +9,7 @@
     - safe_join [component(:icon, @submit_icon), @submit_label], " "
 
 - case
-- when ::Current.modal_request
+- when Baseline::Current.modal_request
   .d-none{ data: helpers.stimco(:modal, to_h: false).target(:footer_content) }
     = actions
 - when @horizontal

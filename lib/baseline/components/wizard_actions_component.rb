@@ -7,7 +7,7 @@ module Baseline
         form, step_label, cancel_url, show_current_step, button_color
       @back_css_class = class_names(
         "btn", "btn-outline-dark", "order-4", "order-sm-0",
-        "btn-lg" => !::Current.modal_request
+        "btn-lg" => !Current.modal_request
       )
     end
 
@@ -18,7 +18,7 @@ module Baseline
     private def submit_button(css_class: nil)
       css_class = class_names(
         "btn", "btn-#{@button_color}", *css_class,
-        "btn-lg" => !::Current.modal_request
+        "btn-lg" => !Current.modal_request
       )
       @form.button class: css_class do
         safe_join [

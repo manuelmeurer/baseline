@@ -7,7 +7,7 @@ Rails.application.config.to_prepare do
     include Baseline::Authentication[:with_admin_user]
 
     before_action prepend: true do
-      ::Current.namespace = :pghero
+      Baseline::Current.namespace = :pghero
     end
 
     def pghero_login_url = main_app.admin_login_url

@@ -81,7 +81,7 @@ module Baseline
       end
     end
 
-    def auth_group(namespace: ::Current.namespace, &block)
+    def auth_group(namespace: Current.namespace, &block)
       with_group do |group|
         group.auth_item(namespace:, &block)
       end
@@ -153,7 +153,7 @@ module Baseline
         end
       end
 
-      def auth_item(namespace: ::Current.namespace)
+      def auth_item(namespace: Current.namespace)
         if ::Current.user
           photo = component(:attachment_image, ::Current.user.photo_or_dummy, :sm_thumb)
 

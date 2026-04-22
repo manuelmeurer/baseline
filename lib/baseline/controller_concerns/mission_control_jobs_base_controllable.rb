@@ -8,7 +8,7 @@ module Baseline
       include Baseline::Authentication[:with_admin_user]
 
       before_action prepend: true do
-        ::Current.namespace = :mission_control_jobs
+        Current.namespace = :mission_control_jobs
       end
     end
 

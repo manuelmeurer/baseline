@@ -73,12 +73,12 @@ end
 
 module I18nNamespaceFallbacks
   def translate(key, **options)
-    fallbacks = Baseline.configuration.i18n_namespace_fallbacks[Current.namespace]
+    fallbacks = Baseline.configuration.i18n_namespace_fallbacks[Baseline::Current.namespace]
     scope     = Array(options[:scope])
 
     return super unless
       fallbacks &&
-      scope.first == Current.namespace
+      scope.first == Baseline::Current.namespace
 
     Array(fallbacks).each do |fallback|
       scope = scope.drop(1).unshift(fallback)

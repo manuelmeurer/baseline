@@ -8,7 +8,7 @@ module Baseline
     end
 
     def call
-      return unless ::Current.modal_request
+      return unless Current.modal_request
 
       @text ||= t(:cancel).capitalize
 

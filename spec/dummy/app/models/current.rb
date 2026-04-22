@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Current < ActiveSupport::CurrentAttributes
-  attribute :namespace, :action_name, :modal_request, :admin_user, :user
+  attribute :admin_user, :user
 
   def user=(value)
     super

@@ -234,7 +234,7 @@ module Baseline
 
       def custom_human_attribute_name(attribute)
         I18n.t attribute,
-          scope:   [::Current.namespace, :human_attribute_names, to_s.underscore],
+          scope:   [Current.namespace, :human_attribute_names, to_s.underscore],
           default: human_attribute_name(attribute)
       end
 
