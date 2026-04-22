@@ -14,13 +14,63 @@ module Baseline
 
       @imageable, @size, @vertical, @circle, @image_wrapper, @data, @css_class, @align_items =
         imageable, size, vertical, circle, image_wrapper, data, css_class, align_items
-
-      @margin = {
-        xs: 2,
-        sm: 2,
-        md: 3,
-        lg: 3
-      }.fetch(size, 4)
     end
+
+    private
+
+      def image_css_class(extra = nil)
+        [
+          extra,
+          "border",
+          *variant_image_classes
+        ].compact.join(" ")
+      end
+
+      def container_css_class
+        if Current.tailwind
+          [@css_class, "flex", "items-#{@align_items}", ("flex-col" if @vertical)]
+        else
+          [@css_class, "d-flex", "align-items-#{@align_items}", ("flex-column" if @vertical)]
+        end.compact.join(" ")
+      end
+
+      def margin_css_class
+        axis  = @vertical ? "mb" : "me"
+        scale =
+          if Current.tailwind
+            { xs: 2, sm: 2, md: 4, lg: 4 }.fetch(@size, 6)
+          else
+            { xs: 2, sm: 2, md: 3, lg: 3 }.fetch(@size, 4)
+          end
+        "#{axis}-#{scale}"
+      end
+
+      def variant_image_classes
+        if Current.tailwind
+          [
+            "border-base-300",
+            "object-cover",
+            "shrink-0",
+            tailwind_size_class,
+            ("rounded-full" if @circle)
+          ]
+        else
+          [
+            "object-fit-cover",
+            "square-#{@size}",
+            ("rounded-circle" if @circle)
+          ]
+        end.compact
+      end
+
+      def tailwind_size_class
+        {
+          xs: "size-[30px]",
+          sm: "size-[40px]",
+          md: "size-[80px]",
+          lg: "size-[120px]",
+          xl: "size-[200px]"
+        }.fetch(@size)
+      end
   end
 end

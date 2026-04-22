@@ -53,3 +53,40 @@
     padding: 24px 28px 80px;
   }
 }
+
+/*
+ * Scoped Bootstrap -> daisyUI bridge for drawer contents.
+ *
+ * When a page loads Bootstrap as part of its namespace stylesheet (e.g.
+ * funlocked's web.css) and also opts into Tailwind/daisyUI for specific
+ * actions via `Baseline::Current.tailwind = true`, Bootstrap's reset lands
+ * unlayered while daisyUI lives in `@layer components`. Unlayered rules beat
+ * any named layer regardless of specificity, so Bootstrap wins: `<a>` gets
+ * Bootstrap's near-black body color (invisible on the dark drawer) and
+ * `.btn-outline` loses its outline (Bootstrap's `.btn` sets a transparent
+ * border that daisyUI's layered rule can't override).
+ *
+ * These overrides are themselves unlayered and win on specificity via the
+ * `.drawer-body-content` prefix. Drop them once Bootstrap itself lives in a
+ * cascade layer below `components`.
+ */
+.drawer-body-content {
+  a {
+    color: var(--color-base-content);
+  }
+
+  .btn {
+    color: var(--color-base-content);
+  }
+
+  .btn-outline {
+    border-color: color-mix(in oklab, var(--color-base-content) 30%, transparent);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-base-100);
+      background: var(--color-base-content);
+      border-color: var(--color-base-content);
+    }
+  }
+}
