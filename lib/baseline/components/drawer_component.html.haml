@@ -1,0 +1,14 @@
+-# frozen_string_literal: true
+
+.drawer.drawer-end{ data: @stimco.to_h }
+  = helpers.check_box_tag "app-drawer", "1", false, id: "app-drawer", class: "drawer-toggle", autocomplete: "off", data: @stimco.target(:toggle)
+  .drawer-content
+    = content
+  .drawer-side
+    %label.drawer-overlay{ for: "app-drawer", aria: { label: t(:close) } }
+    %aside.drawer-body
+      .drawer-body-head
+        %label.drawer-body-close{ for: "app-drawer", aria: { label: t(:close) } }
+          = component :icon, "xmark", version: :solid
+      .drawer-body-content
+        = helpers.turbo_frame_tag :drawer, data: @stimco.target(:frame), target: "_top"

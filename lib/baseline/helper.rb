@@ -262,24 +262,21 @@ module Baseline
     end
 
     def link_to_modal(name = nil, options = nil, html_options = nil, &block)
-      if block
-        options, html_options, name = name, options, capture(&block)
-      end
-      html_options ||= {}
-      html_options[:data] ||= {}
-
-      url = url_for(options)
-
-      html_options[:data].merge! \
+      link_to_with_data(name, options, html_options, data: ->(url) {
         Current.tailwind ?
           stimco(:modal, to_h: false).action(:open, url:) :
           {
+            url:,
             bs_toggle: "modal",
-            bs_target: "#modal-container",
-            url:       url
+            bs_target: "#modal-container"
           }
+      }, &block)
+    end
 
-      link_to name, "#", html_options
+    def link_to_drawer(name = nil, options = nil, html_options = nil, &block)
+      link_to_with_data(name, options, html_options, data: ->(url) {
+        stimco(:drawer, to_h: false).action(:open, url:)
+      }, &block)
     end
 
     def component(name, *, **, &)
@@ -775,6 +772,16 @@ module Baseline
     end
 
     private
+
+      def link_to_with_data(name = nil, options = nil, html_options = nil, data:, &block)
+        if block
+          options, html_options, name = name, options, capture(&block)
+        end
+        html_options ||= {}
+        html_options[:data] ||= {}
+        html_options[:data].merge! data.call(url_for(options))
+        link_to name, "#", html_options
+      end
 
       AUTO_LINK_RE = %r(
         (?: ((?:http|https|mailto|webcal|ssh|sftp|file):)// | www\.\w )

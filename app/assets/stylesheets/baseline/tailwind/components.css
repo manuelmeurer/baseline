@@ -1,5 +1,55 @@
+.drawer-side {
+  z-index: 1060 !important;
+}
+
 @layer components {
   [data-controller="toast-stack"] {
     z-index: 60;
+  }
+
+  .drawer-body {
+    display: flex;
+    flex-direction: column;
+    width: min(560px, 94vw);
+    min-height: 100vh;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    border-left: 1px solid var(--color-base-300);
+    overflow-y: auto;
+  }
+
+  .drawer-body-head {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-base-300);
+    position: sticky;
+    top: 0;
+    background: var(--color-base-100);
+    z-index: 1;
+  }
+
+  .drawer-body-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    line-height: 1;
+    border-radius: 9999px;
+    border: 1px solid var(--color-base-content);
+    background: transparent;
+    color: var(--color-base-content);
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  .drawer-body-close:hover {
+    opacity: 1;
+  }
+
+  .drawer-body-content {
+    flex: 1;
+    padding: 24px 28px 80px;
   }
 }
