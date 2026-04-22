@@ -209,3 +209,5 @@ Always use [strict locals](https://guides.rubyonrails.org/action_view_overview.h
 Apply these conventions when writing or modifying JavaScript code.
 
 - Always put the body of an `if` statement on a separate line, even for simple returns.
+- Omit parentheses around arrow function parameters when possible. Parens are only required for zero params, multiple params, destructured params, rest params, or params with default values / type annotations — a single plain param should be written without parens (`x => x * 2`, not `(x) => x * 2`).
+- Don't abbreviate parameters or variables to single letters. Use full names (e.g. `event` for an event listener param, not `e`; `error` instead of `err`; `element` instead of `el`).
