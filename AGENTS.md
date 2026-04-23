@@ -203,6 +203,7 @@ Always use [strict locals](https://guides.rubyonrails.org/action_view_overview.h
 - Prefer these I18n keys: `headline` for headlines, `text` for the main text of the page or section, `cta` for the text of a call to action (often a button or link). If text needs to be broken up into several I18n keys, use `text_1`, `text_2`, etc. If none of these are a good match, check the locale files for keys that have been previously used for similar text fragments.
 - Prefer simple names for interpolation attributes: `name`, `url`, `cta`, etc. When in doubt, check the locale files for interpolation attributes that have been previously used.
 - Don't use quotes for I18n values, unless they contain a colon.
+- Never include URLs in I18n values; always pass them in as an interpolation variable.
 
 ## JavaScript Style Guide
 
