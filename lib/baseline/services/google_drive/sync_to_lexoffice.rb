@@ -9,7 +9,6 @@ module Baseline
 
       def call
         require "baseline/services/external/google/oauth/service"
-        require_relative "helpers"
 
         drive = Baseline::External::Google::Oauth::Service.new(:drive, AdminUser.manuel)
         files = drive
