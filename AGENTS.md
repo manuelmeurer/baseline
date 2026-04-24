@@ -137,6 +137,10 @@ after_create do
   schedule_welcome_email
 end
 
+validate do
+  errors.add :base, :invalid if name.blank? && email.blank?
+end
+
 # Bad - separate method for simple logic
 before_validation :set_slug
 
