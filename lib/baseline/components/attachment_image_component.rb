@@ -20,7 +20,7 @@ module Baseline
       variants = {
         "#{key}_fit":           base.merge(width: size, height: size, fit: "scale-down"),
         "#{key}_fit_grayscale": base.merge(width: size, height: size, fit: "scale-down", saturation: 0),
-        "#{key}_thumb":         base.merge(width: size, height: size, fit: "cover",      gravity: "face", zoom: 0.8)
+        "#{key}_thumb":         base.merge(width: size, height: size, fit: "cover",      gravity: "face", zoom: 0.6)
       }
 
       variants.each { versions[_1.to_sym]     = _2 }
