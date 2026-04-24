@@ -28,21 +28,25 @@ module Baseline
 
       def container_css_class
         if Current.tailwind
-          [@css_class, "flex", "items-#{@align_items}", ("flex-col" if @vertical)]
+          [@css_class, "flex", "items-#{@align_items}", ("flex-col" if @vertical), gap_css_class]
         else
           [@css_class, "d-flex", "align-items-#{@align_items}", ("flex-column" if @vertical)]
         end.compact.join(" ")
       end
 
+      # Only used in Bootstrap mode; Tailwind gets spacing via `gap` on the container
+      # so the space is preserved even when the image is wrapped (e.g. in a link).
       def margin_css_class
+        return if Current.tailwind
+
         axis  = @vertical ? "mb" : "me"
-        scale =
-          if Current.tailwind
-            { xs: 2, sm: 2, md: 4, lg: 4 }.fetch(@size, 6)
-          else
-            { xs: 2, sm: 2, md: 3, lg: 3 }.fetch(@size, 4)
-          end
+        scale = { xs: 2, sm: 2, md: 3, lg: 3 }.fetch(@size, 4)
         "#{axis}-#{scale}"
+      end
+
+      def gap_css_class
+        scale = { xs: 2, sm: 2, md: 4, lg: 4 }.fetch(@size, 6)
+        "gap-#{scale}"
       end
 
       def variant_image_classes
