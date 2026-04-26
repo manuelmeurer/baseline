@@ -12,6 +12,8 @@ module Dummy
   class Application < Rails::Application
     include Baseline::ApplicationCore
 
+    config.add_database_configuration(:sqlite)
+
     config.i18n.available_locales = %i[en de]
     config.i18n.default_locale    = config.i18n.available_locales.first
     config.i18n.fallbacks         = [I18n.default_locale]

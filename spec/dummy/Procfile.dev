@@ -1,0 +1,4 @@
+server: PGGSSENCMODE=disable bin/rails server
+css: bin/rails dartsass:watch
+tailwind: bin/tailwindcss -w
+jobs: PGGSSENCMODE=disable bin/jobs

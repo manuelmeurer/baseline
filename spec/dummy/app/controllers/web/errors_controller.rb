@@ -2,7 +2,7 @@
 
 module Web
   class ErrorsController < BaseController
-    include Baseline::ErrorsControllable
+    include Baseline::ErrorPagesControllable
     _baseline_finalize
   end
 end
