@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-# Load env files explicitly and pass /dev/null as env file to foreman
-# to circumvent foreman's automatic .env loading, which does not support
-# variable substitution (e.g. FOO=${BAR}).
+# Load env files explicitly and set OVERMIND_SKIP_ENV to skip Overmind's
+# automatic .env loading, which uses godotenv.Overload (clobbering our
+# shell-sourced values) and does not support variable substitution
+# (e.g. FOO=${BAR}).
 set -a
 [ -f .env.development ] && source .env.development
 [ -f .env ] && source .env
 [ -f .env.worktree-manager ] && source .env.worktree-manager
 set +a
 
-exec foreman start -f Procfile.dev -e /dev/null "$@"
+OVERMIND_SKIP_ENV=1 exec overmind start -f Procfile.dev "$@"
