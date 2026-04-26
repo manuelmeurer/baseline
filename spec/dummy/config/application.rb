@@ -6,7 +6,7 @@ require "rails/all"
 
 Bundler.require(*Rails.groups)
 
-Baseline.load_conductor_env
+Baseline.load_worktree_manager_env
 
 module Dummy
   class Application < Rails::Application

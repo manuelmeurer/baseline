@@ -6,7 +6,7 @@
 set -a
 [ -f .env.development ] && source .env.development
 [ -f .env ] && source .env
-[ -f .env.conductor ] && source .env.conductor
+[ -f .env.worktree-manager ] && source .env.worktree-manager
 set +a
 
 exec foreman start -f Procfile.dev -e /dev/null "$@"

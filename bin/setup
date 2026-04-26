@@ -20,9 +20,7 @@ class Setup < Thor
   def setup
     run("bundle check") || run("bundle install")
 
-    if @app_root = ENV["CONDUCTOR_ROOT_PATH"]
-      setup_conductor
-    end
+    setup_worktree_manager
 
     run "RAILS_ENV=development #{rails} db:prepare", abort_on_failure: true
     run "RAILS_ENV=test #{rails} parallel:prepare", abort_on_failure: true
@@ -33,15 +31,18 @@ class Setup < Thor
 
     def rails = File.join(Dir.pwd, "bin/rails")
 
-    def setup_conductor
-      symlink_from_app_root \
-        ".bundle",
-        "config/master.key"
+    def setup_worktree_manager
+      if app_root = ENV["CONDUCTOR_ROOT_PATH"] || ENV["SUPERSET_ROOT_PATH"]
+        symlink_from_app_root \
+          app_root,
+          ".bundle",
+          "config/master.key"
+      end
     end
 
-    def symlink_from_app_root(*paths)
+    def symlink_from_app_root(app_root, *paths)
       paths.each do |path|
-        source = File.join(@app_root, path)
+        source = File.join(app_root, path)
         next unless File.exist?(source)
 
         if File.exist?(path)

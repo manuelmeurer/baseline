@@ -62,19 +62,33 @@ module Baseline
       File.write pathname, content
     end
 
-    def load_conductor_env
-      return unless ENV["CONDUCTOR_ROOT_PATH"]
+    def load_worktree_manager_env
+      return unless ENV["CONDUCTOR_ROOT_PATH"] || ENV["SUPERSET_ROOT_PATH"]
 
-      env_file = ".env.conductor"
+      env_file = ".env.worktree-manager"
 
       unless File.exist?(env_file)
-        # Resolve statically: the workspace name can change during a Conductor
+        # Resolve statically: the workspace name can change during a Conductor or Superset
         # session, but the DB name must stay what it was when the DB was created.
-        workspace_name = ENV.fetch("CONDUCTOR_WORKSPACE_NAME")
+        unless workspace_name = ENV["CONDUCTOR_WORKSPACE_NAME"] || ENV["SUPERSET_WORKSPACE_NAME"]
+          abort "Error: neither CONDUCTOR_WORKSPACE_NAME nor SUPERSET_WORKSPACE_NAME found."
+        end
+
+        port =
+          if ENV["CONDUCTOR_ROOT_PATH"]
+            "$CONDUCTOR_PORT"
+          else
+            # Superset doesn't expose a per-workspace port like Conductor's CONDUCTOR_PORT, so we pick one ourselves.
+            # Passing 0 to TCPServer asks the kernel for a free port from its ephemeral range (49152–65535 on macOS);
+            # we close immediately and bake the number into the env file so it stays stable across restarts.
+            require "socket"
+            server = TCPServer.new("127.0.0.1", 0)
+            server.addr[1].tap { server.close }
+          end
 
         File.write env_file, <<~CONTENT
-          PORT=$CONDUCTOR_PORT
-          DB_NAME_SUFFIX=conductor_#{workspace_name}
+          PORT=#{port}
+          DB_NAME_SUFFIX=worktree_#{workspace_name}
         CONTENT
       end
 
