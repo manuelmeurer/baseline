@@ -94,7 +94,7 @@ All concerns are under `Baseline::` namespace (not `Baseline::ControllerConcerns
 - GoogleOauthControllable, ApiTodoistControllable
 
 **Infrastructure**
-- ErrorsControllable, EssentialsControllable, FramesControllable
+- ErrorPagesControllable, EssentialsControllable, FramesControllable
 
 **Patterns**
 - **Wizardify** - Multi-step wizard forms with step progression
