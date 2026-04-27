@@ -72,12 +72,6 @@ module Baseline
       end
 
       def field(attribute, **options, &block)
-        @_baseline_declared_field_ids ||= Set.new
-        unless @_baseline_declared_field_ids.add?(attribute)
-          # raise "Avo resource #{self.class.inspect} already declares field :#{attribute}. " \
-          #       "Use a distinct attribute id with `name:` if you need a custom display."
-        end
-
         return super if options.key?(:as)
 
         field_options(attribute, **options)
