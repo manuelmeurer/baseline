@@ -46,6 +46,14 @@ module Baseline
       app.config.assets.paths << root.join("app", "assets", "stylesheets")
     end
 
+    initializer "baseline.errors.install", after: :load_config_initializers do
+      Baseline::Errors.install!
+    end
+
+    config.after_initialize do
+      Baseline::Errors.ensure_schema!
+    end
+
     rake_tasks do
       path = File.expand_path(__dir__)
       Dir.glob("#{path}/tasks/**/*.rake").each { load _1 }

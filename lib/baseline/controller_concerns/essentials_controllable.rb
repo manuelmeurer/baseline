@@ -44,7 +44,7 @@ module Baseline
           {
             "User-agent": "*",
             "Allow":      "/",
-            "Sitemap":    url_for([Current.namespace, :sitemap, only_path: false])
+            "Sitemap":    url_for(prefix_namespace_unless_engine(:sitemap, only_path: false))
           }
         else
           {

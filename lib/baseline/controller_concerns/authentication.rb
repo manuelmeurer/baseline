@@ -42,7 +42,7 @@ module Baseline
             before_action(**) do
               if ::Current.user
                 html_redirect_back_or_to \
-                  [Current.namespace, :root],
+                  prefix_namespace_unless_engine(:root),
                   alert: t(:already_logged_in, scope: :authentication)
               end
             end
@@ -97,7 +97,7 @@ module Baseline
 
           def request_authentication
             session[:return_to] = request.url
-            redirect_to [Current.namespace, :login],
+            redirect_to prefix_namespace_unless_engine(:login),
               alert: t(:cta, scope: :authentication)
           end
 
@@ -105,11 +105,9 @@ module Baseline
             authenticate(user)
 
             redirect_to_return_to_or_to \
-              after_authentication_url,
+              prefix_namespace_unless_engine(:root),
               notice: t(:success, scope: :authentication)
           end
-
-          def after_authentication_url = [Current.namespace, :root]
 
           def authenticate(user)
             unless auth_user_scope.exists?(id: user)

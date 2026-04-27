@@ -6,6 +6,9 @@ require_relative "baseline/inflector"
 loader = Zeitwerk::Loader.for_gem
 
 loader.ignore("#{__dir__}/baseline/environments")
+loader.ignore("#{__dir__}/baseline/errors.rb")
+loader.ignore("#{__dir__}/baseline/errors")
+loader.ignore("#{__dir__}/baseline/admin")
 loader.ignore("#{__dir__}/baseline/initializers")
 loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
 loader.ignore("#{__dir__}/baseline/services/external")
@@ -28,6 +31,46 @@ loader.collapse("#{__dir__}/baseline/service_concerns")
 loader.collapse("#{__dir__}/baseline/services")
 
 loader.inflector = Baseline::Inflector.new(__FILE__)
+
+# `Baseline::Admin` is a Rails engine namespace, and `Baseline::Errors` is a
+# regular namespace whose controllers/models are mounted into that engine.
+# Both have `app/*` dirs managed by `Rails.autoloaders.main`. If this gem's
+# (reloading) loader managed them, reloading would replace the module
+# objects, invalidating rails.main's crefs and breaking autoload of their
+# controllers. Define the namespaces here and manage their children with
+# separate, non-reloading loaders.
+module Baseline
+  module Errors
+    # `Errors` controllers live outside the admin engine's isolated
+    # namespace. Without these methods, Rails wires their URL helpers and
+    # `_routes` to the host app rather than the admin engine.
+    class << self
+      def railtie_routes_url_helpers(include_path_helpers = true)
+        Baseline::Admin::Engine.routes.url_helpers(include_path_helpers)
+      end
+
+      def railtie_helpers_paths
+        Baseline::Admin::Engine.helpers_paths
+      end
+    end
+  end
+
+  module Admin
+  end
+end
+
+errors_loader = Zeitwerk::Loader.new
+errors_loader.tag = "baseline.errors"
+errors_loader.inflector = Baseline::Inflector.new(__FILE__)
+errors_loader.push_dir("#{__dir__}/baseline/errors", namespace: Baseline::Errors)
+errors_loader.setup
+require_relative "baseline/errors"
+
+admin_loader = Zeitwerk::Loader.new
+admin_loader.tag = "baseline.admin"
+admin_loader.inflector = Baseline::Inflector.new(__FILE__)
+admin_loader.push_dir("#{__dir__}/baseline/admin", namespace: Baseline::Admin)
+admin_loader.setup
 
 if defined?(Rails) && Rails.env.development?
   loader.enable_reloading
@@ -136,6 +179,7 @@ Baseline.configuration
 
 if defined?(Rails)
   require "baseline/engine"
+  require "baseline/admin/engine"
 
   Rails::Application.class_eval do
     def env_credentials(env = Rails.env)

@@ -52,6 +52,7 @@ module Baseline
       importmap.pin "baseline/base_controller"
       importmap.pin "baseline/stimulus"
       importmap.pin "baseline/avo.custom", preload: false
+      importmap.pin "newadmin", to: "baseline/newadmin.js", preload: ["admin"]
 
       gem_controllers_dir = File.join(
         Gem.loaded_specs["baseline"].full_gem_path,

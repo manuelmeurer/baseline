@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+-# locals: ()
+
+= component :navbar, brand: site_name do |navbar|
+  - if Current.admin_user
+    = navbar.with_group do |group|
+      = group.with_item_link errors_dashboard_path do
+        = component :icon, "triangle-exclamation"
+        Errors
+    = navbar.with_group align: :end do |group|
+      = group.with_item_link logout_path, data: { turbo_method: :delete } do
+        = component :icon, "power-off"
+        = t :log_out

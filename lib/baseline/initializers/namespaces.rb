@@ -5,7 +5,7 @@ Rails.configuration.app_stimulus_namespaces =
     _1.index_with {
       [it, :shared]
     }
-  }
+  }.merge(newadmin: %i[newadmin shared])
 
 Rails.configuration.stimulus_app_namespaces =
   Rails

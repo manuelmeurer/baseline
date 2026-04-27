@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Baseline
-  module ErrorsControllable
+  module ErrorPagesControllable
     extend ActiveSupport::Concern
 
     included do
@@ -33,6 +33,6 @@ module Baseline
 
       def page_title        = "Error #{@id}"
       def action_i18n_scope = super(@id)
-      def cta_path          = [Current.namespace, :root]
+      def cta_path          = prefix_namespace_unless_engine(:root)
   end
 end

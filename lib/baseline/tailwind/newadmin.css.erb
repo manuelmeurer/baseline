@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "<%= baseline_path %>/app/assets/stylesheets/baseline/tailwind/base.css";
+@import "<%= baseline_path %>/app/assets/stylesheets/baseline/tailwind/components.css";
+
+@source not "<%= baseline_path %>/lib/baseline/tailwind/daisyui{,*}.mjs";
+@source "<%= baseline_path %>/lib/baseline/components";
+@source "<%= baseline_path %>/app";
+
+@plugin "<%= baseline_path %>/lib/baseline/tailwind/daisyui.mjs";
+@plugin "<%= baseline_path %>/lib/baseline/tailwind/daisyui-theme.mjs";

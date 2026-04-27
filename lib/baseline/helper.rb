@@ -483,19 +483,17 @@ module Baseline
     end
 
     def manifest_link_if_allowed
-      if controller_path
-        .split("/")
-        .first
+      essentials = controller_path
         .camelize
-        .constantize
-        .const_get(:EssentialsController)
-        .new
-        .render_manifest?
+        .deconstantize
+        .safe_constantize
+        &.then { _1.const_get(:EssentialsController) if _1.const_defined?(:EssentialsController) }
 
-        tag.link \
-          rel:  "manifest",
-          href: url_for([Current.namespace, :manifest, format: :json])
-      end
+      return unless essentials&.new&.render_manifest?
+
+      tag.link \
+        rel:  "manifest",
+        href: url_for(prefix_namespace_unless_engine(:manifest, format: :json))
     end
 
     def company_details

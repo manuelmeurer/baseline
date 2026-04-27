@@ -1,0 +1,61 @@
+-# frozen_string_literal: true
+
+- active_status = params[:status].presence || "unresolved"
+- unresolved_link_class = ["rounded-lg px-3 py-2 text-sm font-medium", (active_status == "unresolved" ? "bg-zinc-900 text-white" : "bg-white text-zinc-700 ring-1 ring-zinc-200")].join(" ")
+- resolved_link_class = ["rounded-lg px-3 py-2 text-sm font-medium", (active_status == "resolved" ? "bg-zinc-900 text-white" : "bg-white text-zinc-700 ring-1 ring-zinc-200")].join(" ")
+
+%header.flex.items-center.justify-between.gap-4.mb-6
+  %div
+    %h1.text-3xl.font-semibold
+      Errors
+    %p.mt-1.text-sm.text-zinc-600
+      Latest grouped exceptions captured by Baseline.
+  .flex.items-center.gap-2
+    = link_to "Unresolved",
+      issues_path(status: :unresolved),
+      class: unresolved_link_class
+    = link_to "Resolved",
+      issues_path(status: :resolved),
+      class: resolved_link_class
+
+- if @issues.any?
+  .overflow-hidden.rounded-xl.bg-white.shadow-sm.ring-1.ring-zinc-200
+    %table.min-w-full.divide-y.divide-zinc-200.text-sm
+      %thead.bg-zinc-50
+        %tr
+          %th.px-4.py-3.text-left.font-medium.text-zinc-600
+            Error
+          %th.px-4.py-3.text-left.font-medium.text-zinc-600
+            Seen
+          %th.px-4.py-3.text-left.font-medium.text-zinc-600
+            Occurrences
+          %th.px-4.py-3.text-left.font-medium.text-zinc-600
+            Status
+      %tbody.divide-y.divide-zinc-100
+        - @issues.each do |issue|
+          %tr.hover:bg-zinc-50
+            %td.px-4.py-4.align-top
+              = link_to issue_path(issue), class: "block" do
+                .font-medium.text-zinc-900
+                  = issue.class_name
+                .mt-1.line-clamp-2.text-zinc-600
+                  = issue.message
+            %td.px-4.py-4.align-top.text-zinc-600
+              .font-medium
+                = l issue.last_seen_at, format: :default
+              .mt-1.text-xs
+                first:
+                = l issue.first_seen_at, format: :default
+            %td.px-4.py-4.align-top.text-zinc-600
+              = issue.occurrences_count
+            %td.px-4.py-4.align-top
+              - if issue.resolved?
+                %span.inline-flex.rounded-full.bg-emerald-100.px-2.5.py-1.text-xs.font-medium.text-emerald-800
+                  Resolved
+              - else
+                %span.inline-flex.rounded-full.bg-amber-100.px-2.5.py-1.text-xs.font-medium.text-amber-800
+                  Unresolved
+- else
+  .rounded-xl.bg-white.p-8.text-center.shadow-sm.ring-1.ring-zinc-200
+    %p.text-zinc-600
+      No issues in this filter.

@@ -129,6 +129,16 @@ module Baseline
         }
       end
 
+      # Returns the given route name prefixed with `Current.namespace` when
+      # rendering inside the host app, or the bare name when rendering inside
+      # an isolated engine (whose routes don't share the host's namespace prefixes).
+      helper_method def prefix_namespace_unless_engine(name, **opts)
+        in_engine = !_routes.equal?(Rails.application.routes)
+        Rails.logger.warn "prefix_namespace_unless_engine(#{name.inspect}): in_engine=#{in_engine} _routes=#{_routes.object_id} app_routes=#{Rails.application.routes.object_id}"
+        prefix = Current.namespace unless in_engine
+        [prefix, name, opts].compact_blank
+      end
+
       helper_method def page_image_path(path = nil)
         return nil unless id = params[:id]
 
@@ -164,7 +174,7 @@ module Baseline
           only:   :create,
           with: -> {
             add_flash :alert, t(:generic_error)
-            html_redirect_to([Current.namespace, :login])
+            html_redirect_to(prefix_namespace_unless_engine(:login))
           }
       end
 
