@@ -113,7 +113,7 @@ module Baseline
     def real_from
       return unless from_admin?
       FORWARDED_FOR_REGEXES.each do |regex|
-        if result = email.text[regex, :email]&.downcase&.strip
+        if result = text[regex, :email]&.downcase&.strip
           return result
         end
       end
