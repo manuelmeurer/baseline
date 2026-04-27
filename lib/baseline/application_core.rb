@@ -20,8 +20,10 @@ module Baseline
           # In a git worktree, `.git` is a file containing `gitdir: .../worktrees/<name>`.
           # The registered name is guaranteed unique by git, unlike the directory basename.
           git_worktree_name = if (git_file = Rails.root.join(".git")).file?
-            git_file.read[%r{gitdir: .*/worktrees/(\S+)}, 1].presence or
+            name = git_file.read[%r{gitdir: .*/worktrees/(\S+)}, 1].presence or
               raise "Could not determine git worktree name from #{git_file}"
+            # Sanitize for use in database names (PostgreSQL rejects dots and hyphens without quoting).
+            name.parameterize(separator: "_")
           end
 
           generate_database_name = ->(base, env) {
