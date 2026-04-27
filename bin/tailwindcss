@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Processes .css.erb templates in app/assets/tailwind/ and runs tailwindcss
-# for each resulting .css input file.
+# Processes .css.erb templates from both the host app's app/assets/tailwind/
+# and baseline's lib/baseline/tailwind/, then runs tailwindcss for each
+# resulting .css input file. Build output goes to the host's app/assets/builds/.
 #
 # Usage:
 #   bin/tailwindcss            # one-time build
@@ -13,29 +14,36 @@ require "bundler/setup"
 require "erb"
 require "tailwindcss/ruby"
 
-TAILWIND_DIR = "app/assets/tailwind"
-BUILDS_DIR   = "app/assets/builds"
-
 # baseline_path is used in the ERB templates to reference files in the gem.
 baseline_path = Gem.loaded_specs["baseline"].full_gem_path
 
-# Process .css.erb templates into .css files.
+HOST_TAILWIND_DIR = "app/assets/tailwind"
+GEM_TAILWIND_DIR  = File.join(baseline_path, "lib/baseline/tailwind")
+BUILDS_DIR        = "app/assets/builds"
+TEMPLATE_DIRS     = [HOST_TAILWIND_DIR, GEM_TAILWIND_DIR].freeze
+
+# Process .css.erb templates into .css files (rendered alongside their template).
 render_erb_templates = -> do
-  Dir.glob("#{TAILWIND_DIR}/*.css.erb").each do |template_path|
-    output_path = template_path.delete_suffix(".erb")
-    result = ERB.new(File.read(template_path)).result(binding)
-    File.write(output_path, result)
+  TEMPLATE_DIRS.each do |dir|
+    Dir.glob("#{dir}/*.css.erb").each do |template_path|
+      output_path = template_path.delete_suffix(".erb")
+      result = ERB.new(File.read(template_path)).result(binding)
+      File.write(output_path, result)
+    end
   end
 end
 
 # 1. Initial ERB rendering
 render_erb_templates.call
 
-# 2. Collect all CSS input files
-input_files = Dir.glob("#{TAILWIND_DIR}/*.css").sort
+# 2. Collect all CSS input files (skip rendered duplicates by basename)
+input_files = TEMPLATE_DIRS
+  .flat_map { Dir.glob("#{_1}/*.css") }
+  .uniq { File.basename(_1) }
+  .sort
 
 if input_files.empty?
-  abort "No CSS input files found in #{TAILWIND_DIR}/"
+  abort "No CSS input files found in #{TEMPLATE_DIRS.join(' or ')}"
 end
 
 # 3. Run tailwindcss for each input file
@@ -59,11 +67,15 @@ end
 if watch
   require "listen"
 
-  Listen.to(TAILWIND_DIR, only: %r{\.css\.erb$}) do |modified, added, removed|
-    changed = [*modified, *added].map { File.basename(_1) }.join(", ")
-    puts "re-rendering .css.erb templates (#{changed})"
-    render_erb_templates.call
-  end.start
+  TEMPLATE_DIRS.each do |dir|
+    next unless Dir.exist?(dir)
+
+    Listen.to(dir, only: %r{\.css\.erb$}) do |modified, added, removed|
+      changed = [*modified, *added].map { File.basename(_1) }.join(", ")
+      puts "re-rendering .css.erb templates (#{changed})"
+      render_erb_templates.call
+    end.start
+  end
 end
 
 # Forward signals to child processes
