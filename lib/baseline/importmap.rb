@@ -36,7 +36,6 @@ module Baseline
       end
 
       importmap.pin "application_controller"
-      importmap.pin "controllers",                to: "controllers/index.js"
 
       {
         "@rails/actiontext"    => "actiontext.esm.js",
@@ -51,26 +50,49 @@ module Baseline
       end
 
       importmap.pin "baseline/base_controller"
+      importmap.pin "baseline/stimulus"
       importmap.pin "baseline/avo.custom", preload: false
 
-      # TODO: This should be possible with `pin_all_from` but it doesn't work for some reason.
-      # importmap.pin_all_from \
-      #   File.join(
-      #     Gem.loaded_specs["baseline"].full_gem_path,
-      #     "app/javascript/baseline/controllers"
-      #   ),
-      #   under:   "baseline",
-      #   preload: false
-      File.join(
+      gem_controllers_dir = File.join(
         Gem.loaded_specs["baseline"].full_gem_path,
-        "app/javascript/baseline/controllers/**/*.js"
-      ).then { Dir[_1] }
-        .map { File.basename(_1) }
-        .each do |basename|
-          importmap.pin "baseline/#{basename.delete_suffix(".js")}",
-            to:      "baseline/controllers/#{basename}",
-            preload: false
+        "app/javascript/baseline/controllers"
+      )
+
+      # Namespaced controllers (e.g. controllers/admin/foo_controller.js): pinned as
+      # `controllers/<namespace>/<name>` so `eagerLoadControllersFrom("controllers/<namespace>")`
+      # finds them. Preloaded for the entrypoints that use the namespace.
+      # Also collects entrypoints per top-level controller name, so the matching
+      # `baseline/<name>` pin (imported by the namespaced variant) can be preloaded too.
+      top_level_preloads = Hash.new { |hash, key| hash[key] = [] }
+
+      Dir[File.join(gem_controllers_dir, "*")]
+        .select { File.directory? _1 }
+        .each do |subdir|
+          namespace = File.basename(subdir)
+          preload = Rails
+            .configuration
+            .stimulus_app_namespaces
+            .fetch(namespace.to_sym, [])
+            .map(&:to_s)
+
+          Dir[File.join(subdir, "*.js")].each do |path|
+            name = File.basename(path).delete_suffix(".js")
+            importmap.pin "controllers/#{namespace}/#{name}",
+              to: "baseline/controllers/#{namespace}/#{name}.js",
+              preload:
+            top_level_preloads[name].concat(preload)
+          end
         end
+
+      # Top-level controllers: pinned as `baseline/foo_controller` for explicit imports.
+      # Preloaded only for entrypoints whose namespaced variant imports them.
+      Dir[File.join(gem_controllers_dir, "*.js")].each do |path|
+        basename = File.basename(path)
+        name = basename.delete_suffix(".js")
+        importmap.pin "baseline/#{name}",
+          to:      "baseline/controllers/#{basename}",
+          preload: top_level_preloads[name].uniq.presence || false
+      end
 
       Rails
         .root
