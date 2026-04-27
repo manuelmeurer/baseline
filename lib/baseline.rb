@@ -111,12 +111,6 @@ module Baseline
       env_file = ".env.worktree-manager"
 
       unless File.exist?(env_file)
-        # Resolve statically: the workspace name can change during a Conductor or Superset
-        # session, but the DB name must stay what it was when the DB was created.
-        unless workspace_name = ENV["CONDUCTOR_WORKSPACE_NAME"] || ENV["SUPERSET_WORKSPACE_NAME"]
-          abort "Error: neither CONDUCTOR_WORKSPACE_NAME nor SUPERSET_WORKSPACE_NAME found."
-        end
-
         port =
           if ENV["CONDUCTOR_ROOT_PATH"]
             "$CONDUCTOR_PORT"
@@ -131,7 +125,6 @@ module Baseline
 
         File.write env_file, <<~CONTENT
           PORT=#{port}
-          DB_NAME_SUFFIX=worktree_#{workspace_name}
         CONTENT
       end
 
