@@ -1,4 +1,8 @@
 en:
+
+  meta:
+    name: Baseline Dummy
+
   site_names:
-    admin: Dummy Admin EN
-    web: Dummy Web EN
+    admin: Baseline Dummy Admin EN
+    web: Baseline Dummy Web EN

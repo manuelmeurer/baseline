@@ -6,7 +6,7 @@ end
 
 constraints URLManager.route_constraints(:web) do
   namespace :web, path: "" do
-    concerns :error_pages, :essentials, :health
+    concerns :errors, :essentials, :health
 
     Web::PagesController::PAGES.each do |id|
       if id == "home"
