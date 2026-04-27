@@ -5,7 +5,11 @@ description: Commit current worktree changes and fast-forward merge into main. U
 
 # Ship Worktree
 
-You are finishing a feature in a git worktree. Do the following:
+You are finishing a feature in a git worktree.
+
+**Goal:** land this worktree's commits on `main` (locally and on `origin`). The worktree branch itself is throwaway — never push the worktree branch ref to `origin`. Only `main` gets published. After shipping, the worktree branch exists only locally and can be deleted.
+
+Do the following:
 
 1. Run `git status --short` to show current status.
 2. Run `git diff --stat HEAD` to show the diff summary.
@@ -32,7 +36,7 @@ git merge-base --is-ancestor origin/main HEAD && echo "HEAD is up to date with o
 
 ### Case A: clean fast-forward possible
 
-Local `main` is an ancestor of `origin/main`, and `origin/main` is an ancestor of `HEAD`. Proceed:
+Local `main` is an ancestor of `origin/main`, and `origin/main` is an ancestor of `HEAD`. Fast-forward local `main` to `HEAD`, then push `main` (not the worktree branch) to `origin`:
 
 ```sh
 git push . HEAD:main
@@ -43,7 +47,7 @@ git push origin main
 
 Local `main` is an ancestor of (or equal to) `origin/main`, but `origin/main` is NOT an ancestor of `HEAD`. This means `origin/main` has moved forward since this branch was created, but local `main` has no unpushed commits.
 
-Rebase this branch onto `origin/main`, then push:
+Rebase this branch onto `origin/main`, fast-forward local `main` to `HEAD`, then push `main` (not the worktree branch) to `origin`:
 
 ```sh
 git rebase origin/main
