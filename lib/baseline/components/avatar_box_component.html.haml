@@ -1,27 +1,14 @@
 -# frozen_string_literal: true
 
-- render_image = ->(extra_class = nil) do
-  - image = helpers.capture_haml do
-    - case @imageable
-    - when String
-      = image_tag @imageable, class: image_css_class(extra_class)
-    - when ActiveStorage::Attached, ActiveStorage::Blob
-      - if @imageable.try(:attached?) == false
-        - raise "Attachment is missing: #{@imageable.id}"
-      = component(:attachment_image, @imageable, :md_thumb, class: image_css_class(extra_class))
-    - else
-      - raise "Unexpected @imageable: #{@imageable.class}"
-  - image.if(@image_wrapper) { _2 } # Since `@image_wrapper` is a Proc, the second argument passed to the block is `@image_wrapper.call(image)`.
-
 - case
 - when content
   %div{ class: container_css_class, data: @data }
-    = render_image.call margin_css_class
+    = render_image(margin_css_class)
     -# Wrap content in a div to prevent it from being affected by the flex properties of the parent container.
     %div
       = content
 - when @data || @css_class
   %div{ class: @css_class, data: @data }
-    = render_image.call
+    = render_image
 - else
-  = render_image.call
+  = render_image
