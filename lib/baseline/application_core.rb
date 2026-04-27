@@ -77,7 +77,7 @@ module Baseline
           }
 
           %i[development test production].index_with do |env|
-            %i[cable cache queue].index_with {
+            %i[cable cache queue errors].index_with {
               db_config[:sqlite].call(_1, env)
             }.reverse_merge(
               primary: db_config[primary_adapter].call(:primary, env)
