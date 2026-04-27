@@ -5,6 +5,8 @@ module Baseline
     class Meta < ::External::Base
       BASE_URL = "https://graph.facebook.com/v25.0".freeze
 
+      HASHED_USER_DATA_KEYS = %i[em ph fn ln db ge ct st zp country external_id].freeze
+
       add_action :send_event do |name, **data|
         event = {
           event_name:       name,
@@ -12,7 +14,7 @@ module Baseline
           event_id:         data[:event_id],
           action_source:    data[:action_source] || "website",
           event_source_url: data[:url],
-          user_data:        data[:user_data]&.transform_values { hash_value(_1) },
+          user_data:        data[:user_data]&.to_h { [_1, HASHED_USER_DATA_KEYS.include?(_1) ? hash_value(_2) : _2] },
           custom_data:      data[:custom_data]
         }.compact
 
