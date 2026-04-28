@@ -6,6 +6,26 @@ require "rspec/rails"
 require "view_component/test_helpers"
 require "capybara/rspec"
 
+if defined?(WebMock) && defined?(Postmark)
+  require "webmock/rspec"
+
+  WebMock.disable_net_connect!(allow_localhost: true)
+  WebMock.globally_stub_request do |request|
+    if request.uri.host == "api.postmarkapp.com"
+      {
+        status:  200,
+        headers: { "Content-Type" => "application/json" },
+        body:    {
+          To:        "test@example.com",
+          MessageID: "00000000-0000-0000-0000-000000000000",
+          ErrorCode: 0,
+          Message:   "OK"
+        }.to_json
+      }
+    end
+  end
+end
+
 if defined?(Geocoder)
   Geocoder.configure(lookup: :test)
   Geocoder::Lookup::Test.set_default_stub [{
