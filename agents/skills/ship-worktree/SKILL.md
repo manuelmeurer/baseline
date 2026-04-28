@@ -36,9 +36,18 @@ Then determine the state of the three relevant refs: `HEAD`, local `main`, and `
 git rev-parse HEAD
 git rev-parse main
 git rev-parse origin/main
-git merge-base --is-ancestor main origin/main && echo "local main is ancestor of origin/main" || echo "local main has commits not on origin/main"
-git merge-base --is-ancestor origin/main HEAD && echo "HEAD is up to date with origin/main" || echo "HEAD is behind origin/main"
+git merge-base --is-ancestor main origin/main && echo "local main is ancestor of origin/main (no unpushed local main commits)" || echo "local main has commits not on origin/main"
+git merge-base --is-ancestor origin/main HEAD && echo "origin/main is reachable from HEAD (HEAD contains everything on origin/main)" || echo "origin/main has commits not in HEAD (HEAD is behind or diverged)"
 ```
+
+The second check tells you whether `origin/main` is an ancestor of `HEAD`, not whether `HEAD` is strictly behind. A "not reachable" result can mean either (a) `HEAD` is strictly behind `origin/main`, or (b) `HEAD` and `origin/main` have diverged. To disambiguate, also list commits in both directions:
+
+```sh
+git log --oneline origin/main..HEAD   # commits on this branch not yet on origin/main
+git log --oneline HEAD..origin/main   # commits on origin/main not yet on this branch
+```
+
+If both lists are non-empty, the branches have diverged — treat that as Case B (rebase) unless the divergence is unexpected.
 
 ### Case A: clean fast-forward possible
 
