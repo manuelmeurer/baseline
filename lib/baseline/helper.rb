@@ -426,7 +426,11 @@ module Baseline
           s.parentNode.insertBefore(t,s)}(window,document,"script",
           "https://connect.facebook.net/en_US/fbevents.js");
           fbq("init", "#{pixel_id}");
-          document.addEventListener("turbo:load", () => fbq("track", "PageView"));
+          document.addEventListener("turbo:load", () => {
+            const eventId = crypto.randomUUID();
+            fbq("track", "PageView", {}, { eventID: eventId });
+            document.dispatchEvent(new CustomEvent("meta:pageview", { detail: { eventId } }));
+          });
         }
       JS
     end
