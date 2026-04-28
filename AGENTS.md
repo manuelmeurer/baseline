@@ -6,6 +6,13 @@
 - Default language: Ruby. Prefer Ruby when writing scripts.
 - To delete files or folders, always use `trash` instead of `rm`.
 
+## Gems
+
+Never modify the code of installed gems, especially baseline. Before making any changes to baseline (or any gem), check the app's `Gemfile`:
+
+- If it points to a local path (e.g. `path: "~/code/own/baseline"`), edit the local source there.
+- If an installed gem is used (version, git, etc.), first switch the `Gemfile` to use the local path (`~/code/own/baseline` for baseline), run `bundle install`, then make the changes in the local source.
+
 ## Project shorthand
 
 Note: use these names in conversation (e.g., "copy the file from uplink" or "check out funlocked for an example"); list maps shorthand to source code locations.
