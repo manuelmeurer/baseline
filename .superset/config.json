@@ -1,0 +1,11 @@
+{
+  "setup": [
+    "cd spec/dummy && bin/setup"
+  ],
+  "teardown": [
+    "cd spec/dummy && bin/teardown"
+  ],
+  "run": [
+    "cd spec/dummy && bin/dev"
+  ]
+}
