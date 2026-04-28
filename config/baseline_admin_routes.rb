@@ -20,4 +20,12 @@ Baseline::Admin::Engine.routes.draw do
       end
     end
   end
+
+  scope path: "cms" do
+    root to: "/baseline/cms/dashboards#show", as: :cms_dashboard
+  end
+
+  scope path: "design" do
+    root to: "/baseline/design/dashboards#show", as: :design_dashboard
+  end
 end

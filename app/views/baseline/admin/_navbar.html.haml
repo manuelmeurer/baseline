@@ -4,6 +4,12 @@
 = component :navbar, brand: site_name do |navbar|
   - if Current.admin_user
     = navbar.with_group do |group|
+      = group.with_item_link cms_dashboard_path do
+        = component :icon, "pen-to-square"
+        CMS
+      = group.with_item_link design_dashboard_path do
+        = component :icon, "palette"
+        Design
       = group.with_item_link errors_dashboard_path do
         = component :icon, "triangle-exclamation"
         Errors
