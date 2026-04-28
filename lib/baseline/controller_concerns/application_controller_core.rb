@@ -92,7 +92,7 @@ module Baseline
           title:,
           description: page_meta_description,
           type:        "website",
-          url:         url_for(only_path: false)
+          url:         request.original_url
         )
       end
 
@@ -134,7 +134,6 @@ module Baseline
       # an isolated engine (whose routes don't share the host's namespace prefixes).
       helper_method def prefix_namespace_unless_engine(name, **opts)
         in_engine = !_routes.equal?(Rails.application.routes)
-        Rails.logger.warn "prefix_namespace_unless_engine(#{name.inspect}): in_engine=#{in_engine} _routes=#{_routes.object_id} app_routes=#{Rails.application.routes.object_id}"
         prefix = Current.namespace unless in_engine
         [prefix, name, opts].compact_blank
       end
