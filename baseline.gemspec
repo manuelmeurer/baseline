@@ -27,10 +27,4 @@ Gem::Specification.new do |gem|
   gem.require_paths         = ["lib"]
 
   gem.add_dependency "zeitwerk"
-
-  gem.add_development_dependency "capybara-playwright-driver", "~> 0.5"
-  gem.add_development_dependency "capybara",                   "~> 3.38"
-  gem.add_development_dependency "factory_bot_rails",          "~> 6.1"
-  gem.add_development_dependency "rspec-rails",                "~> 8.0"
-  gem.add_development_dependency "shoulda-matchers",           "~> 6.0"
 end

@@ -2,11 +2,6 @@
 
 require "baseline/spec/spec_helper"
 
-# Gems that are included in the gemspec, not in the Gemfile,
-# are not automatically required.
-require "shoulda/matchers"
-require "factory_bot_rails"
-
 ENV["RAILS_ENV"] ||= "test"
 
 require File.expand_path("dummy/config/environment", __dir__)
