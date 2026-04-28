@@ -392,7 +392,7 @@ module Baseline
               !_1.match?(/locale|password|token|_type\z/)
           }.keys
 
-        return if columns.empty?
+        return if columns.empty? && !reflect_on_association(:user)
 
         case db_adapter
         when :postgresql

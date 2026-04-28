@@ -61,7 +61,7 @@ module Baseline
 
       after_initialize if: :new_record? do
         self.due_on      ||= Date.current
-        self.responsible ||= default_responsible
+        self.responsible ||= default_responsible if respond_to?(:default_responsible, true)
       end
     end
 
