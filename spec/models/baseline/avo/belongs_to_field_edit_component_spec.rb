@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-RSpec.describe Avo::Fields::BelongsToField::EditComponent do
-  subject(:component) { described_class.allocate }
+RSpec.describe "Avo::Fields::BelongsToField::EditComponent", :avo do
+  subject(:component) { ::Avo::Fields::BelongsToField::EditComponent.allocate }
 
   let(:base_class) { BaseResource }
   let(:descendant_class) { DescendantResource }

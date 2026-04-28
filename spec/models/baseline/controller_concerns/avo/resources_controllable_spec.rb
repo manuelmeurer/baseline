@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Baseline::Avo::ResourcesControllable do
+RSpec.describe Baseline::Avo::ResourcesControllable, :avo do
   subject(:assign_via_polymorphic_association_to_record) do
     controller.send(:assign_via_polymorphic_association_to_record)
   end

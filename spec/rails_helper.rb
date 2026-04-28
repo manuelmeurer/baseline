@@ -34,4 +34,8 @@ RSpec.configure do |config|
         raise("Asset precompilation failed")
     end
   end
+
+  config.before(:each, :avo) do
+    skip "Avo gem is not loaded in the dummy app" unless defined?(::Avo)
+  end
 end
