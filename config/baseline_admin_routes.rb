@@ -8,10 +8,10 @@ Baseline::Admin::Engine.routes.draw do
   root to: "dashboards#show"
 
   scope path: "errors" do
-    root to: "/baseline/errors/dashboards#show", as: :errors_dashboard
+    root to: "errors/dashboards#show", as: :errors_dashboard
 
     resources :issues,
-      controller: "/baseline/errors/issues",
+      controller: "errors/issues",
       only:       %i[index show] do
 
       member do
@@ -22,10 +22,10 @@ Baseline::Admin::Engine.routes.draw do
   end
 
   scope path: "cms" do
-    root to: "/baseline/cms/dashboards#show", as: :cms_dashboard
+    root to: "cms/dashboards#show", as: :cms_dashboard
   end
 
   scope path: "design" do
-    root to: "/baseline/design/dashboards#show", as: :design_dashboard
+    root to: "design/dashboards#show", as: :design_dashboard
   end
 end

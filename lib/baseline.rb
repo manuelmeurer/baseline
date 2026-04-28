@@ -32,27 +32,14 @@ loader.collapse("#{__dir__}/baseline/services")
 
 loader.inflector = Baseline::Inflector.new(__FILE__)
 
-# `Baseline::Admin` is a Rails engine namespace, and `Baseline::Errors` is a
-# regular namespace whose controllers/models are mounted into that engine.
-# Both have `app/*` dirs managed by `Rails.autoloaders.main`. If this gem's
-# (reloading) loader managed them, reloading would replace the module
-# objects, invalidating rails.main's crefs and breaking autoload of their
-# controllers. Define the namespaces here and manage their children with
-# separate, non-reloading loaders.
+# `Baseline::Admin` (Rails engine) and `Baseline::Errors` both have code in
+# both `app/*` (managed by `Rails.autoloaders.main`) and `lib/baseline/*`.
+# If this gem's (reloading) loader managed the `lib/` side, reloading would
+# replace the module objects, invalidating rails.main's crefs and breaking
+# autoload of constants under `app/*`. Define the namespaces here and
+# manage their `lib/` children with separate, non-reloading loaders.
 module Baseline
   module Errors
-    # `Errors` controllers live outside the admin engine's isolated
-    # namespace. Without these methods, Rails wires their URL helpers and
-    # `_routes` to the host app rather than the admin engine.
-    class << self
-      def railtie_routes_url_helpers(include_path_helpers = true)
-        Baseline::Admin::Engine.routes.url_helpers(include_path_helpers)
-      end
-
-      def railtie_helpers_paths
-        Baseline::Admin::Engine.helpers_paths
-      end
-    end
   end
 
   module Admin
