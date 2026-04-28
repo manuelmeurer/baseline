@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.description           = "Baseline"
   gem.homepage              = "https://github.com/manuelmeurer/baseline"
   gem.license               = "MIT"
-  gem.required_ruby_version = ">= 3.1"
+  gem.required_ruby_version = ">= 4.0"
   gem.files                 = files - test_files - ignored_files
   gem.executables           = gem.files.grep(%r{\Abin/}).map { File.basename(_1) } - %w[rspec restart-apps]
   gem.test_files            = test_files
