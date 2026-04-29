@@ -231,7 +231,9 @@ module Baseline
                 default:,
                 polymorphic_as: attribute,
                 types:          polymorphic_types_with_resource(attribute)
-            })
+            }).if(reload_form_html) {
+              _1.merge(_2)
+            }
         when association_reflection&.macro == :has_many
           options
             .reverse_merge(index_truncate)
