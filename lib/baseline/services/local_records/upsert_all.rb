@@ -47,7 +47,9 @@ module Baseline
 
               if record.changed?
                 record.save!
-                ClearCloudflareCache.call_async record if defined?(ClearCloudflareCache)
+                if defined?(::ClearCloudflareCache)
+                  ::ClearCloudflareCache.call_async record
+                end
               end
             end
         end

@@ -232,6 +232,15 @@ module Baseline
 
       def db_adapter = connection.adapter_name.downcase.to_sym
 
+      def clear_cloudflare_cache(method = nil)
+        after_commit do
+          if !method || record = public_send(method)
+            arg = record || (destroyed? ? { self.class.to_s => as_json } : self)
+            ::ClearCloudflareCache.call_async(arg)
+          end
+        end
+      end
+
       def custom_human_attribute_name(attribute)
         I18n.t attribute,
           scope:   [Current.namespace, :human_attribute_names, to_s.underscore],
