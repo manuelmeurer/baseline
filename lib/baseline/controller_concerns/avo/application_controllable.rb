@@ -12,6 +12,12 @@ module Baseline
         before_action prepend: true do
           Current.namespace = :avo
         end
+
+        # This is duplicated for now from ApplicationControllerCore,
+        # but we will not use Avo much longer, so that's ok.
+        helper_method def prefix_namespace_unless_engine(name, **opts)
+          [Current.namespace, name, opts].compact_blank
+        end
       end
 
       def avo_login_url = main_app.admin_login_url
