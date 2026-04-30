@@ -150,6 +150,12 @@ en:
             address:
               geocoding_failed: could not be geocoded
 
+  essentials:
+    offline:
+      headline: You are offline
+      text: This page is not available without an internet connection. Please check your connection and try again.
+      cta: Try again
+
   errors:
     cta: "[Click here](%{url}) to return to the homepage."
 

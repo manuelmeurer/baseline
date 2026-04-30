@@ -11,6 +11,8 @@ module Baseline
 
           get :manifest
 
+          get :offline
+
           get :robots,
             defaults: { format: "text" },
             format:   true

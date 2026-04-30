@@ -5,6 +5,7 @@ module Web
     include Baseline::EssentialsControllable
 
     def render_manifest? = true
+    def render_offline?  = true
 
     private
 

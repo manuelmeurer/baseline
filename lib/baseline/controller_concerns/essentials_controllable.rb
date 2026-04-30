@@ -16,6 +16,10 @@ module Baseline
         end
       end
 
+      before_action only: :offline do
+        head :not_found unless render_offline?
+      end
+
       before_action only: :robots do
         unless params[:format] == "txt"
           redirect_to url_for(format: :text)
@@ -109,8 +113,15 @@ module Baseline
       render json: JSON.pretty_generate(json)
     end
 
+    def offline
+      render layout: false
+    rescue ActionView::MissingTemplate
+      render template: "baseline/essentials/offline", layout: false
+    end
+
     def render_manifest? = false
     def render_favicon?  = true
+    def render_offline?  = false
 
     private
 

@@ -162,6 +162,12 @@ de:
             address:
               geocoding_failed: konnte nicht geokodiert werden
 
+  essentials:
+    offline:
+      headline: Du bist offline
+      text: Diese Seite ist ohne Internetverbindung nicht verfügbar. Bitte überprüfe deine Verbindung und versuche es erneut.
+      cta: Erneut versuchen
+
   errors:
     cta: "[Klick hier](%{url}), um zur Homepage zurückzukommen."
 
