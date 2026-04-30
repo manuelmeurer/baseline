@@ -116,3 +116,64 @@ document.addEventListener("keydown", event => {
     controller?.closeModal()
   }
 })
+
+// Global search: hide empty resource sections; if every section is empty,
+// show a single consolidated "no results" message instead of one per resource.
+const GLOBAL_SEARCH_EMPTY_CLASS = "baseline-global-search-empty"
+const GLOBAL_SEARCH_FALLBACK_CLASS = "baseline-global-search-fallback"
+
+function updateGlobalSearchPanel(panelLayout) {
+  const sources = panelLayout.querySelectorAll(".aa-Source")
+  if (!sources.length)
+    return
+
+  let noResultsText = null
+  let visibleCount = 0
+
+  sources.forEach(source => {
+    const noResults = source.querySelector(".aa-SourceNoResults")
+    if (noResults) {
+      if (!noResultsText)
+        noResultsText = noResults.textContent.trim()
+      source.classList.add(GLOBAL_SEARCH_EMPTY_CLASS)
+      source.style.display = "none"
+    } else {
+      source.classList.remove(GLOBAL_SEARCH_EMPTY_CLASS)
+      source.style.display = ""
+      visibleCount += 1
+    }
+  })
+
+  let fallback = panelLayout.querySelector(`.${GLOBAL_SEARCH_FALLBACK_CLASS}`)
+  if (visibleCount === 0 && noResultsText) {
+    if (!fallback) {
+      fallback = document.createElement("div")
+      fallback.className = `aa-SourceNoResults ${GLOBAL_SEARCH_FALLBACK_CLASS}`
+      panelLayout.appendChild(fallback)
+    }
+    fallback.textContent = noResultsText
+  } else if (fallback) {
+    fallback.remove()
+  }
+}
+
+const globalSearchObserver = new MutationObserver(mutations => {
+  const panels = new Set()
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (node.nodeType !== Node.ELEMENT_NODE)
+        return
+      if (node.matches?.(".aa-PanelLayout"))
+        panels.add(node)
+      node.querySelectorAll?.(".aa-PanelLayout").forEach(panel => panels.add(panel))
+    })
+    if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+      const panel = mutation.target.closest?.(".aa-PanelLayout")
+      if (panel)
+        panels.add(panel)
+    }
+  })
+  panels.forEach(updateGlobalSearchPanel)
+})
+
+globalSearchObserver.observe(document.body, { childList: true, subtree: true })
