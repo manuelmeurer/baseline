@@ -32,7 +32,7 @@ gem "pry-rails",                                "~> 0.3"
 gem "puma",                                     "~> 7.0", require: false
 gem "rack-cors",                                "~> 3.0"
 gem "rails-i18n",                               "~> 8.0"
-gem "rails",                                    "~> 8.0.1"
+gem "rails",                                    "~> 8.1.0"
 gem "ransack",                                  "~> 4.0"
 gem "readline",                                 "~> 0.0" # Necessary for Pry if Ruby was not compiled with Readline support.
 gem "reverse_markdown",                         "~> 3.0"
