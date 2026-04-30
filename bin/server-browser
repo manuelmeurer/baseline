@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "socket"
+
+port = ENV["PORT"] || "3000"
+
+server_pid = spawn("bin/rails", "server", *ARGV)
+
+%w[INT TERM HUP QUIT].each do |signal|
+  trap(signal) { Process.kill(signal, server_pid) }
+end
+
+Thread.new do
+  loop do
+    TCPSocket.new("localhost", port).close
+    break
+  rescue Errno::ECONNREFUSED
+    sleep 0.5
+  end
+  system "open", "http://localhost:#{port}"
+end
+
+Process.wait(server_pid)
+exit $?.exitstatus || 1
