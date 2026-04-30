@@ -20,6 +20,15 @@ module Baseline
         head :not_found unless render_offline?
       end
 
+      before_action only: :service_worker do
+        case
+        when !render_service_worker?
+          head :not_found
+        when params[:format] != "js"
+          redirect_to url_for(format: :js)
+        end
+      end
+
       before_action only: :robots do
         unless params[:format] == "txt"
           redirect_to url_for(format: :text)
@@ -119,9 +128,23 @@ module Baseline
       render template: "baseline/essentials/offline", layout: false
     end
 
-    def render_manifest? = false
-    def render_favicon?  = true
-    def render_offline?  = false
+    def service_worker
+      response.headers["Cache-Control"] = "no-cache"
+
+      render \
+        layout:       false,
+        content_type: "text/javascript"
+    rescue ActionView::MissingTemplate
+      render \
+        template:     "baseline/essentials/service_worker",
+        layout:       false,
+        content_type: "text/javascript"
+    end
+
+    def render_manifest?        = false
+    def render_favicon?         = true
+    def render_offline?         = false
+    def render_service_worker?  = false
 
     private
 

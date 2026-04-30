@@ -1,0 +1,49 @@
+// Baseline default service worker.
+// Caches the offline fallback page and serves it when navigation requests fail.
+
+const CACHE_VERSION = <%= raw Rails.configuration.revision.to_json %>;
+const CACHE_NAME    = `baseline-offline-${CACHE_VERSION}`;
+const OFFLINE_URL   = <%= raw url_for(prefix_namespace_unless_engine(:offline, only_path: true)).to_json %>;
+
+self.addEventListener("install", event => {
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.add(new Request(OFFLINE_URL, { cache: "reload" }));
+      await self.skipWaiting();
+    })()
+  );
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    (async () => {
+      const names = await caches.keys();
+      await Promise.all(
+        names
+          .filter(name => name.startsWith("baseline-offline-") && name !== CACHE_NAME)
+          .map(name => caches.delete(name))
+      );
+      await self.clients.claim();
+    })()
+  );
+});
+
+self.addEventListener("fetch", event => {
+  const request = event.request;
+
+  if (request.mode !== "navigate")
+    return;
+
+  event.respondWith(
+    (async () => {
+      try {
+        return await fetch(request);
+      } catch {
+        const cache = await caches.open(CACHE_NAME);
+        const cached = await cache.match(OFFLINE_URL);
+        return cached || Response.error();
+      }
+    })()
+  );
+});

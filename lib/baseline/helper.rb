@@ -487,17 +487,25 @@ module Baseline
     end
 
     def manifest_link_if_allowed
-      essentials = controller_path
-        .camelize
-        .deconstantize
-        .safe_constantize
-        &.then { _1.const_get(:EssentialsController) if _1.const_defined?(:EssentialsController) }
-
-      return unless essentials&.new&.render_manifest?
+      return unless namespace_essentials_controller&.new&.render_manifest?
 
       tag.link \
         rel:  "manifest",
         href: url_for(prefix_namespace_unless_engine(:manifest, format: :json))
+    end
+
+    def service_worker_registration_if_allowed
+      return unless namespace_essentials_controller&.new&.render_service_worker?
+
+      url = url_for(prefix_namespace_unless_engine(:service_worker, format: :js))
+
+      javascript_tag <<~JS, nonce: true
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker.register(#{url.to_json}, { scope: "/" });
+          });
+        }
+      JS
     end
 
     def company_details
@@ -682,6 +690,7 @@ module Baseline
         og_data_tags,
         icon_links,
         manifest_link_if_allowed,
+        service_worker_registration_if_allowed,
         plausible_javascript_tag,
         meta_javascript_tag,
         linkedin_javascript_tag,
@@ -774,6 +783,14 @@ module Baseline
     end
 
     private
+
+      def namespace_essentials_controller
+        controller_path
+          .camelize
+          .deconstantize
+          .safe_constantize
+          &.then { _1.const_get(:EssentialsController) if _1.const_defined?(:EssentialsController) }
+      end
 
       def link_to_with_data(name = nil, options = nil, html_options = nil, data:, &block)
         if block

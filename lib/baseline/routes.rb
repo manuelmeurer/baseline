@@ -13,6 +13,9 @@ module Baseline
 
           get :offline
 
+          get :service_worker,
+            path: "service-worker"
+
           get :robots,
             defaults: { format: "text" },
             format:   true

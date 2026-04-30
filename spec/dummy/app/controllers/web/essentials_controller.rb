@@ -4,8 +4,9 @@ module Web
   class EssentialsController < BaseController
     include Baseline::EssentialsControllable
 
-    def render_manifest? = true
-    def render_offline?  = true
+    def render_manifest?       = true
+    def render_offline?        = true
+    def render_service_worker? = true
 
     private
 
