@@ -18,18 +18,18 @@ gem "dartsass-rails",                           "~> 0.5"
 gem "dotenv-rails",                             "~> 3.2"
 gem "email_validator",                          "~> 2.2"
 gem "friendly_id",                              "~> 5.5"
-gem "haml-rails",                               "~> 2.1"
-gem "http",                                     "~> 5.0", require: false
+gem "haml-rails",                               "~> 3.0"
+gem "http",                                     "~> 6.0", require: false
 gem "image_processing",                         "~> 1.14"
 gem "importmap-rails",                          "~> 2.0"
 gem "lexxy",                                    "~> 0.1"
 gem "listen",                                   "~> 3.9"
 gem "memo_wise",                                "~> 1.9"
 gem "mission_control-jobs",                     "~> 1.0"
-gem "paper_trail",                              "~> 16.0"
+gem "paper_trail",                              "~> 17.0"
 gem "propshaft",                                "~> 1.0"
 gem "pry-rails",                                "~> 0.3"
-gem "puma",                                     "~> 7.0", require: false
+gem "puma",                                     "~> 8.0", require: false
 gem "rack-cors",                                "~> 3.0"
 gem "rails-i18n",                               "~> 8.0"
 gem "rails",                                    "~> 8.1.0"
