@@ -18,6 +18,7 @@ loader.ignore("#{__dir__}/baseline/strict_ivars.rb")
 loader.ignore("#{__dir__}/baseline/spec/rails_helper.rb")
 loader.ignore("#{__dir__}/baseline/spec/spec_helper.rb")
 loader.ignore("#{__dir__}/active_storage")
+loader.ignore("#{__dir__}/generators")
 
 unless defined?(::Avo)
   loader.ignore("#{__dir__}/baseline/avo")

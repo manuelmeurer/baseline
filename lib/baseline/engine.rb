@@ -50,10 +50,6 @@ module Baseline
       Baseline::Errors.install!
     end
 
-    config.after_initialize do
-      Baseline::Errors.ensure_schema!
-    end
-
     rake_tasks do
       path = File.expand_path(__dir__)
       Dir.glob("#{path}/tasks/**/*.rake").each { load _1 }

@@ -15,7 +15,6 @@ RSpec.describe "Baseline::Errors ActiveJob hook" do
   around do |example|
     previous = Baseline.configuration.capture_exceptions
     Baseline.configuration.capture_exceptions = true
-    Baseline::Errors.ensure_schema!
     Baseline::Errors::Issue.delete_all
     example.run
   ensure

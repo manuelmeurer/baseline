@@ -1,0 +1,10 @@
+Description:
+    Installs Baseline::Errors by copying the schema for the `errors` database
+    into your application's `db/` directory. After running this generator, run
+    `bin/rails db:prepare` to create the database and load the schema.
+
+Example:
+    bin/rails generate baseline:errors:install
+
+    This will create:
+        db/errors_schema.rb

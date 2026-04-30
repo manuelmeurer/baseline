@@ -24,16 +24,6 @@ module Baseline
 
       def db_config_present? = db_config.present?
 
-      def ensure_schema!
-        return unless enabled?
-
-        Schema.define
-      rescue => error
-        Rails.logger.error(
-          "[Baseline::Errors] schema setup failed: #{error.class}: #{error.message}"
-        )
-      end
-
       def install!
         return if @installed
 

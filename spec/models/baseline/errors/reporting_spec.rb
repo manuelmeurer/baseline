@@ -6,7 +6,6 @@ RSpec.describe "Baseline::Errors reporting" do
   around do |example|
     previous = Baseline.configuration.capture_exceptions
     Baseline.configuration.capture_exceptions = true
-    Baseline::Errors.ensure_schema!
     Baseline::Errors::Issue.delete_all
     example.run
   ensure

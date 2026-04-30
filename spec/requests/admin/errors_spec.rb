@@ -8,7 +8,6 @@ RSpec.describe "Errors", type: :request do
   around do |example|
     previous = Baseline.configuration.capture_exceptions
     Baseline.configuration.capture_exceptions = true
-    Baseline::Errors.ensure_schema!
     example.run
   ensure
     Baseline.configuration.capture_exceptions = previous
