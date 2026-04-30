@@ -152,6 +152,11 @@ module Baseline
         eager_load: true,
         glob:       "**/*"
 
+      mailer_previews_path = Rails.root.join("spec/mailers/previews")
+      if mailer_previews_path.directory?
+        config.eager_load_paths << mailer_previews_path.to_s
+      end
+
       config.revision = begin
         Rails
           .root
