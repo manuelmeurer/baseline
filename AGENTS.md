@@ -52,6 +52,24 @@ Apply these conventions when writing or modifying Ruby code.
 - Use guard clauses for early returns.
 - Use safe navigation operator (`&.`) for nil checks.
 - Add a blank line before the block body only when the block header consists of multiple lines.
+- Don't add blank lines between single-line statements in a method or block body:
+  ```ruby
+  # bad
+  def do_something
+    allow_unauthenticated_access
+
+    def show; end
+
+    _baseline_finalize
+  end
+
+  # good
+  def do_something
+    allow_unauthenticated_access
+    def show; end
+    _baseline_finalize
+  end
+  ```
 - Use multi-line, leading-dot chaining when calling more than one method in a row.
 - Prefer chaining over temporary variables when it stays readable; `then` and `tap` are often helpful.
 - Prefer numbered parameters (`_1`, `_2`) for small blocks; use `it` only when numbered params don't work.
