@@ -4,7 +4,10 @@ module Baseline
   class Engine < ::Rails::Engine
     isolate_namespace Baseline
 
-    config.autoload_paths << root.join("app", "components")
+    initializer "baseline.inflections", before: :setup_main_autoloader do
+      overrides = Baseline::Inflector::ACRONYMS.to_h { [_1.downcase, _1] }
+      Rails.autoloaders.main.inflector.inflect(overrides)
+    end
 
     # hotwire-spark assumes all controllers have view helpers, which is not
     # the case for ActionController::API controllers. Guard accordingly.
