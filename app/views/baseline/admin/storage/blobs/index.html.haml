@@ -1,0 +1,121 @@
+-# frozen_string_literal: true
+
+%header{ class: "mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between" }
+  %div
+    = link_to "Back to storage", storage_dashboard_path, class: "link text-sm"
+    %h1.mt-2.text-3xl.font-semibold
+      Blobs
+    %p.mt-1.text-sm{ class: "text-base-content/70" }
+      = pluralize(number_with_delimiter(@total_count), "blob")
+  .join
+    = link_to "Blobs", storage_blobs_path, class: "btn btn-active join-item"
+    = link_to "Attachments", storage_attachments_path, class: "btn join-item"
+
+.card.mb-6.bg-base-100.shadow
+  .card-body
+    %h2.card-title
+      Filter Blobs
+    = form_with url: storage_blobs_path,
+      method: :get,
+      scope: nil,
+      class: "mt-2 space-y-4" do
+
+      .grid.grid-cols-1.gap-4{ class: "md:grid-cols-3" }
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Key
+          = text_field_tag :key,
+            params[:key],
+            class: "input input-bordered w-full",
+            placeholder: "Exact key"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Filename
+          = text_field_tag :filename,
+            params[:filename],
+            class: "input input-bordered w-full",
+            placeholder: "Search filename"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Service
+          = select_tag :service_name,
+            options_for_select([["All services", ""]] + @service_names.map { [_1, _1] }, params[:service_name]),
+            class: "select select-bordered w-full"
+
+      .grid.grid-cols-1.gap-4{ class: "md:grid-cols-3" }
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Content Type
+          = select_tag :content_type,
+            options_for_select([["All types", ""]] + @content_types.map { [_1, _1] }, params[:content_type]),
+            class: "select select-bordered w-full"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Size
+          = select_tag :size,
+            options_for_select([["Any size", ""], ["Small (< 1 MB)", "small"], ["Medium (1-10 MB)", "medium"], ["Large (> 10 MB)", "large"]], params[:size]),
+            class: "select select-bordered w-full"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Status
+          = select_tag :status,
+            options_for_select([["Any status", ""], ["Attached", "attached"], ["Orphaned", "orphaned"]], params[:status]),
+            class: "select select-bordered w-full"
+
+      .flex.justify-end.gap-2
+        = link_to "Clear", storage_blobs_path, class: "btn btn-ghost"
+        = button_tag "Apply", class: "btn btn-primary"
+
+.card.bg-base-100.shadow
+  .card-body
+    - if @blobs.any?
+      .overflow-x-auto
+        %table.table.table-zebra
+          %thead
+            %tr
+              %th
+                ID
+              %th
+                Filename
+              %th
+                Content Type
+              %th
+                Service
+              %th
+                Size
+              %th
+                Created
+              %th
+          %tbody
+            - @blobs.each do |blob|
+              %tr
+                %td
+                  = blob.id
+                %td.max-w-sm.truncate
+                  = link_to blob.filename,
+                    storage_blob_path(blob),
+                    class: "link font-medium"
+                %td
+                  %span.badge.badge-ghost
+                    = blob.content_type.presence || "Unknown"
+                %td
+                  = blob.service_name
+                %td
+                  = format_storage_bytes blob.byte_size
+                %td
+                  = l blob.created_at, format: :default
+                %td.text-right
+                  = link_to "View",
+                    storage_blob_path(blob),
+                    class: "btn btn-xs"
+      .join.mt-6
+        = pagination_links @total_count
+    - else
+      %p{ class: "text-base-content/70" }
+        No blobs found.

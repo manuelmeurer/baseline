@@ -1,0 +1,110 @@
+-# frozen_string_literal: true
+
+%header{ class: "mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between" }
+  %div
+    = link_to "Back to attachments", storage_attachments_path, class: "link text-sm"
+    %h1.mt-2.text-3xl.font-semibold
+      = @attachment.name
+    %p.mt-1.text-sm{ class: "text-base-content/70" }
+      = "#{@attachment.record_type} ##{@attachment.record_id}"
+  .flex.gap-2
+    = link_to "Blob",
+      storage_blob_path(@blob),
+      class: "btn"
+    = link_to "Download",
+      active_storage_blob_path(@blob, disposition: :attachment),
+      class: "btn btn-primary"
+
+- if media_previewable_blob?(@blob)
+  .card.mb-6.bg-base-100.shadow
+    .card-body
+      %h2.card-title
+        Preview
+      .rounded-box.bg-base-200.p-4
+        - if @blob.content_type.to_s.start_with?("image/")
+          = image_tag active_storage_blob_path(@blob),
+            alt: @blob.filename,
+            class: "mx-auto max-h-[36rem] max-w-full object-contain"
+        - elsif @blob.content_type.to_s.start_with?("video/")
+          %video.w-full{ controls: true }
+            %source{ src: active_storage_blob_path(@blob), type: @blob.content_type }
+        - elsif @blob.content_type.to_s.start_with?("audio/")
+          %audio.w-full{ controls: true }
+            %source{ src: active_storage_blob_path(@blob), type: @blob.content_type }
+        - elsif @blob.content_type == "application/pdf"
+          %object.w-full{ class: "h-[36rem]", data: active_storage_blob_path(@blob), type: "application/pdf" }
+            = link_to "Open PDF", active_storage_blob_path(@blob), class: "link"
+
+.grid.grid-cols-1.gap-6{ class: "lg:grid-cols-2" }
+  .card.bg-base-100.shadow
+    .card-body
+      %h2.card-title
+        Attachment
+      .overflow-x-auto
+        %table.table
+          %tbody
+            %tr
+              %th
+                ID
+              %td
+                = @attachment.id
+            %tr
+              %th
+                Name
+              %td
+                = @attachment.name
+            %tr
+              %th
+                Record Type
+              %td
+                = @attachment.record_type
+            %tr
+              %th
+                Record ID
+              %td
+                = @attachment.record_id
+            %tr
+              %th
+                Record
+              %td
+                = attachment_record_label @attachment
+            %tr
+              %th
+                Created
+              %td
+                = l @attachment.created_at, format: :default
+
+  .card.bg-base-100.shadow
+    .card-body
+      %h2.card-title
+        Blob
+      .overflow-x-auto
+        %table.table
+          %tbody
+            %tr
+              %th
+                ID
+              %td
+                = @blob.id
+            %tr
+              %th
+                Filename
+              %td.break-all
+                = link_to @blob.filename,
+                  storage_blob_path(@blob),
+                  class: "link"
+            %tr
+              %th
+                Content Type
+              %td
+                = @blob.content_type.presence || "Unknown"
+            %tr
+              %th
+                Size
+              %td
+                = format_storage_bytes @blob.byte_size
+            %tr
+              %th
+                Created
+              %td
+                = l @blob.created_at, format: :default

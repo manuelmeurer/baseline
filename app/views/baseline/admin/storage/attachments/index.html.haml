@@ -1,0 +1,104 @@
+-# frozen_string_literal: true
+
+%header{ class: "mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between" }
+  %div
+    = link_to "Back to storage", storage_dashboard_path, class: "link text-sm"
+    %h1.mt-2.text-3xl.font-semibold
+      Attachments
+    %p.mt-1.text-sm{ class: "text-base-content/70" }
+      = pluralize(number_with_delimiter(@total_count), "attachment")
+  .join
+    = link_to "Blobs", storage_blobs_path, class: "btn join-item"
+    = link_to "Attachments", storage_attachments_path, class: "btn btn-active join-item"
+
+.card.mb-6.bg-base-100.shadow
+  .card-body
+    %h2.card-title
+      Filter Attachments
+    = form_with url: storage_attachments_path,
+      method: :get,
+      scope: nil,
+      class: "mt-2 space-y-4" do
+
+      .grid.grid-cols-1.gap-4{ class: "md:grid-cols-4" }
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Name
+          = text_field_tag :name,
+            params[:name],
+            class: "input input-bordered w-full",
+            placeholder: "Search name"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Record Type
+          = select_tag :record_type,
+            options_for_select([["All record types", ""]] + @record_types.map { [_1, _1] }, params[:record_type]),
+            class: "select select-bordered w-full"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Record ID
+          = text_field_tag :record_id,
+            params[:record_id],
+            class: "input input-bordered w-full",
+            placeholder: "Exact ID"
+        %label.form-control.w-full
+          .label
+            %span.label-text
+              Content Type
+          = select_tag :content_type,
+            options_for_select([["All types", ""]] + @content_types.map { [_1, _1] }, params[:content_type]),
+            class: "select select-bordered w-full"
+
+      .flex.justify-end.gap-2
+        = link_to "Clear", storage_attachments_path, class: "btn btn-ghost"
+        = button_tag "Apply", class: "btn btn-primary"
+
+.card.bg-base-100.shadow
+  .card-body
+    - if @attachments.any?
+      .overflow-x-auto
+        %table.table.table-zebra
+          %thead
+            %tr
+              %th
+                ID
+              %th
+                Name
+              %th
+                Record
+              %th
+                Blob
+              %th
+                Size
+              %th
+                Created
+              %th
+          %tbody
+            - @attachments.each do |attachment|
+              %tr
+                %td
+                  = attachment.id
+                %td
+                  = attachment.name
+                %td
+                  = "#{attachment.record_type} ##{attachment.record_id}"
+                %td.max-w-sm.truncate
+                  = link_to attachment.blob.filename,
+                    storage_blob_path(attachment.blob),
+                    class: "link font-medium"
+                %td
+                  = format_storage_bytes attachment.blob.byte_size
+                %td
+                  = l attachment.created_at, format: :default
+                %td.text-right
+                  = link_to "View",
+                    storage_attachment_path(attachment),
+                    class: "btn btn-xs"
+      .join.mt-6
+        = pagination_links @total_count
+    - else
+      %p{ class: "text-base-content/70" }
+        No attachments found.

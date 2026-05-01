@@ -1,0 +1,143 @@
+-# frozen_string_literal: true
+
+%header{ class: "mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between" }
+  %div
+    %h1.text-3xl.font-semibold
+      Storage
+    %p.mt-1.text-sm{ class: "text-base-content/70" }
+      Active Storage blobs and attachments in the host app.
+  - if storage_available?
+    .join
+      = link_to storage_blobs_path, class: "btn join-item" do
+        = component :icon, "file"
+        Blobs
+      = link_to storage_attachments_path, class: "btn join-item" do
+        = component :icon, "paperclip"
+        Attachments
+
+- unless storage_available?
+  .alert.alert-warning
+    = component :icon, "triangle-exclamation"
+    %span
+      Active Storage tables are not available in this app.
+- else
+  .stats.stats-vertical.w-full.shadow{ class: "lg:stats-horizontal" }
+    .stat
+      .stat-title
+        Blobs
+      .stat-value
+        = number_with_delimiter @blobs_count
+      .stat-desc
+        stored files
+    .stat
+      .stat-title
+        Attachments
+      .stat-value
+        = number_with_delimiter @attachments_count
+      .stat-desc
+        model links
+    .stat
+      .stat-title
+        Orphaned
+      .stat-value
+        = number_with_delimiter @orphaned_blobs_count
+      .stat-desc
+        blobs without attachments
+    .stat
+      .stat-title
+        Storage
+      .stat-value.text-3xl
+        = format_storage_bytes @total_storage
+      .stat-desc
+        total byte size
+
+  .mt-6.grid.grid-cols-1.gap-6{ class: "lg:grid-cols-2" }
+    .card.bg-base-100.shadow
+      .card-body
+        %h2.card-title
+          Content Types
+        - if @content_types.any?
+          - total_content_type_count = @content_types.sum { _2 }
+          .space-y-4
+            - @content_types.each do |content_type, count|
+              - percent = total_content_type_count.zero? ? 0 : (count.to_f / total_content_type_count * 100).round(1)
+              %div
+                .mb-1.flex.items-center.justify-between.gap-3.text-sm
+                  %span.badge.badge-neutral
+                    = content_type.presence || "Unknown"
+                  %span{ class: "text-base-content/70" }
+                    = number_with_delimiter count
+                %progress.progress.progress-primary.w-full{ max: 100, value: percent }
+        - else
+          %p{ class: "text-base-content/70" }
+            No blobs found.
+
+    .card.bg-base-100.shadow
+      .card-body
+        %h2.card-title
+          Storage Usage
+        .space-y-4
+          .flex.items-center.justify-between.gap-3
+            %span{ class: "text-base-content/70" }
+              Total
+            %span.font-medium
+              = format_storage_bytes @total_storage
+          .flex.items-center.justify-between.gap-3
+            %span{ class: "text-base-content/70" }
+              Average file size
+            %span.font-medium
+              = format_storage_bytes(@blobs_count.positive? ? @total_storage / @blobs_count : 0)
+          .flex.items-center.justify-between.gap-3
+            %span{ class: "text-base-content/70" }
+              Largest file
+            %span.font-medium
+              - if @largest_blob
+                = link_to @largest_blob.filename,
+                  storage_blob_path(@largest_blob),
+                  class: "link"
+                %span{ class: "text-base-content/60" }
+                  = "(#{format_storage_bytes(@largest_blob.byte_size)})"
+              - else
+                \-
+
+  .mt-6.card.bg-base-100.shadow
+    .card-body
+      .flex.items-center.justify-between.gap-4
+        %h2.card-title
+          Recent Blobs
+        = link_to "View all", storage_blobs_path, class: "btn btn-sm"
+      - if @recent_blobs.any?
+        .overflow-x-auto
+          %table.table
+            %thead
+              %tr
+                %th
+                  Filename
+                %th
+                  Type
+                %th
+                  Size
+                %th
+                  Created
+                %th
+            %tbody
+              - @recent_blobs.each do |blob|
+                %tr
+                  %td.max-w-sm.truncate
+                    = link_to blob.filename,
+                      storage_blob_path(blob),
+                      class: "link font-medium"
+                  %td
+                    %span.badge.badge-ghost
+                      = blob.content_type.presence || "Unknown"
+                  %td
+                    = format_storage_bytes blob.byte_size
+                  %td
+                    = l blob.created_at, format: :default
+                  %td.text-right
+                    = link_to "View",
+                      storage_blob_path(blob),
+                      class: "btn btn-xs"
+      - else
+        %p{ class: "text-base-content/70" }
+          No recent blobs found.

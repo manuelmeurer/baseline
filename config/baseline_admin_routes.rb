@@ -56,4 +56,16 @@ Baseline::Admin::Engine.routes.draw do
 
     root to: "queues#index", as: :jobs_dashboard
   end
+
+  scope path: "storage", as: :storage do
+    root to: "storage/dashboards#show", as: :dashboard
+
+    resources :blobs,
+      controller: "storage/blobs",
+      only:       %i[index show]
+
+    resources :attachments,
+      controller: "storage/attachments",
+      only:       %i[index show]
+  end
 end

@@ -1,0 +1,127 @@
+-# frozen_string_literal: true
+
+%header{ class: "mb-6 flex flex-col gap-4 md:flex-row md:items-start md:justify-between" }
+  %div.min-w-0
+    = link_to "Back to blobs", storage_blobs_path, class: "link text-sm"
+    %h1.mt-2.truncate.text-3xl.font-semibold
+      = @blob.filename
+    %p.mt-1.break-all.text-sm{ class: "text-base-content/70" }
+      = @blob.key
+  .flex.gap-2
+    = link_to "Preview",
+      active_storage_blob_path(@blob),
+      class: "btn"
+    = link_to "Download",
+      active_storage_blob_path(@blob, disposition: :attachment),
+      class: "btn btn-primary"
+
+- if media_previewable_blob?(@blob)
+  .card.mb-6.bg-base-100.shadow
+    .card-body
+      %h2.card-title
+        Preview
+      .rounded-box.bg-base-200.p-4
+        - if @blob.content_type.to_s.start_with?("image/")
+          = image_tag active_storage_blob_path(@blob),
+            alt: @blob.filename,
+            class: "mx-auto max-h-[36rem] max-w-full object-contain"
+        - elsif @blob.content_type.to_s.start_with?("video/")
+          %video.w-full{ controls: true }
+            %source{ src: active_storage_blob_path(@blob), type: @blob.content_type }
+        - elsif @blob.content_type.to_s.start_with?("audio/")
+          %audio.w-full{ controls: true }
+            %source{ src: active_storage_blob_path(@blob), type: @blob.content_type }
+        - elsif @blob.content_type == "application/pdf"
+          %object.w-full{ class: "h-[36rem]", data: active_storage_blob_path(@blob), type: "application/pdf" }
+            = link_to "Open PDF", active_storage_blob_path(@blob), class: "link"
+
+.grid.grid-cols-1.gap-6{ class: "lg:grid-cols-3" }
+  .space-y-6{ class: "lg:col-span-2" }
+    .card.bg-base-100.shadow
+      .card-body
+        %h2.card-title
+          Blob
+        .overflow-x-auto
+          %table.table
+            %tbody
+              %tr
+                %th
+                  ID
+                %td
+                  = @blob.id
+              %tr
+                %th
+                  Filename
+                %td.break-all
+                  = @blob.filename
+              %tr
+                %th
+                  Content Type
+                %td
+                  = @blob.content_type.presence || "Unknown"
+              %tr
+                %th
+                  Size
+                %td
+                  = format_storage_bytes @blob.byte_size
+              %tr
+                %th
+                  Service
+                %td
+                  = @blob.service_name
+              %tr
+                %th
+                  Checksum
+                %td.break-all
+                  = @blob.checksum.presence || "-"
+              %tr
+                %th
+                  Created
+                %td
+                  = l @blob.created_at, format: :default
+
+    .card.bg-base-100.shadow
+      .card-body
+        %h2.card-title
+          Attachments
+          %span.badge
+            = @attachments.size
+        - if @attachments.any?
+          .overflow-x-auto
+            %table.table.table-zebra
+              %thead
+                %tr
+                  %th
+                    ID
+                  %th
+                    Name
+                  %th
+                    Record
+                  %th
+                    Created
+                  %th
+              %tbody
+                - @attachments.each do |attachment|
+                  %tr
+                    %td
+                      = attachment.id
+                    %td
+                      = attachment.name
+                    %td
+                      = "#{attachment.record_type} ##{attachment.record_id}"
+                    %td
+                      = l attachment.created_at, format: :default
+                    %td.text-right
+                      = link_to "View",
+                        storage_attachment_path(attachment),
+                        class: "btn btn-xs"
+        - else
+          %p{ class: "text-base-content/70" }
+            No attachments found for this blob.
+
+  .card.bg-base-100.shadow
+    .card-body
+      %h2.card-title
+        Metadata
+      %pre.overflow-x-auto.rounded-box.bg-neutral.p-4.text-xs.leading-6.text-neutral-content
+        = JSON.pretty_generate(@blob.metadata || {})
