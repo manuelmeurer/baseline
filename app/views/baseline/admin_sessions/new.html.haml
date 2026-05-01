@@ -4,33 +4,31 @@
 
   = component "admin/page_header", title: "Login", css_class: "mt-6"
 
+  - if @oauth_available
+
+    .border-b
+      %p.mb-4
+        Log in with your Google account:
+
+      = form_with url: url_for, data: { turbo: false } do |form|
+        = component :form_actions, form, style: :send, submit_label: "Let's go"
+
+  %p.mb-4
+    Log in with email and password:
+
+  = form_with scope: :session, url: url_for do |form|
+    = component :form_field, form, :email, :email, required: true
+    = component :form_field, form, :password, :password, required: true
+
+    = component :form_actions, form, style: :send, submit_label: "Log in"
+
   - if Rails.env.development?
 
-    %p.mb-4
+    %p.mt-6.mb-4
       Select user to log in with:
 
-    = form_with url: url_for, data: stimco(:autosubmit) do |form|
-      = component :form_field, form, :select, :admin_user_id, choices: options_from_collection_for_select(AdminUser.active, :id, :name), include_blank: true, label_style: false, enhance: true
-
-  - else
-
-    - if @oauth_available
-
-      .border-b
-        %p.mb-4
-          Log in with your Google account:
-
-        = form_with url: url_for, data: { turbo: false } do |form|
-          = component :form_actions, form, style: :send, submit_label: "Let's go"
-
-    %p.mb-4
-      Log in with email and password:
-
-    = form_with scope: :session, url: url_for do |form|
-      = component :form_field, form, :email, :email, required: true
-      = component :form_field, form, :password, :password, required: true
-
-      = component :form_actions, form, style: :send, submit_label: "Log in"
+    = form_with url: url_for, data: stimco(:dev_login) do |form|
+      = component :form_field, form, :select, :login_token, choices: options_from_collection_for_select(AdminUser.active, :login_token, :name), include_blank: true, label_style: false, enhance: true, data: stimco(:dev_login, to_h: false).action(:login)
 
 - else
 
@@ -40,32 +38,30 @@
   .row
     .col-md-6.col-lg-4
 
+      - if @oauth_available
+
+        .my-5.pb-5.border-bottom
+          %p
+            Log in with your Google account:
+
+          = form_with url: url_for, data: { turbo: false } do |form|
+            = component :form_actions, form, style: :send, submit_label: "Let's go"
+
+      .mt-5
+        %p
+          Log in with email and password:
+
+        = form_with scope: :session, url: url_for do |form|
+          = component :form_field, form, :email, :email, required: true
+          = component :form_field, form, :password, :password, required: true
+
+          = component :form_actions, form, style: :send, submit_label: "Log in"
+
       - if Rails.env.development?
 
         .mt-5
           %p
             Select user to log in with:
 
-          = form_with url: url_for, data: stimco(:autosubmit) do |form|
-            = component :form_field, form, :select, :admin_user_id, choices: options_from_collection_for_select(AdminUser.active, :id, :name), include_blank: true, label_style: false, enhance: true
-
-      - else
-
-        - if @oauth_available
-
-          .my-5.pb-5.border-bottom
-            %p
-              Log in with your Google account:
-
-            = form_with url: url_for, data: { turbo: false } do |form|
-              = component :form_actions, form, style: :send, submit_label: "Let's go"
-
-        .mt-5
-          %p
-            Log in with email and password:
-
-          = form_with scope: :session, url: url_for do |form|
-            = component :form_field, form, :email, :email, required: true
-            = component :form_field, form, :password, :password, required: true
-
-            = component :form_actions, form, style: :send, submit_label: "Log in"
+          = form_with url: url_for, data: stimco(:dev_login) do |form|
+            = component :form_field, form, :select, :login_token, choices: options_from_collection_for_select(AdminUser.active, :login_token, :name), include_blank: true, label_style: false, enhance: true, data: stimco(:dev_login, to_h: false).action(:login)
