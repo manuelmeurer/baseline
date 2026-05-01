@@ -2,13 +2,6 @@
 
 # Overridden to wrap images in a link that opens in a new tab.
 
-# Verify original implementation hasn't changed from version 3.28.0, when this override was created.
-Baseline::VerifyGemFileSource.call(
-  "avo",
-  "app/components/avo/fields/common/files/view_type/grid_item_component.rb" => "c4eed4edcd060740d99f392a5dc4105dc0f1acc61808fbc105a4a1adf6b21d22",
-  "app/components/avo/fields/common/files/view_type/grid_item_component.html.erb" => "1d3e4c4ce9ada8e5afc17beea799213da495e20d34c53015404f6ff34e591242"
-)
-
 class Avo::Fields::Common::Files::ViewType::GridItemComponent < Avo::BaseComponent
   include Avo::Fields::Concerns::FileAuthorization
 

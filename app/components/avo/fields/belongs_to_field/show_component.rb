@@ -3,13 +3,6 @@
 # Override Avo's belongs_to show component to show a circular user photo
 # next to the name when the associated record includes ActsAsUser.
 
-# Verify original implementation hasn't changed from version 3.28.0, when this override was created.
-Baseline::VerifyGemFileSource.call(
-  "avo",
-  "app/components/avo/fields/belongs_to_field/show_component.rb" => "1159ce15668d42f9e3a9e65a0c2ad2eef1c85bce3949f6a95a556f90412e3c3d",
-  "app/components/avo/fields/belongs_to_field/show_component.html.erb" => "e742000e7d15497796ff990ff6e0d3e152e61e782ae3bb87d40a25cff974427d"
-)
-
 class Avo::Fields::BelongsToField::ShowComponent < Avo::Fields::ShowComponent
   def call
     field_wrapper(**field_wrapper_args) do

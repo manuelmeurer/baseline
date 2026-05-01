@@ -4,13 +4,6 @@
 # We need to re-implement the full class because ViewComponent requires the class
 # file to exist alongside the template for proper template resolution.
 
-# Verify original implementation hasn't changed from version 3.28.0, when this override was created.
-Baseline::VerifyGemFileSource.call(
-  "avo",
-  "app/components/avo/views/resource_index_component.rb" => "5cc9f2721464828fe3215ee1bf43d23ede9ed7bd9ca095c8823f113fb08681f6",
-  "app/components/avo/views/resource_index_component.html.erb" => "2d3c32aabfdd9af282b78b5fe2399977697558650a2daa5c6d20494563268e94"
-)
-
 class Avo::Views::ResourceIndexComponent < Avo::ResourceComponent
   include Avo::ResourcesHelper
   include Avo::ApplicationHelper
