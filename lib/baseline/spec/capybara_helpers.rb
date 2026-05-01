@@ -5,6 +5,11 @@ module Baseline
     module CapybaraHelpers
       def visit_and_verify_url(url, expected_url = url)
         visit_with_retry url
+
+        # capybara-playwright-driver returns 0 when it misses the navigation response.
+        # Revisit once so have_http_status can still assert the actual HTTP status.
+        visit_with_retry url if page.status_code.zero?
+
         expect(page).to have_http_status(:success)
         expect(page).to have_current_path(expected_url)
       end
