@@ -1,0 +1,62 @@
+-# frozen_string_literal: true
+-# locals: (jobs:, status: nil)
+
+- if jobs.any?
+  .overflow-x-auto.rounded-lg.bg-base-100.shadow-sm
+    %table.table.table-zebra
+      %thead
+        %tr
+          %th
+            Job
+          %th
+            Queue
+          %th
+            Status
+          %th
+            Scheduled
+          %th.text-right
+            Actions
+      %tbody
+        - jobs.each do |job|
+          %tr
+            %td.align-top
+              = link_to job_title(job),
+                job_path(job.job_id),
+                class: "link link-hover font-medium"
+              .mt-1.max-w-xl.truncate.text-xs.opacity-70
+                = job_arguments(job)
+              .mt-1.font-mono.text-xs.opacity-50
+                = job.job_id
+            %td.align-top
+              = job.queue_name
+            %td.align-top
+              %span.badge.badge-outline
+                = (status || job.status || "pending").to_s.humanize
+            %td.align-top
+              - if job.respond_to?(:scheduled_at) && job.scheduled_at
+                = bidirectional_time_distance_in_words_with_title(job.scheduled_at)
+              - else
+                %span.opacity-50
+                  -
+            %td.align-top
+              .flex.justify-end.gap-2
+                - if job.status == :failed
+                  = button_to "Retry",
+                    job_retry_path(job.job_id, params: jobs_filter_param),
+                    class: "btn btn-xs btn-warning"
+                  = button_to "Discard",
+                    job_discard_path(job.job_id, params: jobs_filter_param),
+                    class: "btn btn-xs btn-error",
+                    form: { data: turbo_data(method: :post, confirm: "This will delete the job and cannot be undone.") }
+                - elsif job.status.in?(%i[blocked scheduled])
+                  = button_to "Run now",
+                    job_dispatch_path(job.job_id),
+                    class: "btn btn-xs btn-warning"
+                  = button_to "Discard",
+                    job_discard_path(job.job_id),
+                    class: "btn btn-xs btn-error",
+                    form: { data: turbo_data(method: :post, confirm: "This will delete the job and cannot be undone.") }
+- else
+  .rounded-lg.bg-base-100.p-8.text-center.shadow-sm
+    %p.text-base-content.opacity-70
+      No jobs found.

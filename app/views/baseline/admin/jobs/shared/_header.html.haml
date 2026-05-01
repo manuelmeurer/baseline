@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+-# locals: (title:, subtitle: nil, actions: nil)
+
+%header.mb-6.flex.flex-col.gap-4{ class: "md:flex-row md:items-start md:justify-between" }
+  %div
+    %h1.text-3xl.font-semibold.tracking-tight
+      = title
+    - if subtitle.present?
+      %p.mt-1.text-sm.text-base-content.opacity-70
+        = subtitle
+  - if actions.present?
+    .flex.flex-wrap.items-center.gap-2
+      = actions

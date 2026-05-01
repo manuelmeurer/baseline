@@ -8,6 +8,8 @@ loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/baseline/environments")
 loader.ignore("#{__dir__}/baseline/errors.rb")
 loader.ignore("#{__dir__}/baseline/errors")
+loader.ignore("#{__dir__}/baseline/jobs.rb")
+loader.ignore("#{__dir__}/baseline/jobs")
 loader.ignore("#{__dir__}/baseline/admin")
 loader.ignore("#{__dir__}/baseline/initializers")
 loader.ignore("#{__dir__}/baseline/monkeypatches.rb")
@@ -17,6 +19,7 @@ loader.ignore("#{__dir__}/baseline/sitemap_generator.rb")
 loader.ignore("#{__dir__}/baseline/strict_ivars.rb")
 loader.ignore("#{__dir__}/baseline/spec/rails_helper.rb")
 loader.ignore("#{__dir__}/baseline/spec/spec_helper.rb")
+loader.ignore("#{__dir__}/active_job")
 loader.ignore("#{__dir__}/active_storage")
 loader.ignore("#{__dir__}/generators")
 
@@ -43,6 +46,9 @@ module Baseline
   module Errors
   end
 
+  module Jobs
+  end
+
   module Admin
   end
 end
@@ -53,6 +59,13 @@ errors_loader.inflector = Baseline::Inflector.new(__FILE__)
 errors_loader.push_dir("#{__dir__}/baseline/errors", namespace: Baseline::Errors)
 errors_loader.setup
 require_relative "baseline/errors"
+
+jobs_loader = Zeitwerk::Loader.new
+jobs_loader.tag = "baseline.jobs"
+jobs_loader.inflector = Baseline::Inflector.new(__FILE__)
+jobs_loader.push_dir("#{__dir__}/baseline/jobs", namespace: Baseline::Jobs)
+jobs_loader.setup
+require_relative "baseline/jobs"
 
 admin_loader = Zeitwerk::Loader.new
 admin_loader.tag = "baseline.admin"

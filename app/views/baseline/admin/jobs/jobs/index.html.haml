@@ -1,0 +1,63 @@
+-# frozen_string_literal: true
+
+- section = navigation_section_for_status(jobs_status&.to_sym)
+- if @jobs_count.infinite?
+  - jobs_count_text = "Many"
+- else
+  - jobs_count_text = pluralize(@jobs_count, "job")
+
+= render "baseline/admin/jobs/shared/header",
+  title: "#{jobs_status.to_s.humanize} jobs",
+  subtitle: "#{jobs_count_text} matching this status."
+
+= render "baseline/admin/jobs/shared/navigation", section:
+
+.mb-6.rounded-lg.bg-base-100.p-4.shadow-sm
+  = form_with url: jobs_path(jobs_status),
+    method: :get,
+    scope: :filter,
+    class: "grid gap-3 md:grid-cols-4" do |form|
+    .form-control
+      = form.label :queue_name, "Queue", class: "label"
+      = form.select :queue_name,
+        options_for_select([["All queues", ""]] + @queue_names.map { [_1, _1] }, @job_filters[:queue_name]),
+        {},
+        class: "select select-bordered w-full"
+    .form-control
+      = form.label :job_class_name, "Job class", class: "label"
+      = form.select :job_class_name,
+        options_for_select([["All classes", ""]] + @job_class_names.map { [_1, _1] }, @job_filters[:job_class_name]),
+        {},
+        class: "select select-bordered w-full"
+    .form-control
+      = form.label :finished_at_start, "Finished from", class: "label"
+      = form.date_field :finished_at_start,
+        value: params.dig(:filter, :finished_at_start),
+        class: "input input-bordered w-full"
+    .form-control
+      = form.label :finished_at_end, "Finished until", class: "label"
+      = form.date_field :finished_at_end,
+        value: params.dig(:filter, :finished_at_end),
+        class: "input input-bordered w-full"
+    .flex.flex-wrap.justify-end.gap-2{ class: "md:col-span-4" }
+      = link_to "Clear",
+        jobs_path(jobs_status),
+        class: "btn btn-ghost"
+      = form.submit "Filter", class: "btn btn-primary"
+
+- if jobs_status&.failed?
+  .mb-4.flex.justify-end.gap-2
+    = button_to "Retry filtered",
+      bulk_retries_path(filter: @job_filters),
+      class: "btn btn-warning",
+      form: { data: turbo_data(method: :post, confirm: "Retry the matching failed jobs?") }
+    = button_to "Discard filtered",
+      bulk_discards_path(filter: @job_filters),
+      class: "btn btn-error",
+      form: { data: turbo_data(method: :post, confirm: "Discard the matching failed jobs?") }
+
+= render "baseline/admin/jobs/shared/job_table",
+  jobs: @jobs_page.records,
+  status: jobs_status&.to_sym
+
+= render "baseline/admin/jobs/shared/pagination_toolbar", page: @jobs_page

@@ -1,0 +1,37 @@
+-# frozen_string_literal: true
+
+= render "baseline/admin/jobs/shared/header",
+  title: "Jobs",
+  subtitle: "Queues and Active Job workload."
+
+= render "baseline/admin/jobs/shared/navigation", section: :queues
+
+- if @queues.any?
+  .grid.gap-4{ class: "md:grid-cols-2 xl:grid-cols-3" }
+    - @queues.each do |queue|
+      .card.bg-base-100.shadow-sm
+        .card-body
+          .flex.items-start.justify-between.gap-3
+            %div
+              %h2.card-title
+                = link_to queue.name,
+                  queue_path(queue),
+                  class: "link link-hover"
+              %p.text-sm.opacity-70
+                = pluralize(queue.size, "pending job")
+            %span.badge{ class: queue.active? ? "badge-success" : "badge-warning" }
+              = queue.active? ? "Active" : "Paused"
+          .card-actions.justify-end
+            - if queue.active?
+              = button_to "Pause",
+                queue_pause_path(queue),
+                class: "btn btn-sm btn-warning"
+            - else
+              = button_to "Resume",
+                queue_pause_path(queue),
+                method: :delete,
+                class: "btn btn-sm btn-success"
+- else
+  .rounded-lg.bg-base-100.p-8.text-center.shadow-sm
+    %p.text-base-content.opacity-70
+      No queues found.

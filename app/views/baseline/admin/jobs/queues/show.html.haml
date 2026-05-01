@@ -1,0 +1,13 @@
+-# frozen_string_literal: true
+
+= render "baseline/admin/jobs/shared/header",
+  title: @queue.name,
+  subtitle: "#{pluralize(@queue.size, 'pending job')} in this queue."
+
+= render "baseline/admin/jobs/shared/navigation", section: :queues
+
+= render "baseline/admin/jobs/shared/job_table",
+  jobs: @jobs_page.records,
+  status: :pending
+
+= render "baseline/admin/jobs/shared/pagination_toolbar", page: @jobs_page

@@ -1,0 +1,8 @@
+-# frozen_string_literal: true
+-# locals: (section:)
+
+.tabs.tabs-boxed.mb-6
+  - navigation_sections.each do |key, (label, path)|
+    = link_to label,
+      path,
+      class: ["tab", ("tab-active" if key == section)].compact.join(" ")

@@ -1,0 +1,109 @@
+-# frozen_string_literal: true
+
+= render "baseline/admin/jobs/shared/header",
+  title: job_title(@job),
+  subtitle: @job.job_id
+
+.mb-6
+  = link_to "Back to #{@job.status.to_s.humanize} jobs",
+    jobs_path(@job.status || :pending),
+    class: "btn btn-sm btn-ghost"
+
+.grid.gap-6{ class: "lg:grid-cols-[minmax(0,2fr),minmax(18rem,1fr)]" }
+  .space-y-6
+    .card.bg-base-100.shadow-sm
+      .card-body
+        %h2.card-title
+          Arguments
+        %pre.mt-3.overflow-x-auto.rounded-lg.bg-base-200.p-4.text-xs
+          = JSON.pretty_generate(@job.serialized_arguments)
+
+    - if @job.last_execution_error
+      .card.bg-base-100.shadow-sm
+        .card-body
+          %h2.card-title
+            Error
+          .alert.alert-error.mt-3
+            %span
+              = failed_job_error(@job)
+          %pre.mt-3.overflow-x-auto.rounded-lg.bg-base-200.p-4.text-xs
+            = failed_job_backtrace(@job)
+
+    .card.bg-base-100.shadow-sm
+      .card-body
+        %h2.card-title
+          Raw data
+        %pre.mt-3.overflow-x-auto.rounded-lg.bg-base-200.p-4.text-xs
+          = JSON.pretty_generate(@job.respond_to?(:filtered_raw_data) && @job.filtered_raw_data || @job.raw_data)
+
+  .space-y-6
+    .card.bg-base-100.shadow-sm
+      .card-body
+        %h2.card-title
+          Details
+        .mt-3.space-y-3.text-sm
+          %div
+            .font-medium.opacity-60
+              Status
+            .mt-1
+              = @job.status || "pending"
+          %div
+            .font-medium.opacity-60
+              Queue
+            .mt-1
+              = @job.queue_name
+          %div
+            .font-medium.opacity-60
+              Priority
+            .mt-1
+              = @job.priority || "-"
+          %div
+            .font-medium.opacity-60
+              Scheduled
+            .mt-1
+              = @job.scheduled_at ? bidirectional_time_distance_in_words_with_title(@job.scheduled_at) : "-"
+          - if @job.failed_at
+            %div
+              .font-medium.opacity-60
+                Failed
+              .mt-1
+                = time_distance_in_words_with_title(@job.failed_at)
+          - if @job.finished_at
+            %div
+              .font-medium.opacity-60
+                Finished
+              .mt-1
+                = time_distance_in_words_with_title(@job.finished_at)
+          - if @job.worker_id
+            %div
+              .font-medium.opacity-60
+                Worker
+              .mt-1
+                = link_to @job.worker_id,
+                  worker_path(@job.worker_id),
+                  class: "link"
+
+    .card.bg-base-100.shadow-sm
+      .card-body
+        %h2.card-title
+          Actions
+        .mt-3.flex.flex-wrap.gap-2
+          - if @job.status == :failed
+            = button_to "Retry",
+              job_retry_path(@job.job_id, params: jobs_filter_param),
+              class: "btn btn-warning"
+            = button_to "Discard",
+              job_discard_path(@job.job_id, params: jobs_filter_param),
+              class: "btn btn-error",
+              form: { data: turbo_data(method: :post, confirm: "This will delete the job and cannot be undone.") }
+          - elsif @job.status.in?(%i[blocked scheduled])
+            = button_to "Run now",
+              job_dispatch_path(@job.job_id),
+              class: "btn btn-warning"
+            = button_to "Discard",
+              job_discard_path(@job.job_id),
+              class: "btn btn-error",
+              form: { data: turbo_data(method: :post, confirm: "This will delete the job and cannot be undone.") }
+          - else
+            %span.text-sm.opacity-70
+              No actions available.

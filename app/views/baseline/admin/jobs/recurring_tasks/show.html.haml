@@ -1,0 +1,72 @@
+-# frozen_string_literal: true
+
+= render "baseline/admin/jobs/shared/header",
+  title: @recurring_task.id,
+  subtitle: @recurring_task.job_class_name
+
+.mb-6.flex.flex-wrap.gap-2
+  = link_to "Back to recurring tasks",
+    recurring_tasks_path,
+    class: "btn btn-sm btn-ghost"
+  - if @recurring_task.runnable?
+    = button_to "Enqueue",
+      recurring_task_path(@recurring_task.id),
+      method: :patch,
+      class: "btn btn-sm btn-primary"
+
+.grid.gap-6{ class: "lg:grid-cols-[minmax(18rem,1fr),minmax(0,2fr)]" }
+  .card.bg-base-100.shadow-sm
+    .card-body
+      %h2.card-title
+        Details
+      .mt-3.space-y-3.text-sm
+        %div
+          .font-medium.opacity-60
+            Schedule
+          .mt-1
+            = @recurring_task.schedule
+        %div
+          .font-medium.opacity-60
+            Queue
+          .mt-1
+            = @recurring_task.queue_name || "-"
+        %div
+          .font-medium.opacity-60
+            Priority
+          .mt-1
+            = @recurring_task.priority || "-"
+        %div
+          .font-medium.opacity-60
+            Last enqueued
+          .mt-1
+            - if @recurring_task.last_enqueued_at
+              = time_distance_in_words_with_title(@recurring_task.last_enqueued_at)
+            - else
+              = "-"
+        %div
+          .font-medium.opacity-60
+            Next run
+          .mt-1
+            - if @recurring_task.next_time
+              = bidirectional_time_distance_in_words_with_title(@recurring_task.next_time)
+            - else
+              = "-"
+        - if @recurring_task.command
+          %div
+            .font-medium.opacity-60
+              Command
+            .mt-1.font-mono.text-xs
+              = @recurring_task.command
+        %div
+          .font-medium.opacity-60
+            Arguments
+          %pre.mt-1.overflow-x-auto.rounded-lg.bg-base-200.p-3.text-xs
+            = JSON.pretty_generate(@recurring_task.arguments || [])
+
+  .space-y-4
+    %h2.text-xl.font-semibold
+      Recent jobs
+    = render "baseline/admin/jobs/shared/job_table",
+      jobs: @jobs_page.records,
+      status: nil
+    = render "baseline/admin/jobs/shared/pagination_toolbar", page: @jobs_page

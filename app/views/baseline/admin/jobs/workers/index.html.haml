@@ -1,0 +1,38 @@
+-# frozen_string_literal: true
+
+- workers_count_text = @workers_count.infinite? ? "Many" : pluralize(@workers_count, "worker")
+
+= render "baseline/admin/jobs/shared/header",
+  title: "Workers",
+  subtitle: "#{workers_count_text} reporting."
+
+= render "baseline/admin/jobs/shared/navigation", section: :workers
+
+- if @workers_page.records.any?
+  .overflow-x-auto.rounded-lg.bg-base-100.shadow-sm
+    %table.table.table-zebra
+      %thead
+        %tr
+          %th
+            Worker
+          %th
+            Host
+          %th
+            Last heartbeat
+      %tbody
+        - @workers_page.records.each do |worker|
+          %tr
+            %td
+              = link_to worker.name,
+                worker_path(worker.id),
+                class: "link link-hover font-medium"
+            %td
+              = worker.hostname
+            %td
+              = worker.last_heartbeat_at ? time_distance_in_words_with_title(worker.last_heartbeat_at) : "-"
+- else
+  .rounded-lg.bg-base-100.p-8.text-center.shadow-sm
+    %p.text-base-content.opacity-70
+      No workers found.
+
+= render "baseline/admin/jobs/shared/pagination_toolbar", page: @workers_page

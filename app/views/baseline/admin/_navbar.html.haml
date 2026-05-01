@@ -13,6 +13,9 @@
       = group.with_item_link errors_dashboard_path do
         = component :icon, "triangle-exclamation"
         Errors
+      = group.with_item_link jobs_dashboard_path do
+        = component :icon, "list-check"
+        Jobs
     = navbar.with_group align: :end do |group|
       = group.with_item_link logout_path, data: { turbo_method: :delete } do
         = component :icon, "power-off"

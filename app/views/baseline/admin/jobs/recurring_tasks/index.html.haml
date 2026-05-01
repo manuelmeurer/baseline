@@ -1,0 +1,51 @@
+-# frozen_string_literal: true
+
+= render "baseline/admin/jobs/shared/header",
+  title: "Recurring tasks",
+  subtitle: "Scheduled recurring jobs."
+
+= render "baseline/admin/jobs/shared/navigation", section: :recurring_tasks
+
+- if @recurring_tasks.any?
+  .overflow-x-auto.rounded-lg.bg-base-100.shadow-sm
+    %table.table.table-zebra
+      %thead
+        %tr
+          %th
+            Task
+          %th
+            Job class
+          %th
+            Queue
+          %th
+            Schedule
+          %th
+            Last enqueued
+          %th.text-right
+            Actions
+      %tbody
+        - @recurring_tasks.each do |task|
+          %tr
+            %td
+              = link_to task.id,
+                recurring_task_path(task.id),
+                class: "link link-hover font-medium"
+            %td
+              = task.job_class_name
+            %td
+              = task.queue_name || "-"
+            %td
+              = task.schedule
+            %td
+              = task.last_enqueued_at ? time_distance_in_words_with_title(task.last_enqueued_at) : "-"
+            %td
+              .flex.justify-end
+                - if task.runnable?
+                  = button_to "Enqueue",
+                    recurring_task_path(task.id),
+                    method: :patch,
+                    class: "btn btn-xs btn-primary"
+- else
+  .rounded-lg.bg-base-100.p-8.text-center.shadow-sm
+    %p.text-base-content.opacity-70
+      No recurring tasks found.
