@@ -133,6 +133,13 @@ bundle exec rspec spec/models/user_spec.rb
 
 **When bundle exec fails**: Inform the user that a binstub might resolve the issue, as binstubs can have different load paths or configurations.
 
+### Database columns
+
+When adding, changing, or removing a database column, do not create a new migration unless the user explicitly asks for one. Instead:
+
+1. Edit the original migration that created the table.
+2. Add a section to `stuff.rb` that applies the change to existing databases, including adding/changing/removing the column, setting default values, backfilling existing records, and any related data cleanup.
+
 ### Namespaces
 
 Treat each Rails app as divided into namespaces. Common ones are `web` (the marketing website), `admin` (the admin area), and `users` (the login area for users).
