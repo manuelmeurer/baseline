@@ -8,7 +8,8 @@ module Baseline
                   :custom_icon_classes,
                   :async_inline,
                   :i18n_namespace_fallbacks,
-                  :capture_exceptions
+                  :capture_exceptions,
+                  :webmock_allowed_hosts
     attr_reader :env
 
     def initialize
@@ -19,6 +20,7 @@ module Baseline
       @i18n_namespace_fallbacks = {}
       @no_paper_trail_classes   = []
       @root                     = defined?(Rails) ? Rails.root : Pathname.new(Dir.pwd)
+      @webmock_allowed_hosts    = []
       @wrap_exceptions          = true
 
       super

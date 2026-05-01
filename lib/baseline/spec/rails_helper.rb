@@ -9,7 +9,10 @@ require "capybara/rspec"
 if defined?(WebMock) && defined?(Postmark)
   require "webmock/rspec"
 
-  WebMock.disable_net_connect!(allow_localhost: true)
+  WebMock.disable_net_connect!(
+    allow_localhost: true,
+    allow:           Baseline.configuration.webmock_allowed_hosts
+  )
   WebMock.globally_stub_request do |request|
     if request.uri.host == "api.postmarkapp.com"
       {
