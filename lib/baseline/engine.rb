@@ -15,6 +15,10 @@ module Baseline
     initializer "baseline.inflections", before: :setup_main_autoloader do
       overrides = Baseline::Inflector::ACRONYMS.to_h { [_1.downcase, _1] }
       Rails.autoloaders.main.inflector.inflect(overrides)
+
+      ActiveSupport::Inflector.inflections(:en) do |inflect|
+        Baseline::Inflector::ACRONYMS.each(&inflect.method(:acronym))
+      end
     end
 
     # hotwire-spark assumes all controllers have view helpers, which is not
