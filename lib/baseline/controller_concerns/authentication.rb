@@ -23,6 +23,7 @@ module Baseline
 
           helper_method def authenticated?   = !!resume_session
           helper_method def unauthenticated? = !authenticated?
+          helper_method :auth_user_scope
         end
 
         class_methods do

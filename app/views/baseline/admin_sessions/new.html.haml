@@ -22,14 +22,6 @@
 
     = component :form_actions, form, style: :send, submit_label: "Log in"
 
-  - if Rails.env.development?
-
-    %p.mt-6.mb-4
-      Select user to log in with:
-
-    = form_with url: url_for, data: stimco(:dev_login) do |form|
-      = component :form_field, form, :select, :login_token, choices: options_from_collection_for_select(AdminUser.active, :login_token, :name), include_blank: true, label_style: false, enhance: true, data: stimco(:dev_login, to_h: false).action(:login)
-
 - else
 
   %h1
@@ -57,11 +49,4 @@
 
           = component :form_actions, form, style: :send, submit_label: "Log in"
 
-      - if Rails.env.development?
-
-        .mt-5
-          %p
-            Select user to log in with:
-
-          = form_with url: url_for, data: stimco(:dev_login) do |form|
-            = component :form_field, form, :select, :login_token, choices: options_from_collection_for_select(AdminUser.active, :login_token, :name), include_blank: true, label_style: false, enhance: true, data: stimco(:dev_login, to_h: false).action(:login)
+= render "baseline/dev_login"

@@ -1,0 +1,15 @@
+-# frozen_string_literal: true
+
+- return unless Rails.env.development?
+
+- users = auth_user_scope.order(created_at: :desc).limit(100)
+- dev_login_stimco = stimco(:dev_login, to_h: false)
+
+.row.mt-5
+  .col-md-6
+    %hr
+    %p.text-muted
+      %small
+        Dev only: log in as
+    = form_with url: url_for, data: dev_login_stimco.to_h do |form|
+      = component :form_field, form, :select, :login_token, choices: options_from_collection_for_select(users, :login_token, :name), include_blank: true, label_style: false, enhance: true, data: dev_login_stimco.action(change: :login)
