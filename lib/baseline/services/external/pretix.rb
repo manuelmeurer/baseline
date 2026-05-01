@@ -83,6 +83,16 @@ module Baseline
         end
       end
 
+      # https://docs.pretix.eu/dev/api/resources/vouchers.html#get--api-v1-organizers-(organizer)-events-(event)-vouchers-(id)-
+      add_action :get_voucher,
+        return_unless_prod: ->(_event_id, voucher_id) {
+          { id: voucher_id, code: "dummy" }
+        } do |event_id, voucher_id|
+
+        request :get,
+          path_with_prefix(event_id, "vouchers", voucher_id)
+      end
+
       # https://docs.pretix.eu/dev/api/resources/vouchers.html#patch--api-v1-organizers-(organizer)-events-(event)-vouchers-(id)-
       add_action :update_voucher do |event_id, voucher_id, params|
         request :patch,
