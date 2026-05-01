@@ -25,12 +25,10 @@ RSpec.describe AdminUser do
   end
 
   describe ".search" do
-    it "generates SQL that searches associated user columns" do
+    it "delegates to the associated User's FTS5 search" do
       sql = AdminUser.search("test").to_sql
 
-      User.searchable_params.fetch(:columns).each do |column|
-        expect(sql).to match(/users.*#{column}.*LIKE/i)
-      end
+      expect(sql).to match(/users_fts.+MATCH/i)
     end
 
     it "returns records matching user attributes" do

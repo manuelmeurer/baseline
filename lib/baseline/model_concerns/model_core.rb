@@ -241,6 +241,33 @@ module Baseline
         end
       end
 
+      def ensure_fts5_table!
+        return if @_fts5_table_checked
+
+        fts_table = "#{table_name}_fts"
+        exists = connection
+          .select_value("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = #{connection.quote(fts_table)}")
+        unless exists
+          raise "Missing FTS5 virtual table `#{fts_table}` for #{self}. " \
+            "Add a migration with `include Baseline::Migration::FTS5` and " \
+            "`create_fts5_index :#{table_name}`."
+        end
+
+        expected = searchable_params.fetch(:columns).map(&:to_s).sort
+        actual   = connection
+          .exec_query("PRAGMA table_info(#{connection.quote_table_name(fts_table)})")
+          .rows
+          .map { _1[1] }
+          .sort
+        unless expected == actual
+          raise "FTS5 column drift on `#{fts_table}` for #{self}: " \
+            "expected #{expected.inspect}, got #{actual.inspect}. " \
+            "Add a migration with `recreate_fts5_index :#{table_name}`."
+        end
+
+        @_fts5_table_checked = true
+      end
+
       def custom_human_attribute_name(attribute)
         I18n.t attribute,
           scope:   [Current.namespace, :human_attribute_names, to_s.underscore],
@@ -401,22 +428,27 @@ module Baseline
               !_1.match?(/locale|password|token|_type\z/)
           }.keys
 
-        return if columns.empty? && !reflect_on_association(:user)
+        has_user_association = reflect_on_association(:user) && self != User
+        return if columns.empty? && !has_user_association
 
         case db_adapter
         when :postgresql
+          return if columns.empty?
+
           {
             against:  columns,
             using:    { tsearch: { prefix: true } },
             ignoring: :accents
-          }.if(reflect_on_association(:user)) {
+          }.if(has_user_association) {
             _1.merge \
               associated_against: {
                 user: User.searchable_params.fetch(:against)
               }
           }
         when :sqlite
-          { columns: }.if(reflect_on_association(:user)) {
+          return if columns.empty? && !has_user_association
+
+          { columns: }.if(has_user_association) {
             _1.merge \
               associated_columns: {
                 user: User.searchable_params.fetch(:columns)
@@ -428,11 +460,6 @@ module Baseline
       end
 
       def common_image_file_types = %i[jpeg png svg webp gif]
-
-      if defined?(::Ransack)
-        def ransackable_attributes(auth_object = nil)   = authorizable_ransackable_attributes
-        def ransackable_associations(auth_object = nil) = authorizable_ransackable_associations
-      end
 
       def polymorphic_types(association)
         unless reflect_on_association(association).try(:polymorphic?)
@@ -841,20 +868,39 @@ module Baseline
               pg_search_scope :search, searchable_params
             end
           when :sqlite
-            if defined?(::Ransack)
-              scope :search, ->(query) {
-                next all if query.blank?
+            # Backed by an FTS5 virtual table created via
+            # `Baseline::Migration::FTS5#create_fts5_index` in a host-app
+            # migration. Models with searchable own columns require the
+            # `<table>_fts` virtual table to exist; the scope checks once
+            # (and memoizes) at first use and raises a clear error if the
+            # migration was not run.
+            scope :search, ->(query) {
+              next all if query.blank?
 
-                params = searchable_params
-                predicates = params.fetch(:columns).map { [:"#{_1}_cont", query] }.to_h
+              params  = searchable_params
+              columns = params.fetch(:columns)
+              relations = []
 
-                params[:associated_columns]&.each do |association, columns|
-                  columns.each { predicates[:"#{association}_#{_1}_cont"] = query }
+              if columns.any?
+                tokens = query.to_s.scan(/[\p{Word}*]+/)
+                if tokens.any?
+                  ensure_fts5_table!
+                  match = tokens.map { %("#{_1}"*) }.join(" ")
+                  fts_table = "#{table_name}_fts"
+                  relations << where(
+                    "#{table_name}.id IN (SELECT rowid FROM #{fts_table} WHERE #{fts_table} MATCH ?)",
+                    match
+                  )
                 end
+              end
 
-                predicates.merge(m: "or").then { ransack(_1).result(distinct: false) }
-              }
-            end
+              params[:associated_columns]&.each_key do |association|
+                association_class = reflect_on_association(association).klass
+                relations << where(association => association_class.search(query))
+              end
+
+              relations.empty? ? none : relations.reduce(:or)
+            }
           else
             raise "Unexpected database adapter: #{db_adapter}"
           end

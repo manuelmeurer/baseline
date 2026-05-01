@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_23_143100) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_30_000001) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -161,4 +161,30 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_143100) do
   add_foreign_key "admin_users", "users"
   add_foreign_key "user_subscriptions", "subscriptions"
   add_foreign_key "user_subscriptions", "users"
+
+  # Virtual tables defined in this database.
+  # Note that virtual tables may not work with other database engines. Be careful if changing database.
+  create_virtual_table "users_fts", "fts5", ["email", "first_name", "last_name", "content='users'", "content_rowid='id'", "tokenize='unicode61 remove_diacritics 2'"]
+
+  # Triggers (e.g. FTS5 sync triggers).
+  execute <<~SQL
+    CREATE TRIGGER users_fts_ad AFTER DELETE ON users BEGIN
+      INSERT INTO users_fts(users_fts, rowid, email, first_name, last_name)
+      VALUES ('delete', old.id, old.email, old.first_name, old.last_name);
+    END
+  SQL
+  execute <<~SQL
+    CREATE TRIGGER users_fts_ai AFTER INSERT ON users BEGIN
+      INSERT INTO users_fts(rowid, email, first_name, last_name)
+      VALUES (new.id, new.email, new.first_name, new.last_name);
+    END
+  SQL
+  execute <<~SQL
+    CREATE TRIGGER users_fts_au AFTER UPDATE ON users BEGIN
+      INSERT INTO users_fts(users_fts, rowid, email, first_name, last_name)
+      VALUES ('delete', old.id, old.email, old.first_name, old.last_name);
+      INSERT INTO users_fts(rowid, email, first_name, last_name)
+      VALUES (new.id, new.email, new.first_name, new.last_name);
+    END
+  SQL
 end

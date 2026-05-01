@@ -61,6 +61,12 @@ module Baseline
       Baseline::Errors.install!
     end
 
+    initializer "baseline.sqlite_schema_dumper_with_triggers" do
+      ActiveSupport.on_load(:active_record_sqlite3adapter) do
+        require "baseline/sqlite_schema_dumper_with_triggers"
+      end
+    end
+
     config.baseline = ActiveSupport::OrderedOptions.new unless config.try(:baseline)
     config.baseline.jobs = ActiveSupport::OrderedOptions.new
 

@@ -2,7 +2,7 @@
 
 module Baseline
   class Inflector < Zeitwerk::GemInflector
-    ACRONYMS = %w[API CMS CSS HTML ID MJML PDF URL VAT].freeze
+    ACRONYMS = %w[API CMS CSS FTS5 HTML ID MJML PDF URL VAT].freeze
 
     def camelize(...)
       ACRONYMS.inject(super) {
