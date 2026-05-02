@@ -14,11 +14,18 @@ module Baseline
 
         included do
           prefixed = -> { [prefix, _1].compact.join("_").if(_1.is_a?(Symbol), &:to_sym) }
-          start_column, end_column = schema_columns.fetch_values(start_attribute, end_attribute)
-          type ||= [start_column, end_column]
-            .map { _1.fetch :type }
-            .uniq
-            .sole
+          case
+          when respond_to?(:schema_columns)
+            start_column, end_column = schema_columns.fetch_values(start_attribute, end_attribute)
+            type ||= [start_column, end_column]
+              .map { _1.fetch :type }
+              .uniq
+              .sole
+          when !type
+            raise ArgumentError, "type is required without schema_columns"
+          else
+            end_column = {}
+          end
 
           unless end_column[:virtual]
             validates end_attribute,
